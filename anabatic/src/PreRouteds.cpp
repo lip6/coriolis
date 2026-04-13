@@ -118,8 +118,8 @@ namespace Anabatic {
 
         Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
         if (horizontal) {
-          if (    not ab.contains(horizontal->getSourcePosition())
-             and  not ab.contains(horizontal->getTargetPosition()) ) continue;
+          if (  not ab.contains(horizontal->getSourcePosition())
+             or not ab.contains(horizontal->getTargetPosition()) ) continue;
 
           segments.push_back( horizontal );
           if (Session::isGLayer(component->getLayer())) {
@@ -132,8 +132,8 @@ namespace Anabatic {
         } else {
           Vertical* vertical = dynamic_cast<Vertical*>(component);
           if (vertical) {
-            if (    not ab.contains(vertical->getSourcePosition())
-               and  not ab.contains(vertical->getTargetPosition()) ) continue;
+            if (  not ab.contains(vertical->getSourcePosition())
+               or not ab.contains(vertical->getTargetPosition()) ) continue;
 
             if (Session::isGLayer(component->getLayer())) {
               isManualGlobalRouted = true;

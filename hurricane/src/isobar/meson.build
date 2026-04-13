@@ -31,6 +31,7 @@ isobar_sources = files([
   'PyRegularLayerCollection.cpp',
   'PyViaLayerCollection.cpp',
   'PyLibrary.cpp',
+  'PyLibraryCollection.cpp',
   'PyNet.cpp',
   'PyNetType.cpp',
   'PyNetDirection.cpp',

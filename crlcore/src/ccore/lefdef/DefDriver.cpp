@@ -104,7 +104,7 @@ namespace CRL {
 typedef  list<Net*>  NetList;
 
 
-struct LessNet : public binary_function<Net*,Net*,bool> {
+struct LessNet {
     bool operator () ( Net* net1, Net* net2 );
 };
 

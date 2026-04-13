@@ -95,9 +95,6 @@ namespace Katana {
     if (not plane->_layerGauge)
       throw Error( badLayerGauge, depth, getString(katana->getConfiguration()->getRoutingGauge()).c_str() );
 
-    uint32_t  gaugeDepth = 0;
-    if (Session::getLayerGauge(gaugeDepth)->getType() == Constant::PinOnly) ++gaugeDepth;
-
     DbU::Unit extensionCap = ( std::max( Session::getWireWidth(depth), Session::getViaWidth(depth) )
                              + Session::getPitch(depth) ) / 2;
 
@@ -160,10 +157,14 @@ namespace Katana {
 
   Track* RoutingPlane::getTrackByPosition ( DbU::Unit axis, uint32_t mode ) const
   {
+    if (_tracks.empty())     return nullptr;
+    if (axis < _tracks.front()->getAxis()) return _tracks.front();
+    if (axis > _tracks.back ()->getAxis()) return _tracks.back();
+    
     size_t index = getLayerGauge()->getTrackIndex( getAxisMin(), getAxisMax(), axis, mode );
     if (index == getTracksSize()) {
-      if (not index) return NULL;
-      if ((mode == Constant::Superior) or (mode == Constant::Exact)) return NULL;
+      if (not index) return nullptr;
+      if ((mode == Constant::Superior) or (mode == Constant::Exact)) return nullptr;
       --index;
     }
 
@@ -183,12 +184,25 @@ namespace Katana {
   }
 
 
+  DbU::Unit  RoutingPlane::getUsedWL () const
+  {
+    DbU::Unit usedWL = 0;
+    for ( size_t i=0 ; i<_tracks.size() ; ++i ) {
+      Track* track = _tracks[ i ];
+      for ( size_t j=0 ; j<track->getSize() ; ++j ) {
+        usedWL += track->getSegment( j )->getLength();
+      }
+    }
+    return usedWL;
+  }
+  
+
   string  RoutingPlane::_getString () const
   {
     return "<" + _getTypeName() + " @"
                + getString(_depth) + " "
-               + getString(getLayer()) + " [ "
-               + ((getDirection() == Flags::Horizontal) ? " horizontal [" : " vertical [")
+               + getString(getLayer())
+               + ((getDirection() == Flags::Horizontal) ? " H [" : " V [")
                + getString(_tracks.size()) + "/"
                + getString(_tracks.capacity())
                + "]>";

@@ -20,6 +20,7 @@
 #include <sstream>
 #include <exception>
 
+#include <QSettings>
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
@@ -29,6 +30,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QFileDialog>
+#include <QCloseEvent>
 
 #include "hurricane/utilities/Path.h"
 #include "hurricane/configuration/Configuration.h"
@@ -88,7 +90,8 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "CellViewer".
 
-  QString  CellViewer::_prefixWPath ( "viewer.menuBar." );
+  QString              CellViewer::_prefixWPath ( "viewer.menuBar." );
+  vector<CellViewer*>  CellViewer::_allViewers;
 
 
   CellViewer::CellViewer ( QWidget* parent ) : QMainWindow             (parent)
@@ -112,9 +115,9 @@ namespace Hurricane {
                                              , _firstShow              (false)
                                              , _toolInterrupt          (false)
                                              , _flags                  (0)
-                                             , _updateState            (ExternalEmit)
                                              , _pyScriptName           ()
   {
+    _allViewers.push_back( this );
     setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
     setObjectName( "viewer" );
     menuBar()->setObjectName ( _getAbsWidgetPath("") );
@@ -165,7 +168,7 @@ namespace Hurricane {
            , _mousePosition , SLOT  (setPosition(const Point&)) );
 
     connect( _cellWidget    , SIGNAL(selectionModeChanged())
-           , this           , SLOT  (changeSelectionMode ()) );
+           , this           , SLOT  (selectionModeChanged()) );
     connect( &_selectCommand, SIGNAL(selectionToggled (Occurrence))
            ,  _cellWidget   , SLOT  (select           (Occurrence)) );
 
@@ -183,6 +186,19 @@ namespace Hurricane {
     _controller->deleteLater ();
   //_script->deleteLater ();
     _goto->deleteLater ();
+    for ( auto iviewer = _allViewers.begin() ; iviewer != _allViewers.end() ; ++iviewer ) {
+      if (*iviewer == this ) {
+        _allViewers.erase( iviewer );
+        break;
+      }
+    }
+  }
+
+
+  void  CellViewer::closeEvent ( QCloseEvent* event )
+  {
+    _controller->setInDeletion ();
+    event->accept();
   }
 
 
@@ -490,12 +506,6 @@ namespace Hurricane {
                       );
     connect( action, SIGNAL(triggered()), this, SLOT(close()) );
 
-    action = addToMenu( "file.close"
-                      , tr("&Close")
-                      , tr("Close This Coriolis CellViewer")
-                      , QKeySequence(tr("CTRL+W"))
-                      );
-
     action = addToMenu( "file.exit"
                       , tr("&Exit")
                       , tr("Exit All Coriolis CellViewer")
@@ -711,6 +721,31 @@ namespace Hurricane {
   }
 
 
+  void  CellViewer::readQtSettings ()
+  {
+    size_t    viewerId = getAllViewers().size() - 1;
+    QSettings settings;
+    QString   sizeKey = QString( "CellViewer/%1/geometry" ).arg( viewerId );
+    if (not settings.contains(sizeKey)) return;
+    settings.beginGroup( QString("CellViewer/%1").arg(viewerId) );
+    restoreGeometry( settings.value( "geometry" ).toByteArray() );
+    getControllerWidget()->readQtSettings( viewerId );
+    settings.endGroup();
+  }
+
+
+  void  CellViewer::saveQtSettings ()
+  {
+    QSettings settings;
+    for ( size_t i=0 ; i<_allViewers.size() ; ++i ) {
+      settings.beginGroup( QString("CellViewer/%1").arg(i) );
+      settings.setValue( "geometry", _allViewers[i]->saveGeometry() );
+      _allViewers[i]->getControllerWidget()->saveQtSettings( i );
+      settings.endGroup();
+    }
+  }
+    
+
   void  CellViewer::doGoto ()
   {
     if ( _goto->exec() == QDialog::Accepted ) {
@@ -743,27 +778,23 @@ namespace Hurricane {
   }
 
 
-  void  CellViewer::changeSelectionMode ()
+  void  CellViewer::selectionModeChanged ()
   {
-    if ( _updateState != InternalEmit ) {
-      _showSelectionAction->blockSignals ( true );
-      _showSelectionAction->setChecked   ( _cellWidget->getState()->cumulativeSelection() );
-      _showSelectionAction->blockSignals ( false );
-    }
-    _updateState = ExternalEmit;
+    setShowSelection( _cellWidget->showSelection() );
   }
 
 
-  void  CellViewer::setShowSelection ( bool )
+  void  CellViewer::setShowSelection ( bool state )
   {
-    _updateState = InternalEmit;
-    _cellWidget->setShowSelection ( not _cellWidget->showSelection() );
+    _showSelectionAction->blockSignals ( true );
+    _showSelectionAction->setChecked   ( state );
+    _cellWidget->setShowSelection      ( state );
+    _showSelectionAction->blockSignals ( false );
   }
 
 
   void  CellViewer::setCumulativeSelection ( bool state )
   {
-    _updateState = InternalEmit;
     _cellWidget->setCumulativeSelection ( state );
   }
 

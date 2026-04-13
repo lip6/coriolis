@@ -64,6 +64,12 @@ typedef  multimap<Entity*,Entity*>  SlaveEntityMap;
 class Cell : public Entity {
 // *************************
 
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
+
 // Types
 // *****
 
@@ -96,6 +102,7 @@ class Cell : public Entity {
                   , Routed                  = (1 << 28)
                   , SlavedAb                = (1 << 29)
                   , Materialized            = (1 << 30) 
+                  , NoExtractConsistent     = (1 << 31) 
                   };
 
       public:
@@ -237,15 +244,15 @@ class Cell : public Entity {
         const Cell* _cell;
     };
 
-    class InstanceMap : public IntrusiveMap<Name, Instance> {
+    class InstanceMap : public IntrusiveMap<const SharedName*, Instance> {
     // ****************************************************
 
-        public: typedef IntrusiveMap<Name, Instance> Inherit;
+        public: typedef IntrusiveMap<const SharedName*, Instance> Inherit;
 
         public: InstanceMap();
 
-        public: virtual Name _getKey(Instance* instance) const;
-        public: virtual unsigned _getHashValue(Name name) const;
+        public: virtual const SharedName* _getKey(Instance* instance) const;
+        public: virtual unsigned _getHashValue(const SharedName* name) const;
         public: virtual Instance* _getNextElement(Instance* instance) const;
         public: virtual void _setNextElement(Instance* instance, Instance* nextInstance) const;
 
@@ -413,7 +420,7 @@ class Cell : public Entity {
     public: Flags& getFlags() { return _flags; } 
     public: Path getShuntedPath() const { return _shuntedPath; }
     public: Entity* getEntity(const Signature&) const;
-    public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name);};
+    public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name._getSharedName());};
     public: Instances getInstances() const {return _instanceMap.getElements();};
     public: Instances getPlacedInstances() const;
     public: Instances getFixedInstances() const;
@@ -446,7 +453,7 @@ class Cell : public Entity {
     public: Pin* getPin(const Name& name) const {return _pinMap.getElement(name);};
     public: Pins getPins() const {return _pinMap.getElements();};
     public: Slice* getSlice(const Layer* layer) const {return _sliceMap->getElement(layer);};
-    public: Slices getSlices(const Layer::Mask& mask = ~0) const;
+  public: Slices getSlices(const Layer::Mask& mask = Layer::Mask::FFFF) const;
     public: const ExtensionSliceMap& getExtensionSliceMap() const { return _extensionSlices; };
     public: ExtensionSlice* getExtensionSlice(const Name& name) const;
     public: ExtensionSlices getExtensionSlices(ExtensionSlice::Mask mask=~0) const;
@@ -455,8 +462,7 @@ class Cell : public Entity {
     public: Markers getMarkers() const {return _markerSet.getElements();};
     public: Markers getMarkersUnder(const Box& area) const;
     public: References getReferences() const;
-    public: Components getComponents(const Layer::Mask& mask = ~0) const;
-    public: Components getComponentsUnder(const Box& area, const Layer::Mask& mask = ~0) const;
+  public: Components getComponents(const Layer::Mask& mask = Layer::Mask::FFFF ) const; public: Components getComponentsUnder(const Box& area, const Layer::Mask& mask = Layer::Mask::FFFF) const;
     public: Occurrences getOccurrences(unsigned searchDepth = std::numeric_limits<unsigned int>::max()) const;
     public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = std::numeric_limits<unsigned int>::max(), DbU::Unit threshold=0) const;
     public: Occurrences getTerminalInstanceOccurrences() const;
@@ -464,8 +470,8 @@ class Cell : public Entity {
     public: Occurrences getTerminalNetlistInstanceOccurrences( const Instance* topInstance=NULL ) const;
     public: Occurrences getTerminalNetlistInstanceOccurrencesUnder(const Box& area) const;
     public: Occurrences getNonTerminalNetlistInstanceOccurrences( const Instance* topInstance=NULL ) const;
-    public: Occurrences getComponentOccurrences(const Layer::Mask& mask = ~0) const;
-    public: Occurrences getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = ~0) const;
+    public: Occurrences getComponentOccurrences(const Layer::Mask& mask = Layer::Mask::FFFF) const;
+    public: Occurrences getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = Layer::Mask::FFFF) const;
     public: Occurrences getHyperNetRootNetOccurrences() const;
     public: ExtensionSlice::Mask getExtensionSliceMask ( const Name& name ) const;
     public: Gos getExtensionGos ( const Name& name ) const;
@@ -495,6 +501,7 @@ class Cell : public Entity {
     public: bool isAbstractedSupply() const {return _flags.isset(Flags::AbstractedSupply);};
     public: bool isPlaced() const {return _flags.isset(Flags::Placed);};
     public: bool isRouted() const {return _flags.isset(Flags::Routed);};
+    public: bool isExtractConsistent() const {return not _flags.isset(Flags::NoExtractConsistent);};
     public: bool isNetAlias(const Name& name) const;
 
 // Updators
@@ -511,6 +518,7 @@ class Cell : public Entity {
     public: void setPowerFeed(bool state) {_flags.set(Flags::PowerFeed,state);};
     public: void setRouted(bool state) {_flags.set(Flags::Routed,state);};
     public: void setAbstractedSupply(bool state) { _flags.set(Flags::AbstractedSupply,state); };
+    public: void setNoExtractConsistent(bool state) { _flags.set(Flags::NoExtractConsistent,state); };
     public: void flattenNets(uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, const std::set<std::string>& excludeds, uint64_t flags=Flags::BuildRings);
@@ -521,12 +529,16 @@ class Cell : public Entity {
     public: void materialize();
     public: void unmaterialize();
     public: Cell* getClone();
+    public: void flatten(Instance*);
     public: void uniquify(unsigned int depth=std::numeric_limits<unsigned int>::max());
     public: void addObserver(BaseObserver*);
     public: void removeObserver(BaseObserver*);
     public: void notify(unsigned flags);  
     public: void destroyPhysical();
 };
+
+  
+inline const FastRTTI& Cell::fastRTTI () { return _fastRTTI; }
 
 
 inline  Cell::ClonedSet::Locator::Locator ( const Locator& other )

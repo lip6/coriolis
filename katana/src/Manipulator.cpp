@@ -40,7 +40,7 @@ namespace {
 
   class LvGCandidate {
     public:
-      struct Compare : public binary_function<LvGCandidate&,LvGCandidate&,bool> {
+      struct Compare {
           inline bool  operator() ( const LvGCandidate& lhs, const LvGCandidate& rhs ) const;
       };
     public:
@@ -180,6 +180,7 @@ namespace Katana {
     uint32_t  perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
 
     if (flags & Manipulator::PerpandicularsFirst) {
+      cdebug_log(159,0) << "Ripup perpandicular first flag." << endl;
       parallelActionFlags      &= ~SegmentAction::EventLevel4;
       perpandicularActionFlags |=  SegmentAction::EventLevel4;
       if (flags & Manipulator::ToRipupLimit)
@@ -194,13 +195,26 @@ namespace Katana {
     Track* track = NULL;
     const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
 
+    bool nonPrefFounds = false;
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
       cdebug_log(159,0) << "| " << perpandiculars[i] << endl;
 
       track = perpandiculars[i]->getTrack();
+      DataNegociate* dataPp = perpandiculars[i]->getDataNegociate();
+
       if (not track) {
       // The perpandicular is not placed yet.
-        if (perpandiculars[i]->isFixedAxis()) {
+        if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
+          cdebug_log(159,0) << "Promote non-pref perpandicular" << endl;
+          Flags         flags    = Flags::NoFlags;
+          AutoContact*  terminal = nullptr;
+          TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
+          cdebug_log(159,0) << "parallel " << parallel << endl;
+          if (parallel and (parallel->getBreakLevel() < 2)) {
+            parallel->makeDogleg( terminal->getGCell(), flags );
+            nonPrefFounds = true;
+          }
+        } else if (perpandiculars[i]->isFixedAxis()) {
           RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandiculars[i]->getLayer());
           Track*        track = plane->getTrackByPosition( perpandiculars[i]->getAxis() );
           if (track) {
@@ -215,6 +229,19 @@ namespace Katana {
           }
         }
         continue;
+      }
+
+      if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
+        cdebug_log(159,0) << "One perpandicular is non-pref, promote to pref." << endl;
+        cdebug_tabw(159,-1);
+        Flags         flags    = Flags::NoFlags;
+        AutoContact*  terminal = nullptr;
+        TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
+        if (parallel and (parallel->getBreakLevel() < 2)) {
+          parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
+          nonPrefFounds = true;
+          continue;
+        }
       }
 
       bool dislodgeCaged = false;
@@ -266,6 +293,13 @@ namespace Katana {
       }
     }
 
+    if (nonPrefFounds) {
+      cdebug_log(159,0) << "Some non-pref perpandiculars has been found." << endl;
+      _fsm.addAction( _segment, SegmentAction::SelfRipup );
+      cdebug_tabw(159,-1);
+      return true;
+    }
+
     if (cagedPerpandiculars and not placedPerpandiculars) {
       cdebug_log(159,0) << "Aborted ripup of perpandiculars, constraints are due to fixed/blockage." << endl;
       _fsm.addAction( _segment, SegmentAction::SelfRipup );
@@ -278,6 +312,7 @@ namespace Katana {
       for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
         _fsm.addAction( perpandiculars[i], perpandicularActionFlags|SegmentAction::EventLevel4 );
       }
+      parallelActionFlags &= ~SegmentAction::EventLevel4;
       _fsm.addAction( _segment, parallelActionFlags );
       cdebug_tabw(159,-1);
       return true;
@@ -505,7 +540,7 @@ namespace Katana {
     TrackElement*     segment1     = NULL;
     TrackElement*     segment2     = NULL;
     Track*            track        = _segment->getTrack();
-    Anabatic::GCell* dogLegGCell  = gcells[ifirstDogleg];
+    Anabatic::GCell*  dogLegGCell  = gcells[ifirstDogleg];
     TrackElement*     dogleg       = NULL;
     DbU::Unit         doglegAxis;
     bool              doglegReuse1 = false;
@@ -525,7 +560,7 @@ namespace Katana {
         cdebug_tabw(159,-1);
         return false;
       }
-      if (not _segment->makeDogleg( dogLegGCell, dogleg, segment1 )) {
+      if (not _segment->makeDogleg( dogLegGCell, dogleg, segment1, Flags::NoFlags )) {
         cdebug_log(159,0) << "FIRST makeDogleg() call failed (BUG)." << endl;
         cdebug_tabw(159,-1);
         return false;
@@ -586,7 +621,7 @@ namespace Katana {
           cdebug_tabw(159,-1);
           return false;
         }
-        if (not segment1->makeDogleg( dogLegGCell, dogleg, segment2 )) {
+        if (not segment1->makeDogleg( dogLegGCell, dogleg, segment2, Flags::NoFlags )) {
           cdebug_log(159,0) << "SECOND makeDogleg() call failed (BUG)." << endl;
           cdebug_tabw(159,-1);
           return false;
@@ -659,6 +694,61 @@ namespace Katana {
 
     cdebug_tabw(159,-1);
     return success;
+  }
+
+
+  bool  Manipulator::relaxVH ( uint32_t flags )
+  {
+    cdebug_log(159,0) << "Manipulator::relaxVH() of: " << _segment << endl; 
+
+    if (_segment->isFixed()) return false;
+    if (not _data) return false;
+    if (_segment->isTerminal()) return false;
+    if (not _segment->isGlobal()) return false;
+    if (_segment->getLayer() != Session::getRoutingGauge()->getRoutingLayer(1)) return false;
+
+    cdebug_tabw(159,1);
+    vector<GCell*> gcells;
+    _segment->getGCells( gcells );
+
+    if (gcells.size() < 2) {
+      cerr << Bug( "relax() Cannot break %s,\n      only in %s."
+                 , getString(_segment).c_str()
+                 , getString(gcells[0]).c_str()
+                 ) << endl;
+      cdebug_tabw(159,-1);
+      return false;
+    }
+
+    GCell* candidate = gcells[1];
+    cdebug_log(159,0) << "[1] WDensity[1]=" << gcells[1]->getWDensity(1)
+                      << " " << gcells[1] << endl;
+    for ( size_t i = 2; i+1 < gcells.size() ; ++i ) {
+      cdebug_log(159,0) << "[" << i << "] WDensity[1]=" << gcells[i]->getWDensity(1)
+                        << " " << gcells[i] << endl;
+      if (gcells[i]->getWDensity(1) < candidate->getWDensity(1))
+        candidate = gcells[i];
+    }
+    if (candidate->getWDensity(1) < 0.5) {
+      TrackElement* dogleg   = nullptr;
+      TrackElement* parallel = nullptr;
+      cdebug_log(159,0) << "Making dogleg in " << candidate << endl;
+      if (not _segment->canDogleg(candidate)) {
+        cdebug_log(159,0) << "Cannot create dogleg." << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
+      if (not _segment->makeDogleg( candidate, dogleg, parallel, Flags::NoFlags )) {
+        cdebug_log(159,0) << "makeDogleg() call failed (BUG)." << endl;
+        cerr << "makeDogleg() call failed (BUG)." << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
+    } else
+      return false;
+    
+    cdebug_tabw(159,-1);
+    return true;
   }
 
 
@@ -792,6 +882,32 @@ namespace Katana {
       cdebug_log(159,0) << "- Hard overlap/enclosure/shrink " << segment2 << endl;
     //if ( (_segment->isUnbreakable() or _segment->isStrap()) and segment2->isGlobal() ) continue;
       if ( (_segment->isStrap()) and segment2->isGlobal() ) continue;
+#ifdef NEW_NONPREF_FEATURE
+      if (segment2->isNonPref()) {
+        cdebug_log(159,0) << "- Non-pref (perpandicular) move aside " << segment2 << endl;
+        if (shrinkRight xor shrinkLeft) {
+          if (shrinkRight) {
+            if ( not (success=Manipulator(segment2,_fsm)
+                     .ripup( SegmentAction::OtherRipupPerpandAndPushAside
+                           , toFree.getVMin() - getPPitch()/2
+                           )) )
+              continue;
+          }
+          if (shrinkLeft) {
+            cdebug_log(159,0) << "Move PP to right: "
+                              << DbU::getValueString(toFree.getVMax()) << " + "
+                              << DbU::getValueString(getPPitch()/2)
+                              << endl;
+            if ( not (success=Manipulator(segment2,_fsm)
+                     .ripup( SegmentAction::OtherRipupPerpandAndPushAside
+                           , toFree.getVMax() + getPPitch()/2
+                           )) )
+              continue;
+          }
+        }
+      }
+#endif
+      
       if ( not (success = Manipulator(segment2,_fsm).ripup(SegmentAction::OtherRipup)) )
         continue;
 
@@ -1044,7 +1160,7 @@ namespace Katana {
 
       if (  costs[itrack]->isFixed()
          or costs[itrack]->isBlockage()
-         or costs[itrack]->isInfinite()
+         or costs[itrack]->isInfiniteOrSpanRp()
          or costs[itrack]->isOverlapGlobal() )
         continue;
 
@@ -1192,26 +1308,28 @@ namespace Katana {
   {
     cdebug_log(159,0) << "Manipulator::moveUp() " << _segment << endl; 
 
-    Flags kflags = Flags::WithNeighbors;
+    Flags kflags = Flags::WithPerpands|Flags::WithNeighbors|Flags::AllAbove;
     kflags |= (flags & AllowLocalMoveUp   ) ? Flags::AllowLocal     : Flags::NoFlags;
     kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : Flags::NoFlags;
     kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : Flags::NoFlags;
 
-    float reserve = 1.0;
-  //float reserve = 0.5;
+    float reserve = Session::getMoveUpReserve();
     if (_segment->base() and (_segment->base()->getRpDistance() > 2)) reserve = 1.0;
     if (_segment->getLength() > getLongWireUpThreshold1()*getPitch()) reserve = getLongWireUpReserve1();
+    if (Session::getConfiguration()->isVH() and (_segment->getDepth() < 3)) reserve = 1.5;
 
     if (_segment->isFixed()) return false;
     if (not (flags & AllowLocalMoveUp)) {
       if (_segment->isLocal()) {
         if (not _segment->canPivotUp(1.0,kflags)) return false;
       } else {
-        if (_segment->getLength() < 20*getPitch()) {
+        if (_segment->getLength() < 30*getPitch()) {
+          if (Session::getConfiguration()->isVH()) kflags |=  Flags::IgnoreContacts;
+          else                                     kflags &= ~Flags::IgnoreContacts;
           if (not (flags & AllowShortPivotUp)) return false;
-          if (not _segment->canPivotUp(1.0,(kflags & ~Flags::IgnoreContacts))) return false;
-        }
-        if (not _segment->canMoveUp(reserve,kflags)) return false;
+          if (not _segment->canPivotUp(1.0,kflags|Flags::CheckLowDensity)) return false;
+        } else
+          if (not _segment->canMoveUp(reserve,kflags|Flags::CheckLowDensity)) return false;
       }
     } else {
       if (not _segment->canMoveUp(1.0,kflags)) return false;
@@ -1327,7 +1445,7 @@ namespace Katana {
 
     TrackElement* dogleg   = NULL;
     TrackElement* parallel = NULL;
-    _segment->makeDogleg( gcells[igcell], dogleg, parallel );
+    _segment->makeDogleg( gcells[igcell], dogleg, parallel, Flags::NoFlags );
     return (dogleg != NULL);
   }
 
@@ -1338,7 +1456,21 @@ namespace Katana {
 
     if (_segment->isFixed()) return false;
     if (not _event->canMinimize()) return false;
-    if (_segment->isNonPref()) return true;
+    if (_segment->isNonPref()) {
+      cdebug_log(159,0) << "| Non-pref case." << endl; 
+      AutoContact* term = _segment->base()->getAutoSource();
+      AutoContact* turn = _segment->base()->getAutoTarget();
+      if (not term) {
+        std::swap( term, turn );
+        if (not term) return true;
+      }
+      DbU::Unit axisHint = (_segment->isHorizontal()) ? term->getX() : term->getY();
+      for ( TrackElement* perpandicular : _segment->getPerpandiculars() )
+        _fsm.addAction( perpandicular, SegmentAction::SelfRipupPerpandWithAxisHint, axisHint );
+      _event->setMinimized();
+      cdebug_log(159,0) << "| Minimized." << endl; 
+      return true;
+    }
 
     DbU::Unit  minSpan = DbU::Max;
     DbU::Unit  maxSpan = DbU::Min;
@@ -1375,6 +1507,16 @@ namespace Katana {
 
       RoutingEvent* event2 = data2->getRoutingEvent();
       if (not event2) continue;
+
+      if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
+        Flags         flags    = Flags::NoFlags;
+        AutoContact*  terminal = nullptr;
+        TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
+        if (parallel and (parallel->getBreakLevel() < 2)) {
+          parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
+          return true;
+        }
+      }
 
       cdebug_log(159,0) << "  | Constraints: " << event2->getConstraints() << endl;
 
@@ -1688,12 +1830,11 @@ namespace Katana {
       if (not data) continue;
       if (data->getState() >= DataNegociate::RepairFailed) continue;
 
-      if (RoutingEvent::getStage() == StageRepair) {
+      if (RoutingEvent::getStage() == Anabatic::StageRepair) {
         if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
           _segment->getDataNegociate()->resetRipupCount();
 
-        data->setState( DataNegociate::Repair );
-        if (data->getStateCount() > 1) data->resetStateCount();
+        data->setState( DataNegociate::Repair, Flags::ResetCount );
       }
 
       cdebug_log(159,0) << "Perpandicular ripup: " << perpandicular << endl;
@@ -1732,12 +1873,11 @@ namespace Katana {
       } else
         continue;
 
-      if (RoutingEvent::getStage() == StageRepair) {
+      if (RoutingEvent::getStage() == Anabatic::StageRepair) {
         if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
           _segment->getDataNegociate()->resetRipupCount();
 
-        data->setState( DataNegociate::Repair );
-        if (data->getStateCount() > 1) data->resetStateCount();
+        data->setState( DataNegociate::Repair, Flags::ResetCount );
       }
 
       cdebug_log(159,0) << "Stacked VIA ripup: " << perpandicular << endl;
@@ -1771,84 +1911,101 @@ namespace Katana {
       return false;
     }
 
-    Interval xspan ( terminal->getX() );
-    xspan.inflate( ( plane->getLayerGauge()->getPWireWidth()
-                   + plane->getLayerGauge()->getPitch()
-                   - plane->getLayerGauge()->getWireWidth()) / 2 );
-
-    Box termConstraints ( terminal->getConstraintBox() );
-    Box turnConstraints ( turn    ->getConstraintBox() );
-    Interval axisRange = terminal->getUConstraints( Flags::Vertical );
-    axisRange.inflate( plane->getLayerGauge()->getPitch() );
-    cdebug_log(159,0) << "Axis range (UConstraints) " << axisRange << endl;
-
-    size_t offset      = Track::npos;
-    size_t minBlockage = Track::npos;
-    size_t maxBlockage = Track::npos;
-    for ( Track* track : Tracks_Range::get(plane,axisRange) ) {
-      if (offset == Track::npos) offset = track->getIndex();
-      cdebug_log(159,0) << "| track=" << track << endl;
-      Interval  freeInterval = track->getFreeInterval( xspan.getCenter(), _segment->getNet() );
-      if (freeInterval.contains(xspan)) continue;
-
-      size_t begin = Track::npos;
-      size_t end   = Track::npos;
-      track->getOverlapBounds( xspan, begin, end );
-      if (begin == Track::npos) continue;
-
-      for ( bool trackDone=false ; not trackDone and (begin < end) ; begin++ ) {
-        TrackElement* element = track->getSegment( begin );
-        if (element->getNet() == _segment->getNet()) continue;
-        if (xspan.getIntersection( element->getCanonicalInterval() ).getSize() == 0) continue;
-        if (element->isBlockage() or element->isFixed()) {
-          trackDone = true;
-          if (track->getIndex() == offset) {
-            minBlockage = track->getIndex();
-            continue;
-          }
-          if ((minBlockage != Track::npos) and (minBlockage+1 == track->getIndex())) {
-            minBlockage = track->getIndex();
-            continue;
-          }
-          maxBlockage = track->getIndex();
-        }
+    if (_segment->isNonPref()) {
+      if (_segment->canPromoteToPref(Flags::NoFlags)) {
+        _segment->promoteToPref();
+      } else {
+        cdebug_tabw(159,-1);
+        return false;
       }
-      if (maxBlockage != Track::npos) break;
+    } else {
+      _fsm.addAction ( _segment     , SegmentAction::SelfRipup|SegmentAction::EventLevel1 );
+      _fsm.addAction ( perpandicular, SegmentAction::Perpandicular
+                                    | SegmentAction::Ripup
+                                    | SegmentAction::EventLevel4 );
     }
-    cdebug_log(159,0) << "minBlockage=" << minBlockage << endl;
-    cdebug_log(159,0) << "maxBlockage=" << maxBlockage << endl;
-    Interval nonBlocked ( (minBlockage == Track::npos) ? terminal->getGCell()->getYMin()
-                                                       : plane->getTrackByIndex(minBlockage)->getAxis()
-                        , (maxBlockage == Track::npos) ? terminal->getGCell()->getYMax()
-                                                       : plane->getTrackByIndex(maxBlockage)->getAxis() );
-    cdebug_log(159,0) << "Non blocked vertical " << nonBlocked << endl;
-    Interval turnVConstraints = Interval( turn    ->getUConstraints(Flags::Vertical) );
-    Interval termVConstraints = Interval( terminal->getUConstraints(Flags::Vertical) );
-    turnVConstraints.inflate( perpandicular->getPitch() );
-    turnVConstraints.intersection( nonBlocked );
-    termVConstraints.intersection( nonBlocked );
-
-    cdebug_log(159,0) << "Using: pitch=" << DbU::getValueString(perpandicular->getPitch())
-                      << " axis=" << DbU::getValueString(perpandicular->getAxis())
-                      << " pp=" << perpandicular << endl;
-    terminal->setConstraintBox( Box( termConstraints.getXMin()
-                                   , termVConstraints.getVMin()
-                                   , termConstraints.getXMax()
-                                   , termVConstraints.getVMax()
-                                   ) );
-    turn->setConstraintBox( Box( turnConstraints.getXMin()
-                               , turnVConstraints.getVMin()
-                               , turnConstraints.getXMax()
-                               , turnVConstraints.getVMax()
-                               ) );
-
-    cdebug_log(159,0) << "Restrict: " << terminal << " to " << terminal->getConstraintBox() << endl;
-    cdebug_log(159,0) << "Restrict: " << turn     << " to " << turn    ->getConstraintBox() << endl;
-
-    _fsm.addAction ( perpandicular, SegmentAction::SelfRipupPerpand|SegmentAction::EventLevel4 );
-
+      
     cdebug_tabw(159,-1);
     return true;
+
+    // Interval xspan ( terminal->getX() );
+    // xspan.inflate( ( plane->getLayerGauge()->getPWireWidth()
+    //                + plane->getLayerGauge()->getPitch()
+    //                - plane->getLayerGauge()->getWireWidth()) / 2 );
+
+    // Box termConstraints ( terminal->getConstraintBox() );
+    // Box turnConstraints ( turn    ->getConstraintBox() );
+    // Interval axisRange = terminal->getUConstraints( Flags::Vertical );
+    // axisRange.inflate( plane->getLayerGauge()->getPitch() );
+    // cdebug_log(159,0) << "Axis range (UConstraints) " << axisRange << endl;
+
+    // size_t offset      = Track::npos;
+    // size_t minBlockage = Track::npos;
+    // size_t maxBlockage = Track::npos;
+    // for ( Track* track : Tracks_Range::get(plane,axisRange) ) {
+    //   if (offset == Track::npos) offset = track->getIndex();
+    //   cdebug_log(159,0) << "| track=" << track << endl;
+    //   Interval  freeInterval = track->getFreeInterval( xspan.getCenter(), _segment->getNet() );
+    //   if (freeInterval.contains(xspan)) continue;
+
+    //   size_t begin = Track::npos;
+    //   size_t end   = Track::npos;
+    //   track->getOverlapBounds( xspan, begin, end );
+    //   if (begin == Track::npos) continue;
+
+    //   for ( bool trackDone=false ; not trackDone and (begin < end) ; begin++ ) {
+    //     TrackElement* element = track->getSegment( begin );
+    //     if (element->getNet() == _segment->getNet()) continue;
+    //     if (xspan.getIntersection( element->getCanonicalInterval() ).getSize() == 0) continue;
+    //     if (element->isBlockage() or element->isFixed()) {
+    //       trackDone = true;
+    //       if (track->getIndex() == offset) {
+    //         minBlockage = track->getIndex();
+    //         continue;
+    //       }
+    //       if ((minBlockage != Track::npos) and (minBlockage+1 == track->getIndex())) {
+    //         minBlockage = track->getIndex();
+    //         continue;
+    //       }
+    //       maxBlockage = track->getIndex();
+    //     }
+    //   }
+    //   if (maxBlockage != Track::npos) break;
+    // }
+    // cdebug_log(159,0) << "minBlockage=" << minBlockage << endl;
+    // cdebug_log(159,0) << "maxBlockage=" << maxBlockage << endl;
+    // Interval nonBlocked ( (minBlockage == Track::npos) ? terminal->getGCell()->getYMin()
+    //                                                    : plane->getTrackByIndex(minBlockage)->getAxis()
+    //                     , (maxBlockage == Track::npos) ? terminal->getGCell()->getYMax()
+    //                                                    : plane->getTrackByIndex(maxBlockage)->getAxis() );
+    // cdebug_log(159,0) << "Non blocked vertical " << nonBlocked << endl;
+    // Interval turnVConstraints = Interval( turn    ->getUConstraints(Flags::Vertical) );
+    // Interval termVConstraints = Interval( terminal->getUConstraints(Flags::Vertical) );
+    // turnVConstraints.inflate( perpandicular->getPitch() );
+    // turnVConstraints.intersection( nonBlocked );
+    // termVConstraints.intersection( nonBlocked );
+
+    // cdebug_log(159,0) << "Using: pitch=" << DbU::getValueString(perpandicular->getPitch())
+    //                   << " axis=" << DbU::getValueString(perpandicular->getAxis())
+    //                   << " pp=" << perpandicular << endl;
+    // terminal->setConstraintBox( Box( termConstraints.getXMin()
+    //                                , termVConstraints.getVMin()
+    //                                , termConstraints.getXMax()
+    //                                , termVConstraints.getVMax()
+    //                                ) );
+    // turn->setConstraintBox( Box( turnConstraints.getXMin()
+    //                            , turnVConstraints.getVMin()
+    //                            , turnConstraints.getXMax()
+    //                            , turnVConstraints.getVMax()
+    //                            ) );
+
+    // cdebug_log(159,0) << "Restrict: " << terminal << " to " << terminal->getConstraintBox() << endl;
+    // cdebug_log(159,0) << "Restrict: " << turn     << " to " << turn    ->getConstraintBox() << endl;
+
+    // _fsm.addAction ( perpandicular, SegmentAction::SelfRipupPerpand|SegmentAction::EventLevel4 );
+
+    // cdebug_tabw(159,-1);
+    // return true;
   }
 
 

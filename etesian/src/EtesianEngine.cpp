@@ -146,8 +146,8 @@ namespace {
                                    , DbU::Unit     vpitch
                                    )
   {
-    DbU::Unit tx = position.x * vpitch;
-    DbU::Unit ty = position.y * hpitch;
+    DbU::Unit tx = position.x * hpitch;
+    DbU::Unit ty = position.y * vpitch;
 
     Box       cellBox    = model->getAbutmentBox();
     Transformation::Orientation orient = Transformation::Orientation::ID;
@@ -295,6 +295,7 @@ namespace Etesian {
 
   EtesianEngine::EtesianEngine ( Cell* cell )
     : Super         (cell)
+    , _status       (NoFlags)
     , _configuration(new Configuration())
     , _block        (NULL)
     , _ySpinSet     (false)
@@ -317,6 +318,7 @@ namespace Etesian {
     , _sliceHeight  (0)
     , _fixedAbHeight(0)
     , _fixedAbWidth (0)
+    , _latchUpMax   (0)
     , _diodeCount   (0)
     , _bufferCount  (0)
     , _excludedNets ()
@@ -342,7 +344,7 @@ namespace Etesian {
 
       _bloatCells.select( getConfiguration()->getBloat() );
 
-      string bufferName = getConfiguration()->getSpareBufferName();;
+      string bufferName = getConfiguration()->getHFNSBufferName();;
       Cell*  buffer = DataBase::getDB()->getCell( bufferName );
       if (buffer) {
         _bufferCells.useBuffer( buffer, 8, 20 );
@@ -388,9 +390,11 @@ namespace Etesian {
       Cell*  tie     = DataBase::getDB()->getCell( tieName );
       if (not tie)
         tie = AllianceFramework::get()->getCell( tieName, Catalog::State::Views|Catalog::State::Foreign );
-      if (tie)
+      if (tie) {
         _feedCells.useTie( tie );
-      else
+        if (getConfiguration()->getLatchUpDistance())
+          _latchUpMax = getConfiguration()->getLatchUpDistance()*2 - tie->getAbutmentBox().getWidth();
+      } else
         cerr << Warning( "EtesianEngine::_postCreate() Unable to find \"%s\" tie cell."
                        , tieName.c_str()
                        ) << endl;
@@ -481,10 +485,11 @@ namespace Etesian {
       _placeArea = topAb.getIntersection( placeArea );
     }
 
+    DbU::Unit sliceStep   = getSliceHStep();
     DbU::Unit sliceHeight = getSliceHeight();
-    _placeArea = Box( DbU::toCeil ( placeArea.getXMin(), sliceHeight )
+    _placeArea = Box( DbU::toCeil ( placeArea.getXMin(), sliceStep   )
                     , DbU::toCeil ( placeArea.getYMin(), sliceHeight )
-                    , DbU::toFloor( placeArea.getXMax(), sliceHeight )
+                    , DbU::toFloor( placeArea.getXMax(), sliceStep   )
                     , DbU::toFloor( placeArea.getYMax(), sliceHeight )
                     );
     size_t bottomSlice = (_placeArea.getYMin() - topAb.getYMin()) / sliceHeight;
@@ -574,8 +579,8 @@ namespace Etesian {
     }
 
     DbU::Unit abWidth = columns*getSliceHeight();
-    DbU::Unit adjust  = abWidth % getSliceStep();
-    if (adjust) abWidth += getSliceStep() - adjust;
+    DbU::Unit adjust  = abWidth % getSliceHStep();
+    if (adjust) abWidth += getSliceHStep() - adjust;
 
     getCell()->setAbutmentBox( Box( 0
                                   , 0
@@ -693,8 +698,8 @@ namespace Etesian {
   {
     clearColoquinte();
     AllianceFramework* af          = AllianceFramework::get();
-    DbU::Unit          hpitch      = getSliceStep();
-    DbU::Unit          vpitch      = getSliceStep();
+    DbU::Unit          hpitch      = getSliceHStep();
+    DbU::Unit          vpitch      = getSliceVStep();
     DbU::Unit          sliceHeight = getSliceHeight();
     bool               isFlexLib   = (getGauge()->getName() == "FlexLib");
 
@@ -707,14 +712,21 @@ namespace Etesian {
     stdCellSizes.setIndent( "       ", 1 );
 
     cmess1 << "  o  Converting \"" << getCell()->getName() << "\" into Coloquinte." << endl;
-    cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
-    cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
-    cmess1 << ::Dots::asString("     - Slice height"    , DbU::getValueString(sliceHeight)) << endl;
+    cmess1 << ::Dots::asString("     - H-pitch"     , DbU::getValueString(hpitch)) << endl;
+    cmess1 << ::Dots::asString("     - V-pitch"     , DbU::getValueString(vpitch)) << endl;
+    cmess1 << ::Dots::asString("     - Slice height", DbU::getValueString(sliceHeight)) << endl;
     if (isFlexLib)
       cmess1 << ::Dots::asString("     - Using patches for"    , "\"FlexLib\"") << endl;
     cmess2 << "     o  Looking through the hierarchy." << endl;
     cmess2 << "        - Whole place area: " << getBlockCell()->getAbutmentBox() << "." << endl;
     cmess2 << "        - Sub-place Area: " << _placeArea << "." << endl;
+
+    if (sliceHeight % vpitch) {
+      throw Error( "EtesianEngine::toColoquinte(): Slice height (%s) must be a multiple of vpitch (%s)."
+                 , DbU::getValueString(sliceHeight).c_str()
+                 , DbU::getValueString(vpitch).c_str() );
+    }
+    
     DbU::Unit totalLength    = (_placeArea.getHeight() / sliceHeight) * _placeArea.getWidth();
     DbU::Unit usedLength     = 0;
     DbU::Unit registerLength = 0;
@@ -751,10 +763,10 @@ namespace Etesian {
       }
     }
     _surface = new coloquinte::Rectangle( (int)(topAb.getXMin() / hpitch)
-                            , (int)(topAb.getXMax() / hpitch)
-                            , (int)(topAb.getYMin() / vpitch)
-                            , (int)(topAb.getYMax() / vpitch)
-                            );
+                                        , (int)(topAb.getXMax() / hpitch)
+                                        , (int)(topAb.getYMin() / vpitch)
+                                        , (int)(topAb.getYMax() / vpitch)
+                                        );
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
       ++instancesNb;
@@ -783,6 +795,8 @@ namespace Etesian {
       return 0;
     }
 
+    cmess1 << ::Dots::asPercentage( "     - Effective density"
+                                  , (float)usedLength/(float)totalLength ) << endl;
     cmess1 << ::Dots::asPercentage( "     - Effective space margin"
                                   , (float)(totalLength-usedLength)/(float)totalLength ) << endl;
 
@@ -792,12 +806,16 @@ namespace Etesian {
       ostringstream os1;
       os1 << registerNb << " (" << fixed << setprecision(2) << ratio << "%)";
       cmess1 << ::Dots::asString    ( "     - Registers (DFF) ", os1.str() ) << endl;
-      cmess1 << ::Dots::asPercentage( "     - Registers (DFF) area "
+      cmess1 << ::Dots::asPercentage( "     - Registers (DFF) density "
                                   , (float)(registerLength)/(float)totalLength ) << endl;
-      ratio = ((float)_bufferCount / (float)instancesNb) * 100.0;
-      ostringstream os2;
-      os2 << _bufferCount << " (" << fixed << setprecision(2) << ratio << "%)";
-      cmess1 << ::Dots::asString( "     - Buffers ", os2.str() ) << endl;
+      if (_bufferCount != 0) {
+        // Seems unused
+        // Related to (now unused) code in HFNS.cpp for clock tree insertion
+        ratio = ((float)_bufferCount / (float)instancesNb) * 100.0;
+        ostringstream os2;
+        os2 << _bufferCount << " (" << fixed << setprecision(2) << ratio << "%)";
+        cmess1 << ::Dots::asString( "     - Buffers ", os2.str() ) << endl;
+      }
     }
     cout.flush();
 
@@ -814,6 +832,15 @@ namespace Etesian {
     vector<bool> cellIsObstruction( instancesNb+1 );
     vector<CellRowPolarity> cellRowPolarity( instancesNb+1, CellRowPolarity::SAME );
 
+    // Compute a bloat factor to reach (1 - densityVariation) density
+    double bloatFactor = std::max(1.0, (1.0 - getDensityVariation()) * totalLength / usedLength);
+    if (bloatFactor != 1.0) {
+      ostringstream bf;
+      bf << fixed << setprecision(2) << "x " << bloatFactor;
+      cmess1 << ::Dots::asString( "     - Coloquinte cell bloat factor ", bf.str() ) << endl;
+    }
+    int rowHeight = (getSliceHeight() + vpitch - 1) / vpitch;
+
     cmess1 << "     - Building RoutingPads (transhierarchical)" << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
   //getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
@@ -821,6 +848,7 @@ namespace Etesian {
 
     int instanceId       = 0;
     if (getBlockInstance()) {
+      // Translate the fixed instances
       for ( Instance* instance : getCell()->getInstances() ) {
         if (instance == getBlockInstance()) continue;
         if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
@@ -849,20 +877,11 @@ namespace Etesian {
       }
     }
 
-    // Compute a bloat factor to be reach 1 - densityVariation density
-    double bloatFactor = std::max(1.0, (1.0 - getDensityVariation()) * totalLength / usedLength);
-    // Limit the maximum size of cells after bloat to avoid placement issues
-    int maxBloatSize = _surface->width() / 8;
-    if (bloatFactor != 1.0) {
-      ostringstream bf;
-      bf << fixed << setprecision(2) << bloatFactor << "%";
-      cmess1 << ::Dots::asString( "     - Coloquinte cell bloat factor ", bf.str() ) << endl;
-    }
-    int rowHeight = (getSliceHeight() + vpitch - 1) / vpitch;
-
+    // Translate the placeable instances
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
-      if (instanceId >= instancesNb) {
+    //cerr << occurrence << endl;
+      if (instanceId >= (int) instancesNb) {
         // This will be an error
         ++instanceId;
         continue;
@@ -887,12 +906,10 @@ namespace Etesian {
       int xpos  = instanceAb.getXMin() / hpitch;
       int ypos  = instanceAb.getYMin() / vpitch;
 
+      // Huge hack to solve a specific DRC issue in Flexlib
       string masterName = getString( instance->getMasterCell()->getName() );
       if (isFlexLib and not instance->isFixed() and (masterName == "buf_x8"))
          ++xsize;
-
-      // Take bloat into account to compute the size
-      xsize = std::max(xsize, std::min(maxBloatSize, (int) (xsize * bloatFactor)));
 
       cellX[instanceId] = xpos;
       cellY[instanceId] = ypos;
@@ -918,7 +935,7 @@ namespace Etesian {
       dots.dot();
     }
 
-    if (instanceId != instancesNb) {
+    if (instanceId != (int) instancesNb) {
       throw Error( "EtesianEngine::toColoquinte(): %d  leaf instances, but expected %d\n"
                    "        maybe a virtual flattening problem."
                  , instanceId, instancesNb 
@@ -1039,6 +1056,12 @@ namespace Etesian {
       cmess2 << stdCellSizes.toString(1) << endl;
 
     _circuit->setupRows(*_surface, rowHeight);
+
+    // Apply changes to match target density variation; we add a small margin to be safer
+    float rowSideMarginInCellHeight = 0.3;
+    float maxExpansionInRowWidth = 1.0 / 8.0;
+    _circuit->expandCellsToDensity(1.0 - getDensityVariation(), rowSideMarginInCellHeight, maxExpansionInRowWidth);
+
     _circuit->check();
     _placementLB = new coloquinte::PlacementSolution ();
     _placementUB = new coloquinte::PlacementSolution ( *_placementLB );
@@ -1079,25 +1102,30 @@ namespace Etesian {
     }
   }
 
-  void EtesianEngine::_coloquinteCallback(coloquinte::PlacementStep step) {
-    auto placement = _circuit->solution();
-    if (step == coloquinte::PlacementStep::LowerBound) {
-      *_placementLB = placement;
-    }
-    else {
-      *_placementUB = placement;
-    }
 
-    // Graphical update
+  void EtesianEngine::_coloquinteCallback ( coloquinte::PlacementStep step )
+  {
+  // Graphical update
     GraphicUpdate conf = getUpdateConf();
-    if (conf == GraphicUpdate::UpdateAll) {
-      _updatePlacement(&placement);
+    bool updatePlacement = (conf == GraphicUpdate::UpdateAll);
+    if ((conf == GraphicUpdate::LowerBound) and (step == coloquinte::PlacementStep::LowerBound)) {
+      updatePlacement = true;
     }
-    else if (conf == GraphicUpdate::LowerBound &&
-             step == coloquinte::PlacementStep::LowerBound) {
-      _updatePlacement(&placement);
-    }
+    _coloquinteCallbackCore( step, updatePlacement );
   }
+
+
+  void EtesianEngine::_coloquinteCallbackCore ( coloquinte::PlacementStep step, bool updatePlacement )
+  {
+    auto placement = _circuit->solution();
+    if (step == coloquinte::PlacementStep::LowerBound)
+      *_placementLB = placement;
+    else
+      *_placementUB = placement;
+
+    if (updatePlacement) _updatePlacement( &placement, NoFlags );
+  }
+
 
   void  EtesianEngine::globalPlace ()
   {
@@ -1110,12 +1138,14 @@ namespace Etesian {
 
   void  EtesianEngine::detailedPlace ()
   {
-    coloquinte::ColoquinteParameters params(getPlaceEffort());
-    coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
-    _circuit->placeDetailed(params, callback);
+    coloquinte::ColoquinteParameters params   ( getPlaceEffort() );
+    coloquinte::PlacementCallback    callback = std::bind( &EtesianEngine::_coloquinteCallback
+                                                         , this
+                                                         , std::placeholders::_1 );
+    _circuit->placeDetailed( params, callback );
     *_placementUB = _circuit->solution();
     *_placementLB = *_placementUB; // In case we run other passes
-    _updatePlacement(_placementUB);
+    _updatePlacement( _placementUB, CheckOngrid );
   }
 
 
@@ -1156,10 +1186,10 @@ namespace Etesian {
 
     cmess1 << _circuit->report() << std::endl;
 
-    cmess1 << "  o  Global placement." << endl;
+    cmess1 << "  o  Global placement (effort " << getPlaceEffort() << ")" << endl;
     globalPlace();
 
-    cmess1 << "  o  Detailed Placement." << endl;
+    cmess1 << "  o  Detailed Placement (effort " << getPlaceEffort() << ")" << endl;
     detailedPlace();
 
   //toHurricane();
@@ -1186,7 +1216,8 @@ namespace Etesian {
     UpdateSession::close();
   }
 
-  void  EtesianEngine::_updatePlacement ( const coloquinte::PlacementSolution* placement )
+
+  void  EtesianEngine::_updatePlacement ( const coloquinte::PlacementSolution* placement, uint32_t flags )
   {
     UpdateSession::open();
 
@@ -1199,8 +1230,9 @@ namespace Etesian {
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
-      DbU::Unit hpitch          = getSliceStep();
-      DbU::Unit vpitch          = getSliceStep();
+      DbU::Unit hpitch          = getSliceHStep();
+      DbU::Unit vpitch          = getSliceVStep();
+      DbU::Unit sliceHeight     = getSliceHeight();
       Point     instancePosition;
       Instance* instance        = static_cast<Instance*>(occurrence.getEntity());
       string    instanceName    = occurrence.getCompactString();
@@ -1212,9 +1244,16 @@ namespace Etesian {
       if (iid == _instsToIds.end() ) {
         cerr << Error( "Unable to lookup instance <%s>.", instanceName.c_str() ) << endl;
       } else {
-        if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
+        if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
+          auto ab = instance->getAbutmentBox();
+          if ( ab.getXMin() % hpitch ) {
+            cerr << Error( "Instance <%s> fixed placed out of the hpitch.", instanceName.c_str() ) << endl;
+          }
+          if ( ab.getYMin() % sliceHeight ) {
+            cerr << Error( "Instance <%s> fixed placed out of the slice height.", instanceName.c_str() ) << endl;
+          }
           continue;
-
+        }
       //uint32_t       outputSide = getOutputSide( instance->getMasterCell() );
         auto place = (*placement)[(*iid).second];
         Transformation cellTrans  = toTransformation( place.position
@@ -1229,6 +1268,15 @@ namespace Etesian {
       // of all the intermediary instances.
         instance->setTransformation( cellTrans );
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+        if (flags & CheckOngrid) {
+          auto ab = instance->getAbutmentBox();
+          if ( ab.getXMin() % hpitch ) {
+            cerr << Error( "Instance <%s> placed out of the hpitch.", instanceName.c_str() ) << endl;
+          }
+          if ( ab.getYMin() % sliceHeight ) {
+            cerr << Error( "Instance <%s> placed out of the slice height.", instanceName.c_str() ) << endl;
+          }
+        }
       }
     }
 

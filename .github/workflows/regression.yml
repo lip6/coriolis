@@ -58,7 +58,7 @@ jobs:
        run: |
          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
          cd ${{ github.workspace }}/coriolis-2.x/src/coriolis
-         make -f Makefile.LIP6 install install_alliance
+         make -f Makefile.LIP6 SRC_DIR=${{ github.workspace }}/coriolis-2.x/src install install_alliance
      - name: Check for binaries
        run: ls -1 ${{ github.workspace }}/coriolis-2.x/release/install/bin
      - name: Run the reference set of designs

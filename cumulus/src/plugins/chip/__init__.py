@@ -85,7 +85,7 @@ class CoreWire ( object ):
         self.viaPitch      = DbU.fromLambda( 4.0 )
         self.gapWidth      = 0
         self._computeCoreLayers()
-        if self.conf.routingGauge.getName() == 'FlexLib':
+        if self.conf.routingGauge.getName() in ('FlexLib', 'StdCellLib'):
             self.addJumper = True
 
     @property
@@ -211,6 +211,7 @@ class CoreWire ( object ):
                #   #xPadMin -= self.bbSegment.getHeight()//2
                #    xPadMin -= 3*vPitch
             if self.addJumper:
+                trace( 550, '\tJumper enabled (antenna effect)\n' )
                 rg        = self.conf.routingGauge
                 gaugeM5   = rg.getLayerGauge( 4 )
                 wwidthM5  = gaugeM5.getWireWidth()
@@ -237,14 +238,15 @@ class CoreWire ( object ):
                                           , xPadMax
                                           )
                 trace( 550, '\thChip2: %s\n' % str(hChip2) )
+                viaHeight = max( 2*wwidthM5, self.bbSegment.getHeight() )
                 hChip = hChip2 if self.side == West else hChip1
                 bvia1 = BigVia( self.chipNet
                               , rg.getLayerDepth( self.padSegment.getLayer() )
                               , xJumpMin
                               , self.bbSegment.getCenter().getY()
                               , wwidthM5
-                              , 2*wwidthM5
-                              , flags=BigVia.AllowAllExpand )
+                              , viaHeight
+                              , flags=BigVia.FitToVias )
                 bvia1.mergeDepth( gaugeM5.getDepth() )
                 trace( 550, '\tbvia1: %s\n' % str(bvia1) )
                 bvia1.doLayout()
@@ -253,8 +255,8 @@ class CoreWire ( object ):
                               , xJumpMax
                               , self.bbSegment.getCenter().getY()
                               , wwidthM5
-                              , 2*wwidthM5
-                              , flags=BigVia.AllowAllExpand )
+                              , viaHeight
+                              , flags=BigVia.FitToVias )
                 bvia2.mergeDepth( gaugeM5.getDepth() )
                 bvia2.doLayout()
                 trace( 550, '\tbvia2: %s\n' % str(bvia2) )
@@ -262,7 +264,7 @@ class CoreWire ( object ):
                                  , bvia2.getPlate( gaugeM5.getLayer() )
                                  , gaugeM5.getLayer()
                                  , self.bbSegment.getCenter().getY()
-                                 , wwidthM5
+                                 , viaHeight
                                  )
             else:
                 hChip = Horizontal.create( self.chipNet
@@ -377,6 +379,7 @@ class CoreWire ( object ):
                                    , yPadMin
                                    , yPadMax
                                    )
+            trace( 550, '\tvChip: {}\n'.format( vChip ))
             trace( 550, '\tself.arraySize: %s\n' % str(self.arraySize) )
             if self.arraySize:
                 contacts = self.conf.coronaContactArray( self.chipNet

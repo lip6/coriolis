@@ -54,10 +54,14 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "RoutingPad".
 
+  FastRTTI  RoutingPad::_fastRTTI ( demangle(typeid(RoutingPad).name()), &RoutingPad::Inherit::fastRTTI() );
+
   RoutingPad::RoutingPad ( Net* net, Occurrence occurrence )
     :  Inherit   (net)
     , _occurrence(occurrence)
-  { }
+    , _flags     (0)
+  {
+  }
 
 
   RoutingPad* RoutingPad::create ( Net* net, Occurrence occurrence, unsigned int flags )
@@ -122,6 +126,10 @@ namespace Hurricane {
 
     return RoutingPad::create ( pin->getNet(), pinOccurrence );
   }
+
+
+  const FastRTTI& RoutingPad::vfastRTTI () const
+  { return _fastRTTI; }
 
 
   bool  RoutingPad::isPlacedOccurrence ( unsigned int flags ) const
@@ -267,12 +275,26 @@ namespace Hurricane {
     jsonWrite( writer, "_occurrence", &_occurrence );
   }
 
+
+  std::string  RoutingPad::getStringFlags () const
+  {
+    string s;
+    s += ((_flags & SelectedComponent) ? "S" : "-");
+    s += ((_flags & HSmall           ) ? "h" : "-");
+    s += ((_flags & VSmall           ) ? "v" : "-");
+    s += ((_flags & Punctual         ) ? "p" : "-");
+    s += ((_flags & M1Offgrid        ) ? "o" : "-");
+    return s;
+  }
+
+  
   string RoutingPad::_getString () const
   {
     string s = Inherit::_getString();
     s.insert(s.length() - 1, " [" + DbU::getValueString(getX()));
     s.insert(s.length() - 1, " " + DbU::getValueString(getY()));
     s.insert(s.length() - 1, "] ");
+    s.insert(s.length() - 1, getStringFlags() + " ");
     s.insert(s.length() - 1, getString(_occurrence));
     return s;
   }
@@ -282,7 +304,9 @@ namespace Hurricane {
   {
     Record* record = Inherit::_getRecord();
     if ( record ) {
-      record->add(getSlot("_occurrence",_occurrence));
+      record->add(getSlot("_fastRTTI"  , &_fastRTTI  ), Record::Overload );
+      record->add(getSlot("_occurrence",  _occurrence));
+      record->add(getSlot("_flags"     ,  _flags     ));
     }
     return record;
   }

@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/viewer/ExceptionWidget.h"
@@ -52,6 +53,8 @@ namespace  Katana {
   using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::PyBox;
+  using Isobar::PyTypeBox;
   using Isobar::PyNet;
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
@@ -153,19 +156,25 @@ extern "C" {
   }
 
 
-  PyObject* PyKatanaEngine_digitalInit ( PyKatanaEngine* self )
+  PyObject* PyKatanaEngine_digitalInit ( PyKatanaEngine* self, PyObject* args )
   {
     cdebug_log(40,0) << "PyKatanaEngine_digitalInit()" << endl;
 
     HTRY
       METHOD_HEAD("KatanaEngine.digitalInit()")
-      if (katana->getViewer()) {
-        if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::digitalInit,katana) )) {
-          PyErr_SetString( HurricaneError, "KatanaEngine::digitalInit() has thrown an exception (C++)." );
-          return NULL;
+      uint64_t  flags = 0;
+      if (PyArg_ParseTuple(args,"|L:KatanaEngine.digitalInit", &flags)) {
+        if (katana->getViewer()) {
+          if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::digitalInit,katana, flags) )) {
+            PyErr_SetString( HurricaneError, "KatanaEngine::digitalInit() has thrown an exception (C++)." );
+            return NULL;
+          }
+        } else {
+          katana->digitalInit( flags );
         }
       } else {
-        katana->digitalInit();
+        PyErr_SetString(ConstructorError, "KatanaEngine.digitalInit(): Invalid number/bad type of parameter.");
+        return NULL;
       }
     HCATCH
 
@@ -196,6 +205,22 @@ extern "C" {
   }
 
 
+  static PyObject* PyKatanaEngine_addStdCellArea ( PyKatanaEngine *self, PyObject* args )
+  {
+    cdebug_log(34,0) << "KatanaEngine.addStdCellArea()" << endl;
+    HTRY
+      METHOD_HEAD ( "KatanaEngine.addStdCellArea()" )
+      PyBox* pyBox;
+      if (not PyArg_ParseTuple(args,"O!:KatanaEngine.addStdCellArea", &PyTypeBox, &pyBox)) {
+        PyErr_SetString( ConstructorError, "KatanaEngine.addStdCellArea(): Parameter is not an Box." );
+        return NULL;
+      }
+      katana->addStdCellArea( *PYBOX_O(pyBox) );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   PyObject* PyKatanaEngine_runGlobalRouter ( PyKatanaEngine* self, PyObject* args )
   {
     cdebug_log(40,0) << "PyKatanaEngine_runGlobalRouter()" << endl;
@@ -203,7 +228,7 @@ extern "C" {
     HTRY
       METHOD_HEAD("KatanaEngine.runGlobalRouter()")
       uint64_t  flags = 0;
-      if (PyArg_ParseTuple(args,"L:KatanaEngine.runGlobalRouter", &flags)) {
+      if (PyArg_ParseTuple(args,"|L:KatanaEngine.runGlobalRouter", &flags)) {
         if (katana->getViewer()) {
           if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runGlobalRouter,katana,flags) )) {
             PyErr_SetString( HurricaneError, "KatanaEngine::runGlobalrouter() has thrown an exception (C++)." );
@@ -328,6 +353,7 @@ extern "C" {
   DirectVoidToolMethod  (KatanaEngine,katana,printConfiguration)
   DirectVoidToolMethod  (KatanaEngine,katana,finalizeLayout)
   DirectVoidToolMethod  (KatanaEngine,katana,resetRouting)
+  DirectVoidToolMethod  (KatanaEngine,katana,resetStdCellArea)
   DirectVoidMethod      (KatanaEngine,katana,dumpMeasures)
   DirectGetBoolAttribute(PyKatanaEngine_isGlobalRoutingSuccess,isGlobalRoutingSuccess,PyKatanaEngine,KatanaEngine)
   DirectGetBoolAttribute(PyKatanaEngine_isDetailedRoutingSuccess,isDetailedRoutingSuccess,PyKatanaEngine,KatanaEngine)
@@ -344,10 +370,14 @@ extern "C" {
                                    , "Create a Katana engine on this cell." }
     , { "setViewer"                , (PyCFunction)PyKatanaEngine_setViewer               , METH_VARARGS
                                    , "Associate a Viewer to this KatanaEngine." }
-    , { "digitalInit"              , (PyCFunction)PyKatanaEngine_digitalInit             , METH_NOARGS
+    , { "digitalInit"              , (PyCFunction)PyKatanaEngine_digitalInit             , METH_VARARGS
                                    , "Setup Katana for digital routing." }
     , { "exclude"                  , (PyCFunction)PyKatanaEngine_exclude                 , METH_VARARGS
                                    , "Exclude a net from routing." }
+    , { "resetStdCellArea"         , (PyCFunction)PyKatanaEngine_resetStdCellArea        , METH_NOARGS
+                                   , "Delete all areas flagged as standart cells." }
+    , { "addStdCellArea"           , (PyCFunction)PyKatanaEngine_addStdCellArea          , METH_VARARGS
+                                   , "Add a new area containing standard cells." }
     , { "printConfiguration"       , (PyCFunction)PyKatanaEngine_printConfiguration      , METH_NOARGS
                                    , "Display on the console the configuration of Katana." }
     , { "getSuccessState"          , (PyCFunction)PyKatanaEngine_getSuccessState         , METH_NOARGS

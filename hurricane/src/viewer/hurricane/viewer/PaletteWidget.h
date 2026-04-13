@@ -64,6 +64,8 @@ namespace Hurricane {
              void              readGraphics      ();
              void              resetGraphics     ();
              void              rereadGraphics    ();
+             void              saveQtSettings    ( size_t viewerId ) const;
+             void              readQtSettings    ( size_t viewerId );
     signals:                                     
              void              paletteChanged    ();
     public slots:              

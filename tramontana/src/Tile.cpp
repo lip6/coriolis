@@ -40,6 +40,7 @@
 #include "crlcore/Utilities.h"
 #include "tramontana/Tile.h"
 #include "tramontana/Equipotential.h"
+#include "tramontana/ShortCircuit.h"
 #include "tramontana/SweepLine.h"
 
 
@@ -80,30 +81,66 @@ namespace Tramontana {
   using Hurricane::Instance;
 
 
+  bool isTracedOcc ( Occurrence occ )
+  {
+    if (not occ.isValid()) return false;
+    if (not occ.getPath().getHeadInstance()) return false;
+    if (occ.getPath().getHeadInstance()->getId() != 17812) return false;
+    if (   (occ.getEntity()->getId() !=  1385)
+       and (occ.getEntity()->getId() != 73435)) 
+      return false;
+    return true;
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Tramontana::Tile".
 
 
-  uint32_t       Tile::_idCounter = 0;
-  uint32_t       Tile::_time      = 0;
-  vector<Tile*>  Tile::_allocateds;
+  uint32_t        Tile::_time      = 0;
+  vector<Tile*>   Tile::_allocateds;
+  vector<Tile*>   Tile::_destroyQueue;
+  vector<size_t>  Tile::_freeds;
+  size_t          Tile::_peakTiles  = 0;
+  size_t          Tile::_totalTiles = 0;
 
 
-  Tile::Tile ( Occurrence occurrence, const BasicLayer* layer, const Box& boundingBox, Tile* parent )
-    : _id           (_idCounter++)
-    , _occurrence   (occurrence) 
-    , _layer        (layer)
-    , _boundingBox  (boundingBox)
-    , _equipotential(nullptr)
-    , _flags        (0)
-    , _parent       (parent)
-    , _rank         (0)
-    , _timeStamp    (0)
+  Tile::Tile (       Occurrence  occurrence
+             ,       Occurrence  deepOccurrence
+             , const BasicLayer* layer
+             , const Box&        boundingBox
+             ,       Tile*       parent )
+    : _id            (0)
+    , _refCount      (0)
+    , _occurrence    (occurrence) 
+    , _deepOccurrence(deepOccurrence) 
+    , _layer         (layer)
+    , _boundingBox   (boundingBox)
+    , _equipotential (nullptr)
+    , _flags         (0)
+    , _parent        (parent)
+    , _rank          (0)
+    , _timeStamp     (0)
   {
-    cdebug_log(160,0) << "Tile::Tile() " << this << endl;
-    _allocateds.push_back( this );
-    if (occurrence.getPath().isEmpty() and not occurrence.getEntity())
-      cerr << "Tile with empty occurrence!!" << endl;
+    _totalTiles++;
+    if (not _freeds.empty()) {
+      _id = _freeds.back();
+      _freeds.pop_back();
+      _allocateds[ _id ] = this;
+    } else {
+      _id = _allocateds.size();
+      _allocateds.push_back( this );
+      _peakTiles++;
+    }
+    if (_parent) _parent->incRefCount();
+
+    if (occurrence.getPath().isEmpty()) {
+      if (not occurrence.getEntity()) {
+        cerr << Error( "Tile::Tile(): Cannot build on an empty Occurrence." ) << endl;
+      }
+      _flags |= TopLevel;
+    }
+    cdebug_log(165,0) << "Tile::Tile() " << this << endl;
   }
 
 
@@ -163,38 +200,62 @@ namespace Tramontana {
                      ) << endl;
         return nullptr;
       }
-      // if (rectilinear->getId() == 3367) {
-      //   DebugSession::open( 160, 169 );
-      //   cdebug_log(160,0) << "Tiling: " << rectilinear << endl;
-      // }
       vector<Box> boxes;
       rectilinear->getAsRectangles( boxes );
       for ( Box bb : boxes ) {
         occurrence.getPath().getTransformation().applyOn( bb );
-        Tile* tile = new Tile ( childEqui, layer, bb, rootTile );
+        if (bb.isEmpty()) {
+          throw Error( "Tile::create(): Empty tile box when decomposing Rectilinear.\n"
+                       "        On: %s"
+                     , getString(occurrence).c_str() );
+        }
+        Tile* tile = new Tile ( childEqui, occurrence, layer, bb, rootTile );
         sweepLine->add( tile );
-        cdebug_log(160,0) << "| " << tile << endl;
+        cdebug_log(165,0) << "| " << tile << endl;
         if (not rootTile) rootTile = tile;
       }
-      // if (rectilinear->getId() == 3367) {
-      //   DebugSession::close();
-      // }
       return rootTile;
     }
 
-    Box bb = component->getBoundingBox( layer );
+    Box bb;
+    if (flags & ForceLayer) bb = component->getBoundingBox();
+    else                    bb = component->getBoundingBox( layer );
     occurrence.getPath().getTransformation().applyOn( bb );
 
-    Tile* tile = new Tile ( childEqui, layer, bb, rootTile );
+    if (bb.isEmpty()) {
+      throw Error( "Tile::create(): Empty tile box when processing Component.\n"
+                 "        On: %s"
+                 , getString(occurrence).c_str() );
+    }
+    Tile* tile = new Tile ( childEqui, occurrence, layer, bb, rootTile );
     sweepLine->add( tile );
+
+  //cerr << "Tile::create() " << (void*)tile << ":" << tile << endl;
+
     return tile;
   }
 
 
-  void  Tile::destroy ()
+  void  Tile::queuedDestroy ()
   {
-    cdebug_log(160,1) << "Tile::destroy() " << this << endl;
-    cdebug_tabw(160,-1);
+    if (isFreed()) return;
+    if (_parent) _parent->decRefCount();
+    _flags |= Freed;
+    cdebug_log(165,0) << "Tile::destroy() " << this << endl;
+    _destroyQueue.push_back( this );
+  }
+
+
+  void  Tile::destroyQueued ()
+  {
+
+    for ( Tile* tile : _destroyQueue ) {
+      _allocateds[ tile->getId() ] = nullptr;
+      _freeds.push_back( tile->getId() );
+    //cerr << "Tile::destroyQueued() " << (void*)tile << ":" << tile << endl;
+      delete tile;
+    }
+    _destroyQueue.clear();
   }
 
 
@@ -204,24 +265,72 @@ namespace Tramontana {
 
   void  Tile::deleteAllTiles ()
   {
-    for ( Tile* tile : _allocateds) delete tile;
+    int64_t delCount = 0;
+    for ( Tile* tile : _allocateds) {
+      if (tile) delCount++;
+      delete tile;
+    }
+    int64_t delta = (int64_t)_allocateds.size() - (int64_t)_freeds.size() - delCount;
+    if (delta < 0) {
+      cerr << Error( "Tile::deleteAllTiles(): Delete more tiles than allocated, brace for a crash.\n"
+                     "        Has allocateds %lu, freed %lu in excess of %ld."
+                   , _allocateds.size(), _freeds.size(), delCount-_freeds.size()
+                   ) << endl;
+    }
+    if (delta > 0) {
+      cerr << Error( "Tile::deleteAllTiles(): Delete less tiles than allocated, memory leak.\n"
+                     "        Has allocateds %lu, freed %lu short of %ld."
+                   , _allocateds.size(), _freeds.size(), _freeds.size()-delCount
+                   ) << endl;
+    }
     _allocateds.clear();
-    _idCounter = 0;
+    _freeds.clear();
+    _peakTiles  = 0;
+    _totalTiles = 0;
   }
 
-  // Net* Tile::getNet () const
-  // { return dynamic_cast<Component*>( _occurrence.getEntity() )->getNet(); }
+
+  void  Tile::showStats ()
+  {
+    size_t roots        = 0;
+    size_t childs       = 0;
+    size_t mergedChilds = 0;
+    size_t nullRefCount = 0;
+    size_t nonFreeds    = 0;
+    for ( Tile* tile : _allocateds ) {
+      if (not tile) continue;
+      if (tile->getParent()) {
+        childs++;
+        if (tile->isOccMerged())
+          mergedChilds++;
+      } else
+        roots++;
+      if (tile->getRefCount() == 0) {
+        nullRefCount++;
+        if (not tile->isFreed() and tile->isOccMerged())
+          nonFreeds++;
+      }
+    }
+    cerr << "\n        o  Tile statistics:" << endl;
+    cerr << Dots::asUInt("           - Roots"           , roots             ) << endl;
+    cerr << Dots::asUInt("           - Childs"          , childs            ) << endl;
+    cerr << Dots::asUInt("           - Merged childs"   , mergedChilds      ) << endl;
+    cerr << Dots::asUInt("           - Null refcount"   , nullRefCount      ) << endl;
+    cerr << Dots::asUInt("           - Non freeds"      , nonFreeds         ) << endl;
+    cerr << Dots::asUInt("           - Total allocateds", _allocateds.size()) << endl;
+    cerr << Dots::asUInt("           - Freed"           , _freeds.size()    ) << endl;
+  }
 
 
   Tile* Tile::getRoot ( uint32_t flags )
   {
-    cdebug_log(160,1) << "Tile::getRoot() tid=" << getId() << " " << getOccurrence() << endl;
-    cdebug_log(160,0) << "+ " << (getEquipotential() ? getString(getEquipotential()) : "equi=NULL") << endl;
+    cdebug_log(165,1) << "Tile::getRoot() " << this << endl;
+    cdebug_log(165,0) << "+ " << (getEquipotential() ? getString(getEquipotential()) : "equi=NULL") << endl;
     if (not getParent()) {
       if ((flags & MakeLeafEqui) and not getEquipotential()) {
         newEquipotential();
       }
-      cdebug_tabw(160,-1);
+      cdebug_tabw(165,-1);
       return this;
     }
     
@@ -229,7 +338,7 @@ namespace Tramontana {
     while ( root->getParent() ) {
       // if (flags & MergeEqui) {
       //   if (not root->getParent()->getEquipotential() and root->getEquipotential()) {
-      //     cdebug_log(160,0) << "| tile has no equi, immediate merge" << endl;
+      //     cdebug_log(165,0) << "| tile has no equi, immediate merge" << endl;
       //     root->getParent()->setEquipotential( root->getEquipotential() );
       //     root->getEquipotential()->add( root->getParent()->getOccurrence ()
       //                                  , root->getParent()->getBoundingBox() );
@@ -237,11 +346,16 @@ namespace Tramontana {
       //   }
       // }
       root = root->getParent();
-      cdebug_log(160,0) << "| parent tid=" << root->getId() << " " << root->getOccurrence() << endl;
+      cdebug_log(165,0) << "| parent " << root << endl;
+      if (root->isFreed())
+        cerr << Error( "Tile::getRoot(): On %s,\n"
+                       "        parent tile is already freed %s."
+                     , getString(this).c_str()
+                     , getString(root).c_str()
+                     ) << endl;
     }
-    cdebug_log(160,0) << "> root tid=" << root->getId() << " "
+    cdebug_log(165,0) << "> root " << root << " "
                       << (root->getEquipotential() ? getString(root->getEquipotential()) : "equi=NULL") << endl;
-
 
     if (flags & MergeEqui) {
       Equipotential* rootEqui = root->getEquipotential();
@@ -252,25 +366,10 @@ namespace Tramontana {
       Tile* current = this;
       while ((current != root) and current) {
         if (current->isUpToDate()) {
-          cdebug_log(160,0) << "> Up to date current: tid=" << current->getId() << endl;
+          cdebug_log(165,0) << "> Up to date current: tid=" << current->getId() << endl;
           break;
         }
-        if (not current->isOccMerged()) {
-          if (current->getEquipotential()) {
-            if (current->getEquipotential() != rootEqui) {
-              cdebug_log(160,0) << "| merge tid=" << current->getId() << " => tid=" << root->getId() << endl;
-              cdebug_log(160,0) << "|       tid=" << current->getEquipotential() << endl;
-              rootEqui->merge( current->getEquipotential() );
-            }
-          } else {
-            cdebug_log(160,0) << "| add " << current->getOccurrence() << endl;
-            rootEqui->add( current->getOccurrence(), _boundingBox );
-          }
-          current->setOccMerged( true );
-          current->syncTime();
-          cdebug_log(160,0) << "| current up to date: time=" << current->_timeStamp
-                            << " " << current->isUpToDate() << endl;
-        }
+        root->_mergeEqui( current );
         current = current->getParent();
       }
     }
@@ -284,8 +383,32 @@ namespace Tramontana {
       }
     }
 
-    cdebug_tabw(160,-1);
+    cdebug_tabw(165,-1);
     return root;
+  }
+
+
+  bool  Tile::_mergeEqui ( Tile* other )
+  {
+    cdebug_log(160,0) << "Tile::_mergeEqui() " << this
+                      << " + " << other << endl;
+
+    if (not getEquipotential()) return false;
+    if (other->isOccMerged()) return false;
+
+    bool shortCircuit = false;
+    if (other->getEquipotential()) {
+      if (getEquipotential() != other->getEquipotential()) {
+        shortCircuit = getEquipotential()->merge( other->getEquipotential() );
+        other->destroyEquipotential();
+      }
+    } else {
+      shortCircuit = getEquipotential()->add( other->getOccurrence(), other->getBoundingBox() );
+    }
+    other->setOccMerged( true );
+    other->syncTime();
+
+    return shortCircuit;
   }
 
 
@@ -303,6 +426,16 @@ namespace Tramontana {
 
     if (root1->getRank() < root2->getRank())
       std::swap( root1, root2 );
+
+    ShortCircuit* shortCircuit = nullptr;
+    if (root1->_mergeEqui(root2)) {
+      cdebug_log(160,0) << "Shorted Tiles:" << endl;
+      cdebug_log(160,0) << "  " << getDeepOccurrence() << endl;
+      cdebug_log(160,0) << "  " << other->getDeepOccurrence() << endl;
+      ShortCircuit* shortCircuit = new ShortCircuit( getDeepOccurrence(), other->getDeepOccurrence() );
+      root1->getEquipotential()->add( shortCircuit );
+    }
+
     if (root1->getRank() == root2->getRank())
       root1->incRank();
     root2->setParent( root1 );
@@ -333,6 +466,39 @@ namespace Tramontana {
   }
 
 
+  void  Tile::destroyEquipotential ()
+  {
+    if (not _equipotential) return;
+    if (not _equipotential->isMerged()) {
+      cerr << Error( "Tile::destroyEquipotential(): %s not merged.\n"
+                     "        (on: %s)"
+                   , getString(_equipotential).c_str()
+                   , getString(this).c_str()
+                   ) << endl;
+    }
+    _equipotential->destroy();
+    _equipotential = nullptr;
+  }
+
+
+  void  Tile::check ( string tag ) const
+  {
+    if (_id != 205594) return;
+    
+    cerr << tag << endl;
+    cerr << "  Tile::check() " << this << endl;
+    size_t childCount = 0;
+    for ( const Tile* tile : _allocateds ) {
+      if (not tile) continue;
+      if (tile->getParent() and (tile->getParent() == this)) {
+        cerr << "    | child " << tile << endl;
+        childCount++;
+      }
+    }
+    cerr << "    childs:" << childCount << " vs. ref:" << _refCount << endl;
+  }
+
+
   string  Tile::_getTypeName () const
   { return "Tramontana::Tile"; }
 
@@ -341,7 +507,14 @@ namespace Tramontana {
   {
     ostringstream  os;
     os << "<Tile tid:" << _id
-       << " " << _boundingBox << " " << _layer->getName() << " " << _occurrence << ">";
+       << " ref=" << _refCount
+       << " " << (_parent            ? "p" : "-")
+       <<        (getEquipotential() ? "E" : "-")
+       <<        (isOccMerged     () ? "m" : "-")
+       <<        (isFreed         () ? "F" : "-")
+       << " " << _boundingBox
+       << " " << _layer->getName()
+       << " " << _occurrence << ">";
     return os.str();
   }
 
@@ -350,6 +523,8 @@ namespace Tramontana {
   {
     Record* record = new Record ( _getString() );
     if (record) {
+      record->add( getSlot( "_refCount"   ,  _refCount    ) );
+      record->add( getSlot( "_parent"     ,  _parent      ) );
       record->add( getSlot( "_occurrence" , &_occurrence  ) );
       record->add( getSlot( "_layer"      ,  _layer       ) );
       record->add( getSlot( "_boundingBox", &_boundingBox ) );

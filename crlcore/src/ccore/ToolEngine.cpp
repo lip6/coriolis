@@ -194,12 +194,13 @@ namespace CRL {
   ToolEngine::ToolEngine ( Cell* cell, bool verbose )
     : Super()
     , _cell                     (cell)
-    , _verbose                  (verbose)
+    , _observers                ()
     , _placementModificationFlag(0)
     , _routingModificationFlag  (0)
     , _inRelationDestroy        (false)
     , _timer                    ()
     , _passNumber               (0)
+    , _verbose                  (verbose)
   { }
 
 
@@ -253,6 +254,18 @@ namespace CRL {
     ToolEnginesRelation::destroyAllToolEnginesRelations();
     _inDestroyAll = false;
   }
+
+
+  void ToolEngine::addObserver( BaseObserver* observer )
+  { _observers.addObserver( observer ); }
+
+
+  void ToolEngine::removeObserver ( BaseObserver* observer )
+  { _observers.removeObserver( observer ); }
+
+
+  void ToolEngine::notify ( unsigned flags )
+  { _observers.notify( flags ); }
 
 
   string  ToolEngine::_getTypeName () const

@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/DebugSession.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Point.h"
 #include "hurricane/Error.h"
@@ -22,6 +23,7 @@
 #include "katana/Session.h"
 #include "katana/Track.h"
 #include "katana/TrackElement.h"
+#include "katana/TrackFixedSpanRp.h"
 #include "katana/KatanaEngine.h"
 #include "katana/RoutingPlane.h"
 #include "katana/NegociateWindow.h"
@@ -87,6 +89,7 @@ namespace Katana {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
+  using Hurricane::DebugSession;
   using Hurricane::Error;
   using Hurricane::Bug;
   using Hurricane::Point;
@@ -146,16 +149,12 @@ namespace Katana {
   { return Session::getKatanaEngine()->getConfiguration(); }
 
 
-  uint32_t  Session::getStage ()
-  { return get("getStage()")->_getKatanaEngine()->getStage(); }
-
-
   AutoContact* Session::lookup ( Contact* contact )
   { return Super::lookup(contact); }
 
 
   TrackElement* Session::lookup ( Segment* segment )
-  { return Session::get("Session::lookup(Segment*)")->_getKatanaEngine()->_lookup(segment); }
+  { return Session::get("Session::lookup(Segment*)")->_getKatanaEngine()->_lookup( segment ); }
 
 
   TrackElement* Session::lookup ( AutoSegment* segment )
@@ -219,6 +218,7 @@ namespace Katana {
 
     for ( size_t i=0 ; i<_removeEvents.size() ; ++i ) {
       cdebug_log(159,0) << "Remove event for:" << _removeEvents[i]._segment << endl;
+      cdebug_log(159,0) << "  from: " << _removeEvents[i]._segment->getTrack() << endl;
 
       if (not _removeEvents[i]._segment->getTrack()) continue;
       _removeEvents[i]._segment->detach( packTracks );
@@ -258,14 +258,19 @@ namespace Katana {
     _doRemovalEvents();
   //if (checkTrack) checkTrack->check( overlaps, "Session::_revalidate() - check track 82 @270." );
 
+    cdebug_log(159,1) << "Processing Track insert event" << endl;
     for ( const Event& event : _insertEvents ) {
       if (event._segment) {
         if (event._segment->getAxis() != event._axis) event._segment->setAxis( event._axis );
-        if (not event._segment->isReduced())          event._track->insert( event._segment );
+        if (      event._segment->isFixed()
+           or not event._segment->isReduced())
+          event._track->insert( event._segment );
       }
-      if (event._marker) event._track->insert( event._marker );
+      if (event._marker)        event._track->insert( event._marker );
+      if (event._markerSpacing) event._track->insert( event._markerSpacing );
     }
     _insertEvents.clear();
+    cdebug_log(159,-1) << "Insert events processeds" << endl;
     _doRemovalEvents( false );
   //if (checkTrack) checkTrack->check( overlaps, "Session::_revalidate() - check track 82 @270." );
 
@@ -321,55 +326,64 @@ namespace Katana {
     _sortEvents.clear();
 
   // Looking for reduced/raised segments.
+    std::vector<AutoSegment*>  canReduces;
     for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
+      DebugSession::open( revalidateds[i]->getNet(), 159,160 );
+      cdebug_log(159,0) << "Session: check for raise:" << revalidateds[i] << endl;
       if (revalidateds[i]->mustRaise()) {
-        cdebug_log(159,0) << "Session: raise:" << revalidateds[i] << endl;
-        revalidateds[i]->raise();
+        revalidateds[i]->raise( canReduces );
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment) trackSegment->reschedule( 0 );
       }
-      // if (revalidateds[i]->isUnderMinLength()) {
-      //   cdebug_log(159,0) << "Session: under min length:" << revalidateds[i] << endl;
-      //   revalidateds[i]->expandToMinLength();
-      //   TrackElement* trackSegment = lookup( revalidateds[i] );
-      //   if (trackSegment) {
-      //     trackSegment->invalidate();
-      //     trackSegment->reschedule( 0 );
-      //   }
-      // } else {
-      //   if (revalidateds[i]->isAtMinArea()) {
-      //     if (revalidateds[i]->unexpandToMinLength()) {
-      //       TrackElement* trackSegment = lookup( revalidateds[i] );
-      //       if (trackSegment) {
-      //         trackSegment->invalidate();
-      //         trackSegment->reschedule( 0 );
-      //       }
-      //     }
-      //   }
-      // }
-      if (revalidateds[i]->canReduce()) {
-        revalidateds[i]->reduce();
-        TrackElement* trackSegment = lookup( revalidateds[i] );
-        if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
-        cdebug_log(159,0) << "Session: reduce:" << revalidateds[i] << endl;
-      }
+      DebugSession::close();
     }
-    
-    // for ( TrackElement* trackSegment : _indirectInvalids ) {
-    //   cdebug_log(159,0) << "Indirect reschedule:" << trackSegment << endl;
-    //   trackSegment->reschedule( 0 );
-    //   // addRemoveEvent( trackSegment );
+    for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
+      DebugSession::open( revalidateds[i]->getNet(), 159,160 );
+      cdebug_log(159,0) << "Session: check for reduce:" << revalidateds[i] << endl;
+      if (revalidateds[i]->canReduce()) {
+        TrackElement* trackSegment = lookup( revalidateds[i] );
+        if (trackSegment) {
+          trackSegment->reduce();
+          if (trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+        }
+      }
+      DebugSession::close();
+    }
+    for ( size_t i=0 ; i<canReduces.size() ; ++i ) {
+      DebugSession::open( canReduces[i]->getNet(), 159,160 );
+      cdebug_log(159,0) << "Session: check for cascading reduce:" << canReduces[i] << endl;
+      if (canReduces[i]->canReduce()) {
+        TrackElement* trackSegment = lookup( canReduces[i] );
+        if (trackSegment) {
+          trackSegment->reduce();
+          if (trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+        }
+      }
+      DebugSession::close();
+    }
+    for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
+      DebugSession::open( revalidateds[i]->getNet(), 159,160 );
+      if (revalidateds[i]->hasBecomeBelowPitch()) {
+        cdebug_log(159,0) << "Session: below pitch:" << revalidateds[i] << endl;
+        revalidateds[i]->resetBecomeBelowPitch();
+        TrackElement* trackSegment = lookup( revalidateds[i] );
+        if (trackSegment) {
+          trackSegment->invalidate();
+          trackSegment->reschedule( 0 );
+          cdebug_log(159,0) << "Has a TrackSegment" << endl;
+        }
+      }
+      DebugSession::close();
+    }
 
-    //   // if (trackSegment->getDataNegociate() and trackSegment->getDataNegociate()->hasRoutingEvent()) {
-    //   //   RoutingEvent* event = trackSegment->getDataNegociate()->getRoutingEvent();
-    //   //   if (   not event->isDisabled()
-    //   //      and not event->isUnimplemented()
-    //   //      and     event->isProcessed()) {
-    //   //     trackSegment->reschedule( 0 );
-    //   //   }
-    //   // }
+    // for ( size_t i=0 ; i<canReduces.size() ; ++i ) {
+    //   DebugSession::open( canReduces[i]->getNet(), 159,160 );
+    //   canReduces[i]->reduce();
+    //   TrackElement* trackSegment = lookup( canReduces[i] );
+    //   if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+    //   cdebug_log(159,0) << "Session: reduce:" << canReduces[i] << endl;
+    //   DebugSession::close();
     // }
-    _indirectInvalids.clear();
 
     _doRemovalEvents();
     for ( Track* track : _sortEvents ) track->doReorder();
@@ -412,20 +426,33 @@ namespace Katana {
   }
 
 
+  void  Session::_addInsertEvent ( TrackMarkerSpacing* marker, Track* track )
+  {
+    _insertEvents.push_back( Event(marker,track) );
+    _addSortEvent( track, true );
+  }
+
+
   void  Session::_addInsertEvent ( TrackElement* segment, Track* track, DbU::Unit axis, bool check )
   {
-    cdebug_log(159,0) <<  "addInsertEvent() " << segment
-                      << "\n               @" << DbU::getValueString(axis)
+    cdebug_log(159,0) <<   "_addInsertEvent() " << segment
+                      << "\n                 @" << DbU::getValueString(axis)
                       << " " << track << endl;
 
-    if ( check and (segment->getTrack() != NULL) ) {
-      cerr << Bug("Session::addInsertEvent(): Segment already in Track."
-                 "\n      %s."
-                 "\n      to %s."
-                 ,getString(segment).c_str()
-                 ,getString(track).c_str()
-                 ) << endl;
-      return;
+    if (segment->getTrack()) {
+      if (segment->isForwardSetTrack()) {
+        segment->unsetFlags( TElemForwardSetTrack );
+      } else {
+        if (check) {
+          cerr << Bug( "Session::addInsertEvent(): Segment already in Track."
+                       "\n      %s."
+                       "\n      to %s."
+                     , getString(segment).c_str()
+                     , getString(track).c_str()
+                     )  << endl;
+          return;
+        }
+      }
     }
 
     _insertEvents.push_back( Event(segment,track,axis) );
@@ -441,7 +468,7 @@ namespace Katana {
       return;
     }
 
-    cdebug_log(159,0) << "Ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
+    cdebug_log(159,0) << "_addRemoveEvent() ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
     _removeEvents.push_back( Event(segment,segment->getTrack(),segment->getAxis()) );
     _addSortEvent( segment->getTrack(), true );
   }
@@ -462,13 +489,13 @@ namespace Katana {
 
   void  Session::_addMoveEvent ( TrackElement* segment, Track* track, DbU::Unit axis )
   {
-    if (not segment->getTrack()) {
-      if (not segment->isNonPref() and not segment->isReduced()) {
-        cerr << Bug( " Katana::Session::addMoveEvent() : %s is not yet in a track."
-                   , getString(segment).c_str() ) << endl;
-      }
-    } else {
+    if (segment->getTrack()) {
       _addRemoveEvent( segment );
+    } else {
+      // if (not segment->isNonPref() and not segment->isReduced()) {
+      //   cerr << Bug( " Katana::Session::addMoveEvent() : %s is not yet in a track."
+      //              , getString(segment).c_str() ) << endl;
+      // }
     }
     _addInsertEvent( segment, track, axis, false );
   }
@@ -484,10 +511,6 @@ namespace Katana {
     for ( Track* elem : _sortEvents ) if (elem == track) return;
     _sortEvents.push_back( track );
   }
-
-
-  void  Session::setStage ( uint32_t stage )
-  { get("setStage()")->_getKatanaEngine()->setStage(stage); }
 
 
   string  Session::_getTypeName () const

@@ -42,6 +42,7 @@ namespace Anabatic {
   using  Hurricane::Name;
   using  Hurricane::Layer;
   using  Hurricane::DbU;
+  using  Hurricane::Point;
   using  Hurricane::RoutingPad;
   using  Hurricane::Cell;
   using  CRL::CellGauge;
@@ -62,13 +63,17 @@ namespace Anabatic {
       virtual                   ~Configuration        ();
       virtual Configuration*     clone                () const;
     // Methods.
+              bool               isSymbolic           () const;
+              bool               isTwoMetals          () const;
+              bool               isHybrid             () const;
+              bool               isM1Offgrid          () const;
+              bool               isHV                 () const;
+              bool               isVH                 () const;
       inline  bool               isGLayer             ( const Layer* ) const;
               bool               isGMetal             ( const Layer* ) const;
               bool               isGContact           ( const Layer* ) const;
-              bool               isTwoMetals          () const;
-              bool               isHybrid             () const;
-              bool               isHV                 () const;
-              bool               isVH                 () const;
+              bool               isUsable             ( size_t depth ) const;
+              size_t             getFirstRoutingLayer () const;
       inline  std::string        getNetBuilderStyle   () const;
       inline  StyleFlags         getRoutingStyle      () const;
               const Layer*       getGContactLayer     () const;
@@ -96,6 +101,9 @@ namespace Anabatic {
       inline  DbU::Unit          getDContactPitch     () const;
               size_t             getDepth             () const;
               size_t             getAllowedDepth      () const;
+      inline  float              getLowDensity        () const;
+      inline  float              getMoveUpReserve     () const;
+      inline  float              getLowUpDensity      () const;
               size_t             getLayerDepth        ( const Layer* ) const;
               CellGauge*         getCellGauge         () const;
               RoutingGauge*      getRoutingGauge      () const;
@@ -104,7 +112,7 @@ namespace Anabatic {
               Layer*             getContactLayer      ( size_t depth ) const;
               DbU::Unit          getSliceHeight       () const;
               DbU::Unit          getSliceStep         () const;
-              DbU::Unit          getPitch             ( size_t depth, Flags flags ) const;
+              DbU::Unit          getPitch             ( size_t depth, Flags flags=Flags::NoFlags ) const;
               DbU::Unit          getOffset            ( size_t depth ) const;
               DbU::Unit          getWireWidth         ( size_t depth ) const;
               DbU::Unit          getPWireWidth        ( size_t depth ) const;
@@ -116,12 +124,18 @@ namespace Anabatic {
               DbU::Unit          getPWireWidth        ( const Layer* ) const;
               DbU::Unit          getExtensionCap      ( const Layer* ) const;
               Flags              getDirection         ( const Layer* ) const;
-              float              getSaturateRatio     () const;
-              size_t             getSaturateRp        () const;
+      inline  float              getGCellAspectRatio  () const;
+      inline  float              getSaturateRatio     () const;
+      inline  size_t             getSaturateRp        () const;
       inline  std::string        getDiodeName         () const;
       inline  DbU::Unit          getAntennaGateMaxWL  () const;
       inline  DbU::Unit          getAntennaDiodeMaxWL () const;
               DbU::Unit          getGlobalThreshold   () const;
+      inline  int                getHsmallThreshold   () const;
+      inline  int                getVsmallThreshold   () const;
+      inline  int                getVlargeThreshold   () const;
+      inline  DbU::Unit          getSmallNetWidth     () const;
+      inline  DbU::Unit          getSmallNetHeight    () const;
               void               setAllowedDepth      ( size_t );
               void               setSaturateRatio     ( float );
               void               setSaturateRp        ( size_t );
@@ -134,6 +148,8 @@ namespace Anabatic {
               float              getEdgeHScaling      () const;
               int                getGlobalIterations  () const;
               DbU::Unit          isOnRoutingGrid      ( RoutingPad* ) const;
+              void               getPositions         ( RoutingPad* , Point& source, Point& target ) const;
+              void               checkRoutingPadSize  ( RoutingPad* ) const;
               bool               selectRpComponent    ( RoutingPad* ) const;
       inline  void               setRoutingStyle      ( StyleFlags );
       inline  void               resetRoutingStyle    ( StyleFlags );
@@ -156,10 +172,17 @@ namespace Anabatic {
       CellGauge*              _cg;
       RoutingGauge*           _rg;
       std::vector<DbU::Unit>  _extensionCaps;
+      float                   _gcellAspectRatio;
       float                   _saturateRatio;
       size_t                  _saturateRp;
       DbU::Unit               _globalThreshold;
+      int                     _hsmallThreshold;
+      int                     _vsmallThreshold;
+      int                     _vlargeThreshold;
       size_t                  _allowedDepth;
+      float                   _lowDensity;
+      float                   _lowUpDensity;
+      float                   _moveUpReserve;
       DbU::Unit               _edgeLength;
       DbU::Unit               _edgeWidth;
       float                   _edgeCostH;
@@ -170,6 +193,8 @@ namespace Anabatic {
       std::string             _diodeName;
       DbU::Unit               _antennaGateMaxWL;
       DbU::Unit               _antennaDiodeMaxWL;
+      DbU::Unit               _smallNetWidth;
+      DbU::Unit               _smallNetHeight;
     private:
       Configuration& operator=           ( const Configuration& ) = delete;
       void           _setTopRoutingLayer ( Name name );
@@ -199,11 +224,25 @@ namespace Anabatic {
   inline  const Layer* Configuration::getDContactLayer     () const { return getContactLayer( getDContactDepth() ); }
   inline  DbU::Unit    Configuration::getDContactWidth     () const { return getWireWidth   ( getDContactDepth() ); }
   inline  DbU::Unit    Configuration::getDContactPitch     () const { return getPitch       ( getDContactDepth(), Flags::NoFlags ); }
+  inline  float        Configuration::getLowDensity        () const { return _lowDensity; }
+  inline  float        Configuration::getLowUpDensity      () const { return _lowUpDensity; }
+  inline  float        Configuration::getMoveUpReserve     () const { return _moveUpReserve; }
+  inline  float        Configuration::getGCellAspectRatio  () const { return _gcellAspectRatio; }
+  inline  float        Configuration::getSaturateRatio     () const { return _saturateRatio; }
+  inline  size_t       Configuration::getSaturateRp        () const { return _saturateRp; }
   inline  std::string  Configuration::getDiodeName         () const { return _diodeName; }
   inline  DbU::Unit    Configuration::getAntennaGateMaxWL  () const { return _antennaGateMaxWL; }
   inline  DbU::Unit    Configuration::getAntennaDiodeMaxWL () const { return _antennaDiodeMaxWL; }
+  inline  DbU::Unit    Configuration::getGlobalThreshold   () const { return _globalThreshold; }
+  inline  int          Configuration::getVsmallThreshold   () const { return _vsmallThreshold; }
+  inline  int          Configuration::getVlargeThreshold   () const { return _vlargeThreshold; }
+  inline  int          Configuration::getHsmallThreshold   () const { return _hsmallThreshold; }
+  inline  DbU::Unit    Configuration::getSmallNetWidth     () const { return _smallNetWidth; }
+  inline  DbU::Unit    Configuration::getSmallNetHeight    () const { return _smallNetHeight; }
   inline  void         Configuration::setRoutingStyle      ( StyleFlags flags ) { _routingStyle  =  flags; }
   inline  void         Configuration::resetRoutingStyle    ( StyleFlags flags ) { _routingStyle &= ~flags; }
+
+
 
 
 } // Anabatic namespace.

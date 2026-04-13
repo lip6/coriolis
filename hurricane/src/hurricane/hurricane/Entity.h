@@ -37,6 +37,11 @@ namespace Hurricane {
   {
     public:
       typedef DBo Inherit;
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
     public:                                
       virtual Cell*         getCell             () const = 0;
       virtual Box           getBoundingBox      () const = 0;
@@ -50,6 +55,9 @@ namespace Hurricane {
       virtual void          _postCreate         ();
       virtual void          _preDestroy         ();
   };
+
+  
+  inline const FastRTTI& Entity::fastRTTI () { return _fastRTTI; }
 
 
 // -------------------------------------------------------------------

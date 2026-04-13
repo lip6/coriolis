@@ -50,9 +50,11 @@ namespace Anabatic {
   const BaseFlags  Flags::HRailGCell          = (1L << 14);
   const BaseFlags  Flags::VRailGCell          = (1L << 15);
   const BaseFlags  Flags::GoStraight          = (1L << 16);
+  const BaseFlags  Flags::StdCellArea         = (1L << 17);
 // Flags for Edge objects states only.                      
   const BaseFlags  Flags::NullCapacity        = (1L <<  5);
   const BaseFlags  Flags::InfiniteCapacity    = (1L <<  6);
+  const BaseFlags  Flags::UniqueCapacity      = (1L <<  7);
 // Flags for Anabatic objects states only.                      
   const BaseFlags  Flags::DemoMode            = (1L <<  5);
   const BaseFlags  Flags::WarnOnGCellOverload = (1L <<  6);
@@ -117,22 +119,31 @@ namespace Anabatic {
   const BaseFlags  Flags::Superior            = (1L << 22);
   const BaseFlags  Flags::DoglegOnLeft        = (1L << 23);
   const BaseFlags  Flags::DoglegOnRight       = (1L << 24);
-  const BaseFlags  Flags::WithNeighbors       = (1L << 25);
-  const BaseFlags  Flags::NoCheckLayer        = (1L << 26);
-  const BaseFlags  Flags::HalfSlacken         = (1L << 27);
-  const BaseFlags  Flags::NoGCellShrink       = (1L << 28);
-  const BaseFlags  Flags::CParanoid           = (1L << 29);
-  const BaseFlags  Flags::CheckLowDensity     = (1L << 30);
-  const BaseFlags  Flags::CheckLowUpDensity   = (1L << 31);
-  const BaseFlags  Flags::NoUpdate            = (1L << 32);
-  const BaseFlags  Flags::NorthPath           = (1L << 33);
-  const BaseFlags  Flags::UseNonPref          = (1L << 34);
-  const BaseFlags  Flags::Force               = (1L << 35);
-  const BaseFlags  Flags::LayerCapOnly        = (1L << 36);
-  const BaseFlags  Flags::NoMinLength         = (1L << 37);
-  const BaseFlags  Flags::NoSegExt            = (1L << 38);
-  const BaseFlags  Flags::NullLength          = (1L << 39);
-  const BaseFlags  Flags::OnVSmall            = (1L << 40);
+  const BaseFlags  Flags::DoglegDown          = (1L << 25);
+  const BaseFlags  Flags::WithNeighbors       = (1L << 26);
+  const BaseFlags  Flags::NoCheckLayer        = (1L << 27);
+  const BaseFlags  Flags::NoCheckGCell        = (1L << 28);
+  const BaseFlags  Flags::HalfSlacken         = (1L << 29);
+  const BaseFlags  Flags::NoGCellShrink       = (1L << 30);
+  const BaseFlags  Flags::CParanoid           = (1L << 31);
+  const BaseFlags  Flags::CheckLowDensity     = (1L << 32);
+  const BaseFlags  Flags::CheckLowUpDensity   = (1L << 33);
+  const BaseFlags  Flags::NoUpdate            = (1L << 34);
+  const BaseFlags  Flags::NorthPath           = (1L << 35);
+  const BaseFlags  Flags::UseNonPref          = (1L << 36);
+  const BaseFlags  Flags::Force               = (1L << 37);
+  const BaseFlags  Flags::LayerCapOnly        = (1L << 38);
+  const BaseFlags  Flags::NoMinLength         = (1L << 39);
+  const BaseFlags  Flags::NoSegExt            = (1L << 40);
+  const BaseFlags  Flags::NullLength          = (1L << 41);
+  const BaseFlags  Flags::OnVSmall            = (1L << 42);
+  const BaseFlags  Flags::Unbreakable         = (1L << 43);
+  const BaseFlags  Flags::ForOffgrid          = (1L << 44);
+  const BaseFlags  Flags::AllAbove            = (1L << 45);
+  const BaseFlags  Flags::IncBreakLevel       = (1L << 46);
+  const BaseFlags  Flags::ToSameRipupLimit    = (1L << 47);
+  const BaseFlags  Flags::CapInNonPrefDir     = (1L << 48);
+  const BaseFlags  Flags::ToMinimize          = (1L << 49);
 
 
   Flags::~Flags ()
@@ -208,11 +219,14 @@ namespace Anabatic {
     s += (_flags & (uint64_t)StdCellRow   ) ? 'R' : '-';
     s += (_flags & (uint64_t)ChannelRow   ) ? 'C' : '-';
     s += (_flags & (uint64_t)GoStraight   ) ? 'g' : '-';
+    s += (_flags & (uint64_t)StdCellArea  ) ? 'S' : '-';
     s += ",";
     s += (_flags & (uint64_t)Invalidated  ) ? 'i' : '-';
     s += (_flags & (uint64_t)DestroyGCell ) ? 'D' : '-';
     s += (_flags & (uint64_t)AboveLayer   ) ? 'A' : '-';
     s += (_flags & (uint64_t)BelowLayer   ) ? 'B' : '-';
+    s += (_flags & (uint64_t)IncBreakLevel) ? 'I' : '-';
+    s += (_flags & (uint64_t)UseNonPref   ) ? 'p' : '-';
 
     return s;
   }
@@ -222,12 +236,14 @@ namespace Anabatic {
 // Class  :  "Anabatic::StyleFlags".
 
   
-  const BaseFlags  StyleFlags::NoStyle =  0;
-  const BaseFlags  StyleFlags::HV      = (1L <<  0);
-  const BaseFlags  StyleFlags::VH      = (1L <<  1);
-  const BaseFlags  StyleFlags::OTH     = (1L <<  2);
-  const BaseFlags  StyleFlags::Channel = (1L <<  3);
-  const BaseFlags  StyleFlags::Hybrid  = (1L <<  4);
+  const BaseFlags  StyleFlags::NoStyle         =  0;
+  const BaseFlags  StyleFlags::HV              = (1L <<  0);
+  const BaseFlags  StyleFlags::VH              = (1L <<  1);
+  const BaseFlags  StyleFlags::OTH             = (1L <<  2);
+  const BaseFlags  StyleFlags::Channel         = (1L <<  3);
+  const BaseFlags  StyleFlags::Hybrid          = (1L <<  4);
+  const BaseFlags  StyleFlags::M1Offgrid       = (1L <<  5);
+  const BaseFlags  StyleFlags::VSmallAsOffgrid = (1L <<  6);
 
 
   StyleFlags::~StyleFlags ()
@@ -236,12 +252,14 @@ namespace Anabatic {
 
   StyleFlags  StyleFlags::toFlag ( std::string textFlag )
   {
-    if (textFlag == "HV")      return HV;
-    if (textFlag == "VH")      return VH;
-    if (textFlag == "OTH")     return OTH;
-    if (textFlag == "Channel") return Channel;
-    if (textFlag == "Hybrid")  return Hybrid;
-    if (textFlag == "NoStyle") return NoStyle;
+    if (textFlag == "HV")              return HV;
+    if (textFlag == "VH")              return VH;
+    if (textFlag == "OTH")             return OTH;
+    if (textFlag == "Channel")         return Channel;
+    if (textFlag == "Hybrid")          return Hybrid;
+    if (textFlag == "NoStyle")         return NoStyle;
+    if (textFlag == "M1Offgrid")       return M1Offgrid;
+    if (textFlag == "VSmallAsOffgrid") return VSmallAsOffgrid;
     std::cerr << Error( "StyleFlags::toFlag(): Unknown flag value \"%s\"", textFlag.c_str() ) << std::endl;
     return NoStyle;
   }
@@ -265,11 +283,13 @@ namespace Anabatic {
   {
     ostringstream s;
 
-    if (_flags & (uint64_t)HV)      { s << (s.tellp() ? "|" : "") << "HV"; }
-    if (_flags & (uint64_t)VH)      { s << (s.tellp() ? "|" : "") << "VH"; }
-    if (_flags & (uint64_t)OTH)     { s << (s.tellp() ? "|" : "") << "OTH"; }
-    if (_flags & (uint64_t)Channel) { s << (s.tellp() ? "|" : "") << "Channel"; }
-    if (_flags & (uint64_t)Hybrid ) { s << (s.tellp() ? "|" : "") << "Hybrid"; }
+    if (_flags & (uint64_t)HV)              { s << (s.tellp() ? "|" : "") << "HV"; }
+    if (_flags & (uint64_t)VH)              { s << (s.tellp() ? "|" : "") << "VH"; }
+    if (_flags & (uint64_t)OTH)             { s << (s.tellp() ? "|" : "") << "OTH"; }
+    if (_flags & (uint64_t)Channel)         { s << (s.tellp() ? "|" : "") << "Channel"; }
+    if (_flags & (uint64_t)Hybrid )         { s << (s.tellp() ? "|" : "") << "Hybrid"; }
+    if (_flags & (uint64_t)M1Offgrid)       { s << (s.tellp() ? "|" : "") << "M1Offgrid"; }
+    if (_flags & (uint64_t)VSmallAsOffgrid) { s << (s.tellp() ? "|" : "") << "VSmallAsOffgrid"; }
     s << " (0x" << hex << _flags << ")";
     return s.str();
   }

@@ -21,6 +21,7 @@
 #include "hurricane/Initializer.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/SharedName.h"
 #include "hurricane/SharedPath.h"
 #include "hurricane/UpdateSession.h"
@@ -114,6 +115,7 @@ namespace Hurricane {
 // DataBase implementation
 // ****************************************************************************************************
 
+FastRTTI  DataBase::_fastRTTI ( demangle(typeid(DataBase).name()), &DBo::fastRTTI() );
 DataBase* DataBase::_db = NULL;
 
 
@@ -164,6 +166,10 @@ void DataBase::_preDestroy()
     _db = NULL;
 }
 
+const FastRTTI& DataBase::vfastRTTI () const
+// *****************************************
+{ return _fastRTTI; }
+
 string DataBase::_getString() const
 // ********************************
 {
@@ -175,11 +181,12 @@ Record* DataBase::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-      record->add(getSlot("_technology"                ,  _technology             ));
-      record->add(getSlot("_rootLibrary"               ,  _rootLibrary            ));
-      record->add(getSlot("DbU::precision"             ,  DbU::getPrecision()     ));
-      record->add(getSlot("DbU::resolution"            ,  DbU::db(1)              ));
-      record->add(getSlot("DbU::getGridsPerLambda"     ,  DbU::getGridsPerLambda()));
+      record->add( getSlot("_fastRTTI"                  , &_fastRTTI               ), Record::Overload );
+      record->add( getSlot("_technology"                ,  _technology             ));
+      record->add( getSlot("_rootLibrary"               ,  _rootLibrary            ));
+      record->add( getSlot("DbU::precision"             ,  DbU::getPrecision()     ));
+      record->add( getSlot("DbU::resolution"            ,  DbU::db(1)              ));
+      record->add( getSlot("DbU::getGridsPerLambda"     ,  DbU::getGridsPerLambda()));
       record->add( DbU::getValueSlot("DbU::polygonStep", &DbU::_polygonStep       ));
     //record->add(getSlot("GridStep", getValueString(getGridStep())));
     }
@@ -269,17 +276,31 @@ Cell* DataBase::getCell(string name)
   vector<Library*>  libStack;
   libStack.push_back( getRootLibrary() );
 
+//DebugSession::open( 18, 19);
+  cdebug_log(18,0) << "DataBase::getCell() name=\"" << name << "\"" << endl;
   while ( not libStack.empty() ) {
     Library* library = libStack.back();
     libStack.pop_back();
 
+    cdebug_log(18,1) << "> Looking into " << library << endl;
+    for ( Cell* cell : library->getCells() ) {
+      cdebug_log(18,0) << "| " << cell << endl;
+    }
     Cell* cell = library->getCell( name );
-    if (cell) return cell;
+    if (cell) {
+      cdebug_log(18,-1) << "Found " << cell << endl;
+      DebugSession::close();
+      return cell;
+    }
 
-    for ( Library* child : library->getLibraries() )
+    for ( Library* child : library->getLibraries() ) {
+      cdebug_log(18,0) << "+ Child " << library << endl;
       libStack.push_back( child );
+    }
+    cdebug_tabw(18,-1);
   }
 
+//DebugSession::close();
   return NULL;
 }
 

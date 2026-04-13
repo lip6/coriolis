@@ -18,6 +18,7 @@
 #include <sstream>
 #include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Net.h"
 #include "hurricane/Name.h"
@@ -38,65 +39,100 @@ namespace Katana {
   using std::ostringstream;
   using std::setprecision;
   using Hurricane::Bug;
+  using Hurricane::DebugSession;
   using CRL::RoutingGauge;
 
 
   TrackMarker* TrackMarker::create ( RoutingPad* rp, size_t depth )
   {
-    TrackMarker* segment = new TrackMarker ( rp, depth );
-    return segment;
+    TrackMarker* marker = new TrackMarker ( rp, depth );
+    return marker;
   }
 
 
-  void  TrackMarker::destroy ()
-  {
-    if ( !--_refcount ) delete this;
-  }
-
-
-  TrackMarker::TrackMarker ( RoutingPad* pad, size_t depth )
-    : _routingPad    (pad)
-    , _sourcePosition(0)
-    , _targetPosition(0)
-    , _track         (NULL)
+  TrackMarker::TrackMarker ( RoutingPad* rp, size_t depth )
+    : TrackMarkerBase()
+    , _routingPad    (rp)
     , _weight        (0)
-    , _refcount      (0)
   {
-    Point         sourcePoint  = pad->getSourcePosition();
-    Point         targetPoint  = pad->getTargetPosition();
-    RoutingGauge* rg           = Session::getRoutingGauge();
-    RoutingPlane* rp           = Session::getKatanaEngine()->getRoutingPlaneByIndex(depth);
-    DbU::Unit     pitch        = DbU::toLambda(Session::getPitch(depth));
-    Flags         rpDirection  = rg->getLayerDirection(depth);
+    DebugSession::open( rp->getNet(), 159, 160 );
+    cdebug_log(159,1) << "TrackMarker::TrackMarker() depth=" << depth << " " << rp << endl;
+
+    RoutingGauge* rg             = Session::getRoutingGauge();
+    RoutingPlane* plane          = Session::getKatanaEngine()->getRoutingPlaneByIndex( depth );
+    DbU::Unit     pitch          = Session::getPitch( depth );
+    Flags         planeDirection = rg->getLayerDirection( depth );
     Interval      trackSpan;
 
-    if ( rpDirection == Constant::Horizontal ) {
-      _sourcePosition = sourcePoint.getX();
-      _targetPosition = targetPoint.getX();
-      trackSpan       = Interval ( sourcePoint.getY(), targetPoint.getY() );
+    if (rg->isSymbolic()) {
+      Point sourcePoint = rp->getSourcePosition();
+      Point targetPoint = rp->getTargetPosition();
+      if ( planeDirection == Constant::Horizontal ) {
+        setSourceU( sourcePoint.getX() );
+        setTargetU( targetPoint.getX() );
+        trackSpan = Interval( sourcePoint.getY(), targetPoint.getY() );
+      } else {
+        setSourceU( sourcePoint.getY() );
+        setTargetU( targetPoint.getY() );
+        trackSpan = Interval( sourcePoint.getX(), targetPoint.getX() );
+      }
     } else {
-      _sourcePosition = sourcePoint.getY();
-      _targetPosition = targetPoint.getY();
-      trackSpan       = Interval ( sourcePoint.getX(), targetPoint.getX() );
+      Box bb = rp->getBoundingBox();
+      cdebug_log(159,0) << "bb=" << bb << endl;
+      RoutingLayerGauge* rlg1         = Session::getLayerGauge( (size_t)0 );
+      const Layer*       viaLayer1    = Session::getBuildContactLayer( 0 );
+      DbU::Unit          viaEnclosure = rlg1->getHalfViaWidth()
+                                      + viaLayer1->getBottomEnclosure( Layer::EnclosureV );
+      if (planeDirection == Constant::Horizontal) {
+        setSourceU( bb.getXMin() );
+        setTargetU( bb.getXMax() );
+        trackSpan = Interval( bb.getYMin(), bb.getYMax() );
+      } else {
+        setSourceU( bb.getYMin() );
+        setTargetU( bb.getYMax() );
+        trackSpan = Interval( bb.getXMin(), bb.getXMax() );
+      }
+      trackSpan.inflate( -viaEnclosure );
+    }
+    cdebug_log(159,0) << "trackSpan=" << trackSpan << endl;
+    
+    if (planeDirection xor (uint64_t)rg->getLayerDirection(rg->getLayerDepth(rp->getLayer()))) {
+      if (not rg->isSymbolic())
+        _weight = (uint32_t)( 100.0 / (1.0 + (trackSpan.getSize()/pitch)) );
+    } else {
+      _weight = (uint32_t)( (1.0 + trackSpan.getSize()/pitch) * 20.0 );
     }
 
-    if ( rpDirection xor (uint64_t)rg->getLayerDirection(rg->getLayerDepth(pad->getLayer())) ) {
-      _weight = (uint32_t)(( pitch / (pitch+trackSpan.getSize()) ) * 100.0) ;
+    Track* track = plane->getTrackByPosition ( trackSpan.getVMin() );
+    cdebug_log(159,0) << "Nearest: " << track << endl;
+    if (trackSpan.contains(track->getAxis())
+       or (track->getNextTrack() and trackSpan.contains(track->getNextTrack()->getAxis()))) {
+      if (track->getAxis() < trackSpan.getVMin())
+        track = track->getNextTrack();
+      while ( track && (track->getAxis() <= trackSpan.getVMax()) ) {
+        cdebug_log(159,0) << "| weight=" << _weight << " " << track << endl;
+        Session::addInsertEvent ( this, track );
+        track = track->getNextTrack();
+        incRefcount();
+      }
     } else {
-      _weight = (uint32_t)( (pitch + trackSpan.getSize()) * 20.0 );
-    }
-
-    Track* track = rp->getTrackByPosition ( trackSpan.getVMin() );
-    while ( track && (track->getAxis() <= trackSpan.getVMax()) ) {
+      cdebug_log(159,0) << "| offgrid weight=" << _weight << " " << track << endl;
       Session::addInsertEvent ( this, track );
       track = track->getNextTrack();
-      _refcount++;
+      incRefcount();
     }
-   }
+
+    cdebug_tabw(159,-1);
+    DebugSession::close();
+  }
 
 
   Net* TrackMarker::getNet () const
   { return _routingPad->getNet(); }
+
+
+  uint32_t  TrackMarker::getWeight ( const Track* track ) const
+  { return _weight; }
 
 
   string  TrackMarker::_getTypeName () const
@@ -105,26 +141,19 @@ namespace Katana {
 
   string  TrackMarker::_getString () const
   {
-    ostringstream s;
-    s << "<"   << _getTypeName()
-      << " "   << getNet()->getName()
-      << " ["  << DbU::getValueString(_sourcePosition)
-      << ":"   << DbU::getValueString(_targetPosition)
-      << " "   << setprecision(3) << ((double)_weight)/100.0
-      << ">";
-    return s.str();
+    ostringstream os;
+    os << " " << setprecision(3) << ((double)_weight)/100.0;
+    string s = Super::_getString();
+    s.insert( s.size()-1, os.str() );
+    return s;
   }
 
 
   Record* TrackMarker::_getRecord () const
   {
-    Record* record = new Record ( _getString() );
+    Record* record = Super::_getRecord();
     record->add ( getSlot ( "_routingPad"    ,  _routingPad     ) );
-    record->add ( getSlot ( "_sourcePosition",  _sourcePosition ) );
-    record->add ( getSlot ( "_targetPosition",  _targetPosition ) );
-    record->add ( getSlot ( "_track"         ,  _track          ) );
     record->add ( getSlot ( "_weight"        ,  _weight         ) );
-
     return record;
   }
 

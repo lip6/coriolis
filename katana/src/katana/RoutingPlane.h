@@ -50,6 +50,8 @@ namespace Katana {
       inline const vector<Track*> getTracks          () const;
       inline size_t               getTracksSize      () const;
       inline size_t               computeTracksSize  () const;
+      inline DbU::Unit            getTotalWL         () const;
+             DbU::Unit            getUsedWL          () const;
       inline DbU::Unit            getTrackPosition   ( size_t index ) const;
              Track*               getTrackByIndex    ( size_t index ) const;
              Track*               getTrackByPosition ( DbU::Unit axis, uint32_t mode=Constant::Nearest ) const;
@@ -115,6 +117,9 @@ namespace Katana {
 
   inline bool  RoutingPlane::isVertical () const
   { return (getDirection() & Flags::Vertical); }
+
+  inline DbU::Unit  RoutingPlane::getTotalWL () const
+  { return (_trackMax - _trackMin) * _tracks.size();  }
 
 
 }  // Katana namespace.

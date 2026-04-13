@@ -299,7 +299,7 @@ namespace Anabatic {
 
   void  AutoContact::invalidate ( Flags flags )
   {
-    if (flags & Flags::Topology ) setFlags( CntInvalidatedCache );
+    if (flags & Flags::Topology ) setFlags( CntInvalidatedCache|CntInvalidatedTopology );
     if (not isInvalidated()) {
       cdebug_log(145,1) << "AutoContact::invalidate() - " << this << endl;
       cdebug_log(145,0) << "flags:" << flags.asString(FlagsFunction) << endl;
@@ -392,38 +392,41 @@ namespace Anabatic {
 
   void  AutoContact::showTopologyError ( const std::string& message, Flags flags )
   {
-    Component*    anchor      = NULL;
-    Horizontal**  horizontals = new Horizontal* [10];
-    Vertical**    verticals   = new Vertical*   [10];
+    Component*     anchor      = NULL;
+    Horizontal**   horizontals = new Horizontal* [10];
+    Vertical**     verticals   = new Vertical*   [10];
+    ostringstream  strError;
 
-    if (not (flags & Flags::CParanoid)) cparanoid.setStreamMask( mstream::PassThrough );
-
+    strError << "In topology of " << this << "\n";
     _getTopology ( base(), anchor, horizontals, verticals, 10 );
  
-    cparanoid << Error("In topology of %s",getString(this).c_str()) << endl;
-    if (anchor) cparanoid << "        A: " << anchor << endl;
+    if (anchor) strError << "        A: " << anchor << "\n";
 
     for ( size_t i=0 ; (i<10) and (horizontals[i] != NULL); ++i ) {
       AutoSegment* autoSegment = Session::lookup ( horizontals[i] );
       if (autoSegment != NULL)
-        cparanoid << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << endl; 
+        strError << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << "\n"; 
       else
-        cparanoid << "        ?: " << horizontals[i] << endl; 
+        strError << "        ?: " << horizontals[i] << "\n"; 
     }
+    if (not horizontals[0]) strError << "        No horizontal connecteds\n";
+    if (not verticals  [0]) strError << "        No verticals connecteds\n";
 
     for ( size_t i=0 ; (i<10) and (verticals[i] != NULL); ++i ) {
       AutoSegment* autoSegment = Session::lookup ( verticals[i] );
       if (autoSegment != NULL)
-        cparanoid << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << endl; 
+        strError << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << "\n"; 
       else
-        cparanoid << "        ?: " << verticals[i] << endl; 
+        strError << "        ?: " << verticals[i] << "\n"; 
     }
 
-    cparanoid << "        " << message  << endl;
-    if (not (flags & Flags::CParanoid)) cparanoid.unsetStreamMask( mstream::PassThrough );
-
+    strError << "        " << message  << "\n";
+    Error  error ( strError.str().c_str() );
+    
     delete [] horizontals;
     delete [] verticals;
+
+    throw error;
   }
 
 
@@ -457,6 +460,7 @@ namespace Anabatic {
 
     RoutingGauge* rg         = Session::getRoutingGauge();
     size_t        movedDepth = rg->getLayerDepth(moved->getLayer());
+    if (moved->isNonPref() and (movedDepth > 0)) --movedDepth;
 
     Component* anchor = getAnchor();
     if (anchor) {
@@ -487,7 +491,7 @@ namespace Anabatic {
     setCBXMax ( box.getXMax() );
     setCBYMin ( box.getYMin() );
     setCBYMax ( box.getYMax() );
-    cdebug_log(149,0) << "setConstraintBox() " << this << " " << getConstraintBox() << endl;
+    cdebug_log(149,0) << "  Set to: " << getConstraintBox() << endl;
     cdebug_log(149,0) << "* " << _gcell << endl;
   }
 
@@ -543,7 +547,10 @@ namespace Anabatic {
 
 
   void  AutoContact::restoreNativeConstraintBox ()
-  { setConstraintBox ( getNativeConstraintBox() ); }
+  {
+    if (_flags & CntLockConstraintBox) return;
+    setConstraintBox ( getNativeConstraintBox() );
+  }
 
                  
   Box& AutoContact::intersectConstraintBox ( Box& box ) const
@@ -677,13 +684,15 @@ namespace Anabatic {
     }
   //s.insert( 1, "id: " );
   //s.insert( 4, getString(_id) );
-    s.insert( s.size()-1, (isFixed           ())?" F":" -" );
-    s.insert( s.size()-1, (isTerminal        ())? "T": "-" );
-    s.insert( s.size()-1, (canDrag           ())? "D": "-" );
-    s.insert( s.size()-1, (isHTee            ())? "h": "-" );
-    s.insert( s.size()-1, (isVTee            ())? "v": "-" );
-    s.insert( s.size()-1, (isInvalidated     ())? "i": "-" );
-    s.insert( s.size()-1, (isInvalidatedCache())? "c": "-" );
+    s.insert( s.size()-1, (isFixed              ())?" F":" -" );
+    s.insert( s.size()-1, (isTerminal           ())? "T": "-" );
+    s.insert( s.size()-1, (canDrag              ())? "D": "-" );
+    s.insert( s.size()-1, (isHTee               ())? "h": "-" );
+    s.insert( s.size()-1, (isVTee               ())? "v": "-" );
+    s.insert( s.size()-1, (isInvalidated        ())? "i": "-" );
+    s.insert( s.size()-1, (isInvalidatedWidth   ())? "w": "-" );
+    s.insert( s.size()-1, (isInvalidatedCache   ())? "c": "-" );
+    s.insert( s.size()-1, (isInvalidatedTopology())? "t": "-" );
 
   //s.insert( s.size()-1, getString(getConstraintBox()));
     return s;

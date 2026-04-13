@@ -1,0 +1,137 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- #
+
+from __future__ import unicode_literals
+import socket
+
+hostname   = socket.gethostname()
+
+OUTPUT_PATH  = '@OUTPUT_PATH@'
+PLUGIN_PATHS = [ '@SOURCEDIR@/pelican-plugins' ]
+PLUGINS      = [ 'bootstrap-rst']
+
+STATIC_PATHS = [ 'pages/users-guide',
+                 'pages/python-tutorial',
+                 'pages/python-cpp-new',
+                 'pages/python-cpp',
+                 'pages/stratus',
+                 'pages/check-toolkit',
+                 'pages/design-flow',
+                 'pages/rds',
+                 'pages/presentations',
+                 'pages/packaging',
+                 'pages/technical-log',
+                 'images',
+               ]
+
+
+AUTHOR   ='Coriolis Developers'
+SITENAME ='Coriolis VLSI CAD Tools'
+SITEURL  = '@SITEURL@'
+TIMEZONE = 'UTC'
+
+THEME = '@SOURCEDIR@/themes/nest-coriolis'
+#THEME = 'nest'
+#THEME = 'dev-random'
+#THEME = 'brutalist'
+
+ARTICLE_EXCLUDES        = [ ]
+
+PATH       = '@SOURCEDIR@/content'
+PAGE_PATHS = [ 'pages' ]
+
+TIMEZONE     = 'Europe/Paris'
+DEFAULT_LANG ='en'
+
+# Feed generation is usually not desired when developing
+FEED_ALL_ATOM         = None
+CATEGORY_FEED_ATOM    = None
+TRANSLATION_FEED_ATOM = None
+AUTHOR_FEED_ATOM      = None
+AUTHOR_FEED_RSS       = None
+DISPLAY_PAGES_ON_MENU = True
+
+# Blogroll
+#SOCIAL = (('Pelican'   , 'http://getpelican.com/' ),
+#          ('Python.org', 'http://python.org/'     ),
+#          ('Jinja2'    , 'http://jinja.pocoo.org/'),)
+SOCIAL = (('Matrix', 'element://vector/webapp/#/room/%23coriolis%3Amatrix.org?via=matrix.or'),)
+
+# Social widget
+LINKS  = (('Alliance/Coriolis'      , 'https://coriolis.lip6.fr/'),
+          ('CIAN Team Website'      , 'https://largo.lip6.fr/'   ),)
+
+DEFAULT_PAGINATION = 10
+
+IGNORE_FILES = [ 'UsersGuide.rst'       # For User's Guide.
+               , 'definitions.rst'
+               , 'Abstract.rst'
+               , 'DesignFlow.rst'
+               , 'HTML_defs.rst'
+               , 'Pelican_defs.rst'
+               , 'Installation.rst'
+               , 'LicenseCredits.rst'
+               , 'Releases.rst'
+               , 'ScriptsPlugins.rst'
+               , 'ViewerTools.rst'
+
+               , 'QuickStart.rst'     # For Design Flow.
+
+               , 'PythonTutorial.rst' # For Python Tutorial & New.
+               , 'Introduction.rst'
+               , 'Implementation.rst'
+               , 'Environment.rst'
+               , 'CellNetComponent.rst'
+               , 'Collections.rst'
+               , 'CgtScript.rst'
+               , 'Netlist.rst'
+               , 'RealDesigns.rst'
+               , 'ToolEngines.rst'
+               , 'AdvancedTopics.rst'
+               , 'AdvancedTopics.rst'
+               , 'pdfHeader.rst'
+
+               , 'PythonCpp.rst'      # For Python/C++ Tutorial
+               , 'Introduction.rst'
+               , 'Configuration.rst'
+               , 'DBoStandalone.rst'
+               , 'DBoHierarchy.rst'
+               , 'NonDBo.rst'
+               , 'DbU.rst'
+               , 'Name.rst'
+
+               , 'OBS.rst'           # For Packaging
+
+               , 'December_2023.rst' # For Technical Logs
+
+               , 'Stratus.rst'       # For Stratus.
+               , 'Developper.rst'
+               , 'DpGen.rst'
+               , 'Language.rst'
+               , 'Patterns.rst'
+
+               , 'CheckToolkit.rst'   # Alliance Check Toolkit.
+               , 'README.rst'
+
+               , 'RDS.rst'            # For RDS.
+               , 'RDSpage.rst'
+
+               , 'Installation.rst'   # For Alliance.
+
+               , 'Presentations.rst'  # For Presentations.
+               , 'PresentationsPage.rst'
+               ]
+
+# Uncomment following line if you want document-relative URLs when developing
+RELATIVE_URLS = True
+
+NEST_INDEX_HEADER_TITLE   ='Alliance/Coriolis VLSI CAD Tools'
+NEST_HEADER_LOGO          =  '/images/common/Coriolis-logo-white-4-small.png'
+NEST_HEADER_IMAGES        =          'common/layout-motif-faded-4.png'
+NEST_LINKS_COLUMN_TITLE   ='Links'
+NEST_SOCIAL_COLUMN_TITLE  ='Social'
+NEST_SITEMAP_COLUMN_TITLE ='Map'
+NEST_COPYRIGHT            ='Copyright © 2020-2020 Sorbonne Universite'
+
+MENUITEMS = [ ('Git'          , '/pages/github.html' )
+            , ('Documentation', '/pages/documentation.html' ) ]

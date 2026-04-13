@@ -51,11 +51,14 @@ class Macro ( object ):
     @staticmethod
     def place ( topCell, instance, transf, status ):
         macro   = Macro.lookup( instance.getMasterCell() )
+        instance.setMasterCell(macro.wrapper)
         ab      = instance.getMasterCell().getAbutmentBox()
         if transf.getOrientation() == Transformation.Orientation.ID:
             abShift = Transformation( -ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
         if transf.getOrientation() == Transformation.Orientation.MX:
             abShift = Transformation( ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
+        if transf.getOrientation() == Transformation.Orientation.MY:
+            abShift = Transformation( -ab.getXMin(), ab.getYMin(), Transformation.Orientation.ID )
         print( 'transf={}'.format(transf) )
         print( 'abShift={}'.format(abShift) )
         abShift.applyOn( transf )
@@ -122,11 +125,17 @@ class Macro ( object ):
           that are half free and half occluded by the block itself may
           cause (stupid) deadlock to appear.
         """
-        trace( 550, '\tMacro.__init__() {}\n'.format(macroCell) )
-        self.cell = macroCell
-        Macro.LUT[ self.cell ] = self
-
+        trace( 550, '+,', '\tMacro.__init__() {}\n'.format(macroCell) )
         af = AllianceFramework.get()
+        self.cell = macroCell
+        self.wrapper = af.createCell(f"{self.cell.getName()}_wrapper")
+        inst = Instance.create(self.wrapper, f"inst", self.cell)
+        inst.setTransformation( Transformation() )
+        inst.setPlacementStatus( Instance.PlacementStatus.FIXED )
+        self.wrapper.setTerminalNetlist( True )
+        Macro.LUT[ self.cell ] = self
+        trace( 550, '\tWrapper {}\n'.format( self.wrapper ))
+
         ab = self.cell.getAbutmentBox()
         self.rg = af.getRoutingGauge( gaugeName )
         gaugeMetal2      = self.rg.getLayerGauge( 1 )
@@ -148,6 +157,37 @@ class Macro ( object ):
         yMinAdjust = 0
         xMaxAdjust = 0
         yMaxAdjust = 0
+        for inst_net in self.cell.getNets():
+            wrapper_net = None
+            for component in inst_net.getComponents():
+                if not (component.getLayer().isBlockage() or NetExternalComponents.isExternal(component)):
+                    continue
+                if wrapper_net is None:
+                    wrapper_net = Net.create(self.wrapper, inst_net.getName())
+                    wrapper_net.setType(inst_net.getType())
+                    wrapper_net.setDirection(inst_net.getDirection())
+                    if inst_net.isExternal():
+                        wrapper_net.setExternal(True)
+                        wrapper_net.setGlobal(inst_net.isGlobal())
+                        # Connect a logical plug through the wrapper
+                        plug = inst.getPlug(inst_net)
+                        plug.setNet(wrapper_net)
+                if isinstance(component, Horizontal):
+                    inst_comp = Horizontal.create(wrapper_net, component.getLayer(),
+                        component.getY(), component.getWidth(), component.getSourceX(), component.getTargetX())
+                elif isinstance(component, Vertical):
+                    inst_comp = Vertical.create(wrapper_net, component.getLayer(),
+                        component.getX(), component.getWidth(), component.getSourceY(), component.getTargetY())
+                elif isinstance(component, Pad):
+                    inst_comp = Pad.create(wrapper_net, component.getLayer(), component.getBoundingBox())
+                elif isinstance(component, Rectilinear):
+                    inst_comp = Rectilinear.create(wrapper_net, component.getLayer(), component.getPoints())
+                else:
+                    assert False, f"unable to copy net component {component}"
+                if inst_net.isExternal():
+                    NetExternalComponents.setExternal(inst_comp)
+        self.wrapper.setRouted(True)
+
         if self.cell.getName().lower() == 'spblock_512w64b8w':
             print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
             useJumper  = True
@@ -155,7 +195,7 @@ class Macro ( object ):
             pitch      = gaugeMetal2.getPitch()
             if xMinAdjust % pitch:
                 xMinAdjust += pitch - (xMinAdjust % pitch)
-            for net in self.cell.getNets():
+            for net in self.wrapper.getNets():
                 for component in net.getComponents():
                     if isinstance(component,Rectilinear) and component.getLayer() == blockageMetal2:
                         bb = Box( component.getBoundingBox() )
@@ -197,19 +237,69 @@ class Macro ( object ):
         eastPins  = []
         northPins = []
         southPins = []
-        for net in self.cell.getNets():
+        for net in self.wrapper.getNets():
             if not net.isExternal() or net.isSupply() or net.isClock():
                 continue
+            eastCandidates  = []
+            westCandidates  = []
+            northCandidates = []
+            southCandidates = []
             for component in net.getComponents():
                 if not NetExternalComponents.isExternal(component):
                     continue
                 bb = component.getBoundingBox()
                 if not ab.isConstrainedBy(bb):
                     continue
-                if   ab.getXMax() == bb.getXMax():  eastPins.append( component )
-                elif ab.getXMin() == bb.getXMin():  westPins.append( component )
-                elif ab.getYMax() == bb.getYMax(): northPins.append( component )
-                elif ab.getYMin() == bb.getYMin(): southPins.append( component )
+                if   ab.getXMax() == bb.getXMax():  eastCandidates.append( component )
+                elif ab.getXMin() == bb.getXMin():  westCandidates.append( component )
+                elif ab.getYMax() == bb.getYMax(): northCandidates.append( component )
+                elif ab.getYMin() == bb.getYMin(): southCandidates.append( component )
+            if   len( eastCandidates) + len( westCandidates) \
+               + len(northCandidates) + len(southCandidates) == 0:
+                print( ErrorMessage( 1, [ 'Macro.__init__(): No suitable external terminal for "{}" in macro "{}".' \
+                                          .format( net.getName(), self.cell.getName() ) ] ))
+                continue
+            found = False
+            if len(eastCandidates):
+                best       = eastCandidates[ 0 ]
+                bestHeight = best.getBoundingBox().getHeight()
+                for candidate in eastCandidates[1:]:
+                    bb = candidate.getBoundingBox()
+                    if bb.getHeight() > bestHeight:
+                        best       = candidate
+                        bestHeight = bb.getHeight()
+                eastPins.append( best )
+                found = True
+            if not found and len(westCandidates):
+                best       = westCandidates[ 0 ]
+                bestHeight = best.getBoundingBox().getHeight()
+                for candidate in westCandidates[1:]:
+                    bb = candidate.getBoundingBox()
+                    if bb.getHeight() > bestHeight:
+                        best       = candidate
+                        bestHeight = bb.getHeight()
+                westPins.append( best )
+                found = True
+            if not found and len(northCandidates):
+                best      = northCandidates[ 0 ]
+                bestWidth = best.getBoundingBox().getWidth()
+                for candidate in northCandidates[1:]:
+                    bb = candidate.getBoundingBox()
+                    if bb.getWidth() > bestWidth:
+                        best      = candidate
+                        bestWidth = bb.getHeight()
+                northPins.append( best )
+                found = True
+            if not found and len(southCandidates):
+                best      = southCandidates[ 0 ]
+                bestWidth = best.getBoundingBox().getWidth()
+                for candidate in southCandidates[1:]:
+                    bb = candidate.getBoundingBox()
+                    if bb.getWidth() > bestWidth:
+                        best      = candidate
+                        bestWidth = bb.getHeight()
+                southPins.append( best )
+                found = True
         if ab.getWidth () % sliceHeight: xMaxAdjust = sliceHeight - (ab.getWidth ()+xMinAdjust) % sliceHeight
         if ab.getHeight() % sliceHeight: yMaxAdjust = sliceHeight - (ab.getHeight()+yMinAdjust) % sliceHeight
         self.innerAb.inflate( xMinAdjust, 0, xMaxAdjust, yMaxAdjust )
@@ -222,6 +312,7 @@ class Macro ( object ):
                             
         with UpdateSession():
             for component in westPins:
+                trace( 550, '\twestPin {}\n'.format( component ))
                 NetExternalComponents.setInternal( component )
                 pitch     = self.rg.getPitch( component.getLayer() )
                 ppitch    = self.getPPitch( component.getLayer() )
@@ -283,7 +374,7 @@ class Macro ( object ):
                                                   , xMin
                                                   , xMin + ppitch + ppitch//2
                                                   )
-                    blockageNet = self.cell.getNet( '*'  )
+                    blockageNet = self.wrapper.getNet( '*'  )
                     for gauge in [ gaugeMetal3, gaugeMetal3, gaugeMetal4, gaugeMetal5 ]:
                         bb =      bvia1.getPlate( gauge.getLayer() ).getBoundingBox()
                         bb.merge( bvia2.getPlate( gauge.getLayer() ).getBoundingBox() )
@@ -315,6 +406,7 @@ class Macro ( object ):
                                                   )
                 NetExternalComponents.setExternal( horizontal )
             for component in eastPins:
+                trace( 550, '\teastPin {}\n'.format( component ))
                 layer = component.getLayer()
                 if layer.getMask() != gaugeMetal2.getLayer().getMask():
                     useBigVia = True
@@ -361,13 +453,25 @@ class Macro ( object ):
                                               )
                 NetExternalComponents.setExternal( horizontal )
             for component in southPins:
+                trace( 550, '\tsouthPin {}\n'.format( component ))
                 NetExternalComponents.setInternal( component )
-                pitch     = self.rg.getPitch( component.getLayer() )
+                innerRg = self.rg.getLayerGauge( component.getLayer() )
+                outerRg = innerRg
+                vDepth  = innerRg.getDepth()
+                if innerRg.isHorizontal(): 
+                   #if vDepth+1 < self.rg.getAllowedDepth(): vDepth += 1
+                   #else:                                    vDepth -= 1
+                    outerRg = self.rg.getLayerGauge( vDepth + 1 )
+                if outerRg.getLayer().getMask() != innerRg.getLayer().getMask():
+                    useBigVia = True
+                pitch     = self.rg.getPitch( outerRg.getLayer() )
                 ppitch    = self.getPPitch( component.getLayer() )
-                wwidth    = self.getWireWidth( component.getLayer() )
+                wwidth    = self.getWireWidth( outerRg.getLayer() )
                 bb        = component.getBoundingBox()
+                if useBigVia:
+                    bb.inflate( 0, 4*wwidth, 0, 0 )
                 xAxis     = bb.getXCenter()
-                xOngrid   = self.getNearestTrackAxis( component.getLayer(), xAxis )
+                xOngrid   = self.getNearestTrackAxis( outerRg.getLayer(), xAxis )
                 yMax      = bb.getYMin()
                 yMin      = yMax - vMargin*ppitch
                 width     = bb.getWidth()
@@ -380,22 +484,41 @@ class Macro ( object ):
                     else:
                         ppXAxis   += width//2
                         ppXOngrid -= wwidth//2
-                horizontal = Horizontal.create( component.getNet()
-                                              , component.getLayer()
-                                              , bb.getYMin()
-                                              , width
-                                              , ppXAxis
-                                              , ppXOngrid
-                                              )
+                if useBigVia:
+                    bvia = BigVia( component.getNet()
+                                 , innerRg.getDepth()
+                                 , xOngrid
+                                 , bb.getYMin() + wwidth
+                                 , wwidth
+                                 , 3*wwidth
+                                 , flags=BigVia.AllowAllExpand )
+                    bvia.mergeDepth( outerRg.getDepth() )
+                    bvia.doLayout()
+                    bottomPlate = bvia.getPlate( component.getLayer() )
+                    Vertical.create( component.getNet()
+                                   , component.getLayer()
+                                   , bb.getXCenter()
+                                   , bb.getWidth()
+                                   , bottomPlate.getBoundingBox().getYMin()
+                                   , bb.getYMax()
+                                   )
+                else:
+                    horizontal = Horizontal.create( component.getNet()
+                                                  , component.getLayer()
+                                                  , bb.getYMin()
+                                                  , width
+                                                  , ppXAxis
+                                                  , ppXOngrid
+                                                  )
                 vertical = Vertical.create( component.getNet()
-                                          , component.getLayer()
+                                          , outerRg.getLayer()
                                           , xOngrid
                                           , wwidth
                                           , yMin
                                           , yMax
                                           )
                 vertical = Vertical.create( component.getNet()
-                                          , component.getLayer()
+                                          , outerRg.getLayer()
                                           , xOngrid
                                           , wwidth
                                           , yMin
@@ -403,6 +526,7 @@ class Macro ( object ):
                                           )
                 NetExternalComponents.setExternal( vertical )
             for component in northPins:
+                trace( 550, '\tnorthPin {}\n'.format( component ))
                 layer = component.getLayer()
                 if layer.getMask() != gaugeMetal3.getLayer().getMask():
                     useBigVia = True
@@ -459,4 +583,5 @@ class Macro ( object ):
                                           , yMax
                                           )
                 NetExternalComponents.setExternal( vertical )
-        self.cell.setAbutmentBox( self.outerAb )
+        self.wrapper.setAbutmentBox( self.outerAb )
+        trace( 550, '-' )

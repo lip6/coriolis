@@ -27,14 +27,13 @@ viewer_mocs = qt.compile_moc(
     'hurricane/viewer/SelectionWidget.h',
     'hurricane/viewer/NetlistModel.h',
     'hurricane/viewer/NetlistWidget.h',
+    'hurricane/viewer/NetsetWidget.h',
     'hurricane/viewer/HierarchyModel.h',
     'hurricane/viewer/HierarchyWidget.h',
     'hurricane/viewer/DisplayFilterWidget.h',
     'hurricane/viewer/ControllerWidget.h',
     'hurricane/viewer/ScriptWidget.h',
     'hurricane/viewer/AboutWindow.h',
-    'hurricane/viewer/PyErrorWidget.h',
-    'hurricane/viewer/PyCellViewer.h'
   ],
   include_directories: hurricane_includes
 )
@@ -99,6 +98,7 @@ viewer = shared_library(
   'NetInformations.cpp',
   'NetlistModel.cpp',
   'NetlistWidget.cpp',
+  'NetsetWidget.cpp',
   'HierarchyInformations.cpp',
   'HierarchyModel.cpp',
   'HierarchyWidget.cpp',

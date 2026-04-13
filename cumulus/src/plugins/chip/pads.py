@@ -27,7 +27,7 @@ from   ...CRL             import AllianceFramework, RoutingGauge, RoutingLayerGa
                                  Gds
 from   ...helpers         import trace, l, u, n, onFGrid
 from   ...helpers.io      import ErrorMessage, WarningMessage
-from   ...helpers.overlay import UpdateSession
+from   ...helpers.overlay import UpdateSession, CfgDefault
 from   .                  import CoreWire
 from   ..block.block      import Block
 from   ..block.bigvia     import BigVia
@@ -159,6 +159,28 @@ class Corner ( object ):
 
 
 # --------------------------------------------------------------------
+# Class  :  "pads.PadPosition"
+
+class PadPosition ( object ):
+
+    def __init__ ( self, side ):
+        self.side = side
+        if self.side.type in (North,South):
+            self.cornerWidth = self.side.corona.padCornerWidth
+        else:
+            self.cornerWidth = self.side.corona.padCornerHeight
+        self.padSpacing = (self.side.sideLength - 2*self.cornerWidth - self.side.padLength) \
+                          // (len(self.side.pads) + 1)
+
+    def __call__ ( self, padIndex ):
+        position = self.cornerWidth + self.padSpacing
+        for i in range( len(self.side.pads) ):
+            if i >= padIndex: break;
+            position += self.padSpacing + self.side.pads[i][1].getMasterCell().getAbutmentBox().getWidth()
+        return position
+
+
+# --------------------------------------------------------------------
 # Class  :  "pads.Side"
 
 class Side ( object ):
@@ -172,24 +194,40 @@ class Side ( object ):
         self.gap           = 0
         self.coreWires     = []
         if self.type == North:
-            self.pads       = self.corona.northPads
-            self.sideName   = 'north'
-            self.sideLength = self.conf.chipAb.getWidth()
+            self.pads        = self.corona.northPads
+            self.sideName    = 'north'
+            self.sideLength  = self.conf.chipAb.getWidth()
+            self.cornerWidth = self.corona.padCornerWidth
         elif self.type == South:
-            self.pads       = self.corona.southPads
-            self.sideName   = 'south'
-            self.sideLength = self.conf.chipAb.getWidth()
+            self.pads        = self.corona.southPads
+            self.sideName    = 'south'
+            self.cornerWidth = self.corona.padCornerWidth
+            self.sideLength  = self.conf.chipAb.getWidth()
         elif self.type == East:
-            self.pads       = self.corona.eastPads
-            self.sideName   = 'east'
-            self.sideLength = self.conf.chipAb.getHeight()
+            self.pads        = self.corona.eastPads
+            self.sideName    = 'east'
+            self.sideLength  = self.conf.chipAb.getHeight()
+            self.cornerWidth = self.corona.padCornerHeight
         elif self.type == West:
-            self.pads       = self.corona.westPads
-            self.sideName   = 'west'
-            self.sideLength = self.conf.chipAb.getHeight()
+            self.pads        = self.corona.westPads
+            self.sideName    = 'west'
+            self.sideLength  = self.conf.chipAb.getHeight()
+            self.cornerWidth = self.corona.padCornerHeight
         else:
             raise ErrorMessage( 1, 'Pads.Side.__init__(): Invalid value for sideType ({})'.format(sideType))
         self.spacerNames = 'padspacer_' + self.sideName + '_%d'
+        self.uniformPads = True
+        self.padLength   = 0
+        refPadWidth = 0
+        for pad in self.pads:
+            padWidth = pad[1].getMasterCell().getAbutmentBox().getWidth() 
+            self.padLength += padWidth
+            if self.uniformPads:
+                if not refPadWidth:
+                    refPadWidth = padWidth
+                else:
+                    if refPadWidth != padWidth:
+                        self.uniformPads = False
 
     @property
     def conf ( self ): return self.corona.conf
@@ -395,7 +433,7 @@ class Side ( object ):
             self.u = self.corona.padCornerHeight
         padLength = 0
         for pad in self.pads: padLength += pad[1].getMasterCell().getAbutmentBox().getWidth() 
-        padSpacing = (self.sideLength - 2*self.conf.ioPadHeight - padLength) // (len(self.pads) + 1)
+        padSpacing = (self.sideLength - 2*self.u - padLength) // (len(self.pads) + 1)
         if self.conf.padsHavePosition:
             self.pads.sort( key=itemgetter(0) )
             position = self.u
@@ -407,17 +445,20 @@ class Side ( object ):
                 pad[0] = self.toGrid( pad[0] )
                 position = pad[0] + pad[1].getMasterCell().getAbutmentBox().getWidth()  
         else:
-            spacing    = 0
-            minSpacing = self.corona.minPadSpacing
-            position   = self.u
-            for i in range(len(self.pads)):
-                spacing     += padSpacing
-                nextPosition = self.toGrid( position + spacing )
-                if nextPosition - position >= minSpacing:
-                    position += spacing
-                    spacing   = 0
-                self.pads[i][0] = self.toGrid( position )
-                position += self.pads[i][1].getMasterCell().getAbutmentBox().getWidth()
+            padPosition = self.conf.PadPosition( self )
+            for i in range( len(self.pads) ):
+                self.pads[i][0] = self.toGrid( padPosition( i ))
+           #spacing    = 0
+           #minSpacing = self.corona.minPadSpacing
+           #position   = self.u
+           #for i in range(len(self.pads)):
+           #    spacing += padSpacing
+           #    nextPosition = self.toGrid( position + spacing )
+           #    if nextPosition - position >= minSpacing:
+           #        position += spacing
+           #        spacing   = 0
+           #    self.pads[i][0] = self.toGrid( position )
+           #    position += self.pads[i][1].getMasterCell().getAbutmentBox().getWidth()
         for pad in self.pads:
             self._fillPadSpacing( pad[0] - self.u )
             self._placePad( pad[1] )
@@ -559,6 +600,8 @@ class Corona ( object ):
         
         self.chip             = chip
         self.conf.validated   = False
+        self.padCornerWidth   = self.conf.ioPadHeight
+        self.padCornerHeight  = self.conf.ioPadHeight
         self.northPads        = _dupPads( self.conf.chipConf.northPads )
         self.southPads        = _dupPads( self.conf.chipConf.southPads )
         self.eastPads         = _dupPads( self.conf.chipConf.eastPads )
@@ -578,8 +621,6 @@ class Corona ( object ):
         self.padCorner        = []
         self.padRails         = []  # [ , [net, layer, axis, width] ]
         self.powerCount       = 0
-        self.padCornerWidth   = self.conf.ioPadHeight
-        self.padCornerHeight  = self.conf.ioPadHeight
         self.conf.cfg.chip.padCoreSide = None
         if self.conf.cfg.chip.padCoreSide.lower() == 'south':
             self.padOrient = Transformation.Orientation.MY
@@ -890,11 +931,16 @@ class Corona ( object ):
         trace( 550, ',+', '\tCorona.Builder._supplyToPads()\n' )
         supplyLayerDepth = self.conf.routingGauge.getPowerSupplyGauge().getDepth()
         supplyLayer      = self.conf.routingGauge.getPowerSupplyGauge().getLayer()
-        chipLayer        = self.conf.getRoutingLayer( self.conf.routingGauge.getPowerSupplyGauge().getDepth() - 1 )
         coronaAb         = self.conf.icorona.getAbutmentBox()
         chipAxis         = coronaAxis + self.conf.icorona.getTransformation().getTx()
+        iopinRingLayer   = None
+        if self.conf.iopinRingLayer:
+            iopinRingLayer = DataBase.getDB().getTechnology().getLayer( self.conf.iopinRingLayer )
+        if not iopinRingLayer:
+            iopinRingLayer = self.conf.getRoutingLayer( self.conf.routingGauge.getPowerSupplyGauge().getDepth() - 1 )
         rails = []
-        trace( 550, '\tchipLayer={}\n'.format(chipLayer) )
+        trace( 550, '\tself.conf.chipLayer={}\n'.format(self.conf.iopinRingLayer) )
+        trace( 550, '\tiopinRingLayer={}\n'.format(iopinRingLayer) )
         for rail in self.padRails:
             rails.append( [ rail[0], rail[1], rail[2], rail[3] ] )
         if self.conf.padCoreSide == 'North':
@@ -904,7 +950,7 @@ class Corona ( object ):
             layer    = rail[1]
             railAxis = rail[2]
             width    = rail[3]
-            if net != chipNet or chipLayer.getMask() != layer.getMask():
+            if net != chipNet or iopinRingLayer.getMask() != layer.getMask():
                 continue
             if side == North:
                 trace( 550, '\tNorth side supply\n' )
@@ -913,21 +959,22 @@ class Corona ( object ):
                 trace( 550, '\tchipAxis={}\n'.format(DbU.getValueString(chipAxis)) )
                 trace( 550, '\trailNet={} <-> {}\n'.format(net,chipNet) )
                 trace( 550, '\trailAxis={}\n'.format(DbU.getValueString(railAxis)) )
-                Vertical.create( chipNet
-                               , supplyLayer
-                               , chipAxis
-                               , stripeWidth
-                               , coronaAb.getYMax()
-                               , self.conf.chipAb.getYMax() - railAxis
-                               )
+                v = Vertical.create( chipNet
+                                   , supplyLayer
+                                   , chipAxis
+                                   , stripeWidth
+                                   , coronaAb.getYMax()
+                                   , self.conf.chipAb.getYMax() - railAxis
+                                   )
                 via = BigVia( chipNet
                             , supplyLayerDepth
                             , chipAxis
                             , self.conf.chipAb.getYMax() - railAxis
                             , stripeWidth
                             , width
-                            , BigVia.AllowAllExpand
+                            , BigVia.FitToVias
                             )
+                trace( 550, '\tvertical={}\n'.format(v) ) 
                 trace( 550, '\tpower depth: {}\n'.format( self.conf.routingGauge.getPowerSupplyGauge().getDepth() ))
                 via.mergeDepth( self.conf.routingGauge.getPowerSupplyGauge().getDepth()-1 )
                 via.doLayout()
@@ -951,23 +998,24 @@ class Corona ( object ):
                 trace( 550, '\tchipAxis={}\n'.format(DbU.getValueString(chipAxis)) )
                 trace( 550, '\trailNet={} <-> {}\n'.format(net,chipNet) )
                 trace( 550, '\trailAxis={}\n'.format(DbU.getValueString(railAxis)) )
-                Vertical.create( chipNet
-                               , supplyLayer
-                               , chipAxis
-                               , stripeWidth
-                               , self.conf.chipAb.getYMin() + railAxis
-                               , coronaAb.getYMin()
-                               )
+                v = Vertical.create( chipNet
+                                   , supplyLayer
+                                   , chipAxis
+                                   , stripeWidth
+                                   , self.conf.chipAb.getYMin() + railAxis
+                                   , coronaAb.getYMin()
+                                   )
                 via = BigVia( chipNet
                             , supplyLayerDepth
                             , chipAxis
                             , self.conf.chipAb.getYMin() + railAxis
                             , stripeWidth
                             , width
-                            , BigVia.AllowAllExpand
+                            , BigVia.FitToVias
                             )
                 via.mergeDepth( supplyLayerDepth-1 )
                 via.doLayout()
+                trace( 550, '\tvertical={}\n'.format(v) )
                 pin = Pin.create( coronaNet
                                 , '{}.{}'.format(coronaNet.getName(),self.powerCount)
                                 , Pin.Direction.SOUTH
@@ -999,11 +1047,14 @@ class Corona ( object ):
         if not self.conf.routingGauge.hasPowerSupply(): return
         with UpdateSession():
             capViaWidth   = self.conf.vDeepRG.getPitch()*3
+            supplyLayer   = self.conf.routingGauge.getPowerSupplyGauge().getLayer()
             coreAb        = self.conf.coreAb
             powerNet      = None
             groundNet     = None
             chipPowerNet  = None
             chipGroundNet = None
+            capViaWidth   = max( capViaWidth, supplyLayer.getMinimalSize() )
+
             corona = self.conf.corona
             for net in corona.getNets():
                 if net.isPower (): powerNet  = net
@@ -1040,11 +1091,16 @@ class Corona ( object ):
             icore = self.conf.icore
             xcore = icore.getTransformation().getTx()
             stripeSpecs = []
+            trace( 550, '\tcoreAb.getWidth() = {}\n'.format( DbU.getValueString(coreAb.getWidth()) ))
+            trace( 550, '\tcapViaWidth = {}\n'.format( DbU.getValueString(capViaWidth) ))
+            trace( 550, '\tself.supplyRailWidth = {}\n'.format( DbU.getValueString(self.supplyRailWidth) ))
+            trace( 550, '\tself.supplyRailPitch = {}\n'.format( DbU.getValueString(self.supplyRailPitch) ))
             stripesNb = int( (coreAb.getWidth() - 8*capViaWidth + self.supplyRailWidth) \
                                  // self.supplyRailPitch - 1 )
+            trace( 550, '\tstripesNb = {}\n'.format( stripesNb ))
             offset    = (coreAb.getWidth() - self.supplyRailPitch*(stripesNb-1)) // 2
             stripeSpecs.append( [ xcore + capViaWidth//2 , capViaWidth ] )
-            stripeSpecs.append( [ xcore + 2*capViaWidth + capViaWidth//2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + 4*capViaWidth + capViaWidth//2 , capViaWidth ] )
             if self.chip.spares and len(self.chip.spares.rleafX) > 1:
                 rleafX     = self.chip.spares.rleafX
                 spacing    = (rleafX[1] - rleafX[0]) // 2
@@ -1074,7 +1130,7 @@ class Corona ( object ):
                     stripeSpecs.append( [ xcore + offset + i*self.supplyRailPitch
                                         , self.supplyRailWidth
                                         ] )
-            stripeSpecs.append( [ xcore + coreAb.getWidth() - 2*capViaWidth - capViaWidth//2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + coreAb.getWidth() - 4*capViaWidth - capViaWidth//2 , capViaWidth ] )
             stripeSpecs.append( [ xcore + coreAb.getWidth() - capViaWidth//2 , capViaWidth ] )
 
             trace( 550, '\ticoreAb={}\n'.format(icore.getAbutmentBox()) )

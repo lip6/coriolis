@@ -52,6 +52,7 @@ namespace Unicorn {
     public:
       static        UnicornGui* create             ( QWidget* parent=NULL );
                     void        destroy            ();
+                    void        readQtSettings     ();
       static inline Banner&     getBanner          ();
       virtual       Cell*       getCellFromDb      ( const char* name );
       inline        ImportCell* getImportCell      ();
@@ -59,6 +60,7 @@ namespace Unicorn {
       virtual       UnicornGui* vcreate            () const;
       virtual       std::string _getString         () const;
     public slots:                                  
+                    void        saveQtSettings     ();
                     void        openCell           ();
                     void        saveCell           ();
                     void        importCell         ();

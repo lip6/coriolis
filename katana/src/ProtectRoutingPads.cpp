@@ -17,26 +17,32 @@
 #include <map>
 #include <list>
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/RegularLayer.h"
+#include "hurricane/Pin.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/Rectilinear.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Occurrence.h"
 #include "hurricane/Cell.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/NetRoutingProperty.h"
 #include "crlcore/Catalog.h"
-#include "anabatic/AutoContact.h"
+#include "anabatic/AutoContactTerminal.h"
 #include "anabatic/AutoSegment.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AnabaticEngine.h"
 #include "katana/RoutingPlane.h"
 #include "katana/TrackSegment.h"
 #include "katana/TrackFixedSegment.h"
+#include "katana/TrackFixedSpan.h"
+#include "katana/TrackFixedSpanRp.h"
 #include "katana/Track.h"
 #include "katana/KatanaEngine.h"
 
@@ -45,6 +51,7 @@ namespace {
 
   using namespace std;
   using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
@@ -55,8 +62,10 @@ namespace {
   using Hurricane::Layer;
   using Hurricane::BasicLayer;
   using Hurricane::RegularLayer;
+  using Hurricane::Pin;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
+  using Hurricane::Rectilinear;
   using Hurricane::Plug;
   using Hurricane::Transformation;
   using Hurricane::RoutingPad;
@@ -66,9 +75,203 @@ namespace {
   using Hurricane::NetRoutingExtension;
   using Hurricane::NetRoutingState;
   using CRL::CatalogExtension;
+  using Anabatic::GCell;
   using Anabatic::AutoContact;
+  using Anabatic::AutoContactTerminal;
   using Anabatic::AutoSegment;
   using namespace Katana;
+
+
+  class CompareIntervalByVMin {
+    public:
+      inline bool operator () ( const Interval& lhs, const Interval& rhs ) const
+      {
+        if (lhs.getVMin() < rhs.getVMin())
+          return true;
+        else {
+          if (   (lhs.getVMin() == rhs.getVMin())
+             and (lhs.getVMax() >  rhs.getVMax()) )
+            return true;
+        }
+        return false;
+      }
+  };
+
+
+  class CompareTrackByAxis {
+    public:
+      inline bool operator () ( const Track* lhs, const Track* rhs ) const
+      { return lhs->getAxis() < rhs->getAxis(); }
+  };
+
+
+  void  postProtectRoutingPadHV ( RoutingPad* rp )
+  {
+    cdebug_log(145,1) << "::postProtectRoutingPadHV() " << rp << endl;
+
+    RoutingGauge* rg         = Session::getRoutingGauge();
+    RoutingPlane* planeM2    = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     m2spacing  = planeM2->getLayer()->getMinimalSpacing();
+    const Layer*  via12      = Session::getContactLayer( 0 );
+    DbU::Unit     viaVShrink = rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureV );
+    Box           bb         = rp->getBoundingBox();
+
+    bb.inflate( m2spacing/2, -viaVShrink );
+    Track*        track      = planeM2->getTrackByPosition( bb.getYMin(), Constant::Superior );
+
+    Track*   trackFree  = nullptr;
+    size_t   freeAccess = 0;
+    Interval rpInterval ( bb.getXMin(), bb.getXMax() );
+    for ( ; track and (track->getAxis() <= bb.getYMax()) ; track = track->getNextTrack() ) {
+      Interval freeInterval = track->getFreeInterval( bb.getXCenter(), rp->getNet() );
+      if (not freeInterval.isEmpty() and freeInterval.contains(rpInterval)) {
+        freeAccess++;
+        if (not trackFree) trackFree = track;
+      }
+    }
+
+    if (freeAccess < 2) {
+      cdebug_log(145,0) << "RoutingPad is almost fully obstructed" << endl;
+      if (trackFree) {
+        Box metal2bb ( bb.getXMin(), trackFree->getAxis()-1, bb.getXMax(), trackFree->getAxis()+1 );
+        TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, trackFree );
+        cdebug_log(145,0) << "| " << element << endl;
+      }
+    }
+    
+    cdebug_tabw(145,-1);
+  }
+
+
+  void  protectRoutingPadHV ( RoutingPad* rp )
+  {
+#define FEATURE_SPAN_CENTER       0
+#define FEATURE_SPAN_GCELL_CENTER 1
+#define FEATURE_SPAN_ANCHOR       0
+    
+    cdebug_log(145,1) << "::protectRoutingPadHV() " << rp << endl;
+
+    RoutingPlane* planeM1 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 0 );
+    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
+    Box           bb      = rp->getBoundingBox();
+    if (not rp->isVSmall() and (bb.getWidth() < 3*pitch)) {
+      cdebug_tabw(145,-1);
+      return;
+    }
+    RoutingPlane* planeM3 = nullptr;
+    if (Session::getAllowedDepth())
+      planeM3 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 2 );
+    // if (not rp->isPunctual()) {
+    //   cdebug_tabw(145,-1);
+    //   return;
+    // }
+
+    DbU::Unit     m1spacing      = planeM1->getLayer()->getMinimalSpacing();
+    DbU::Unit     m2spacing      = planeM2->getLayer()->getMinimalSpacing();
+    DbU::Unit     halfViaBotSide = AutoSegment::getViaToBottomCap( 1 );
+    DbU::Unit     halfViaTopSide = AutoSegment::getViaToTopCap( 1 );
+#if FEATURE_SPAN_CENTER
+    Box           metal2bb       = Box( bb.getXCenter(), bb.getYCenter(), bb.getXCenter(), bb.getYCenter() );
+#endif
+    cdebug_log(145,0) << "m1spacing=" << DbU::getValueString(m1spacing) << endl;
+    cdebug_log(145,0) << "m2spacing=" << DbU::getValueString(m2spacing) << endl;
+
+#if FEATURE_SPAN_GCELL_CENTER
+    Box trackBb = bb;
+    trackBb.inflate( 0, -halfViaBotSide );
+
+    DbU::Unit y     = trackBb.getYCenter();
+    DbU::Unit x     = trackBb.getXCenter();
+    GCell*    gcell = Session::getGCellUnder( bb.getXCenter(), bb.getYCenter() );
+    if (gcell) {
+      if      (trackBb.getYMax() <= gcell->getYCenter()) y = trackBb.getYMax();
+      else if (trackBb.getYMin() >= gcell->getYCenter()) y = trackBb.getYMin();
+      else    y = gcell->getYCenter();
+    }
+    Track* track = planeM2->getTrackByPosition( y, Constant::Nearest );
+    if (track->getAxis() > trackBb.getYMax()) {
+      y = track->getPreviousTrack()->getAxis();
+    }
+    if (track->getAxis() < trackBb.getYMin()) {
+      y = track->getNextTrack()->getAxis();
+    }
+    if (planeM3) {
+      trackBb.inflate( -halfViaBotSide, 0 );
+      if (not trackBb.isEmpty()) {
+        Track* track = planeM3->getTrackByPosition( x, Constant::Superior );
+        if (track->getAxis() <= trackBb.getXMax()) {
+          x = track->getAxis();
+        }
+      }
+    }
+
+
+    Box metal2bb = Box( x, y );
+#endif
+
+#if FEATURE_SPAN_ANCHOR
+    Contact* anchor = nullptr;
+    for ( Component* slave : rp->getSlaveComponents() ) {
+      anchor = dynamic_cast<Contact*>( slave );
+      if (anchor) break;
+    }
+    DbU::Unit y        = (anchor) ? anchor->getY() : bb.getYCenter();
+    Box       metal2bb = Box( bb.getXCenter(), y, bb.getXCenter(), y );
+#endif
+
+    // if (bb.getWidth() < pitch)
+    // //metal2bb.inflate( halfViaTopSide - halfViaBotSide, 0 );
+    //   metal2bb.inflate( (m1spacing - m2spacing)/2, 0 );
+    // else
+    //   metal2bb.inflate( - m2spacing / 2, 0 );
+    cdebug_log(145,0) << "metal2bb=" << metal2bb << endl;
+  //metal2bb.inflate( m2spacing/2 + halfViaTopSide, 0 );
+    metal2bb.inflate( halfViaTopSide, 0 );
+
+    // Box           metal2bb       = Box( bb.getXMin() - halfViaTopSide + halfViaBotSide
+    //                                   , bb.getYCenter()
+    //                                   , bb.getXMax() + halfViaTopSide - halfViaBotSide
+    //                                   , bb.getYCenter()
+    //                                   );
+
+  //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
+    Track*            ntrack   = planeM2->getTrackByPosition( metal2bb.getYCenter(), Constant::Nearest );
+    TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, ntrack );
+    cdebug_log(145,0) << "halfViaTopSide=" << DbU::getValueString(halfViaTopSide) << endl;
+    cdebug_log(145,0) << "halfViaBotSide=" << DbU::getValueString(halfViaBotSide) << endl;
+    cdebug_log(145,0) << "| " << element << endl;
+    
+    cdebug_tabw(145,-1);
+  }
+
+
+  void  protectRoutingPadVH ( RoutingPad* rp )
+  {
+    cdebug_log(145,1) << "::protectRoutingPadVH() " << rp << endl;
+    if (not rp->isPunctual()) {
+      cdebug_tabw(145,-1);
+      return;
+    }
+
+    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    Box           bb          = rp->getBoundingBox();
+    Track*        track       = plane->getTrackByPosition( bb.getXCenter(), Constant::Nearest );
+    DbU::Unit     halfViaSide = AutoSegment::getViaToTopCap( 0 );
+    Box           metal2bb    = Box( bb.getXMin()
+                                   , bb.getYCenter() - halfViaSide
+                                   , bb.getXMax()
+                                   , bb.getYCenter() + halfViaSide
+                                   );
+
+  //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
+    TrackFixedSpan* element = TrackFixedSpan::create( rp->getNet(), metal2bb, track );
+    cdebug_log(145,0) << "halfViaSside=" << DbU::getValueString(halfViaSide) << endl;
+    cdebug_log(145,0) << "| " << element << endl;
+    
+    cdebug_tabw(145,-1);
+    return;
+  }
 
 
   void  protectRoutingPad ( RoutingPad* rp, Flags flags )
@@ -78,19 +281,17 @@ namespace {
     Name            padNetName     = "pad";
     Component*      usedComponent  = rp->_getEntityAs<Component>();
     Path            path           = rp->getOccurrence().getPath();
+    Net*            net            = rp->getNet();
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();
+    Box             ab             = rp->getCell()->getAbutmentBox();
 
     if (dynamic_cast<Plug*>(usedComponent)) {
       cerr << Error( "Katana::protectRoutingPad(): A RoutingPad of \"%s\" is still on it's Plug.\n"
                      "        (%s)"
-                   , getString(rp->getNet()->getName()).c_str()
+                   , getString(net->getName()).c_str()
                    , getString(usedComponent).c_str()
                    ) << endl;
-      cdebug_tabw(145,-1);
-      return;
-    }
-    if (Session::getRoutingGauge()->getLayerType(usedComponent->getLayer()) == Constant::PinOnly) {
       cdebug_tabw(145,-1);
       return;
     }
@@ -99,84 +300,210 @@ namespace {
     cdebug_log(145,0) << "masterNet:  " << masterNet << endl;
 
     if (CatalogExtension::isPad(masterNet->getCell())) {
-      if (   rp->getNet()->isPower()
-         or (rp->getNet()->getName() == padNetName) ) {
+      if (   net->isPower()
+         or (net->getName() == padNetName) ) {
         cdebug_tabw(145,-1);
         return;
       }
     }
 
-    vector<Segment*> segments;
-
-    for ( Segment* segment : masterNet->getSegments() ) {
-      RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment->getLayer());
-      if (not plane) continue;
-
-      if (usedComponent == dynamic_cast<Component*>(segment)
-         and not (flags & Flags::ProtectSelf)) continue;
-      if (not NetExternalComponents::isExternal(segment)) continue;
-
-      segments.push_back( segment );
+    RoutingLayerGauge* rlg     = Session::getLayerGauge( rp->getLayer() );
+    size_t             rpDepth = rlg->getDepth();
+    if (rlg->getType() == Constant::PinOnly) {
+      if (rpDepth == 0) {
+        if (Session::getRoutingGauge()->isVH()) protectRoutingPadVH( rp );
+        else                                    protectRoutingPadHV( rp );
+      } 
+      cdebug_tabw(145,-1);
+      return;
+    }
+    if (not (  (rlg->getType() == Constant::Default  )
+            or (rlg->getType() == Constant::LocalOnly))) {
+      cdebug_tabw(145,-1);
+      return;
     }
 
-    for ( size_t i=0 ; i<segments.size() ; ++i ) {
-      RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer(segments[i]->getLayer());
+    vector< pair<Box,const Layer*> > bbs;
+    for ( Component* component : masterNet->getComponents() ) {
+      const Layer*  layer = component->getLayer();
+      RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer( layer );
+      if (not plane) continue;
+
+      Pin* pin = dynamic_cast<Pin*>( component );
+      if (pin) {
+        Box bb = pin->getBoundingBox();
+        transformation.applyOn( bb );
+        bbs.push_back( make_pair( bb, layer ));
+        cdebug_log(145,0) << "@ " << pin << " bb:" << bb << endl;
+        continue;
+      }
+
+      Segment* segment = dynamic_cast<Segment*>( component );
+      if (segment) {
+        Box bb = segment->getBoundingBox();
+        transformation.applyOn( bb );
+        bbs.push_back( make_pair( bb, layer ));
+        cdebug_log(145,0) << "@ " << segment << " bb:" << bb << endl;
+        continue;
+      }
+
+      Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( component );
+      if (rectilinear) {
+        cdebug_log(145,0) << "@ " << rectilinear << endl;
+        vector<Box> rbbs;
+        rectilinear->getAsRectangles( rbbs, (plane->isVertical() ? Rectilinear::HSliced
+                                                                 : Rectilinear::VSliced ));
+        for ( Box& bb : rbbs ) {
+          transformation.applyOn( bb );
+          bbs.push_back( make_pair( bb, layer ));
+          cdebug_log(145,0) << "| bb:" << bb << endl;
+        }
+        continue;
+      }
+    }
+
+    map<Track*, vector<Interval>, CompareTrackByAxis > intervalsByTracks;
+    for ( auto item : bbs ) {
+      RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer( item.second );
       Flags         direction = plane->getDirection();
+      DbU::Unit     ppitch    = plane->getLayerGauge()->getPitch();
       DbU::Unit     wireWidth = plane->getLayerGauge()->getWireWidth();
       DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
                                 - wireWidth/2
                                 - DbU::fromLambda(0.1);
-      DbU::Unit     extension = segments[i]->getLayer()->getExtentionCap();
-      Box           bb        ( segments[i]->getBoundingBox() );
+      DbU::Unit     cap       = plane->getLayer()->getMinimalSpacing() / 2;
+      DbU::Unit     extension = item.second->getExtentionCap();
+      Box           bb        = item.first.getIntersection( ab );
 
-      transformation.applyOn ( bb );
-
-      cdebug_log(145,0) << "@ " << segments[i] << " bb:" << bb << endl;
+      cdebug_log(145,0) << "@ bb:"  << bb << endl;
       cdebug_log(145,0) << "delta=" << DbU::getValueString(delta) << endl;
+      cdebug_log(145,0) << "cap="   << DbU::getValueString(cap) << endl;
+      if (bb.isEmpty()) continue;
 
-      if ( direction == Flags::Horizontal ) {
+      if (direction == Flags::Horizontal) {
         DbU::Unit axisMin = bb.getYMin() - delta;
         DbU::Unit axisMax = bb.getYMax() + delta;
 
-        Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
+        Track* track = plane->getTrackByPosition( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
-          Horizontal* segment = Horizontal::create ( rp->getNet()
-                                                   , segments[i]->getLayer()
-                                                   , track->getAxis()
-                                                   , wireWidth
-                                                   , bb.getXMin()+extension
-                                                   , bb.getXMax()-extension
-                                                   );
-          TrackFixedSegment::create ( track, segment );
-          cdebug_log(145,0) << "| " << segment << endl;
+          cdebug_log(145,0) << "> track " << track << endl;
+          intervalsByTracks[ track ].push_back( Interval( bb.getXMin(), bb.getXMax() ));
         }
       } else {
         DbU::Unit axisMin = bb.getXMin() - delta;
         DbU::Unit axisMax = bb.getXMax() + delta;
 
-        Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
+        Track* track = plane->getTrackByPosition( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
-          Vertical* segment = Vertical::create ( rp->getNet()
-                                               , segments[i]->getLayer()
-                                               , track->getAxis()
-                                               , wireWidth
-                                               , bb.getYMin()+extension
-                                               , bb.getYMax()-extension
-                                               );
-          TrackFixedSegment::create ( track, segment );
-          cdebug_log(145,0) << "| " << segment << endl;
+          cdebug_log(145,0) << "> track " << track << endl;
+          intervalsByTracks[ track ].push_back( Interval( bb.getYMin(), bb.getYMax() ) );
         }
       }
     }
+
+    for ( auto item : intervalsByTracks ) {
+      Track*&           track     = const_cast<Track*&>( item.first );
+      vector<Interval>& intervals = item.second;
+      DbU::Unit         cap       = track->getLayer()->getMinimalSpacing() / 2;
+      DbU::Unit         halfWidth = track->getLayer()->getMinimalSize   () / 2;
+      cdebug_log(145,0) << "> track " << track << endl;
+
+      sort( intervals.begin(), intervals.end(), CompareIntervalByVMin() );
+      Interval fullSpan = intervals[0];
+      cdebug_log(145,0) << "| fullSpan " << fullSpan << endl;
+      for ( size_t i=1 ; i < intervals.size() ; ) {
+        if (fullSpan.contains(intervals[i])) {
+          cdebug_log(145,0) << "| contained " << intervals[i] << endl;
+          intervals.erase( intervals.begin() + i );
+          continue;
+        }
+        if (fullSpan.intersect(intervals[i])) {
+          cdebug_log(145,0) << "| intersect " << intervals[i] << endl;
+          fullSpan.merge( intervals[i].getVMax() );
+          cdebug_log(145,0) << "| fullSpan " << fullSpan << endl;
+          if (  (intervals[i  ].getSize() < 2*cap)
+             or (intervals[i-1].getSize() < 2*cap)) {
+            cdebug_log(145,0) << "| too narrow, merge " << endl;
+            intervals[i-1].merge( fullSpan.getVMax() );
+            intervals.erase( intervals.begin() + i );
+            continue;
+          }
+          cdebug_log(145,0) << "| separate" << endl;
+          intervals[i-1] = Interval( intervals[i-1].getVMin()      , intervals[i].getVMin() - cap );
+          intervals[i  ] = Interval( intervals[i  ].getVMin() + cap, intervals[i].getVMax() );
+          ++i;
+          continue;
+        }
+        if (fullSpan.getVMax() > intervals[i-1].getVMax()) {
+          cdebug_log(145,0) << "| expand last" << endl;
+          intervals[i-1].merge( fullSpan.getVMax());
+        }
+        
+        fullSpan = intervals[i];
+        ++i;
+      }
+
+      cdebug_log(145,0) << "Cleaned up on " << track << endl;
+      for ( size_t i=0 ; i<intervals.size() ; ++i ) {
+        cdebug_log(145,0) << "| " << intervals[i] << endl;
+      }
+      cdebug_log(145,0) << "end" << endl;
+
+      for ( size_t i=0 ; i<intervals.size() ; ++i ) {
+        Interval termSpan = Interval( intervals[i] ).inflate( cap );
+        Interval freeSpan = track->getFreeInterval( intervals[i].getCenter(), net );
+        cdebug_log(145,0) << "| termSpan " << termSpan << endl;
+        cdebug_log(145,0) << "| freeSpan " << freeSpan << endl;
+        bool overlap  = false;
+        bool conflict = false;
+        if (freeSpan.isEmpty() or not freeSpan.contains(termSpan)) {
+          overlap = true;
+          size_t ovBegin = 0;
+          size_t ovEnd   = 0;
+          track->getOverlapBounds( termSpan, ovBegin, ovEnd );
+          if (ovBegin != Track::npos) {
+            for ( ; ovBegin <= ovEnd ; ++ovBegin ) {
+              TrackElement*       overlaped = track->getSegment( ovBegin );
+              TrackBaseFixedSpan* fixedSpan = dynamic_cast<TrackBaseFixedSpan*>( overlaped );
+              if (fixedSpan) {
+                if (not fixedSpan->isBlockage())
+                  fixedSpan->setNet( nullptr );
+              } else
+                conflict = true;
+            }
+          }
+        }
+        cdebug_log(145,0) << "| overlap =" << overlap << endl;
+        cdebug_log(145,0) << "| conflict=" << conflict << endl;
+        if (not conflict) {
+          Box bb;
+          if (track->isHorizontal())
+            bb = Box( intervals[i].getVMin(), track->getAxis()-halfWidth
+                    , intervals[i].getVMax(), track->getAxis()+halfWidth );
+          else
+            bb = Box( track->getAxis()-halfWidth, intervals[i].getVMin()
+                    , track->getAxis()+halfWidth, intervals[i].getVMax() );
+          TrackBaseFixedSpan* element = nullptr;
+          if (rp->isPunctual() and not overlap)
+            element = TrackFixedSpanRp::create( rp, bb, track );
+          else
+            element = TrackFixedSpan::create( ((overlap) ? nullptr : net), bb, track );
+          cdebug_log(145,0) << "| " << element << endl;
+        }
+
+      }
+    }
+    Session::revalidate();
     cdebug_tabw(145,-1);
   }
-
+  
 
 } // End of anonymous namespace.
 
 
 namespace Katana {
 
+  using Hurricane::Breakpoint;
   using Hurricane::DataBase;
   using Hurricane::Technology;
   using Hurricane::BasicLayer;
@@ -189,6 +516,10 @@ namespace Katana {
     cmess1 << "  o  Protect external components not useds as RoutingPads." << endl;
 
     openSession();
+
+    RoutingPlane* planeM1 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 0 );
+    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
 
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply()) continue;
@@ -207,6 +538,30 @@ namespace Katana {
         protectRoutingPad( rps[i], flags );
 
       DebugSession::close();
+    }
+
+    if (not Session::getRoutingGauge()->isVH()) {
+      for ( Net* net : getCell()->getNets() ) {
+        if (net->isSupply()) continue;
+
+        DebugSession::open( net, 145, 150 );
+        cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
+
+        NetData* data = getNetData( net );
+        if (data and data->isFixed()) continue;
+
+        vector<RoutingPad*> rps;
+        for ( RoutingPad* rp : net->getRoutingPads() ) {
+          Box  bb = rp->getBoundingBox();
+          if (rp->isVSmall() or (bb.getWidth() > 3*pitch)) continue;
+          rps.push_back( rp );
+        }
+
+        for ( size_t i=0 ; i<rps.size() ; ++i )
+          postProtectRoutingPadHV( rps[i] );
+
+        DebugSession::close();
+      }
     }
 
     Session::close();

@@ -19,6 +19,7 @@
 #include "hurricane/Commons.h"
 #include "hurricane/Error.h"
 #include "hurricane/DbU.h"
+#include "hurricane/Box.h"
 #include "hurricane/Collection.h"
 #include "hurricane/Slot.h"
 #include "crlcore/Utilities.h"
@@ -38,8 +39,9 @@ namespace Constant {
                       , Unusable          = (1 << 4)
                       , PowerSupply       = (1 << 5)
                       , PinOnly           = (1 << 6)
-                      , Default           = (1 << 7)
-                      , BottomPowerSupply = (1 << 8)
+                      , LocalOnly         = (1 << 7)
+                      , Default           = (1 << 8)
+                      , BottomPowerSupply = (1 << 9)
                       };
 
   enum Round          { Superior          = (1 << 10)
@@ -65,6 +67,7 @@ namespace CRL {
   using Hurricane::GenericFilter;
   using Hurricane::Record;
   using Hurricane::DbU;
+  using Hurricane::Box;
   using Hurricane::Layer;
 
 
@@ -94,6 +97,7 @@ namespace CRL {
     // Accessors.                       
       inline  bool                      isHorizontal     () const;
       inline  bool                      isVertical       () const;
+      inline  bool                      isUsable         () const;
       inline  const Layer*              getLayer         () const;
       inline  const Layer*              getBlockageLayer () const;
               unsigned int              getDepth         () const;
@@ -112,8 +116,9 @@ namespace CRL {
               void                      divide           ( DbU::Unit dividend, long& quotient, long& modulo ) const;
               unsigned int              getTrackNumber   ( DbU::Unit start, DbU::Unit stop ) const;
               long                      getTrackIndex    ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
+      inline  DbU::Unit                 getTrackPosition ( const Box&, DbU::Unit position, unsigned mode ) const;
       inline  DbU::Unit                 getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
-              DbU::Unit                 getTrackPosition ( DbU::Unit start, long index ) const;
+      inline  DbU::Unit                 getTrackPosition ( DbU::Unit start, long index ) const;
       inline  void                      setRoutingGauge  ( RoutingGauge* );
       inline  void                      setPWireWidth    ( DbU::Unit );
       inline  void                      setType          ( uint32_t );
@@ -178,6 +183,8 @@ namespace CRL {
 
   inline  bool                      RoutingLayerGauge::isHorizontal     () const { return (_direction == Constant::Direction::Horizontal); }
   inline  bool                      RoutingLayerGauge::isVertical       () const { return (_direction == Constant::Direction::Vertical); }
+  inline  bool                      RoutingLayerGauge::isUsable         () const { return     (_type != Constant::LayerGaugeType::PinOnly)
+                                                                                          and (_type != Constant::LayerGaugeType::LocalOnly); }
   inline  const Layer*              RoutingLayerGauge::getLayer         () const { return _layer; }
   inline  unsigned int              RoutingLayerGauge::getDepth         () const { return _depth; }
   inline  const Layer*              RoutingLayerGauge::getBlockageLayer () const { return _blockageLayer; }
@@ -193,12 +200,20 @@ namespace CRL {
   inline  DbU::Unit                 RoutingLayerGauge::getViaWidth      () const { return _viaWidth; }
   inline  DbU::Unit                 RoutingLayerGauge::getHalfViaWidth  () const { return _viaWidth>>1; }
   inline  DbU::Unit                 RoutingLayerGauge::getObstacleDw    () const { return _obstacleDw; }
+  inline  DbU::Unit                 RoutingLayerGauge::getTrackPosition ( DbU::Unit start, long index ) const
+                                                                        { return index * _pitch + _offset + start; }
   inline  DbU::Unit                 RoutingLayerGauge::getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
                                                                         { return getTrackPosition( start, getTrackIndex(start,stop,position,mode) ); }
   inline  void                      RoutingLayerGauge::setPWireWidth    ( DbU::Unit pwidth ) { _pwireWidth = pwidth; }
   inline  void                      RoutingLayerGauge::setType          ( uint32_t type ) { _type = (Constant::LayerGaugeType)type; }
   inline  void                      RoutingLayerGauge::setRoutingGauge  ( RoutingGauge* rg ) { _routingGauge = rg; }
 
+
+  inline  DbU::Unit  RoutingLayerGauge::getTrackPosition ( const Box& ab, DbU::Unit position, unsigned mode ) const
+  {
+    if (isHorizontal()) return getTrackPosition( ab.getYMin(), ab.getYMax(), position, mode );
+    return getTrackPosition( ab.getXMin(), ab.getXMax(), position, mode );
+  }
 
 // -------------------------------------------------------------------
 // Class  :  "JsonRoutingLayerGauge".
@@ -270,6 +285,7 @@ inline void  from ( Constant::LayerGaugeType& type, const std::string& s )
 {
   if      (s == "Unusable"          ) type = Constant::Unusable;
   else if (s == "PinOnly"           ) type = Constant::PinOnly;
+  else if (s == "LocalOnly"         ) type = Constant::LocalOnly;
   else if (s == "PowerSupply"       ) type = Constant::PowerSupply;
   else if (s == "PowerSupply|Bottom") type = Constant::BottomPowerSupply;
   else {
@@ -289,6 +305,7 @@ inline std::string  getString<const Constant::LayerGaugeType*>
     case Constant::Bottom:            return "Bottom (error)";
     case Constant::Unusable:          return "Unusable";
     case Constant::PinOnly:           return "PinOnly";
+    case Constant::LocalOnly:         return "LocalOnly";
     case Constant::Default:           return "Default";
     case Constant::PowerSupply:       return "PowerSupply";
     case Constant::BottomPowerSupply: return "PowerSupply|Bottom";
@@ -311,6 +328,7 @@ inline std::string  getString<const Constant::LayerGaugeType>
     case Constant::Bottom:            return "Bottom (error)";
     case Constant::Unusable:          return "Unusable";
     case Constant::PinOnly:           return "PinOnly";
+    case Constant::LocalOnly:         return "LocalOnly";
     case Constant::Default:           return "Default";
     case Constant::PowerSupply:       return "PowerSupply";
     case Constant::BottomPowerSupply: return "PowerSupply|Bottom";

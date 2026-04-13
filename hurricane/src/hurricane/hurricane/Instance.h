@@ -34,6 +34,11 @@ class BasicLayer;
 
 class Instance : public Go {
 // ***********************
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
 // Types
 // *****
@@ -191,6 +196,9 @@ class Instance : public Go {
     public: void _setNextOfCellSlaveInstanceSet(Instance* instance) {_nextOfCellSlaveInstanceSet = instance;};
 
 };
+
+  
+  inline const FastRTTI& Instance::fastRTTI () { return _fastRTTI; }
 
 
 class JsonInstance : public JsonEntity {

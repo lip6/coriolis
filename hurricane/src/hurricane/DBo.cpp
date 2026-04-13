@@ -53,6 +53,7 @@ namespace Hurricane {
   unsigned int   DBo::_idCounterLimit =  0;
   unsigned int   DBo::_idCount        =  0;
   unsigned int   DBo::_idCounter      =  1;
+  FastRTTI       DBo::_fastRTTI       ( demangle(typeid(DBo).name()), nullptr );
 
 
   void  DBo::setIdCounterLimit ( unsigned int limit )
@@ -188,6 +189,10 @@ namespace Hurricane {
   }
 
 
+  const FastRTTI& DBo::vfastRTTI () const
+  { return _fastRTTI; }
+
+
   Property* DBo::getProperty ( const Name& name ) const
   {
     set<Property*>::const_iterator iterator = _propertySet.begin();
@@ -314,8 +319,9 @@ namespace Hurricane {
   Record* DBo::_getRecord () const
   {
     Record* record = new Record ( getString(this) );
-    record->add( getSlot("_id"         , _id          ) );
-    record->add( getSlot("_propertySet", &_propertySet) );
+    record->add( getSlot("_fastRTTI"   , &_fastRTTI   ));
+    record->add( getSlot("_id"         ,  _id         ));
+    record->add( getSlot("_propertySet", &_propertySet));
     return record;
   }
 

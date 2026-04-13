@@ -24,7 +24,7 @@
 #include "hurricane/Horizontal.h"
 #include "anabatic/AutoContactTerminal.h"
 #include "katana/DataNegociate.h"
-#include "katana/TrackElement.h"
+#include "katana/TrackFixedSpanRp.h"
 #include "katana/Track.h"
 #include "katana/RoutingPlane.h"
 #include "katana/NegociateWindow.h"
@@ -67,30 +67,76 @@ namespace {
   }
 
 
-  void  getPerpandiculars ( TrackElement*           segment
-                          , Anabatic::AutoContact*  from
+  void  getPerpandiculars ( TrackElement*           startSegment
+                          , Anabatic::AutoContact*  startFrom
                           , Flags                   direction
+                          , int                     maxDepth
                           , vector<TrackElement*>&  perpandiculars
                           )
   {
-    TrackElement* perpandicular;
-    for( Segment* osegment : segment->base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
-      perpandicular = Session::lookup ( osegment );
-      cdebug_log(159,0) << "S " << perpandicular << endl;
+    cdebug_log(159,1) << "getPerpandiculars(): " << startSegment << endl;
+    cdebug_log(159,0) << "  from="      << startFrom << endl;
+    cdebug_log(159,0) << "  direction=" << direction << endl;
+    cdebug_log(159,0) << "  maxDepth="  << maxDepth  << endl;
 
-      if ( not perpandicular or (perpandicular->getDirection() == direction) ) continue;
+    vector< tuple<TrackElement*, Anabatic::AutoContact*, int> > stack;
+    stack.push_back( make_tuple( startSegment, startFrom, maxDepth ));
+    bool  isSymbolic = Session::getRoutingGauge()->isSymbolic();
 
-      perpandiculars.push_back ( perpandicular );
+    size_t nonPrefCount = 1;
+    if (startSegment->isNonPref()) {
+      perpandiculars.push_back( startSegment );
+      if (startSegment->isForOffgrid())
+        nonPrefCount = 0;
+    }
+    
+    while ( not stack.empty() ) {
+      TrackElement*          segment = std::get<0>( stack.back() );
+      Anabatic::AutoContact* from    = std::get<1>( stack.back() );
+      int                    depth   = std::get<2>( stack.back() );
+      stack.pop_back();
+    
+      TrackElement* perpandicular = nullptr;
+      Anabatic::AutoContact* contact = segment->base()->getAutoSource();
+      if (contact != from) {
+        for( Segment* osegment : contact->getSlaveComponents().getSubSet<Segment*>() ) {
+          perpandicular = Session::lookup ( osegment );
+          cdebug_log(159,0) << "S " << perpandicular << endl;
+      
+          if (not perpandicular) continue;
+          if (not isSymbolic and perpandicular->isGlobal()) continue;
+          if (perpandicular->getDirection() == direction) {
+            if (depth > 0)
+              stack.push_back( make_tuple( perpandicular, contact, depth-1 ));
+            continue;
+          }
+          if ((nonPrefCount > 0) and perpandicular->isNonPref())
+            continue;
+          perpandiculars.push_back( perpandicular );
+        }
+      }
+
+      contact = segment->base()->getAutoTarget();
+      if (contact != from) {
+        for( Segment* osegment : contact->getSlaveComponents().getSubSet<Segment*>() ) {
+          perpandicular = Session::lookup ( osegment );
+          cdebug_log(159,0) << "T " << perpandicular << endl;
+      
+          if (not perpandicular) continue;
+          if (not isSymbolic and perpandicular->isGlobal()) continue;
+          if (perpandicular->getDirection() == direction) {
+            if (depth > 0)
+              stack.push_back( make_tuple( perpandicular, contact, depth-1 ));
+            continue;
+          }
+          if ((nonPrefCount > 0) and perpandicular->isNonPref())
+            continue;
+          perpandiculars.push_back( perpandicular );
+        }
+      }
     }
 
-    for( Segment* osegment : segment->base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
-      perpandicular = Session::lookup ( osegment );
-      cdebug_log(159,0) << "T " << perpandicular << endl;
-
-      if ( not perpandicular or (perpandicular->getDirection() == direction) ) continue;
-
-      perpandiculars.push_back ( perpandicular );
-    }
+    cdebug_tabw(159,-1);
   }
 
 
@@ -118,30 +164,63 @@ namespace {
   }
 
 
-  void  propagateCagedConstraints ( TrackElement* segment, set<TrackElement*>& faileds )
+  void  propagateCagedConstraints ( KatanaEngine*       katana
+                                  , TrackElement*       segment
+                                  , size_t              isegment
+                                  , set<TrackElement*>& faileds )
   {
-    cdebug_log(159,0) << "propagateCagedConstraints(): " << segment << endl;
+    DebugSession::open( segment->getNet(), 150, 160 );
+    cdebug_log(159,1) << "propagateCagedConstraints(): " << segment << endl;
 
-    if (not segment->isFixed()) return;
+    if (not segment->isFixed() or segment->isFixedAxis()) {
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return;
+    }
 
     Track*                 track         = segment->getTrack();
-  //Flags                  direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
     Flags                  direction     = segment->getDirection();
-    Anabatic::AutoContact* source        = segment->base()->getAutoSource();
-    RoutingPad*            rp            = NULL;
-    Interval               uside         = source->getGCell()->getSide(direction);
-    DbU::Unit              minConstraint = DbU::Min;
-    DbU::Unit              maxConstraint = DbU::Max;
+    Anabatic::AutoContact* source        = nullptr;
+    GCell*                 gcell         = nullptr;
+    RoutingPad*            rp            = nullptr;
     vector<TrackElement*>  perpandiculars;
+
+    if (segment->isFixedSpanRp()) {
+      rp    = dynamic_cast<TrackFixedSpanRp*>( segment )->getRoutingPad();
+      gcell = katana->getGCellUnder( rp->getCenter() );
+    } else {
+      if (not segment->base()) {
+        cdebug_tabw(159,-1);
+        DebugSession::close();
+        return;
+      }
+
+      source = segment->base()->getAutoSource();
+      rp     = dynamic_cast<RoutingPad*>(source->getAnchor());
+      gcell  = source->getGCell();
+      if (not rp) {
+        cerr << Bug( "%s is not anchored on a <RoutingPad>\n       (%s)"
+                   , getString(source).c_str()
+                   , getString(source->getAnchor()).c_str() ) << endl;
+        cdebug_tabw(159,-1);
+        DebugSession::close();
+        return;
+      }
+    }
+    Interval  uside         = gcell->getSide( direction );
+    DbU::Unit minConstraint = uside.getVMin();
+    DbU::Unit maxConstraint = uside.getVMax();
 
     if ( not track ) {
       cerr << Bug( "%s is not inserted in a <Track>", getString(segment).c_str() ) << endl;
+      cdebug_tabw(159,-1);
+      DebugSession::close();
       return;
     }
 
   // Computing constraints from fixed only TrackElements (caging).
-    TrackElement* parallel;
-    size_t i = track->find( segment );
+    TrackElement* parallel = nullptr;
+    size_t i = isegment;
     while ( (i != Track::npos) and (i > 0) ) {
       parallel = track->getSegment( --i );
       if (not parallel) continue;
@@ -153,7 +232,7 @@ namespace {
       minConstraint = max( minConstraint, parallel->getTargetU() );
     }
 
-    i = track->find( segment );
+    i = isegment;
     while ( i < track->getSize()-1 ) {
       parallel = track->getSegment( ++i );
       if (not parallel) continue;
@@ -167,42 +246,40 @@ namespace {
 
     if (minConstraint > maxConstraint) {
       cerr << Bug( "%s have too tight caging constraints.", getString(segment).c_str() ) << endl;
+      cdebug_tabw(159,-2);
+      DebugSession::close();
       return;
     }
     if ( (minConstraint <= uside.getVMin()) and (maxConstraint >= uside.getVMax()) ) {
       cdebug_log(159,0) << "No constraints [" << DbU::getValueString(minConstraint)
-                  << ":"                << DbU::getValueString(maxConstraint)
-                  << " vs. " << uside << endl;
+                        <<                ":" << DbU::getValueString(maxConstraint)
+                        << " vs. " << uside << endl;
+      cdebug_tabw(159,-2);
+      DebugSession::close();
       return;
     }
 
   // Finding perpandiculars, by way of the source & target RoutingPad.
-    if (source->getAnchor()) {
-      rp = dynamic_cast<RoutingPad*>(source->getAnchor());
-      if (rp) {
-        TrackElement* parallel;
-        for( Segment* osegment : rp->getSlaveComponents().getSubSet<Segment*>() ) {
-          parallel = Session::lookup( osegment );
-          if (not parallel) continue;
+    for( Segment* osegment : rp->getSlaveComponents().getSubSet<Segment*>() ) {
+      parallel = Session::lookup( osegment );
+      if (not parallel) continue;
 
-          cdebug_log(159,0) << "* " << parallel << endl;
-          if (parallel->isFixed ()) continue;
-          if (parallel->isGlobal()) continue;
-          getPerpandiculars( parallel, source, direction, perpandiculars );
-          getPerpandiculars( parallel, segment->base()->getAutoTarget(), direction, perpandiculars );
-        }
-      } else {
-        cerr << Bug( "%s is not anchored on a <RoutingPad>\n       (%s)"
-                   , getString(source).c_str()
-                   , getString(source->getAnchor()).c_str() ) << endl;
-      }
+      int depth = (parallel->isForOffgrid()) ? 1 : 0;
+      cdebug_log(159,0) << "* " << parallel << " depth=" << depth << endl;
+      if (parallel->isFixed ()) continue;
+      if (parallel->isGlobal()) continue;
+      if (parallel->base()->getAutoSource()->isTerminal())
+        getPerpandiculars( parallel, parallel->base()->getAutoSource(), direction, depth, perpandiculars );
+      else
+        getPerpandiculars( parallel, parallel->base()->getAutoTarget(), direction, depth, perpandiculars );
     }
 
   // Apply caging constraints to perpandiculars.
     cdebug_tabw(159,1);
     if (perpandiculars.size() == 0) {
       cdebug_log(159,0) << "No perpandiculars to " << segment << endl;
-      cdebug_tabw(159,-1);
+      cdebug_tabw(159,-2);
+      DebugSession::close();
       return;
     }
 
@@ -210,13 +287,19 @@ namespace {
     for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
       cdebug_log(159,0) << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
       perpandiculars[iperpand]->base()->mergeUserConstraints( constraints );
-      if (perpandiculars[iperpand]->base()->getUserConstraints().isEmpty()) {
+      Interval ppConstraints = perpandiculars[iperpand]->base()->getUserConstraints();
+      if (ppConstraints.isEmpty()) {
         cdebug_log(159,0) << "Cumulative caged constraints are too tight on " << perpandiculars[iperpand] << endl;
         findFailedPerpandiculars( rp, direction, faileds );
       }
+      if (perpandiculars[ iperpand ]->isHorizontal())
+        perpandiculars[ iperpand ]->setAxis( rp->getPosition().getY(), Flags::ToSameRipupLimit );
+      else
+        perpandiculars[ iperpand ]->setAxis( rp->getPosition().getX(), Flags::ToSameRipupLimit );
     }
 
-    cdebug_tabw(159,-1);
+    cdebug_tabw(159,-2);
+    DebugSession::close();
   }
 
 
@@ -253,11 +336,8 @@ namespace {
     cdebug_log(159,1) << "protectCagedTerminals() " << track << endl;
 
     DbU::Unit      lastMovedUp   = track->getMin();
-    uint32_t       moveUpCount   = 0;
-
     Configuration* configuration = Session::getConfiguration();
     const Layer*   metal2        = configuration->getRoutingLayer( 1 );
-  //const Layer*   metal3        = configuration->getRoutingLayer( 2 );
     Net*           neighborNet   = NULL;
     RoutingPlane*  metal3plane   = track->getRoutingPlane()->getTop();
 
@@ -269,16 +349,14 @@ namespace {
     for ( size_t i=0 ; i<track->getSize() ; ++i ) {
       TrackElement* segment = track->getSegment(i);
       if (not segment or segment->isRouted()) continue;
-      if (segment and segment->isFixed() and segment->isTerminal()) {
+      if (segment and (segment->isFixed() or segment->isFixedAxis()) and segment->isTerminal()) {
         DbU::Unit  ppitch = segment->getPPitch();
-      //DbU::Unit  pitch  = segment->getPitch();
 
         if (  ((segment->getSourceU() - track->getMin()) < 2*ppitch)
            or ((track->getMax() - segment->getTargetU()) < 2*ppitch) ) continue;
 
         Interval freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
 
-      //if (freeInterval.getSize() < ppitch*6) {
         if (  (segment->getSourceU() - freeInterval.getVMin() < ppitch*3)
            or (freeInterval.getVMax() - segment->getTargetU() < ppitch*3) ) {
           cparanoid << "[INFO] Caged terminal: " << segment << endl;
@@ -297,7 +375,6 @@ namespace {
           cdebug_log(159,0) << "Support length (rp): " << DbU::getValueString(supportLength) << endl;
 
           if (  (segment->getLayer () != metal2)
-           //or (segment->getLength() >= ppitch)
              or (supportLength        >= ppitch)
              or (segment->getNet   () == neighborNet) ) {
             neighborNet = segment->getNet();
@@ -317,40 +394,7 @@ namespace {
             cparanoid << "[INFO]   Cannot protect caged terminal because top layer (metal3) is obstructed." << endl;
             continue;
           }
-
-          if (segment->getSourceU() - lastMovedUp < ppitch*4) {
-            ++moveUpCount;
-            if (moveUpCount % 2 == 0) {
-            //moveUpCaged( segment );
-            }
-          } else {
-            moveUpCount = 0;
-          }
           lastMovedUp = segment->getSourceU();
-          
-#if NOT_NEEDED_AFTER_6502_OPTIM
-          Anabatic::AutoContact* source
-            = Anabatic::AutoContactTerminal::create( support->getGCell()
-                                                    , rp
-                                                    , metal3
-                                                    , rp->getSourcePosition()
-                                                    , DbU::fromLambda(1.0), DbU::fromLambda(1.0)
-                                                    );
-          source->setFlags( Anabatic::CntIgnoreAnchor|Anabatic::CntFixed );
-    
-          Anabatic::AutoContact* target =
-            Anabatic::AutoContactTerminal::create( support->getGCell()
-                                                  , rp
-                                                  , metal3
-                                                  , rp->getSourcePosition()
-                                                  , DbU::fromLambda(1.0), DbU::fromLambda(1.0)
-                                                  );
-          target->setFlags( Anabatic::CntIgnoreAnchor|Anabatic::CntFixed );
-          
-          AutoSegment* fixedSegment = AutoSegment::create( source, target, Flags::Vertical );
-          fixedSegment->setFlags( AutoSegment::SegFixed );
-          Session::getNegociateWindow()->createTrackSegment( fixedSegment, Flags::LoadingStage );
-#endif
         }
 
         neighborNet = segment->getNet();
@@ -359,44 +403,6 @@ namespace {
 
     cdebug_tabw(159,-1);
   }
-
-
-#if THIS_IS_DISABLED
-  void  metal2protect ( AutoContactTerminal* contact )
-  {
-    const Layer*  metal2         = Session::getRoutingLayer(1);
-    RoutingPlane* metal3plane    = Session::getKatanaEngine()->getRoutingPlaneByIndex( 2 );
-    DbU::Unit     metal3axis     = metal3plane->getTrackByPosition( contact->getY() )->getAxis();
-    RoutingPad*   rp             = dynamic_cast<RoutingPad*>( contact->getAnchor() );
-    DbU::Unit     viaSideProtect = Session::getViaWidth((size_t)0);
-    Point         position       ( contact->getX(), metal3axis );
-
-    AutoContact* sourceVia12 = AutoContactTerminal::create( contact->getGCell()
-                                                          , rp
-                                                          , metal2
-                                                          , position
-                                                          , viaSideProtect, viaSideProtect
-                                                          );
-    AutoContact* targetVia12 = AutoContactTerminal::create( contact->getGCell()
-                                                          , rp
-                                                          , metal2
-                                                          , position
-                                                          , viaSideProtect, viaSideProtect
-                                                          );
-    
-    AutoSegment* segment = AutoSegment::create( sourceVia12, targetVia12, Flags::Vertical );
-    
-    sourceVia12->setFlags( Anabatic::CntFixed|Anabatic::CntIgnoreAnchor );
-    targetVia12->setFlags( Anabatic::CntFixed|Anabatic::CntIgnoreAnchor );
-    segment->setFlags( AutoSegment::SegFixed );
-
-    Session::getNegociateWindow()->createTrackSegment( segment, Flags::LoadingStage );
-    
-    cdebug_log(145,0) << "Hard protect: " << contact << endl;
-    cdebug_log(145,0) << "X:" << DbU::getValueString(position.getX())
-                      << " Metal3 Track Y:" << DbU::getValueString(metal3axis) << endl;
-  }
-#endif
 
 
 } // End of local namespace.
@@ -427,23 +433,27 @@ namespace Katana {
 
   //DebugSession::close();
     Session::revalidate ();
-  }
 
-
-  void  KatanaEngine::_computeCagedConstraints ()
-  {
     set<TrackElement*> faileds;
+    for ( size_t i=0 ; i<_routingPlanes.size() ; ++i ) {
+      RoutingPlane* plane = _routingPlanes[i];
 
-    TrackElement*                  segment  = NULL;
-    AutoSegmentLut::const_iterator isegment = _getAutoSegmentLut().begin();
-    for ( ; isegment != _getAutoSegmentLut().end() ; isegment++ ) {
-      segment = _lookup( isegment->second );
-      if (not segment or not segment->isFixed()) continue;
-
-      DebugSession::open( segment->getNet(), 150, 160 );
-      propagateCagedConstraints( segment, faileds );
-      DebugSession::close();
+      Track* track = plane->getTrackByIndex( 0 );
+      while ( track ) {
+        for ( size_t i=0 ; i<track->getSize() ; ++i ) {
+          TrackElement* segment = track->getSegment( i );
+          if (not segment->isFixedSpanRp()) {
+            if (segment->isFixedSpan()) continue;
+            if (  not segment->isFixed()
+               or not segment->isFixedAxis()) continue;
+          }
+          propagateCagedConstraints( this, segment, i, faileds );
+        }
+        track = track->getNextTrack();
+      }
     }
+
+    Session::revalidate ();
   }
 
 

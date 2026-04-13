@@ -74,11 +74,20 @@ namespace Hurricane {
   }
 
 
-  void Record::add ( Slot* slot )
+  void Record::add ( Slot* slot, uint32_t flags )
   {
-    if (!slot) {
+    if (not slot) {
       cerr << "[ERROR] Record::add(): Attempt to add NULL Slot." << endl;
       return;
+    }
+    if (flags & Overload) {
+      for ( unsigned int slotNb=0; slotNb < _slots.size() ; ++slotNb ) {
+        if (_slots[slotNb]->getName() == slot->getName()) {
+          delete _slots[slotNb];
+          _slots[slotNb] = slot;
+          return;
+        }
+      }
     }
     _slots.push_back(slot);
   }

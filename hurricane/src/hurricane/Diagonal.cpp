@@ -44,10 +44,11 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "Diagonal".
 
+  FastRTTI  Diagonal::_fastRTTI ( demangle(typeid(Diagonal).name()), &Diagonal::Super::fastRTTI() );
+
   Diagonal::Diagonal ( Net* net, const Layer* layer, const Point& source, const Point& target, DbU::Unit width )
     :  Super (net)
-    , _layer (layer)
-    , _source(source)
+    , _layer (layer) , _source(source)
     , _target(target)
     , _width (width)
     , _dWidth(0)
@@ -78,17 +79,18 @@ namespace Hurricane {
   }
 
 
-  bool         Diagonal::isNonRectangle    () const { return true; }
-  DbU::Unit    Diagonal::getX              () const { return (_target.getX() + _source.getX()) / 2; }
-  DbU::Unit    Diagonal::getY              () const { return (_target.getX() + _source.getX()) / 2; }
-  DbU::Unit    Diagonal::getSourceX        () const { return _source.getX(); }
-  DbU::Unit    Diagonal::getSourceY        () const { return _source.getY(); }
-  DbU::Unit    Diagonal::getTargetX        () const { return _target.getX(); }
-  DbU::Unit    Diagonal::getTargetY        () const { return _target.getY(); }
-  Point        Diagonal::getSourcePosition () const { return _source; }
-  Point        Diagonal::getTargetPosition () const { return _target; }
-  DbU::Unit    Diagonal::getWidth          () const { return _width; }
-  const Layer* Diagonal::getLayer          () const { return _layer; }
+  const FastRTTI& Diagonal::vfastRTTI         () const { return _fastRTTI; }
+  bool            Diagonal::isNonRectangle    () const { return true; }
+  DbU::Unit       Diagonal::getX              () const { return (_target.getX() + _source.getX()) / 2; }
+  DbU::Unit       Diagonal::getY              () const { return (_target.getX() + _source.getX()) / 2; }
+  DbU::Unit       Diagonal::getSourceX        () const { return _source.getX(); }
+  DbU::Unit       Diagonal::getSourceY        () const { return _source.getY(); }
+  DbU::Unit       Diagonal::getTargetX        () const { return _target.getX(); }
+  DbU::Unit       Diagonal::getTargetY        () const { return _target.getY(); }
+  Point           Diagonal::getSourcePosition () const { return _source; }
+  Point           Diagonal::getTargetPosition () const { return _target; }
+  DbU::Unit       Diagonal::getWidth          () const { return _width; }
+  const Layer*    Diagonal::getLayer          () const { return _layer; }
 
 
   Box  Diagonal::getBoundingBox() const
@@ -269,10 +271,11 @@ namespace Hurricane {
   {
     Record* record = Super::_getRecord();
     if (record) {
-      record->add(           getSlot("_layer" ,  _layer ) );
-      record->add( DbU::getValueSlot("_width" , &_width ) );
-      record->add(           getSlot("_source", &_source) );
-      record->add(           getSlot("_target", &_target) );
+      record->add(           getSlot("_fastRTTI", &_fastRTTI ), Record::Overload );
+      record->add(           getSlot("_layer"   ,  _layer    ) );
+      record->add( DbU::getValueSlot("_width"   , &_width    ) );
+      record->add(           getSlot("_source"  , &_source   ) );
+      record->add(           getSlot("_target"  , &_target   ) );
     }
     return record;
   }

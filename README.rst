@@ -86,7 +86,7 @@ Install the build dependencies:
 
 .. code-block:: bash
 
-   sudo apt install python3 python3-pip python3.10-venv \
+   sudo apt install python3 python3-pip python3-venv \
                     doxygen pelican texlive-latex-recommended \
                     bison flex \
                     qtbase5-dev libqt5svg5-dev libqwt-qt5-dev libbz2-dev \
@@ -162,9 +162,10 @@ First we set up our pdm virtual environment:
 
 .. code-block:: bash
 
-   pdm install --no-self -d --plugins
+   pdm plugin update
+   pdm sync -d --no-self
    
-Below we are just using a local directory call builddir for our meson_ build directory, but you can put it wherever you like.
+Below we are just using a local directory call builddir for our _meson build directory, but you can put it wherever you like.
 
 .. code-block:: bash
 
@@ -197,6 +198,8 @@ For more configuration and install options, see:
 .. _venv: https://www.dataquest.io/blog/a-complete-guide-to-python-virtual-environments/#how-to-use-python-environments
 .. _shell completion: https://pdm.fming.dev/latest/#shell-completion
 .. _using pdm with virtual environments: https://pdm.fming.dev/latest/usage/venv/
+.. _PDM: https://pdm-project.org/
+.. _meson: https://mesonbuild.com/
    
 Other operating systems
 =======================

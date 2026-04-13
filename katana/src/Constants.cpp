@@ -40,6 +40,8 @@ namespace Katana {
   const Hurricane::BaseFlags  Flags::ShowOverloadedGCells = (1L << 36);
   const Hurricane::BaseFlags  Flags::ShowBloatedInstances = (1L << 37);
   const Hurricane::BaseFlags  Flags::ProtectSelf          = (1L << 38);
+  const Hurricane::BaseFlags  Flags::PlacementCallback    = (1L << 39);
+  const Hurricane::BaseFlags  Flags::IgnoreRipupState     = (1L << 40);
 
 
 }  // Anabatic namespace.

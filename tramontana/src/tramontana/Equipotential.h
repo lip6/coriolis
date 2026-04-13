@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) Sorbonne Université 2007-2023, All Rights Reserved
+// Copyright (c) Sorbonne Université 2007-2023.
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -20,14 +20,18 @@
 #include <iostream>
 #include <set>
 #include "hurricane/Net.h"
+#include "hurricane/DRCError.h"
 #include "hurricane/Component.h"
 #include "hurricane/Occurrence.h"
 #include "hurricane/Occurrences.h"
+#include "hurricane/Cell.h"
 #include "tramontana/EquipotentialRelation.h"
 
 
 namespace Tramontana {
 
+  using Hurricane::FastRTTI;
+  using Hurricane::derived_cast;
   using Hurricane::Record;
   using Hurricane::Box;
   using Hurricane::DbU;
@@ -36,12 +40,15 @@ namespace Tramontana {
   using Hurricane::Layer;
   using Hurricane::BasicLayer;
   using Hurricane::Net;
+  using Hurricane::DRCError;
   using Hurricane::NetSet;
   using Hurricane::Cell;
   using Hurricane::Component;
   using Hurricane::OccurrenceSet;
   using Hurricane::Occurrence;
   using Hurricane::Occurrences;
+  class ShortCircuit;
+  class TramontanaEngine;
 
 
   class NetCompareByName {
@@ -57,40 +64,45 @@ namespace Tramontana {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Tramontana::ShortCircuit".
-
-  class ShortCircuit {
-    public:
-      inline ShortCircuit ( Net*, Net*, Component* );
-    private:
-      Net*       _netA;
-      Net*       _netB;
-      Component* _shortCircuit;
-  };
-
-  
-  inline ShortCircuit::ShortCircuit ( Net* a, Net* b, Component* shortCircuit )
-    : _netA        (a)
-    , _netB        (b)
-    , _shortCircuit(shortCircuit)
-  { }
-
-
-// -------------------------------------------------------------------
 // Class  :  "Tramontana::Equipotential".
 
+  typedef std::set<Equipotential*,DBo::CompareById> EquipotentialSet;
+
+
   class Equipotential : public Entity {
+    private:
+      static              FastRTTI  _fastRTTI;
+    public:
+      static inline const FastRTTI& fastRTTI  (); 
+      virtual       const FastRTTI& vfastRTTI () const; 
     public:
       typedef  Entity  Super;
       typedef  std::map< Net*, std::pair<uint32_t,uint32_t>, NetCompareByName >  NetMap;
+      const    uint32_t  Buried    = (1 << 0);
+      const    uint32_t  External  = (1 << 1);
+      const    uint32_t  Global    = (1 << 2);
+      const    uint32_t  Automatic = (1 << 3);
+      const    uint32_t  Power     = (1 << 4);
+      const    uint32_t  Ground    = (1 << 5);
+      const    uint32_t  HasFused  = (1 << 6);
+      const    uint32_t  Merged    = (1 << 7);
     public:
       static        Equipotential* get               ( Component* );
       static        Equipotential* get               ( Occurrence );
       static        Occurrence     getChildEqui      ( Occurrence );
+      static        size_t         getNetSize        ( TramontanaEngine*, Net* );
+      static        void           clearNetSizes     ();
     public:
       static        Equipotential* create            ( Cell* );
       inline        bool           isEmpty           () const;
       inline        bool           isBuried          () const;
+      inline        bool           isPower           () const;
+      inline        bool           isGround          () const;
+      inline        bool           isSupply          () const;
+      inline        bool           isMerged          () const;
+                    bool           hasOpens          () const;
+      inline        bool           hasShorts         () const;
+      inline        bool           hasFused          () const;
       virtual       Cell*          getCell           () const;
       virtual       Box            getBoundingBox    () const;
       inline        std::string    getName           () const;
@@ -98,9 +110,10 @@ namespace Tramontana {
       inline        Net::Type      getType           () const;
       inline        Net::Direction getDirection      () const;
                     void           show              () const;
+      inline        void           setMerged         ();
       inline        bool           hasComponent      ( Component* ) const;
-                    void           add               ( Occurrence, const Box& boundingBox=Box() );
-                    void           merge             ( Equipotential* );
+                    bool           add               ( Occurrence, const Box& boundingBox=Box() );
+                    bool           merge             ( Equipotential* );
       inline        void           add               ( ShortCircuit* );
                     void           consolidate       ();
                     void           clear             ();
@@ -123,6 +136,8 @@ namespace Tramontana {
                                    Equipotential     ( const Equipotential& ) = delete;
                     Equipotential& operator=         ( const Equipotential& ) = delete;
     private:
+      static std::map<Net*,size_t>  _netSizes;
+    private:
       Cell*                       _owner;
       Box                         _boundingBox;
       NetMap                      _nets;
@@ -132,18 +147,19 @@ namespace Tramontana {
       Net::Type                   _type;
       Net::Direction              _direction;
       uint32_t                    _netCount;
-      bool                        _isBuried;
-      bool                        _isExternal;
-      bool                        _isGlobal;
-      bool                        _isAutomatic;
-      bool                        _hasFused;
+      uint32_t                    _flags;
       std::vector<ShortCircuit*>  _shortCircuits;
   };
 
-
   
+  inline const FastRTTI&       Equipotential::fastRTTI         () { return _fastRTTI; }
   inline       bool            Equipotential::isEmpty          () const { return _components.empty() and _childs.empty(); }
-  inline       bool            Equipotential::isBuried         () const { return _isBuried; }
+  inline       bool            Equipotential::isBuried         () const { return (_flags & Buried); }
+  inline       bool            Equipotential::isPower          () const { return (_flags & Power); }
+  inline       bool            Equipotential::isGround         () const { return (_flags & Ground); }
+  inline       bool            Equipotential::isSupply         () const { return (_flags & (Power|Ground)); }
+  inline       bool            Equipotential::isMerged         () const { return (_flags & Merged); }
+  inline       bool            Equipotential::hasFused         () const { return (_flags & HasFused); }
   inline const OccurrenceSet&  Equipotential::getComponents    () const { return _components; }
   inline const OccurrenceSet&  Equipotential::getChilds        () const { return _childs; }
   inline const Equipotential::NetMap&
@@ -153,7 +169,21 @@ namespace Tramontana {
   inline       Net::Direction  Equipotential::getDirection     () const { return _direction; }
   inline const std::vector<ShortCircuit*>&
                                Equipotential::getShortCircuits () const { return _shortCircuits; }
+  inline       void            Equipotential::setMerged        () { _flags |= Merged; }
   inline       void            Equipotential::add              ( ShortCircuit* s ) { _shortCircuits.push_back( s ); }
+
+  
+
+  inline bool  Equipotential::hasShorts () const
+  {
+    switch ( _nets.size() ) {
+      case 0:
+      case 1: return false;
+      case 2:
+        if (hasFused()) return false;
+    }
+    return true;
+  }
 
   inline bool  Equipotential::hasComponent ( Component* component ) const
   {

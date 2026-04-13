@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <QSettings>
 #include <QLabel>
 #include <QRadioButton>
 #include <QButtonGroup>
@@ -37,7 +38,6 @@ namespace Hurricane {
     , _cellWidget (NULL)
     , _stylesGrid (new QGridLayout())
     , _stylesGroup(new QButtonGroup())
-    , _updateState(ExternalEmit)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
     setWindowTitle ( tr("Display Styles") );
@@ -93,24 +93,19 @@ namespace Hurricane {
 
     connect ( _cellWidget, SIGNAL(styleChanged()), this, SLOT(changeStyle()) );
 
-    _updateState = ExternalEmit;
     changeStyle ();
   }
 
 
   void  GraphicsWidget::changeStyle ()
   {
-    if ( _updateState != InternalEmit ) {
     // Should read style here and sets the widget accordingly.
-    }
-    _updateState = ExternalEmit;
   }
 
 
   void  GraphicsWidget::setStyle ( int id )
   {
     if ( _cellWidget ) {
-      _updateState = InternalEmit;
       _cellWidget->setStyle ( (size_t)id );
     }
   }
@@ -133,5 +128,35 @@ namespace Hurricane {
   //setStyle( 0 );
   }
 
+
+  void  GraphicsWidget::readQtSettings ( size_t viewerId )
+  {
+    const vector<DisplayStyle*>& styles = Graphics::getStyles ();
+    QSettings settings;
+    QString   checkKey = QString( "CellViewer/%1/controller/graphics/displayStyle" ).arg( viewerId );
+    if (not settings.contains(checkKey)) return;
+    settings.beginGroup( QString("CellViewer/%1/controller/graphics").arg(viewerId) );
+    int styleId = settings.value( "displayStyle" ).toInt();
+    if (styleId >= 0) {
+      if ((size_t)styleId < styles.size()) {
+        _cellWidget->setStyle( (size_t)styleId );
+        _stylesGroup->button( styleId )->setChecked( true );
+      } else {
+        cerr << Warning( "GraphicsWidget::readQtSettings(): Unable to restore style id=%d (only %d styles)."
+                       , styleId, styles.size()
+                       ) << endl;
+      }
+    }
+    settings.endGroup();
+  }
+  
+
+  void  GraphicsWidget::saveQtSettings ( size_t viewerId ) const
+  {
+    QSettings settings;
+    settings.beginGroup( QString("CellViewer/%1/controller/graphics").arg(viewerId) );
+    settings.setValue( "displayStyle" , _stylesGroup->checkedId() );
+    settings.endGroup();
+  }
 
 }  // Hurricane namespace.

@@ -30,6 +30,7 @@
 #include "hurricane/Technology.h"
 #include "hurricane/Net.h"
 #include "hurricane/NetExternalComponents.h"
+#include "hurricane/Pad.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
@@ -37,6 +38,7 @@
 #include "hurricane/Cell.h"
 #include "hurricane/Library.h"
 #include "hurricane/UpdateSession.h"
+#include "hurricane/DebugSession.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/ToolBox.h"
 #include "crlcore/RoutingGauge.h"
@@ -69,15 +71,113 @@ namespace {
     vdd->setType    ( Net::Type::POWER );
   }
 #endif
+  
+
+  class PinRectilinearFilter {
+    public:
+                        PinRectilinearFilter ( DbU::Unit xThreshold=0
+                                             , DbU::Unit yThreshold=0
+                                             , DbU::Unit pitch=0
+                                             , uint32_t  flags=LefImport::PinFilter_NOFLAGS );
+             bool       match                ( const Box& candidate, const Box& best );
+      inline DbU::Unit  getXThreshold        () const;
+      inline DbU::Unit  getYThreshold        () const;
+      inline DbU::Unit  getPitch             () const;
+      inline uint32_t   getFlags             () const;
+      inline void       setXThreshold        ( DbU::Unit );
+      inline void       setYThreshold        ( DbU::Unit );
+      inline void       setPitch             ( DbU::Unit );
+      inline void       setFlags             ( uint32_t );
+    private:
+      DbU::Unit  _xThreshold;
+      DbU::Unit  _yThreshold;
+      DbU::Unit  _pitch;
+      uint32_t   _flags;
+  };
+
+  
+  PinRectilinearFilter::PinRectilinearFilter ( DbU::Unit xThreshold
+                                             , DbU::Unit yThreshold
+                                             , DbU::Unit pitch
+                                             , uint32_t  flags )
+    : _xThreshold(xThreshold)
+    , _yThreshold(yThreshold)
+    , _pitch     (pitch)
+    , _flags     (flags)
+  { }
+
+
+  inline DbU::Unit  PinRectilinearFilter::getXThreshold () const                 { return _xThreshold; }
+  inline DbU::Unit  PinRectilinearFilter::getYThreshold () const                 { return _yThreshold; }
+  inline DbU::Unit  PinRectilinearFilter::getPitch      () const                 { return _pitch; }
+  inline uint32_t   PinRectilinearFilter::getFlags      () const                 { return _flags; }
+  inline void       PinRectilinearFilter::setXThreshold ( DbU::Unit xThreshold ) { _xThreshold=xThreshold; }
+  inline void       PinRectilinearFilter::setYThreshold ( DbU::Unit yThreshold ) { _yThreshold=yThreshold; }
+  inline void       PinRectilinearFilter::setPitch      ( DbU::Unit pitch )      { _pitch=pitch; }
+  inline void       PinRectilinearFilter::setFlags      ( uint32_t flags )       { _flags=flags; }
+
+
+  bool  PinRectilinearFilter::match ( const Box& candidate, const Box& best )
+  {
+    if (candidate.getWidth () < _xThreshold) return false;
+    if (candidate.getHeight() < _yThreshold) return false;
+    if (_pitch) {
+      DbU::Unit candidateHeight = candidate.getHeight() - candidate.getHeight() % _pitch;
+      DbU::Unit candidateWidth  = candidate.getWidth () - candidate.getWidth () % _pitch;
+      DbU::Unit bestHeight      = best.getHeight()      - best.getHeight()      % _pitch;
+      DbU::Unit bestWidth       = best.getWidth ()      - best.getWidth ()      % _pitch;
+
+      cdebug_log(100,0) << "|   candidate pitched size: " << DbU::getValueString(candidateWidth)
+                        <<                          " x " << DbU::getValueString(candidateHeight) << endl;
+      cdebug_log(100,0) << "|   best pitched size: " << DbU::getValueString(bestWidth)
+                        <<                     " x " << DbU::getValueString(bestHeight) << endl;
+
+      if (_flags & LefImport::PinFilter_TALLEST) {
+        if (candidateHeight != bestHeight) return (candidateHeight > bestHeight);
+        if (candidateWidth  != bestWidth ) return (candidateWidth  > bestWidth);
+      }
+      if (_flags & LefImport::PinFilter_WIDEST) {
+        if (candidateWidth  != bestWidth ) return (candidateWidth  > bestWidth);
+        if (candidateHeight != bestHeight) return (candidateHeight > bestHeight);
+      }
+      if (_flags & LefImport::PinFilter_LARGEST) {
+        if (  (candidateHeight != bestHeight)
+           or (candidateWidth  != bestWidth )) {
+          float candidateArea = (float)candidateWidth * (float)candidateHeight;
+          float bestArea      = (float)bestWidth      * (float)bestHeight;
+          return (candidateArea > bestArea);
+        }
+      }
+    }
+
+    if (_flags & LefImport::PinFilter_TALLEST) {
+      if (candidate.getHeight() != best.getHeight()) return (candidate.getHeight() > best.getHeight());
+      if (candidate.getWidth()  != best.getWidth ()) return (candidate.getWidth () > best.getWidth ());
+    }
+    if (_flags & LefImport::PinFilter_WIDEST) {
+      if (candidate.getWidth()  != best.getWidth ()) return (candidate.getWidth () > best.getWidth ());
+      if (candidate.getHeight() != best.getHeight()) return (candidate.getHeight() > best.getHeight());
+    }
+    if (   (candidate.getWidth()  == best.getWidth ())
+       and (candidate.getHeight() == best.getHeight())) return false;
+
+    float candidateArea = (float)candidate.getWidth() * (float)candidate.getHeight();
+    float bestArea      = (float)best     .getWidth() * (float)best     .getHeight();
+    return (candidateArea > bestArea);
+  }
 
 
   class LefParser {
     public:
       static       void               setMergeLibrary          ( Library* );
       static       void               setGdsForeignDirectory   ( string );
+      static       void               setGdsForeignLibrary     ( Library* );
+      static       Library*           getGdsForeignLibrary     ();
+      static       void               setPinFilter             ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
       static       DbU::Unit          fromLefUnits             ( int );
       static       Layer*             getLayer                 ( string );
       static       void               addLayer                 ( string, Layer* );
+      static       void               clearLayer               ( string );
       static       void               reset                    ();
       static       Library*           parse                    ( string file );
                                       LefParser                ( string file, string libraryName );
@@ -89,6 +189,9 @@ namespace {
                    Net*               earlyGetNet              ( string name );
       inline       string             getLibraryName           () const;
       inline       Library*           getLibrary               ( bool create=false );
+      inline const Point&             getOrigin                () const;
+      inline       DbU::Unit          getOriginX               () const;
+      inline       DbU::Unit          getOriginY               () const;
       inline       string             getForeignPath           () const;
       inline       void               setForeignPath           ( string );
       inline const Point&             getForeignPosition       () const;
@@ -103,10 +206,12 @@ namespace {
       inline       void               setCellGauge             ( CellGauge* );
       inline       Net*               getNet                   () const;
       inline       void               setNet                   ( Net* );
+      inline       void               setOrigin                ( DbU::Unit x, DbU::Unit y );
       static       void               setCoreSite              ( DbU::Unit x, DbU::Unit y );
       static       DbU::Unit          getCoreSiteX             ();
       static       DbU::Unit          getCoreSiteY             ();
-      inline       DbU::Unit          getMinTerminalWidth      () const;
+      inline       DbU::Unit          getXMinTerminalSize      () const;
+      inline       DbU::Unit          getYMinTerminalSize      () const;
       inline       double             getUnitsMicrons          () const;
       inline       DbU::Unit          fromUnitsMicrons         ( double ) const;
       inline       void               setUnitsMicrons          ( double );
@@ -135,42 +240,51 @@ namespace {
       static       int                _pinCbk                  ( lefrCallbackType_e,       lefiPin*         , lefiUserData );
                    void               _pinStdPostProcess       ();
                    void               _pinPadPostProcess       ();
+                   Segment*           _createBestSegment       ( Rectilinear*, DbU::Unit minWidth, DbU::Unit minHeight, const RoutingLayerGauge*, uint32_t flags );
     private:                                               
-      static       string              _gdsForeignDirectory;
-      static       Library*            _mergeLibrary;
-                   string              _file;
-                   string              _libraryName;
-                   Library*            _library;
-                   string              _foreignPath;
-                   Point               _foreignPosition;
-                   Net*                _gdsPower;
-                   Net*                _gdsGround;
-                   Cell*               _cell;
-                   Net*                _net;
-                   string              _busBits;
-                   double              _unitsMicrons;
-                   DbU::Unit           _oneGrid;
+      static       string                _gdsForeignDirectory;
+      static       Library*              _mergeLibrary;
+      static       Library*              _gdsForeignLibrary;
+      static       PinRectilinearFilter  _pinFilter;
+                   string                _file;
+                   string                _libraryName;
+                   Library*              _library;
+                   string                _foreignPath;
+                   Point                 _foreignPosition;
+                   Net*                  _gdsPower;
+                   Net*                  _gdsGround;
+                   Cell*                 _cell;
+                   Point                 _origin;
+                   Net*                  _net;
+                   string                _busBits;
+                   double                _unitsMicrons;
                    map< string, vector<Component*> >  _pinComponents;
-      static       map<string,Layer*>  _layerLut;
-                   vector<string>      _unmatchedLayers;
-                   vector<string>      _errors;
-                   int                 _nthMetal;
-                   int                 _nthCut;
-                   int                 _nthRouting;
-                   RoutingGauge*       _routingGauge;
-                   CellGauge*          _cellGauge;
-                   DbU::Unit           _minTerminalWidth;
-      static       DbU::Unit           _coreSiteX;
-      static       DbU::Unit           _coreSiteY;
+      static       map<string,Layer*>    _layerLut;
+                   vector<string>        _unmatchedLayers;
+                   vector<string>        _errors;
+                   int                   _nthMetal;
+                   int                   _nthCut;
+                   int                   _nthRouting;
+                   RoutingGauge*         _routingGauge;
+                   CellGauge*            _cellGauge;
+                   DbU::Unit             _xminTerminalSize;
+                   DbU::Unit             _yminTerminalSize;
+      static       DbU::Unit             _coreSiteX;
+      static       DbU::Unit             _coreSiteY;
   };
 
 
   inline       bool              LefParser::isVH                     () const { return _routingGauge->isVH(); }
-  inline       DbU::Unit         LefParser::getMinTerminalWidth      () const { return _minTerminalWidth; }
+  inline       DbU::Unit         LefParser::getXMinTerminalSize      () const { return _xminTerminalSize; }
+  inline       DbU::Unit         LefParser::getYMinTerminalSize      () const { return _yminTerminalSize; }
   inline       string            LefParser::getLibraryName           () const { return _libraryName; }
   inline       Library*          LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
   inline       Cell*             LefParser::getCell                  () const { return _cell; }
   inline       void              LefParser::setCell                  ( Cell* cell ) { _cell=cell; }
+  inline const Point&            LefParser::getOrigin                () const { return _origin; }
+  inline       DbU::Unit         LefParser::getOriginX               () const { return _origin.getX(); }
+  inline       DbU::Unit         LefParser::getOriginY               () const { return _origin.getY(); }
+  inline       void              LefParser::setOrigin                ( DbU::Unit x, DbU::Unit y ) { _origin=Point(x,y); }
   inline       string            LefParser::getForeignPath           () const { return _foreignPath; }
   inline       void              LefParser::setForeignPath           ( string path ) { _foreignPath=path; }
   inline const Point&            LefParser::getForeignPosition       () const { return _foreignPosition; }
@@ -205,21 +319,99 @@ namespace {
   inline DbU::Unit  LefParser::fromUnitsMicrons ( double d ) const
   {
     DbU::Unit u = DbU::fromPhysical(d,DbU::Micro);
-    if (u % _oneGrid) {
+    if (u % DbU::oneGrid) {
       cerr << Error( "LefParser::fromUnitsMicrons(): Offgrid value %s (DbU=%d), grid %s (DbU=%d)."
                    , DbU::getValueString(u).c_str(), u
-                   , DbU::getValueString(_oneGrid).c_str(), _oneGrid )
+                   , DbU::getValueString(DbU::oneGrid).c_str(), DbU::oneGrid )
            << endl;
     }
     return u;
   }
 
 
-  string              LefParser::_gdsForeignDirectory = "";
-  Library*            LefParser::_mergeLibrary = nullptr;
-  map<string,Layer*>  LefParser::_layerLut;
-  DbU::Unit           LefParser::_coreSiteX = 0;
-  DbU::Unit           LefParser::_coreSiteY = 0;
+  Segment* LefParser::_createBestSegment ( Rectilinear*             rectilinear
+                                         , DbU::Unit                minWidth
+                                         , DbU::Unit                minHeight
+                                         , const RoutingLayerGauge* rlg
+                                         , uint32_t                 flags )
+  {
+    PinRectilinearFilter  pinFilter ( minWidth, minHeight, flags );
+
+    Segment*    segment = nullptr;
+    vector<Box> boxes;
+    rectilinear->getAsBiggestRectangles( boxes
+                                       , pinFilter.getXThreshold()
+                                       , pinFilter.getYThreshold() );
+    Box best;
+    for ( Box& candidate : boxes ) {
+      DbU::Unit widthAdjust  = candidate.getWidth () % DbU::twoGrid;
+      DbU::Unit heightAdjust = candidate.getHeight() % DbU::twoGrid;
+
+      if (heightAdjust) {
+      //candidate.inflate( 0, 0, 0, -heightAdjust );
+        if (rlg->isHorizontal()) {
+          DbU::Unit trackMin = rlg->getTrackPosition( getCell()->getAbutmentBox()
+                                                    , candidate.getYMin() + minHeight/2
+                                                    , Constant::Superior );
+          DbU::Unit deltaMin = trackMin - candidate.getYMin() - minHeight/2; 
+          DbU::Unit trackMax = rlg->getTrackPosition( getCell()->getAbutmentBox()
+                                                    , candidate.getYMax() - minHeight/2
+                                                    , Constant::Inferior );
+          DbU::Unit deltaMax = candidate.getYMax() - minHeight/2 - trackMax;
+          cdebug_log(100,0) << "  raw candidate " << candidate << endl;
+          cdebug_log(100,0) << "  min height (pin)=" << DbU::getValueString(minHeight) << endl;
+          cdebug_log(100,0) << "  min LZ=" << DbU::getValueString(candidate.getYMin() + minHeight/2)
+                            <<  " track min=" << DbU::getValueString(trackMin) << endl;
+          cdebug_log(100,0) << "  max LZ=" << DbU::getValueString(candidate.getYMax() - minHeight/2)
+                            <<  " track max=" << DbU::getValueString(trackMax) << endl;
+          cdebug_log(100,0) << "  deltaMin=" << DbU::getValueString(deltaMin)
+                            <<  " deltaMax=" << DbU::getValueString(deltaMax)
+                            << endl;
+          if (trackMin > trackMax) continue;
+          if (deltaMin < deltaMax) candidate.inflate( 0, 0, 0, -heightAdjust );
+          else                     candidate.inflate( 0, -heightAdjust, 0, 0 );
+        } else {
+          candidate.inflate( 0, 0, 0, -heightAdjust );
+        }
+      }
+      
+      if (widthAdjust ) candidate.inflate( 0, 0, -widthAdjust, 0 );
+
+      cdebug_log(100,0) << "| " << candidate << endl;
+      if (pinFilter.match(candidate,best))
+        best = candidate;
+    }
+    if (not best.isEmpty()) {
+      if (best.getWidth() < best.getHeight()) {
+        segment = Vertical::create( rectilinear->getNet()
+                                  , rectilinear->getLayer()
+                                  , best.getXCenter()
+                                  , best.getWidth()
+                                  , best.getYMin() 
+                                  , best.getYMax()
+                                  );
+      } else {
+        segment = Horizontal::create( rectilinear->getNet()
+                                    , rectilinear->getLayer()
+                                    , best.getYCenter()
+                                    , best.getHeight()
+                                    , best.getXMin() 
+                                    , best.getXMax()
+                                    );
+      }
+    }
+    cdebug_log(100,0) << "| -> " << segment << endl;
+    return segment;
+  }
+
+
+  string                LefParser::_gdsForeignDirectory = "";
+  Library*              LefParser::_gdsForeignLibrary   = nullptr;
+  Library*              LefParser::_mergeLibrary        = nullptr;
+  PinRectilinearFilter  LefParser::_pinFilter;
+  map<string,Layer*>    LefParser::_layerLut;
+  DbU::Unit             LefParser::_coreSiteX = 0;
+  DbU::Unit             LefParser::_coreSiteY = 0;
 
 
   void  LefParser::setMergeLibrary ( Library* library )
@@ -228,6 +420,25 @@ namespace {
 
   void  LefParser::setGdsForeignDirectory ( string path )
   { _gdsForeignDirectory = path; }
+
+
+  void  LefParser::setGdsForeignLibrary ( Library* library )
+  { _gdsForeignLibrary = library; }
+
+
+  Library* LefParser::getGdsForeignLibrary ()
+  { return _gdsForeignLibrary; }
+
+
+  void  LefParser::setPinFilter ( DbU::Unit xThreshold
+                                , DbU::Unit yThreshold
+                                , uint32_t flags )
+  {
+    _pinFilter.setXThreshold( xThreshold );
+    _pinFilter.setYThreshold( yThreshold );
+    _pinFilter.setPitch     ( 0 );
+    _pinFilter.setFlags     ( flags );
+  }
 
 
   void  LefParser::reset ()
@@ -245,7 +456,6 @@ namespace {
     return NULL;
   }
 
-
   void  LefParser::addLayer ( string layerName, Layer* layer )
   {
     if (getLayer(layerName)) {
@@ -256,6 +466,11 @@ namespace {
     _layerLut[ layerName ] = layer;
   }
 
+  void LefParser::clearLayer ( string layerName )
+  {
+    auto item = _layerLut.find( layerName );
+    if (item != _layerLut.end()) _layerLut.erase(item);
+  }
 
   bool  LefParser::isUnmatchedLayer ( string layerName )
   {
@@ -275,10 +490,10 @@ namespace {
     , _gdsPower        (nullptr)
     , _gdsGround       (nullptr)
     , _cell            (nullptr)
+    , _origin          ()
     , _net             (nullptr)
     , _busBits         ("()")
     , _unitsMicrons    (0.01)
-    , _oneGrid         (DbU::fromGrid(1.0))
     , _unmatchedLayers ()
     , _errors          ()
     , _nthMetal        (0)
@@ -286,7 +501,8 @@ namespace {
     , _nthRouting      (0)
     , _routingGauge    (nullptr)
     , _cellGauge       (nullptr)
-    , _minTerminalWidth(DbU::fromPhysical(Cfg::getParamDouble("lefImport.minTerminalWidth",0.0)->asDouble(),DbU::UnitPower::Micro))
+    , _xminTerminalSize(DbU::fromMicrons( Cfg::getParamDouble("lefImport.xminTerminalSize",0)->asDouble() ))
+    , _yminTerminalSize(DbU::fromMicrons( Cfg::getParamDouble("lefImport.yminTerminalSize",0)->asDouble() ))
   {
     _routingGauge = AllianceFramework::get()->getRoutingGauge();
     _cellGauge    = AllianceFramework::get()->getCellGauge();
@@ -538,10 +754,14 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-    bool  created = false;
-    Cell* cell    = parser->earlyGetCell( created, foreign->cellName() );
+    bool   created  = false;
+    string cellName = string(foreign->cellName()) + "_lef_foreign";
+    Cell*  cell     = parser->earlyGetCell( created, cellName );
 
-    if (created) {
+    // parser->setForeignPosition( Point( parser->fromUnitsMicrons( - foreign->px() )
+    //                                  , parser->fromUnitsMicrons( - foreign->py() )));
+
+    if (not created) {
       if (_gdsForeignDirectory.empty()) {
         cerr << Warning( "LefParser::_macroForeignCbk(): GDS directory *not* set, ignoring FOREIGN statement." ) << endl;
         return 0;
@@ -553,21 +773,36 @@ namespace {
       Gds::setTopCellName( foreign->cellName() );
       Gds::load( parser->getLibrary(), parser->getForeignPath()
                , Gds::NoBlockages|Gds::Layer_0_IsBoundary);
-    }
 
-    parser->setForeignPosition( Point( parser->fromUnitsMicrons( foreign->px() )
-                                     , parser->fromUnitsMicrons( foreign->px() )));
-
-    for ( Net* net : cell->getNets() ) {
-      if (net->isPower ()) parser->setGdsPower ( net );
-      if (net->isGround()) parser->setGdsGround( net );
-      if (parser->getForeignPosition() != Point(0,0)) {
-        for ( Component* component : net->getComponents() ) {
-          component->translate( parser->getForeignPosition().getX()
-                              , parser->getForeignPosition().getY() );
+      for ( Net* net : cell->getNets() ) {
+        if (net->isPower ()) parser->setGdsPower ( net );
+        if (net->isGround()) parser->setGdsGround( net );
+        if (parser->getForeignPosition() != Point(0,0)) {
+          for ( Component* component : net->getComponents() ) {
+            component->translate( parser->getForeignPosition().getX()
+                                , parser->getForeignPosition().getY() );
+          }
         }
       }
+
+      return 0;
     }
+
+    if (not _gdsForeignLibrary) {
+      cerr << Warning( "LefParser::_macroForeignCbk(): GDS foreign library *not* set, ignoring FOREIGN statement." ) << endl;
+      return 0;
+    }
+    Cell* gdsCell = _gdsForeignLibrary->getCell( cellName );
+    if (not gdsCell) {
+      cerr << Warning( "LefParser::_macroForeignCbk(): GDS foreign cell \"%s\" *not* found in library."
+                     , getString(cellName).c_str() ) << endl;
+      return 0;
+    }
+
+    Instance::create( cell, "foreign"
+                    , gdsCell
+                    , Transformation( parser->getForeignPosition() )
+                    , Instance::PlacementStatus::FIXED );
 
     return 0;
   }
@@ -577,23 +812,24 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-    const Layer* layer         = NULL;
-    const Layer* blockageLayer = NULL;
-          Cell*  cell          = parser->getCell();
-          Net*   blockageNet   = cell->getNet( "blockage" );
+    const Layer*     layer         = NULL;
+    const Layer*     blockageLayer = NULL;
+          Cell*      cell          = parser->getCell();
+          Net*       blockageNet   = cell->getNet( "blockage" );
 
     if (not blockageNet) {
       blockageNet = Net::create( cell, "blockage" );
       blockageNet->setType( Net::Type::BLOCKAGE );
     }
 
-  //cerr << "       @ _obstructionCbk: " << blockageNet->getName() << endl;
+    cdebug_log(100,1) << "@ LefParser::_obstructionCbk: " << blockageNet->getName() << endl;
       
     lefiGeometries* geoms = obstruction->geometries();
     for ( int igeom=0 ; igeom < geoms->numItems() ; ++ igeom ) {
       if (geoms->itemType(igeom) == lefiGeomLayerE) {
-        layer         = parser->getLayer( geoms->getLayer(igeom) );
-        blockageLayer = layer->getBlockageLayer();
+        layer = parser->getLayer( geoms->getLayer(igeom) );
+        if (layer)
+          blockageLayer = layer->getBlockageLayer();
       }
       if (not blockageLayer) {
         cerr << Error( "DefImport::_obstructionCbk(): No blockage layer associated to \"%s\".\n"
@@ -610,19 +846,60 @@ namespace {
         double        h         = r->yh - r->yl;
         Segment*      segment   = NULL;
         if (w >= h) {
-          segment = Horizontal::create( blockageNet, blockageLayer
-                                      , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
-                                      , parser->fromUnitsMicrons( h  )
-                                      , parser->fromUnitsMicrons( r->xl )
-                                      , parser->fromUnitsMicrons( r->xh )
-                                      );
+          DbU::Unit yl = parser->fromUnitsMicrons( r->yl );
+          DbU::Unit yh = parser->fromUnitsMicrons( r->yh );
+          if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
+            segment = Horizontal::create( blockageNet, blockageLayer
+                                        , yh - DbU::oneGrid
+                                        , DbU::twoGrid
+                                        , parser->fromUnitsMicrons( r->xl )
+                                        , parser->fromUnitsMicrons( r->xh )
+                                        );
+            segment = Horizontal::create( blockageNet, blockageLayer
+                                        , (yh - DbU::oneGrid + yl) / 2
+                                        ,  yh - DbU::oneGrid - yl
+                                        , parser->fromUnitsMicrons( r->xl )
+                                        , parser->fromUnitsMicrons( r->xh )
+                                        );
+          } else {
+            segment = Horizontal::create( blockageNet, blockageLayer
+                                        , (yh + yl) / 2
+                                        ,  yh - yl 
+                                        , parser->fromUnitsMicrons( r->xl )
+                                        , parser->fromUnitsMicrons( r->xh )
+                                        );
+          }
         } else {
-          segment = Vertical::create( blockageNet, blockageLayer
-                                    , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
-                                    , parser->fromUnitsMicrons( w  )
-                                    , parser->fromUnitsMicrons( r->yl )
-                                    , parser->fromUnitsMicrons( r->yh )
-                                    );
+          DbU::Unit xl = parser->fromUnitsMicrons( r->xl );
+          DbU::Unit xh = parser->fromUnitsMicrons( r->xh );
+          if ((xl % DbU::twoGrid) xor (xh % DbU::twoGrid)) {
+            segment = Vertical::create( blockageNet, blockageLayer
+                                      , xh - DbU::oneGrid
+                                      , DbU::twoGrid
+                                      , parser->fromUnitsMicrons( r->yl )
+                                      , parser->fromUnitsMicrons( r->yh )
+                                      );
+            segment = Vertical::create( blockageNet, blockageLayer
+                                      , (xh - DbU::oneGrid + xl) / 2
+                                      ,  xh - DbU::oneGrid - xl
+                                      , parser->fromUnitsMicrons( r->yl )
+                                      , parser->fromUnitsMicrons( r->yh )
+                                      );
+          } else {
+            segment = Vertical::create( blockageNet, blockageLayer
+                                      , (xh + xl) / 2
+                                      ,  xh - xl
+                                      , parser->fromUnitsMicrons( r->yl )
+                                      , parser->fromUnitsMicrons( r->yh )
+                                      );
+          }
+          cdebug_log(100,0) <<  "xl=" << DbU::getValueString(xl)
+                            << " xh=" << DbU::getValueString(xh)
+                            << " w="  << DbU::getValueString(w)
+                            << " h="  << DbU::getValueString(h)
+                            << " Ox=" << DbU::getValueString(parser->getOriginX())
+                            << " Oy=" << DbU::getValueString(parser->getOriginY())
+                            << endl;
         }
         cdebug_log(100,0) << "| " << segment << endl;
       }
@@ -641,12 +918,15 @@ namespace {
       }
     }
 
+    cdebug_tabw(100,-1);
     return 0;
   }
 
   
   int  LefParser::_macroCbk ( lefrCallbackType_e c, lefiMacro* macro, lefiUserData ud )
   {
+    cdebug_log(100,1) << "@ LefParser::_macroCbk()" << endl;
+    
     AllianceFramework* af     = AllianceFramework::get();
     LefParser*         parser = (LefParser*)ud;
 
@@ -658,6 +938,11 @@ namespace {
     DbU::Unit  height   = 0;
     Cell*      cell     = parser->earlyGetCell( created );
 
+    parser->setOrigin( parser->fromUnitsMicrons( - macro->originX() )
+                     , parser->fromUnitsMicrons( - macro->originY() ));
+    cdebug_log(100,0) << "Macro: " << cellName << endl;
+    cdebug_log(100,0) << "Origin: " << parser->getOrigin() << endl;
+
     if (cell->getName() != Name(cellName)) {
       cell->setName( cellName );
     }
@@ -665,8 +950,15 @@ namespace {
     if (macro->hasSize()) {
       width  = parser->fromUnitsMicrons( macro->sizeX() );
       height = parser->fromUnitsMicrons( macro->sizeY() );
-      cell->setAbutmentBox( Box( 0, 0, width, height ) );
+      cell->setAbutmentBox( Box( 0, 0, width, height ).translate( parser->getOrigin() ));
+      cdebug_log(100,0) << "AB " << cell->getAbutmentBox() << endl;
     }
+
+    // for ( Net* net : cell->getNets() ) {
+    //   for ( Component* component : net->getComponents() ) {
+    //     component->translate( parser->getOrigin() );
+    //   }
+    // }
 
     bool   isPad     = false;
     string gaugeName = "Unknown SITE";
@@ -693,11 +985,11 @@ namespace {
     else           parser->_pinPadPostProcess();
     parser->clearPinComponents();
 
-    cerr << "     o " << cellName
-         << " " << DbU::getValueString(width) << " " << DbU::getValueString(height)
-         << " " << gaugeName; 
-    if (isPad) cerr << " (PAD)";
-    cerr << endl; 
+    cmess2 << "     o " << cellName
+           << " " << DbU::getValueString(width) << " " << DbU::getValueString(height)
+           << " " << gaugeName; 
+    if (isPad) cmess2 << " (PAD)";
+    cmess2 << endl; 
 
     Catalog::State* state = af->getCatalog()->getState( cellName );
     if (not state) state = af->getCatalog()->getState ( cellName, true );
@@ -709,7 +1001,9 @@ namespace {
     parser->setCell     ( nullptr );
     parser->setGdsPower ( nullptr );
     parser->setGdsGround( nullptr );
+    parser->setOrigin   ( 0, 0 );
 
+    cdebug_tabw(100,-1);
     return 0;
   }
 
@@ -722,9 +1016,14 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-  //cerr << "       @ _pinCbk: " << pin->name() << endl;
+  //if (parser->getCell()->getName() == "NAND2B_XL_GF6T_1P5")
+  //if (parser->getCell()->getName() == "MXI2_X1_GF6T_1P5")
+  //if (parser->getCell()->getName() == "NAND2B_X2_GF6T_1P5")
+    if (parser->getCell()->getName() == "AOI222_X2_GF6T_1P5")
+      DebugSession::open( 100, 110 );
+    cdebug_log(100,1) << "@ LefParser::_pinCbk()" << endl;
 
-    bool created = false;
+    bool  created = false;
     parser->earlyGetCell( created );
 
     Net*      net     = nullptr;
@@ -783,26 +1082,51 @@ namespace {
         }
         if (geoms->itemType(igeom) == lefiGeomRectE) {
           lefiGeomRect* r          = geoms->getRect(igeom);
-          DbU::Unit     w          = parser->fromUnitsMicrons(r->xh - r->xl);
-          DbU::Unit     h          = parser->fromUnitsMicrons(r->yh - r->yl);
+          DbU::Unit     xl         = parser->fromUnitsMicrons( r->xl );
+          DbU::Unit     xh         = parser->fromUnitsMicrons( r->xh );
+          DbU::Unit     yl         = parser->fromUnitsMicrons( r->yl );
+          DbU::Unit     yh         = parser->fromUnitsMicrons( r->yh );
+          DbU::Unit     w          = xh - xl;
+          DbU::Unit     h          = yh - yl;
           Segment*      segment    = NULL;
           float         formFactor = (float)w / (float)h;
+          const RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( layer );
           
-          if ( (formFactor > 0.5) and not parser->isVH() ) {
+          cdebug_log(100,0) <<  "xl=" << DbU::getValueString(xl)
+                            << " xh=" << DbU::getValueString(xh)
+                            << " yl=" << DbU::getValueString(yl)
+                            << " yh=" << DbU::getValueString(yh)
+                            << " Ox=" << DbU::getValueString(parser->getOriginX())
+                            << " Oy=" << DbU::getValueString(parser->getOriginY())
+                            << endl;
+          cdebug_log(100,0) << "formFactor=" << formFactor
+                            << " h=" << DbU::getValueString(h)
+                            << " (> " << DbU::getValueString(parser->getYMinTerminalSize()) << ")"
+                            << endl;
+          if (formFactor > 1.0) {
+            if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
+              Pad::create( net, layer, Box( xl, yl, xh, yh) );
+              yh -= DbU::oneGrid;
+            }
             segment = Horizontal::create( net, layer
-                                        , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
-                                        , h
-                                        , parser->fromUnitsMicrons( r->xl )
-                                        , parser->fromUnitsMicrons( r->xh )
+                                        , (yh + yl) / 2
+                                        ,  yh - yl
+                                        ,  xl
+                                        ,  xh
                                         );
           } else {
+            if ((xl % DbU::twoGrid) xor (xh % DbU::twoGrid)) {
+              Pad::create( net, layer, Box( xl, yl, xh, yh) );
+              xh -= DbU::oneGrid;
+            }
             segment = Vertical::create( net, layer
-                                      , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
-                                      , w
-                                      , parser->fromUnitsMicrons( r->yl )
-                                      , parser->fromUnitsMicrons( r->yh )
+                                      , (xh + xl) / 2
+                                      ,  xh - xl
+                                      ,  yl
+                                      ,  yh
                                       );
           }
+          cdebug_log(100,0) << "| " << segment << endl;
           if (segment) parser->addPinComponent( pin->name(), segment );
         //cerr << "       | " << segment << endl;
           continue;
@@ -851,17 +1175,51 @@ namespace {
       }
     }
 
+    cdebug_tabw(100,-1);
+  //if (parser->getCell()->getName() == "NAND2B_XL_GF6T_1P5")
+  //if (parser->getCell()->getName() == "MXI2_X1_GF6T_1P5")
+  //if (parser->getCell()->getName() == "NAND2B_X2_GF6T_1P5")
+    if (parser->getCell()->getName() == "AOI222_X2_GF6T_1P5")
+      DebugSession::close();
     return 0;
   }
 
 
   void  LefParser::_pinStdPostProcess ()
   {
-    const Layer*              metal1      = _routingGauge->getLayerGauge( (size_t)0 )->getLayer();
-    const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
-          Box                 ab          = _cell->getAbutmentBox();
+    const Layer*              metal1          = _routingGauge->getLayerGauge( (size_t)0 )->getLayer();
+    const RoutingLayerGauge*  gaugeMetal1     = _routingGauge->getLayerGauge( (size_t)0 );
+    const RoutingLayerGauge*  gaugeMetal2     = _routingGauge->getLayerGauge( 1 );
+          Box                 ab              = _cell->getAbutmentBox();
+    const Layer*              viaLayer1       = _routingGauge->getContactLayer(_routingGauge->getFirstRoutingLayer());
+          DbU::Unit           minMetal1Width  = viaLayer1->getMinimalSize()
+                                              + viaLayer1->getBottomEnclosure( Layer::EnclosureH )*2;
+          DbU::Unit           minMetal1Height = viaLayer1->getMinimalSize()
+                                              + viaLayer1->getBottomEnclosure( Layer::EnclosureV )*2;
+          uint32_t            normalFlags     = LefImport::PinFilter_TALLEST;
+          uint32_t            rotatedFlags    = LefImport::PinFilter_WIDEST;
 
-    //cerr << "       @ _pinStdPostProcess" << endl;
+    if (gaugeMetal1->isHorizontal()) {
+      std::swap( minMetal1Width, minMetal1Height );
+      std::swap( normalFlags, rotatedFlags );
+    }
+
+  //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
+  //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
+  //if (_cell->getName() == "AND3_X12_GF6T_1P5")
+  //if (_cell->getName() == "NAND2B_XL_GF6T_1P5")
+  //if (_cell->getName() == "MXI2_X1_GF6T_1P5")
+  //if (_cell->getName() == "AOI222_X2_GF6T_1P5")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__nand3_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi21_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__oai31_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
+  //  DebugSession::open( 100, 110 );
+    cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
       string              pinName    = element.first;
@@ -875,50 +1233,105 @@ namespace {
           break;
         }
 
+        size_t depth = _routingGauge->getLayerDepth( component->getLayer() );
+        if (depth == 0) depth++;
+        const RoutingLayerGauge* rlg = _routingGauge->getLayerGauge( depth );
+        if (rlg) _pinFilter.setPitch( rlg->getPitch() );
+
         Segment* segment = dynamic_cast<Segment*>( component );
         if (segment) {
-          bool isWide = (segment->getWidth() >= getMinTerminalWidth());
+          bool isWide = (segment->getWidth () >= getXMinTerminalSize())
+                    and (segment->getLength() >= getYMinTerminalSize());
 
-          // cerr << "       > " << segment << endl;
-          // if (not isVH()) cerr << "X NOT isVH()" << endl;
-          // else            cerr << "X isVH()" << endl;
-        
+          cdebug_log(100,0) << "> " << segment << endl;
           if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
-          // cerr << "isVH()" << endl;
-            Vertical* v = dynamic_cast<Vertical*>( segment );
+            cdebug_log(100,0) << "isVH()=true" << endl;
+            DbU::Unit metal1Width = _routingGauge->getLayerGauge((size_t)0)->getWireWidth() / 2;
+            Vertical* v           = dynamic_cast<Vertical*>( segment );
             if (v) {
+              if (v->getLength() < getYMinTerminalSize())
+                continue;
+
+              DbU::Unit widthAdjust  = v->getWidth () % DbU::twoGrid;
+              DbU::Unit lengthAdjust = v->getLength() % DbU::twoGrid;
+              if (widthAdjust or lengthAdjust) {
+                Vertical::create( v->getNet()
+                                , v->getLayer()
+                                , v->getX()
+                                , v->getWidth()
+                                , v->getSourceY()
+                                , v->getTargetY()
+                                );
+                if (widthAdjust)  v->setWidth(    v->getWidth()    - widthAdjust );
+                if (lengthAdjust) v->setDyTarget( v->getDyTarget() - lengthAdjust);
+              }
+              
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
                                                                 , ab.getXMax()
                                                                 , v->getX()
                                                                 , Constant::Nearest );
 
               if (nearestX == v->getX()) {
+                ongrids.push_back( v );
               } else {
-                DbU::Unit neighbor = nearestX
-                  + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
+                DbU::Unit neighbor = nearestX;
+                // DbU::Unit neighbor = nearestX
+                //   + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
 
-              //cerr << "       | X:" << DbU::getValueString(v->getX())
-              //     <<  " nearestX:" << DbU::getValueString(nearestX)
-              //     <<  " neighbor:" << DbU::getValueString(neighbor)
-              //     << endl;
-
-                if (  (v->getX() - v->getHalfWidth() > neighbor)
-                   or (v->getX() + v->getHalfWidth() < neighbor) ) {
-                  ongrids.push_back( Vertical::create( v->getNet()
-                                                     , v->getLayer()
-                                                     , nearestX
-                                                     , _routingGauge->getLayerGauge((size_t)0)->getWireWidth()
-                                                     , v->getDySource()
-                                                     , v->getDyTarget()
-                                                     )
-                                   );
-                  cerr << "       | " << ongrids[ongrids.size()-1] << endl;
-                } else {
-                // Unpitched and not wide enough to be under a metal2 track, ignore.
-                }
-
-                continue;
+                cdebug_log(100,0) <<       "| X:" << DbU::getValueString(v->getX())
+                                  << " nearestX:" << DbU::getValueString(nearestX)
+                                  << " neighbor:" << DbU::getValueString(neighbor)
+                                  << endl;
+                Interval   segSpan     ( v->getX() - v->getHalfWidth(), v->getX() + v->getHalfWidth() );
+                Interval   ongridSpan  ( neighbor - metal1Width, neighbor + metal1Width );
+                cdebug_log(100,0) <<       "| M1 half width:" << DbU::getValueString(metal1Width) << endl;
+                cdebug_log(100,0) <<       "| " << segSpan << " include? " << ongridSpan << endl;
+                if (not segSpan.contains(ongridSpan))
+                  continue;
+                ongrids.push_back( v );
+                // ongrids.push_back( Vertical::create( v->getNet()
+                //                                    , v->getLayer()
+                //                                    , nearestX
+                //                                    , _routingGauge->getLayerGauge((size_t)0)->getWireWidth()
+                //                                    , v->getDySource()
+                //                                    , v->getDyTarget()
+                //                                    )
+                //                  );
               }
+              cdebug_log(100,0) << "+ " << ongrids[ongrids.size()-1] << endl;
+              continue;
+            } else {
+              Horizontal* h = dynamic_cast<Horizontal*>( segment );
+              if (not h) continue;
+              if (h->getWidth() < getYMinTerminalSize())
+                continue;
+
+              DbU::Unit widthAdjust  = h->getWidth () % DbU::twoGrid;
+              DbU::Unit lengthAdjust = h->getLength() % DbU::twoGrid;
+              if (widthAdjust or lengthAdjust) {
+                Vertical::create( h->getNet()
+                                , h->getLayer()
+                                , h->getY()
+                                , h->getWidth()
+                                , h->getSourceX()
+                                , h->getTargetX()
+                                );
+                if (widthAdjust)  h->setWidth(    h->getWidth()    - widthAdjust );
+                if (lengthAdjust) h->setDxTarget( h->getDxTarget() - lengthAdjust);
+              }
+
+              DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
+                                                                , ab.getXMax()
+                                                                , (h->getSourceX() + h->getTargetX()) / 2
+                                                                , Constant::Nearest );
+              Interval   segSpan     ( h->getSourceX(), h->getTargetX() );
+              Interval   ongridSpan  ( nearestX - metal1Width, nearestX + metal1Width );
+              cdebug_log(100,0) <<       "| M1 half width:" << DbU::getValueString(metal1Width) << endl;
+              cdebug_log(100,0) <<       "| " << segSpan << " include? " << ongridSpan << endl;
+              if (not segSpan.contains(ongridSpan))
+                continue;
+              ongrids.push_back( h );
+              cdebug_log(100,0) << "+ " << ongrids[ongrids.size()-1] << endl;
             }
           }
       
@@ -926,14 +1339,13 @@ namespace {
         }
         Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( component );
         if (rectilinear) {
-          cerr << "       > " << rectilinear << endl;
+          cdebug_log(100,0) << "+ " << rectilinear << endl;
           if (rectilinear->getLayer()->getMask() != metal1->getMask())
             continue;
 
-          vector<Box> boxes;
-          rectilinear->getAsRectangles( boxes );
-
           if (component->getNet()->isSupply()) {
+            vector<Box> boxes;
+            rectilinear->getAsRectangles( boxes );
             ongrids.push_back( Horizontal::create( rectilinear->getNet()
                                                  , rectilinear->getLayer()
                                                  , boxes.front().getYCenter()
@@ -943,46 +1355,31 @@ namespace {
                                                  )
                                  );
           } else {
-            for ( const Box& box : boxes ) {
-              DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
-                                                                , ab.getXMax()
-                                                                , box.getXCenter()
-                                                                , Constant::Nearest );
-              DbU::Unit xmin = std::min( box.getXMin(), nearestX - gaugeMetal2->getViaWidth()/2 );
-              DbU::Unit xmax = std::max( box.getXMax(), nearestX + gaugeMetal2->getViaWidth()/2 );
-              ongrids.push_back( Vertical::create( rectilinear->getNet()
-                                                 , rectilinear->getLayer()
-                                                 , (xmax+xmin)/2
-                                                 ,  xmax-xmin
-                                                 , box.getYMin()
-                                                 , box.getYMax()
-                                                 )
-                                 );
-              // DbU::Unit neighbor = nearestY
-              //   + ((nearestY > box.getYCenter()) ? 1 : -1) * gaugeMetal2->getPitch();
-              
-              // if (  (box.getYMin() > neighbor)
-              //    or (box.getYMax() < neighbor) ) {
-              //   ongrids.push_back( Vertical::create( rectilinear->getNet()
-              //                                      , rectilinear->getLayer()
-              //                                      , box.getXCenter()
-              //                                      , box.getWidth()
-              //                                      , box.getYMin()
-              //                                      , box.getYMax()
-              //                                      )
-              //                    );
-              // }
+            Segment* segment = _createBestSegment( rectilinear
+                                                 , minMetal1Width
+                                                 , minMetal1Height
+                                                 , gaugeMetal2
+                                                 , normalFlags );
+            if (segment) ongrids.push_back( segment );
+            else {
+              segment = _createBestSegment( rectilinear
+                                          , minMetal1Height
+                                          , minMetal1Width
+                                          , gaugeMetal2
+                                          , rotatedFlags );
+              if (segment) ongrids.push_back( segment );
             }
           }
         }
       }
 
       if (ongrids.empty()) {
-        if (not isSupply)
+        if (not isSupply) 
           cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" has no terminal ongrid."
                          , pinName.c_str() ) << endl;
         for ( Component* component : components ) {
           NetExternalComponents::setExternal( component );
+          cdebug_log(100,0) << "| -> " << component << endl;
         }
       } else {
         for ( Segment* segment : ongrids ) {
@@ -990,11 +1387,30 @@ namespace {
         }
       }
     }
+
+    cdebug_tabw(100,-1);
+  //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
+  //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
+  //if (_cell->getName() == "AND3_X12_GF6T_1P5")
+  //if (_cell->getName() == "NAND2B_XL_GF6T_1P5")
+  //if (_cell->getName() == "MXI2_X1_GF6T_1P5")
+  //if (_cell->getName() == "AOI222_X2_GF6T_1P5")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__nand3_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi21_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__oai31_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
+  //  DebugSession::close();
   }
 
 
   void  LefParser::_pinPadPostProcess ()
   {
+    cdebug_log(100,1) << "@ LefParser::_pinPadPostProcess()" << endl;
+
     Box  ab          = getCell()->getAbutmentBox();
     bool isCornerPad = (_cellGauge) and (_cellGauge->getSliceHeight() == _cellGauge->getSliceStep());
 
@@ -1085,6 +1501,8 @@ namespace {
                                            , vspan.getVMin()
                                            , ab.getYMax()
                                            );
+              cdebug_log(100,0) << "| Native    " << segments[i] << endl;
+              cdebug_log(100,0) << "| cap North " << capSegment << endl;
               break;
           }
         }
@@ -1096,6 +1514,7 @@ namespace {
         }
       }
     }
+    cdebug_tabw(100,-1);
   }
 
 
@@ -1129,6 +1548,9 @@ namespace {
     string                libraryName = file.substr( islash, file.size()-4-islash );
     unique_ptr<LefParser> parser      ( new LefParser(file,libraryName) );
 
+    // if (libraryName == "sg13g2_io")
+    //   DebugSession::open( 100, 110 );
+
     FILE* lefStream = fopen( file.c_str(), "r" );
     if (not lefStream)
       throw Error( "LefImport::load(): Cannot open LEF file \"%s\".", file.c_str() );
@@ -1137,6 +1559,8 @@ namespace {
     lefrRead( lefStream, file.c_str(), (lefiUserData)parser.get() );
 
     fclose( lefStream );
+    // if (libraryName == "sg13g2_io")
+    //   DebugSession::close();
 
     if (not parser->getCellGauge()) {
       cerr << Warning( "LefParser::parse(): No default Alliance cell gauge, unable to check the Cell gauge." ) << endl;
@@ -1156,6 +1580,7 @@ namespace {
     
     return parser->getLibrary();
   }
+
 
 }  // Anonymous namespace.
 
@@ -1206,6 +1631,14 @@ namespace CRL {
   }
 
 
+  void  LefImport::setGdsForeignLibrary ( Library* library )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::setGdsForeignLibrary( library );
+#endif
+  }
+
+
   void  LefImport::setGdsForeignDirectory ( string path )
   {
 #if defined(HAVE_LEFDEF)
@@ -1214,4 +1647,38 @@ namespace CRL {
   }
 
 
-}  // End of CRL namespace.
+  void  LefImport::setPinFilter ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::setPinFilter( xThreshold, yThreshold, flags );
+#endif
+  }
+
+
+  Layer* LefImport::getLayer ( string name )
+  {
+#if defined(HAVE_LEFDEF)
+    return LefParser::getLayer( name );
+#else
+    return 0;
+#endif
+  }
+
+
+  void  LefImport::addLayer ( string name, Layer* layer )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::addLayer( name, layer );
+#endif
+  }
+
+
+  void  LefImport::clearLayer ( string name )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::clearLayer( name );
+#endif
+  }
+
+
+}  // CRL namespace.

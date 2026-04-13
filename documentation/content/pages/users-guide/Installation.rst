@@ -8,6 +8,7 @@ We reccomend installing directly from Pypi <https://pypi.org/>`_. First install 
 
 
 .. code-block:: bash
+
    pip3 install coriolis-eda
 
 
@@ -129,7 +130,7 @@ Then proceed with the generic install instructions.
 
 
 |Coriolis| & Docker
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Under ``bootstrap/docker/`` scripts and configuration files are provided that
 allow to rebuild |Alliance| and |Coriolis| and perform the regression tests
@@ -149,7 +150,7 @@ arguments:
 
 
 Packaging Coriolis
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 Packager should not use |ccb|, instead ``bootstrap/Makefile.package`` is provided
 to emulate a top-level ``autotool`` makefile. Just copy it in the root of the
@@ -162,7 +163,7 @@ Sligthly outdated packaging configuration files can also be found under ``bootst
 
 
 Hooking up into |Alliance|
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 |Coriolis| relies on |Alliance| for the cell libraries. So after installing or
 packaging, you must configure it so that it can found those libraries.
@@ -174,7 +175,7 @@ have look to the `Alliance Helper`.
 
 
 Setting up the Environment (coriolisEnv.py)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To simplify the tedious task of configuring your environment, a helper is provided
 in the ``bootstrap`` source directory (also installed in the directory

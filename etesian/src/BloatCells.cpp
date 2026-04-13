@@ -80,7 +80,7 @@ namespace Etesian {
   DbU::Unit  BloatNsxlib::getDx ( const Cell* cell, const EtesianEngine* etesian ) const
   {
     Box ab ( cell->getAbutmentBox() );
-    DbU::Unit vpitch = etesian->getSliceStep();;
+    DbU::Unit vpitch = etesian->getSliceHStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 
     if (xsize < 6) return vpitch*4;
@@ -102,7 +102,7 @@ namespace Etesian {
   DbU::Unit  BloatFlexlib::getDx ( const Cell* cell, const EtesianEngine* etesian ) const
   {
     Box ab ( cell->getAbutmentBox() );
-    DbU::Unit vpitch = etesian->getSliceStep();;
+    DbU::Unit vpitch = etesian->getSliceHStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 
     if (cell->getName() == "mx2_x2"  ) return 2*vpitch;
@@ -131,7 +131,7 @@ namespace Etesian {
     }
 
     Box ab ( cell->getAbutmentBox() );
-    DbU::Unit vpitch = etesian->getSliceStep();;
+    DbU::Unit vpitch = etesian->getSliceHStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 
     // float termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
@@ -159,7 +159,7 @@ namespace Etesian {
   DbU::Unit  BloatChannel::getDx ( const Cell* cell, const EtesianEngine* etesian ) const
   {
     Box ab ( cell->getAbutmentBox() );
-    DbU::Unit vpitch = etesian->getSliceStep();;
+    DbU::Unit vpitch = etesian->getSliceHStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 #if THIS_IS_DISABLED
     return (xsize < 5) ? ((5-xsize)*vpitch) : 0; 
@@ -203,7 +203,7 @@ namespace Etesian {
     }
 
     Box ab ( cell->getAbutmentBox() );
-    DbU::Unit vpitch = etesian->getSliceStep();;
+    DbU::Unit vpitch = etesian->getSliceHStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 
     // float termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
@@ -253,7 +253,7 @@ namespace Etesian {
     Cell*       cell  = instance->getMasterCell();
     BloatState* state = BloatExtension::get( instanceOcc );
 
-    if (state) dx = state->getTracksCount() * _etesian->getSliceStep();
+    if (state) dx = state->getTracksCount() * _etesian->getSliceHStep();
     else       dx = _selected->getDx( cell, _etesian );
 
     _dxSpace += dx;

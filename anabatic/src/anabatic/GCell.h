@@ -43,7 +43,6 @@ namespace Anabatic {
   using std::string;
   using std::vector;
   using std::set;
-  using std::binary_function;
   using Hurricane::StaticObservable;
   using Hurricane::BaseObserver;
   using Hurricane::Name;
@@ -100,14 +99,14 @@ namespace Anabatic {
                  Observable& operator=  ( const StaticObservable& );
       };
     public:
-      class CompareByDensity : public binary_function<GCell*,GCell*,bool> {
+      class CompareByDensity {
         public:
                       CompareByDensity ( size_t depth );
           inline bool operator()       ( GCell* lhs, GCell* rhs ) const;
         private:
           size_t  _depth;
       };
-      class CompareByKey : public binary_function<const GCell*,const GCell*,bool> {
+      class CompareByKey {
         public:
           inline bool  operator() ( const GCell* lhs, const GCell* rhs ) const;
       };
@@ -137,6 +136,14 @@ namespace Anabatic {
       static        Box                   getBorder            ( const GCell*, const GCell* );
       static inline DbU::Unit             getMatrixHSide       ();
       static inline DbU::Unit             getMatrixVSide       ();
+      static        bool                  getHGCellsUnder      ( vector<GCell*>& gcells
+                                                               , GCell*          gcell
+                                                               , GCell*          end
+                                                               , DbU::Unit       yprobe );
+      static        bool                  getVGCellsUnder      ( vector<GCell*>& gcells
+                                                               , GCell*          gcell
+                                                               , GCell*          end
+                                                               , DbU::Unit       xprobe );
     public:                                                    
       static        GCell*                create               ( AnabaticEngine* );
     public:                                                    
@@ -158,6 +165,7 @@ namespace Anabatic {
       inline        bool                  isGoStraight         () const;
       inline        bool                  isHRail              () const;
       inline        bool                  isVRail              () const;
+      inline        bool                  isStdCellArea        () const;
       inline        bool                  isStdCellRow         () const;
       inline        bool                  isChannelRow         () const;
                     bool                  isWest               ( GCell* ) const;
@@ -224,7 +232,7 @@ namespace Anabatic {
       inline        DbU::Unit             getWidth             () const;
       inline        DbU::Unit             getHeight            () const;
     // Detailed routing functions.                             
-                    bool                  hasFreeTrack         ( size_t depth, float reserve ) const;
+                    bool                  hasFreeTrack         ( size_t depth, float reserve, Flags=Flags::NoFlags ) const;
       inline        size_t                getDepth             () const;
                     size_t                getNetCount          () const;
       inline        int                   getRpCount           () const;
@@ -236,7 +244,7 @@ namespace Anabatic {
                     float                 getAverageHVDensity  () const;
                     float                 getMaxHVDensity      () const;
       inline        float                 getCDensity          ( Flags flags=Flags::NoFlags ) const;
-      inline        float                 getWDensity          ( size_t depth, Flags flags=Flags::NoFlags  ) const;
+                    float                 getWDensity          ( size_t depth, Flags flags=Flags::NoFlags  ) const;
       inline        DbU::Unit             getBlockage          ( size_t depth ) const;
       inline        float                 getFragmentation     ( size_t depth ) const;
       inline        float                 getFeedthroughs      ( size_t depth ) const;
@@ -297,7 +305,7 @@ namespace Anabatic {
       inline        void                  setObserver          ( size_t slot, BaseObserver* );
       inline        void                  notify               ( unsigned int flags );
     // ExtensionGo support.                                    
-      inline  const Name&                 staticGetName        (); 
+      static        Name                  staticGetName        (); 
       virtual const Name&                 getName              () const;
       virtual       void                  translate            ( const DbU::Unit&, const DbU::Unit& );
       virtual       Box                   getBoundingBox       () const;
@@ -364,6 +372,7 @@ namespace Anabatic {
   inline       bool                  GCell::isGoStraight     () const { return _flags & Flags::GoStraight; }
   inline       bool                  GCell::isHRail          () const { return _flags & Flags::HRailGCell; }
   inline       bool                  GCell::isVRail          () const { return _flags & Flags::VRailGCell; }
+  inline       bool                  GCell::isStdCellArea    () const { return _flags & Flags::StdCellArea; }
   inline       bool                  GCell::isStdCellRow     () const { return _flags & Flags::StdCellRow; }
   inline       bool                  GCell::isChannelRow     () const { return _flags & Flags::ChannelRow; }
   inline       bool                  GCell::isSaturated      () const { return _flags & Flags::Saturated; }
@@ -465,9 +474,6 @@ namespace Anabatic {
 
   inline  float  GCell::getCDensity ( Flags flags ) const
   { if (isInvalidated() and not(flags & Flags::NoUpdate)) const_cast<GCell*>(this)->updateDensity(); return _cDensity; }
-
-  inline  float  GCell::getWDensity ( size_t depth, Flags flags  ) const
-  { if (isInvalidated() and not(flags & Flags::NoUpdate)) const_cast<GCell*>(this)->updateDensity(); return _densities[depth]; }
 
   inline  float  GCell::getFragmentation ( size_t depth ) const
   { if (isInvalidated()) const_cast<GCell*>(this)->updateDensity(); return _fragmentations[depth]; }

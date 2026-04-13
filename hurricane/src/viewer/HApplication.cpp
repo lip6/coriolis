@@ -16,8 +16,10 @@
 
 #include  <iostream>
 #include  <iomanip>
+#include  <QSettings>
 #include  "hurricane/Bug.h"
 #include  "hurricane/Error.h"
+#include  "hurricane/utilities/Path.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/ExceptionWidget.h"
 #include  "hurricane/viewer/HApplication.h"
@@ -38,28 +40,28 @@ namespace Hurricane {
 
   HApplication::HApplication ( int& argc, char** argv )
     : QApplication ( argc, argv )
-  { }
+  { sharedCtor(); }
 
 
   HApplication::HApplication ( int& argc, char** argv, bool GUIenabled )
     : QApplication ( argc, argv, GUIenabled )
-  { }
+  { sharedCtor(); }
 
 
 // HApplication::HApplication ( int& argc, char** argv, Type type )
 //   : QApplication ( argc, argv, type )
-// { }
+// { sharedCtor(); }
 
 
 #if defined(Q_WS_X11)
   HApplication::HApplication ( Display* display, Qt::HANDLE visual, Qt::HANDLE colormap )
     : QApplication ( display, visual, colormap )
-  { }
+  { sharedCtor(); }
 
 
   HApplication::HApplication ( Display* display, int& argc, char** argv, Qt::HANDLE visual, Qt::HANDLE colormap )
     : QApplication ( display, argc, argv, visual, colormap )
-  { }
+  { sharedCtor(); }
 #endif
 
 
@@ -91,4 +93,14 @@ namespace Hurricane {
   }
 
 
-} // End of Hurricane namespace.
+  void  HApplication::sharedCtor ()
+  {
+    Utilities::Path cwd = Utilities::Path::cwd() / "coriolis2";
+    QSettings::setPath( QSettings::NativeFormat, QSettings::UserScope, cwd.c_str() );
+    QCoreApplication::setOrganizationName  ( "SU-LIP6" );
+    QCoreApplication::setOrganizationDomain( "lip6.fr" );
+    QCoreApplication::setApplicationName   ( "Coriolis" );
+  }
+
+
+} // Hurricane namespace.

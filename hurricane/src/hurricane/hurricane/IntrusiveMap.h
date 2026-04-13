@@ -21,6 +21,8 @@
 #include <cstring>
 #include <algorithm>
 
+#include "hurricane/Warning.h"
+#include "hurricane/Timer.h"
 #include "hurricane/Collection.h"
 #include "hurricane/Error.h" // AD
 
@@ -34,6 +36,11 @@ namespace Hurricane {
 
 template<class Key, class Element> class IntrusiveMap {
 // **************************************************
+
+// Constants
+// *********
+
+  public: const unsigned int MaxBuckets = (1 << 22);
 
 // Types
 // *****
@@ -280,7 +287,7 @@ template<class Key, class Element> class IntrusiveMap {
     public: Element* getElement(Key key) const
     // ***************************************
     {
-        unsigned index = (_getHashValue(key) / 8) % _length;
+        unsigned index = _getHashValue(key) % _length;
         Element* element = _array[index];
         while (element && (_getKey(element) != key)) element = _getNextElement(element);
         return element;
@@ -381,7 +388,7 @@ template<class Key, class Element> class IntrusiveMap {
     public: bool _contains(Element* element) const
     // *******************************************
     {
-        unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
+        unsigned index = _getHashValue(_getKey(element)) % _length;
         Element* currentElement = _array[index];
         while (currentElement && (currentElement != element))
             currentElement = _getNextElement(currentElement);
@@ -392,7 +399,7 @@ template<class Key, class Element> class IntrusiveMap {
     // ***********************************
     {
         if (!_contains(element)) {
-            unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
+            unsigned index = _getHashValue(_getKey(element)) % _length;
             _setNextElement(element, _array[index]);
             _array[index] = element;
               _size++;
@@ -404,7 +411,7 @@ template<class Key, class Element> class IntrusiveMap {
     // ***********************************
     {
       if (_contains(element)) {
-            unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
+            unsigned index = _getHashValue(_getKey(element)) % _length;
             Element* currentElement = _array[index];
             if (currentElement) {
                 if (currentElement == element) {
@@ -431,9 +438,24 @@ template<class Key, class Element> class IntrusiveMap {
       unsigned newLength = _length;
       double   ratio     = (double)_size / (double)_length;
       if      (ratio <  3.0) newLength = max(_size / 8, (unsigned)1);
-      else if (ratio > 10.0) newLength = min(_size / 5, (unsigned)512);
+      else if (ratio > 10.0) newLength = min(_size / 5, MaxBuckets);
 
       if (newLength != _length) {
+        if (newLength == MaxBuckets) {
+          cerr << Warning( "IntrusiveMap<> has reached maximum bucket size %d, slowdow may occurs."
+                         , MaxBuckets
+                         ) << endl;
+        }
+
+        // Timer timer;
+        // cdebug_log(0,0) << "IntrusiveMap::_resize() " << _length << " -> " << newLength << endl;
+        // if (newLength >= 2048) {
+        //   timer.start();
+        //   cerr << "IntrusiveMap::_resize() " << _length << " -> " << newLength << endl;
+        //   cerr << _getString() << endl;
+        //   Stats();
+        // }
+
         cdebug_log(0,0) << "IntrusiveMap::_resize() " << _length << " -> " << newLength << endl;
 
         unsigned  oldLength = _length;
@@ -449,7 +471,7 @@ template<class Key, class Element> class IntrusiveMap {
 
           while ( element ) {
             Element* nextElement = _getNextElement(element);
-            unsigned newIndex    = (_getHashValue(_getKey(element)) / 8) % _length;
+            unsigned newIndex    = _getHashValue(_getKey(element)) % _length;
             _setNextElement(element, _array[newIndex]);
             _array[ newIndex ] = element;
 
@@ -462,8 +484,38 @@ template<class Key, class Element> class IntrusiveMap {
           }
         }
         delete [] oldArray;
+      
+        // if (newLength >= 2048) {
+        //   timer.stop();
+        //   cerr << "Resized in " << Timer::getStringTime(timer.getCombTime()) << endl;
+        // }
       }
     };
+
+  public: void Stats ()
+  // ******************
+    {
+      std::cerr << "IntrusiveMap<>::Stats() size=" << _size << " buckets=" << _length << std::endl;
+      std::map<size_t,size_t> histogram;
+      for ( unsigned int index = 0; index < _length; ++index ) {
+        size_t bucketSize = 0;
+        for ( Element* element=_array[index]
+            ; element
+            ; element=_getNextElement(element), ++bucketSize );
+        if (histogram.find(bucketSize) != histogram.end())
+          histogram[ bucketSize ]++;
+        else
+          histogram[ bucketSize ] = 1;
+      }
+      std::cerr << "  ============  =====" << std::endl;
+      std::cerr << "  buckets size  count" << std::endl;
+      std::cerr << "  ============  =====" << std::endl;
+      for ( auto entry : histogram ) {
+        std::cerr << "  " << std::setw(12) << entry.first
+                  << "  " << std::setw( 5) << entry.second << std::endl;
+      }
+      std::cerr << "  ============  =====" << std::endl;
+    }
 
 };
 
@@ -516,6 +568,11 @@ namespace Hurricane {
 
 template<class Key, class Element> class IntrusiveMapConst {
 // ********************************************************
+
+// Constants
+// *********
+
+  public: const unsigned int MaxBuckets = (1 << 22);
 
 // Types
 // *****
@@ -762,7 +819,7 @@ template<class Key, class Element> class IntrusiveMapConst {
     public: Element* getElement(const Key& key) const
     // **********************************************
     {
-        unsigned index = (_getHashValue(key) / 8) % _length;
+        unsigned index = _getHashValue(key) % _length;
         Element* element = _array[index];
         while (element && (_getKey(element) != key)) element = _getNextElement(element);
         return element;
@@ -863,7 +920,7 @@ template<class Key, class Element> class IntrusiveMapConst {
     public: bool _contains(Element* element) const
     // *******************************************
     {
-        unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
+        unsigned index = _getHashValue(_getKey(element)) % _length;
         Element* currentElement = _array[index];
         while (currentElement && (currentElement != element))
             currentElement = _getNextElement(currentElement);
@@ -874,7 +931,7 @@ template<class Key, class Element> class IntrusiveMapConst {
     // ***********************************
     {
         if (!_contains(element)) {
-            unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
+            unsigned index = _getHashValue(_getKey(element)) % _length;
             _setNextElement(element, _array[index]);
             _array[index] = element;
               _size++;
@@ -886,7 +943,7 @@ template<class Key, class Element> class IntrusiveMapConst {
     // ***********************************
     {
       if (_contains(element)) {
-            unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
+            unsigned index = _getHashValue(_getKey(element)) % _length;
             Element* currentElement = _array[index];
             if (currentElement) {
                 if (currentElement == element) {
@@ -913,10 +970,24 @@ template<class Key, class Element> class IntrusiveMapConst {
       unsigned newLength = _length;
       double   ratio     = (double)_size / (double)_length;
       if      (ratio <  3.0) newLength = max(_size / 8, (unsigned)1);
-      else if (ratio > 10.0) newLength = min(_size / 5, (unsigned)512);
+      else if (ratio > 10.0) newLength = min(_size / 5, MaxBuckets);
 
       if (newLength != _length) {
+        if (newLength == MaxBuckets) {
+          cerr << Warning( "IntrusiveMapConst<> has reached maximum bucket size %d, slowdow may occurs."
+                         , MaxBuckets
+                         ) << endl;
+        }
+        
         cdebug_log(0,0) << "IntrusiveMapConst::_resize() " << _length << " -> " << newLength << endl;
+
+        // Timer timer;
+        // if (newLength >= 2048) {
+        //   timer.start();
+        //   cerr << "IntrusiveMapConst::_resize() " << _length << " -> " << newLength << endl;
+        //   cerr << _getString() << endl;
+        //   Stats();
+        // }
 
         unsigned  oldLength = _length;
         Element** oldArray  = _array;
@@ -931,7 +1002,7 @@ template<class Key, class Element> class IntrusiveMapConst {
 
           while ( element ) {
             Element* nextElement = _getNextElement(element);
-            unsigned newIndex    = (_getHashValue(_getKey(element)) / 8) % _length;
+            unsigned newIndex    = _getHashValue(_getKey(element)) % _length;
             _setNextElement(element, _array[newIndex]);
             _array[ newIndex ] = element;
 
@@ -944,8 +1015,38 @@ template<class Key, class Element> class IntrusiveMapConst {
           }
         }
         delete [] oldArray;
+
+        // if (newLength >= 2048) {
+        //   timer.stop();
+        //   cerr << "Resized in " << Timer::getStringTime(timer.getCombTime()) << endl;
+        // }
       }
     };
+
+  public: void Stats ()
+  // ******************
+    {
+      std::cerr << "IntrusiveMapConst<>::Stats() size=" << _size << " buckets=" << _length << std::endl;
+      std::map<size_t,size_t> histogram;
+      for ( unsigned int index = 0; index < _length; ++index ) {
+        size_t bucketSize = 0;
+        for ( Element* element=_array[index]
+            ; element
+            ; element=_getNextElement(element), ++bucketSize );
+        if (histogram.find(bucketSize) != histogram.end())
+          histogram[ bucketSize ]++;
+        else
+          histogram[ bucketSize ] = 1;
+      }
+      std::cerr << "  ============  =====" << std::endl;
+      std::cerr << "  buckets size  count" << std::endl;
+      std::cerr << "  ============  =====" << std::endl;
+      for ( auto entry : histogram ) {
+        std::cerr << "  " << std::setw(12) << entry.first
+                  << "  " << std::setw( 5) << entry.second << std::endl;
+      }
+      std::cerr << "  ============  =====" << std::endl;
+    }
 
 };
 

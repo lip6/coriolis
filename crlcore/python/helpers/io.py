@@ -225,5 +225,8 @@ def isVL ( level ):
 
 
 def vprint ( level, message ):
-    if isVL(level): print( message )
+    if isVL(level):
+        print( message )
+        sys.stdout.flush()
+        sys.stderr.flush()
     return

@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_POINT
-#define HURRICANE_POINT
-
+#pragma  once
 #include "hurricane/DbU.h"
 
 namespace Hurricane {
@@ -74,6 +72,7 @@ class Point {
     public: void setX(DbU::Unit x) {_x = x;};
     public: void setY(DbU::Unit y) {_y = y;};
     public: Point& translate(const DbU::Unit& dx, const DbU::Unit& dy);
+    public: Point& translate(const Point&);
     public: Point getTranslated(const DbU::Unit& dx, const DbU::Unit& dy) const;
 
 // Others
@@ -101,9 +100,6 @@ class JsonPoint : public JsonObject {
 } // End of Hurricane namespace.
 
 INSPECTOR_PR_SUPPORT(Hurricane::Point);
-
-
-#endif // HURRICANE_POINT
 
 
 // ****************************************************************************************************

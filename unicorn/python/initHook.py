@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 #
 # This file is part of the Coriolis Software.
 # Copyright (c) Sorbonne Université 2014-2023, All Rights Reserved

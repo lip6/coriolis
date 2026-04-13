@@ -21,7 +21,7 @@ from   ...                import Cfg
 from   ...Hurricane       import Breakpoint, DbU, Box, Transformation, Box, \
                                  Path, Layer, Occurrence, Net, RoutingPad,  \
                                  Horizontal, Vertical, Contact, Pin, Plug,  \
-                                 Instance
+                                 Instance, Point
 from   ...CRL             import AllianceFramework, RoutingLayerGauge
 from   ...helpers         import trace, dots, l, u, n
 from   ...helpers.io      import ErrorMessage, WarningMessage, catch
@@ -276,27 +276,54 @@ class QuadTree ( object ):
 
     @staticmethod
     def isUsedArea ( spares, area, rtag, raiseError ):
-        centerArea  = Box( area.getCenter() )
         sliceHeight = spares.conf.sliceHeight
-        centerArea.inflate( 4*sliceHeight, sliceHeight )
-        trace( 540, '\tQuadTree.isUnderArea(): {} {} of {}\n'.format(rtag,centerArea,spares.conf.cell) )
+        if rtag[-2:] == 'bl':
+            vWireArea = Box( area.getXCenter(), area.getYCenter()
+                           , area.getXCenter(), area.getYMax   () )
+            hWireArea = Box( area.getXCenter(), area.getYMax()
+                           , area.getXMax   (), area.getYMax() )
+        elif rtag[-2:] == 'br':
+            vWireArea = Box( area.getXCenter(), area.getYCenter()
+                           , area.getXCenter(), area.getYMax   () )
+            hWireArea = Box( area.getXCenter(), area.getYMax()
+                           , area.getXMin   (), area.getYMax() )
+        elif rtag[-2:] == 'tl':
+            vWireArea = Box( area.getXCenter(), area.getYCenter()
+                           , area.getXCenter(), area.getYMin   () )
+            hWireArea = Box( area.getXCenter(), area.getYMin()
+                           , area.getXMax   (), area.getYMin() )
+        elif rtag[-2:] == 'tr':
+            vWireArea = Box( area.getXCenter(), area.getYCenter()
+                           , area.getXCenter(), area.getYMin   () )
+            hWireArea = Box( area.getXCenter(), area.getYMin()
+                           , area.getXMin   (), area.getYMin() )
+        else:
+            vWireArea = Box( area.getXCenter(), area.getYCenter() )
+            hWireArea = vWireArea
+        vWireArea.inflate( 0, sliceHeight )
+        hWireArea.inflate( sliceHeight, 0 )
+        trace( 540, '\tQuadTree.isUsedArea(): {} {} of {}\n'.format(rtag,hWireArea,vWireArea,spares.conf.cell) )
         trace( 540, '\t{}\n'.format( spares.conf.cellPnR ))
-        for occurrence in spares.conf.cellPnR.getTerminalNetlistInstanceOccurrencesUnder( centerArea ):
-            if not isinstance(occurrence.getEntity(),Instance):
-                continue
-            instance   = occurrence.getEntity()
-            masterCell = instance.getMasterCell()
-            if not masterCell.isTerminalNetlist():
-                continue
-            trace( 540, '\t| Overlap {}\n'.format(occurrence.getEntity()) )
-            if raiseError:
-                raise Error%essage( 1, [ 'QuadTree.create(): Unable to create QuadTree under area {}' \
-                                         .format(area)
-                                       , 'Area center is under fixed block {}' .format()
-                                       ] )
-            return True
+        for treeBox in vWireArea, hWireArea:
+            for occurrence in spares.conf.cellPnR.getTerminalNetlistInstanceOccurrencesUnder( treeBox ):
+                if not isinstance(occurrence.getEntity(),Instance):
+                    continue
+                instance   = occurrence.getEntity()
+                masterCell = instance.getMasterCell()
+                if not masterCell.isTerminalNetlist():
+                    continue
+                if instance.getName().startswith('spare_'):
+                    continue
+                trace( 540, '\t| Overlap {}\n'.format(occurrence.getEntity()) )
+                if raiseError:
+                    raise ErrorMessage( 1, [ 'QuadTree.create(): Unable to create QuadTree under area {}' \
+                                             .format(area)
+                                           , 'Area center is under fixed block {}' .format()
+                                           ] )
+                return True
         sys.stdout.flush()
         sys.stderr.flush()
+        trace( 540, '\t-> Area is clear.\n' )
         return False
 
     @staticmethod
@@ -305,6 +332,7 @@ class QuadTree ( object ):
         if QuadTree.isUsedArea( spares, area, childRtag, raiseError ):
             return None
         qt = QuadTree( spares, parent, area, childRtag )
+        trace( 540, '\tQuadTree._create(): {}\n'.format(qt) )
         return qt
 
     def __init__ ( self, spares, parent, area, rtag='root' ):
@@ -861,8 +889,17 @@ class QuadTree ( object ):
             angle = math.atan2( dy, dx )
             plugOccsByAngle.append( [ angle, plugOcc ] )
         plugOccsByAngle.sort( key=itemgetter(0) )
+        trace( 540, '\tPlugs sorted by angle\n' )
+        for i in range(len(plugOccsByAngle)):
+            angle, plugOcc = plugOccsByAngle[i]
+            instCenter = plugOcc.getEntity().getInstance().getAbutmentBox().getCenter()
+            plugOcc.getPath().getTransformation().applyOn( instCenter )
+            dx = instCenter.getX()
+            dy = instCenter.getY()
+            trace( 540, '\t {:-2} | {:-5.2} : dx:{} dy:{} {}\n' \
+                        .format(i,angle,DbU.getValueString(dx),DbU.getValueString(dy),plugOcc) )
         splitIndexes = []
-        if (len(plugOccsByAngle) > maxSinks) and (len(self.buffers) > 1):
+        if len(self.buffers) > 1 and len(plugOccsByAngle) > 8:
             partSize = len(plugOccsByAngle) // len(self.buffers)
             trace( 540, '\tpartSize: {}\n'.format(partSize) )
             for isplit in range(1,len(self.buffers)):
@@ -876,15 +913,7 @@ class QuadTree ( object ):
                         maxisplit = i
                 splitIndexes.append( maxisplit )
         splitIndexes.append( len(plugOccsByAngle) )
-        for i in range(len(plugOccsByAngle)):
-            angle, plugOcc = plugOccsByAngle[i]
-            instCenter = plugOcc.getEntity().getInstance().getAbutmentBox().getCenter()
-            plugOcc.getPath().getTransformation().applyOn( instCenter )
-            dx = instCenter.getX()
-            dy = instCenter.getY()
-            trace( 540, '\t {:-2} | {:-5.2} : dx:{} dy:{} {}\n' \
-                        .format(i,angle,DbU.getValueString(dx),DbU.getValueString(dy),plugOcc) )
-        trace( 540, '\tspitIndexes = {}\n'.format(splitIndexes) )
+        trace( 540, '\tsplitIndexes = {}\n'.format(splitIndexes) )
         minIndex = 0
         for i in range(len(splitIndexes)):
             sinks    = splitIndexes[i] - minIndex

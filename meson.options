@@ -1,1 +1,4 @@
 option('check-database', type : 'boolean', value : false, description: 'Build with database checking enabled. Very slow!')
+option('docs', type: 'boolean', value: false, description: 'Build documentation')
+option('docs-siteurl', type: 'string', value: 'https://coriolis-eda.org', description: 'Root URL for documentation')
+option('only-docs', type: 'boolean', value: false, description: 'Skips checks for non-doc build dependencies')

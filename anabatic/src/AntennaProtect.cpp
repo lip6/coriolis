@@ -276,11 +276,23 @@ namespace {
   }
 
   
-  void DiodeCluster::merge ( RoutingPad* rp )
+  void  DiodeCluster::merge ( RoutingPad* rp )
   {
     Plug* rpPlug = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() ); 
     if (rpPlug) {
-      DiodeCluster::merge( _getAnabatic()->getGCellUnder( rp->getPosition() ), 0 );
+      GCell* rpGCell = nullptr;
+      for ( Hook* hook : rp->getBodyHook()->getHooks() ) {
+        Contact* gcontact = dynamic_cast<Contact*>( hook->getComponent() );
+        if (gcontact) {
+          rpGCell = _getAnabatic()->getGCellUnder( gcontact->getPosition() );
+          break;
+        }
+      }
+      if (not rpGCell) {
+        cdebug_log(147,0) << "| Unable to locate GCell under, using fallback " << rp << endl;
+        rpGCell = _getAnabatic()->getGCellUnder( rp->getPosition() );
+      }
+      DiodeCluster::merge( rpGCell, 0 );
       if (rpPlug->getMasterNet()->getDirection() & Net::Direction::DirIn) {
         cdebug_log(147,0) << "| Sink " << rp << endl;
         _getRoutingPads().insert( make_tuple(rp,IsSink) );
@@ -346,11 +358,6 @@ namespace {
     if (diode) {
       cdebug_log(147,0) << "| New diode " << diode << endl;
       _diodes.push_back( diode );
-      GCell*   gcell   = _anabatic->getGCellUnder( diode->getAbutmentBox().getCenter() );
-      Contact* contact = gcell->hasGContact( getTopNet() );
-      if (not contact)
-        contact = gcell->breakGoThrough( getTopNet() );
-      cdebug_log(147,0) << "| breakGoThrough(), contact= " << contact << endl;
     }
     
     cdebug_tabw(147,-1);
@@ -487,6 +494,7 @@ namespace {
       Plug* diodePlug = diode->getPlug( diodeOutput );
       diodePlug->setNet( diodeNet );
       RoutingPad* diodeRp = RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
+      _getAnabatic()->getConfiguration()->selectRpComponent( diodeRp );
       cdebug_log(147,0) << "    " << getRefRp() << endl;
 
       GCell* gcell = _anabatic->getGCellUnder( diodeRp->getPosition() );
@@ -969,13 +977,13 @@ namespace Anabatic {
     }
 
     if (clusters.size() > 1) {
-      NetData* netData        = getNetData( net );
-      size_t   rpClustersSize = clusters.size();
+      NetData*   netData        = getNetData( net );
+      size_t     rpClustersSize = clusters.size();
 
       if (netData) {
         for ( auto item : clusterSegments ) {
           cdebug_log(147,0) << "No move up: " << item.first << endl;
-          netData->setNoMoveUp( item.first );
+        //netData->setNoMoveUp( item.first );
         }
       }
 
@@ -1051,6 +1059,20 @@ namespace Anabatic {
 
       total += clusters.size();
       cdebug_log(147,1) << "Net \"" << net->getName() << " has " << clusters.size() << " diode clusters." << endl;
+      DbU::Unit  clustersWL = 0;
+      for ( DiodeCluster* cluster : clusters ) {
+        cdebug_log(147,0) << "| Cluster WL=" << DbU::getValueString(cluster->getWL())
+                          << " needsDiode=" << cluster->needsDiode() << endl;
+        clustersWL += cluster->getWL();
+      }
+      if (clustersWL < antennaGateMaxWL) {
+        cdebug_log(147,0) << "Sum WL " << DbU::getValueString(clustersWL) << " below gate threshold "
+                          << DbU::getValueString(antennaGateMaxWL) << ", no need of a diode." << endl;
+        cdebug_tabw(147,-2);
+        DebugSession::close();
+        return;
+      }
+      
       size_t i = clusters.size()-1;
       while ( true ) {
         cdebug_log(147,1) << "Cluster [" << i << "] needsDiode=" << clusters[i]->needsDiode()
@@ -1137,16 +1159,16 @@ namespace Anabatic {
     cmess2 << Dots::asString    ( "     - Antenna gate maximum WL"   , DbU::getValueString(etesian->getAntennaGateMaxWL()) ) << endl;
     cmess2 << Dots::asString    ( "     - Antenna diode maximum WL"  , DbU::getValueString(etesian->getAntennaDiodeMaxWL()) ) << endl;
     cmess2 << Dots::asString    ( "     - Antenna segment maximum WL", DbU::getValueString(segmentMaxWL) ) << endl;
-    cmess2 << Dots::asInt       ( "     - Total needed diodes", total  ) << endl;
-    cmess2 << Dots::asInt       ( "     - Failed to allocate" , failed ) << endl;
-    cmess2 << Dots::asPercentage( "     - Success ratio"      , (float)(total-failed)/(float)total ) << endl;
+    cmess1 << Dots::asInt       ( "     - Total needed diodes", total  ) << endl;
+    cmess1 << Dots::asInt       ( "     - Failed to allocate" , failed ) << endl;
+    cmess1 << Dots::asPercentage( "     - Success ratio"      , (float)(total-failed)/(float)total ) << endl;
 
     stopMeasures();
     printMeasures( "antennas" );
 
     Session::close();
   //DebugSession::close();
-    Breakpoint::stop( 99, "After diodes insertions." );
+    Breakpoint::stop( 100, "After diodes insertions." );
   }
 
 

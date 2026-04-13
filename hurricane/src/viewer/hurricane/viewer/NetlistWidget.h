@@ -138,6 +138,8 @@ namespace Hurricane {
               void                   setCell              ( Cell* );
               void                   goTo                 ( int );
               void                   updateSelecteds      ();
+              void                   saveQtSettings       ( size_t viewerId ) const;
+              void                   readQtSettings       ( size_t viewerId );
     signals:
               void                   netSelected          ( Occurrence );
               void                   netUnselected        ( Occurrence );

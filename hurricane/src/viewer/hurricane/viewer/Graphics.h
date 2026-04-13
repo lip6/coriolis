@@ -14,10 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_GRAPHICS_H
-#define  HURRICANE_GRAPHICS_H
-
-
+#pragma  once
 #include <string>
 #include <vector>
 #include <QFont>
@@ -54,6 +51,7 @@ namespace Hurricane {
       static  bool                         isHighDpi        ();
       static  const QFont                  getFixedFont     ( int weight=QFont::Normal, bool italic=false, bool underline=false, int scale=0 );
       static  const QFont                  getNormalFont    ( bool bold=false, bool italic=false, bool underline=false );
+      static  const QFont                  getLayoutFont    ( bool bold=false, bool italic=false, bool underline=false );
       static  const Name&                  getGroup         ( const Name& key );
       static  QColor                       getColor         ( const Name& key, const DisplayStyle::HSVr& darkening=DisplayStyle::HSVr() );
       static  QPen                         getPen           ( const Name& key, const DisplayStyle::HSVr& darkening=DisplayStyle::HSVr() );
@@ -184,6 +182,3 @@ namespace Hurricane {
 
 
 } // End of Hurricane namespace.
-
-
-#endif  // __HURRICANE_GRAPHICS__

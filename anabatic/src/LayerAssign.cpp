@@ -19,6 +19,7 @@
 #include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/Net.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/NetRoutingProperty.h"
@@ -241,11 +242,18 @@ namespace {
           for ( AutoSegment* segment : rpContact->getAutoSegments() ) {
             cdebug_log(149,0) << "| " << segment << endl;
 
-            if (segment->isVertical() and not segment->isNonPref()) {
-              if (segment->getDepth() == 1) {
-                cdebug_log(149,0) << "| Slacken: " << segment << endl;
-                segment->changeDepth( 2, Flags::NoFlags );
-                cdebug_log(149,0) << "| After Slacken: " << segment << endl;
+            if (Session::getConfiguration()->isHV()) {
+              if (not segment->isNonPref()) {
+                if (segment->isVertical()) {
+                  if (segment->getDepth() == 1) {
+                    cdebug_log(149,0) << "| Slacken: " << segment << endl;
+                    segment->changeDepth( 2, Flags::NoFlags );
+                    cdebug_log(149,0) << "| After Slacken: " << segment << endl;
+                  }
+                } else {
+                  segment->makeDogleg( rpContact->getGCell() );
+                  cdebug_log(149,0) << "| Make dogleg: " << segment << endl;
+                }
               }
             } else {
               segment->makeDogleg( rpContact->getGCell() );
@@ -346,7 +354,6 @@ namespace Anabatic {
 
     cmess1 << "  o  Desaturate layer "
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
-    cdebug_log(149,0) << "Session::getSaturateRatio()=" << Session::getSaturateRatio() << endl;
 
     GCellKeyQueue  queue;
     GCell::Set     invalidateds;
@@ -364,8 +371,12 @@ namespace Anabatic {
         GCell*      gcell  = const_cast<GCell*>( topKey->getGCell() );
         queue.pop();
 
+        // if (gcell->getId() == 3534128)
+        //   DebugSession::open( 145, 150 );
+
+        cdebug_log(149,0) << "Before, queue.size()=" << queue.size() << endl;
         if (topKey->isActive()) {
-          cdebug_log(149,0) << "_desaturate: [" << depth << "]:"
+          cdebug_log(149,0) << "_desaturate: finish=" << finished << " [" << depth << "]:"
                             << gcell->getDensity(depth) << " " << gcell << endl;
           
           if (not gcell->isSaturated(depth)) {
@@ -381,16 +392,21 @@ namespace Anabatic {
             optimized = gcell->stepNetDesaturate( depth, globalNets, invalidateds );
             gcell->setSatProcessed( depth );
             if (optimized) {
-              for ( GCell* gcell : invalidateds ) {
-                if (not gcell->isSatProcessed(depth))
-                  queue.push( gcell->cloneKey(depth) );
+              for ( GCell* invalidGCell : invalidateds ) {
+              //if ((invalidGCell != gcell) or (gcell->isSaturated(depth)))
+                if (not invalidGCell->isSatProcessed(depth))
+                  queue.push( invalidGCell->cloneKey(depth) );
               }
               invalidateds.clear();
             }
           }
         }
+        cdebug_log(149,0) << "After, queue.size()=" << queue.size() << endl;
 
         delete topKey;
+
+        // if (gcell->getId() == 3534128)
+        //   DebugSession::close();
       }
     }
     
@@ -668,8 +684,6 @@ namespace Anabatic {
     Net* net = seed->getNet();
     DebugSession::open( net, 145, 150 );
 
-    cdebug_log(9000,0) << "Deter| Move left: " << seed << endl;
-
     seed->moveULeft();
     globalNets.insert( net );
 
@@ -704,8 +718,6 @@ namespace Anabatic {
   {
     Net* net = seed->getNet();
     DebugSession::open( net, 145, 150 );
-
-    cdebug_log(9000,0) << "Deter| Move right: " << seed << endl;
 
     seed->moveURight();
     globalNets.insert( net );
@@ -744,10 +756,12 @@ namespace Anabatic {
     unsigned int seedDepth = Session::getRoutingGauge()->getLayerDepth(seed->getLayer());
 
     DebugSession::open( net, 145, 150 );
-    cdebug_log(9000,0) << "Deter| moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
+    cdebug_log(149,0) << "moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
 
-    if (not seed->canMoveUp( 1.0, Flags::Propagate|Flags::AllowTerminal|Flags::NoCheckLayer) ) {
-      cdebug_log(9000,0) << "Deter| Reject seed move up, cannot move up." << endl;
+    Flags flags = Flags::Propagate|Flags::AllowTerminal|Flags::NoCheckLayer;
+    if (seedDepth > 2) flags |= Flags::IgnoreContacts;
+    if (not seed->canMoveUp( 3.0, flags) ) {
+      cdebug_log(149,0) << "Reject seed move up, cannot move up." << endl;
       DebugSession::close();
       return false;
     }
@@ -764,24 +778,29 @@ namespace Anabatic {
       AutoContact* from    = stack.back().first;
       AutoSegment* segment = stack.back().second;
       stack.pop_back();
+      cdebug_log(149,0) << "> Looking at " << segment << endl;
+      cdebug_log(149,0) << "    from " << from << endl;
 
       if (segment->isLocal()) {
-        if (not segment->isStrongTerminal()) locals.push_back( segment );
+        if (not segment->isStrongTerminal()) {
+          cdebug_log(149,0) << "| Push non-strong local " << segment << endl;
+          locals.push_back( segment );
+        }
         continue;
       }
       if ( (segment->getAnchoredLength() < 3*Session::getSliceHeight()) and (segment != seed) ) {
+        cdebug_log(149,0) << "| Push small anchored local " << segment << endl;
         locals.push_back( segment );
         continue;
       }
 
     // Do something here.
-      if (not segment->canMoveUp( 1.0
-                                , Flags::Propagate
-                                | Flags::AllowTerminal
-                                | Flags::NoCheckLayer
-                                | Flags::CheckLowDensity
-                                ) ) continue;
+      if (not segment->canMoveUp( 2.0, flags|Flags::CheckLowDensity )) {
+        cdebug_log(149,0) << "| Reject global " << segment << endl;
+        continue;
+      }
 
+      cdebug_log(149,0) << "| Push global " << segment << endl;
       globals.push_back( segment );
 
       AutoContact* source = segment->getAutoSource();
@@ -799,7 +818,7 @@ namespace Anabatic {
     }
 
     for ( size_t i=0 ; i<globals.size() ; ++i ) {
-    //cdebug_log(9000,0) << "Deter| Looking up G:" << globals[i] << endl;
+      cdebug_log(149,0) << "Looking up G:" << globals[i] << endl;
       unsigned int depth = Session::getRoutingGauge()->getLayerDepth( globals[i]->getLayer() );
       globals[i]->changeDepth( depth+2, Flags::WithNeighbors );
 
@@ -811,16 +830,27 @@ namespace Anabatic {
     }
 
     for ( size_t i=0 ; i<locals.size() ; ++i ) {
-    //cdebug_log(9000,0) << "Deter| Looking up L:" << locals[i] << endl;
+      cdebug_log(149,0) << "Looking up L:" << locals[i] << endl;
 
       unsigned int depth = Session::getRoutingGauge()->getLayerDepth(locals[i]->getLayer());
       if (depth > seedDepth+1) continue;
 
-      if (locals[i]->canPivotUp(2.0,Flags::Propagate|Flags::NoCheckLayer)) {
-        locals[i]->changeDepth( depth+2, Flags::WithNeighbors );
+      bool moved = false;
+      if (locals[i]->isNonPref()) {
+        locals[i]->changeDepth( depth+1, Flags::Propagate|Flags::WithNeighbors );
+        moved = true;
 
-      //cdebug_log(9000,0) << "Deter| Trunk move up L:" << locals[i] << endl;
+        cdebug_log(149,0) << "Trunk non-pref move up L:" << locals[i] << endl;
+      } else {
+        if (locals[i]->canPivotUp(2.0,Flags::Propagate|Flags::NoCheckLayer)) {
+          locals[i]->changeDepth( depth+2, Flags::WithNeighbors );
+          moved = true;
 
+          cdebug_log(149,0) << "Trunk move up L:" << locals[i] << endl;
+        }
+      }
+
+      if (moved) {
         vector<GCell*> gcells;
         locals[i]->getGCells( gcells );
         for ( size_t j=0 ; j<gcells.size() ; j++ ) {
@@ -829,6 +859,7 @@ namespace Anabatic {
       }
     }
 
+    cdebug_tabw(149,0) << "Successful moveUpNetTrunk() for " << net << " done" << endl;
     cdebug_tabw(149,-1);
     DebugSession::close();
 
@@ -890,8 +921,6 @@ namespace Anabatic {
 
   void  AnabaticEngine::balanceGlobalDensity ()
   {
-    cdebug_log(9000,0) << "Deter| Balance Global Density" << endl;
-
   //_balanceGlobalDensity( 1 ); // metal2
   //_balanceGlobalDensity( 2 ); // metal3
 
@@ -939,7 +968,8 @@ namespace Anabatic {
   {
   //DebugSession::open( 145, 150 );
 
-    cdebug_log(9000,0) << "Deter| Layer Assignment" << endl;
+    cdebug_log(149,1) << "Layer Assignment" << endl;
+    cdebug_log(149,0) << "Desaturate by later density" << endl;
 
     set<Net*> globalNets;
 
@@ -972,7 +1002,7 @@ namespace Anabatic {
          and (getConfiguration()->getAllowedDepth() > 2) ) {
         for ( size_t depth=1 ; depth <= getConfiguration()->getAllowedDepth()-2; ++depth ) {
           _desaturate( depth, globalNets, total, global );
-          if ( (depth > 1) and ((depth-1)%2 == 1) ) Session::revalidate();
+          if ( (depth > 1) and (depth%2 == 0) ) Session::revalidate();
         }
         
         globalNets.clear ();
@@ -985,53 +1015,56 @@ namespace Anabatic {
   
       Session::setAnabaticFlags( Flags::WarnOnGCellOverload );
     }
-
-    set<GCellRps*,GCellRps::Compare> gcellRpss;
     
-    for ( GCell* gcell : getGCells() ) {
-      set<RoutingPad*,Entity::CompareById> rps;
-      
-      const vector<AutoContact*> contacts = gcell->getContacts();
-      for ( AutoContact* contact : contacts ) {
-        AutoContactTerminal* terminal = dynamic_cast<AutoContactTerminal*>( contact );
-        if (terminal) {
-          rps.insert( terminal->getRoutingPad() );
+    if (Session::getConfiguration()->isHV()) {
+      cdebug_log(149,0) << "Desaturate by GCell terminal saturation" << endl;
+      set<GCellRps*,GCellRps::Compare> gcellRpss;
+
+      for ( GCell* gcell : getGCells() ) {
+        set<RoutingPad*,Entity::CompareById> rps;
+        
+        const vector<AutoContact*> contacts = gcell->getContacts();
+        for ( AutoContact* contact : contacts ) {
+          AutoContactTerminal* terminal = dynamic_cast<AutoContactTerminal*>( contact );
+          if (terminal) {
+            rps.insert( terminal->getRoutingPad() );
+          }
         }
-      }
-      if (rps.size() > getConfiguration()->getSaturateRp()) {
-        GCellRps* gcellRps = new GCellRps ( gcell, this );
-        gcellRpss.insert( gcellRps );
-
-        for ( RoutingPad* rp : rps ) gcellRps->add( rp );
-      }
-    } 
-
-    for ( GCellRps* gcellRps : gcellRpss ) {
-      gcellRps->consolidate();
+        if (rps.size() > getConfiguration()->getSaturateRp()) {
+          GCellRps* gcellRps = new GCellRps ( gcell, this );
+          gcellRpss.insert( gcellRps );
       
-      const vector<RpsInRow*>& rpsInRows = gcellRps->getRpsInRows();
-      cdebug_log(149,0) << gcellRps->getGCell() << " has " << rpsInRows.size() << " terminals." << endl;
-
-      size_t count = 0;
-      for ( RpsInRow* rpsInRow : rpsInRows ) {
-        cdebug_log(149,0) << "North:" << rpsInRow->getNorth() << " South:"
-             << rpsInRow->getSouth() << " net:"
-             << rpsInRow->getRps()[0]->getNet()->getName() << endl;
-        cdebug_log(149,0) << "H-Span:" << rpsInRow->getRpsHSpan() << " V-Span:" << rpsInRow->getRpsVSpan() << endl;
-        for ( RoutingPad* arp : rpsInRow->getRps() ) {
-          cdebug_log(149,0) << "| " << arp << endl;
+          for ( RoutingPad* rp : rps ) gcellRps->add( rp );
         }
-        if (++count < 2) rpsInRow->slacken();
-      }
+      } 
 
-      for ( AutoSegment* segment : gcellRps->getGCell()->getHSegments() ) {
-        if (segment->canPivotUp()) {
-          cdebug_log(149,0) << "Move up horizontal: " << segment << endl;
-          segment->moveUp( Flags::Propagate );
-        }
-      }
+      for ( GCellRps* gcellRps : gcellRpss ) {
+        gcellRps->consolidate();
+        
+        const vector<RpsInRow*>& rpsInRows = gcellRps->getRpsInRows();
+        cdebug_log(149,0) << gcellRps->getGCell() << " has " << rpsInRows.size() << " terminals." << endl;
       
-      delete gcellRps;
+        size_t count = 0;
+        for ( RpsInRow* rpsInRow : rpsInRows ) {
+          cdebug_log(149,0) << "North:" << rpsInRow->getNorth() << " South:"
+               << rpsInRow->getSouth() << " net:"
+               << rpsInRow->getRps()[0]->getNet()->getName() << endl;
+          cdebug_log(149,0) << "H-Span:" << rpsInRow->getRpsHSpan() << " V-Span:" << rpsInRow->getRpsVSpan() << endl;
+          for ( RoutingPad* arp : rpsInRow->getRps() ) {
+            cdebug_log(149,0) << "| " << arp << endl;
+          }
+          if (++count < 2) rpsInRow->slacken();
+        }
+      
+        for ( AutoSegment* segment : gcellRps->getGCell()->getHSegments() ) {
+          if (segment->canPivotUp()) {
+            cdebug_log(149,0) << "Move up horizontal: " << segment << endl;
+            segment->moveUp( Flags::Propagate );
+          }
+        }
+        
+        delete gcellRps;
+      }
     }
   
     checkGCellDensities();
@@ -1045,6 +1078,9 @@ namespace Anabatic {
     // cmess2 << "     - Ratio : "
     //        << ((float)global/(float)total)*100.0 << "%." << endl;
 
+    Breakpoint::stop( 100, "After layer assignment." );
+
+    cdebug_tabw(149,-1);
   //DebugSession::close();
   }
 

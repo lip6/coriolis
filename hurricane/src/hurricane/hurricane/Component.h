@@ -41,6 +41,11 @@ namespace Hurricane {
 // Class  :  "Component".
 
   class Component : public Go {
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
     public:
       typedef Go Inherit;
 
@@ -89,6 +94,8 @@ namespace Hurricane {
                                     Component                 ( Net* , bool inPlugCreate = false );
     public:                         
     // Accessors.                   
+      virtual       bool            isConvex                  () const;
+      virtual       bool            isPolygon45               () const;
       virtual       bool            isManhattanized           () const;
       virtual       bool            isNonRectangle            () const;
       virtual       Cell*           getCell                   () const;
@@ -135,6 +142,9 @@ namespace Hurricane {
       BodyHook   _bodyHook;
       Component* _nextOfNetComponentSet;
   };
+
+  
+  inline const FastRTTI& Component::fastRTTI () { return _fastRTTI; }
 
 
   inline Points  Component::getContour () const { return Points_Contour(this); }

@@ -252,6 +252,8 @@ class Net_SlavePlugs : public Collection<Plug*> {
 // Net implementation
 // ****************************************************************************************************
 
+FastRTTI  Net::_fastRTTI ( demangle(typeid(Net).name()), &Net::Inherit::fastRTTI() );
+
 Net::Net(Cell* cell, const Name& name)
 // ***********************************
 :    Inherit(),
@@ -285,6 +287,10 @@ Net* Net::create(Cell* cell, const Name& name)
 
     return net;
 }
+
+const FastRTTI& Net::vfastRTTI () const
+// ************************************
+{ return _fastRTTI; }
 
 Box Net::getBoundingBox() const
 // ****************************
@@ -636,16 +642,18 @@ static void mergeNets(Net* net1, Net* net2)
     net1->merge(net2);
 }
 
-void Net::merge(Net* net)
-// **********************
+
+void Net::merge ( Net* net )
 {
     cdebug_log(18,0) << "Net::merge(): " << this << " with " << net << " (deleted)." << endl;
 
-    if (!net)
-        throw Error("Can't merge net : null net");
+    if (not net)
+      throw Error( "Net::merge(): Can't merge %s with a null net."
+                 , getString(this).c_str() );
 
     if (net == this)
-        throw Error("Can't merge net : itself");
+      throw Error("Net::merge(): Can't merge %s with itself."
+                 , getString(this).c_str() );
 
     if (net->getCell() != _cell)
       throw Error( "Net::merge(): Cannot merge %s (%s) with %s (%s)."
@@ -655,45 +663,55 @@ void Net::merge(Net* net)
                  , getString(net->getCell()->getName()).c_str()
                  );
 
-    if (!isExternal() && net->isExternal() && !net->getConnectedSlavePlugs().isEmpty())
-        throw Error( "Net::merge(): Cannot merge external (%s) with an internal net (%s)."
-                   , getString(net->getName()).c_str()
-                   , getString(getName()).c_str()
-                   );
+    if (not isExternal() and net->isExternal() and not net->getConnectedSlavePlugs().isEmpty())
+      throw Error( "Net::merge(): Cannot merge external (%s) with an internal net (%s)."
+                 , getString(net->getName()).c_str()
+                 , getString(getName()).c_str()
+                 );
+    
+    vector<Rubber*> rubbers;
+    net->getRubbers().fill( rubbers );
+    for ( Rubber* rubber : rubbers ) rubber->_setNet( this );
 
-    for_each_rubber(rubber, net->getRubbers()) rubber->_setNet(this); end_for;
-    for_each_component(component, net->getComponents()) component->_setNet(this); end_for;
-
-    if (isExternal() && net->isExternal()) {
-        for_each_plug(plug, net->getConnectedSlavePlugs()) {
-            Plug* mainPlug = plug->getInstance()->getPlug(this);
-            if (mainPlug->isConnected() && (mainPlug->getNet() != plug->getNet()))
-                mergeNets(mainPlug->getNet(), plug->getNet());
-            end_for;
-        }
-        for_each_plug(plug, net->getConnectedSlavePlugs()) {
-            Plug* mainPlug = plug->getInstance()->getPlug(this);
-            if (!mainPlug->isConnected()) mainPlug->setNet(plug->getNet());
-            Hook* masterHook = plug->getBodyHook();
-            Hook* nextMasterHook = masterHook->getNextMasterHook();
-            if (nextMasterHook != masterHook) {
-                masterHook->detach();
-                mainPlug->getBodyHook()->merge(nextMasterHook);
-            }
-            Hooks slaveHooks = masterHook->getSlaveHooks();
-            while (!slaveHooks.isEmpty()) {
-                Hook* slaveHook = slaveHooks.getFirst();
-                slaveHook->detach();
-                slaveHook->attach(mainPlug->getBodyHook());
-            }
-            plug->_destroy();
-            end_for;
-        }
+    vector<Component*> components;
+    net->getComponents().fill( components );
+    for ( Component* component : components ) {
+      bool isExternalComp = NetExternalComponents::isExternal( component );
+      if (isExternalComp)
+        NetExternalComponents::setInternal( component );
+      component->_setNet( this );
+      if (isExternalComp)
+        NetExternalComponents::setExternal( component );
     }
 
-    bool mergedExternal = net->isExternal();
-    Name mergedName     = net->getName();
-    NetAliasName* slaves = NULL;
+    if (isExternal() and net->isExternal()) {
+      for ( Plug* plug : net->getConnectedSlavePlugs()) {
+        Plug* mainPlug = plug->getInstance()->getPlug( this );
+        if (mainPlug->isConnected() and (mainPlug->getNet() != plug->getNet()))
+          mergeNets( mainPlug->getNet(), plug->getNet() );
+      }
+      for ( Plug* plug : net->getConnectedSlavePlugs()) {
+        Plug* mainPlug = plug->getInstance()->getPlug( this );
+        if (not mainPlug->isConnected()) mainPlug->setNet(plug->getNet());
+        Hook* masterHook = plug->getBodyHook();
+        Hook* nextMasterHook = masterHook->getNextMasterHook();
+        if (nextMasterHook != masterHook) {
+          masterHook->detach();
+          mainPlug->getBodyHook()->merge( nextMasterHook );
+        }
+        Hooks slaveHooks = masterHook->getSlaveHooks();
+        while (not slaveHooks.isEmpty()) {
+          Hook* slaveHook = slaveHooks.getFirst();
+          slaveHook->detach();
+          slaveHook->attach( mainPlug->getBodyHook() );
+        }
+        plug->_destroy();
+      }
+    }
+
+    bool mergedExternal  = net->isExternal();
+    Name mergedName      = net->getName();
+    NetAliasName* slaves = nullptr;
     if (net->_mainName.isAttached()) {
       slaves = dynamic_cast<NetAliasName*>( net->_mainName.getNext() );
       net->_mainName.detach();
@@ -802,6 +820,7 @@ Record* Net::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI ), Record::Overload );
         record->add(getSlot("_cell", _cell));
         record->add(getSlot("_name", &_name));
         record->add(getSlot("_arity", &_arity));
@@ -971,7 +990,7 @@ Net::ComponentSet::ComponentSet()
 unsigned Net::ComponentSet::_getHashValue(Component* component) const
 // ******************************************************************
 {
-  return component->getId() / 8;
+  return hashFNV( component->getId() );
 }
 
 Component* Net::ComponentSet::_getNextElement(Component* component) const
@@ -1001,7 +1020,7 @@ Net::RubberSet::RubberSet()
 unsigned Net::RubberSet::_getHashValue(Rubber* rubber) const
 // *********************************************************
 {
-  return rubber->getId() / 8;
+  return hashFNV( rubber->getId() );
 }
 
 Rubber* Net::RubberSet::_getNextElement(Rubber* rubber) const

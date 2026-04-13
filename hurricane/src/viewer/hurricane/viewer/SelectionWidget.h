@@ -45,14 +45,13 @@ namespace Hurricane {
               void                   inspect                ( const QModelIndex& index  );
               bool                   cumulativeSelection    () const;
     signals:                                                
-              void                   selectionModeChanged   ();
               void                   selectionToggled       ( Selector* );
               void                   inspect                ( Record* );
               void                   inspect                ( Occurrence& );
     public slots:                                           
               void                   setCellWidget          ( CellWidget* );
               void                   clear                  ();
-              void                   changeSelectionMode    ();
+              void                   selectionModeChanged   ();
               void                   setShowSelection       ( bool );
               void                   setCumulativeSelection ( bool );
               void                   selectCurrent          ( const QModelIndex& current, const QModelIndex& );
@@ -76,7 +75,6 @@ namespace Hurricane {
               QCheckBox*             _cumulative;
               QCheckBox*             _showSelection;
               int                    _rowHeight;
-              UpdateState            _updateState;
   };
 
 

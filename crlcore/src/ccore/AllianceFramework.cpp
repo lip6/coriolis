@@ -267,6 +267,8 @@ namespace CRL {
     DataBase* db = DataBase::getDB();
     db->put( AllianceFrameworkProperty::create(this) );
     db->_setCellLoader( bind(&AllianceFramework::cellLoader,this,_1) );
+
+    _environment.addSYSTEM_LIBRARY( ".", "working", Environment::Prepend );
   }
 
 
@@ -423,36 +425,51 @@ namespace CRL {
 
     flags &= ~HasCatalog;
 
-    string dupLibName = libName;
-    for ( size_t duplicate=1 ; true ; ++duplicate ) {
-      AllianceLibrary* library = getAllianceLibrary( dupLibName, flags & ~CreateLibrary );
-      if (library == NULL) break;
+    Library*         hlibrary   = nullptr;
+    AllianceLibrary* alibrary   = nullptr;
+    string           dupLibName = libName;
 
-      ostringstream oss;
-      oss << libName << "." << duplicate;
-      dupLibName = oss.str();
+    if (libName == "working") {
+      hlibrary = getParentLibrary()->getLibrary( libName );
+      if (not hlibrary)
+        hlibrary = Library::create( getParentLibrary(), libName );
+      
+      alibrary = getAllianceLibrary( libName, flags & ~CreateLibrary );
+      if (not alibrary) {
+        alibrary = new AllianceLibrary( path, hlibrary );
+        _libraries.insert( _libraries.begin(), alibrary );
+      } else
+        alibrary->setPath( path );
+    } else {
+      for ( size_t duplicate=1 ; true ; ++duplicate ) {
+        AllianceLibrary* library = getAllianceLibrary( dupLibName, flags & ~CreateLibrary );
+        if (library == NULL) break;
+      
+        ostringstream oss;
+        oss << libName << "." << duplicate;
+        dupLibName = oss.str();
+      }
+      
+      SearchPath& LIBRARIES = _environment.getLIBRARIES();
+      LIBRARIES.select( path );
+      if (not LIBRARIES.hasSelected()) {
+        if (not (flags & AppendLibrary)) LIBRARIES.prepend( path, dupLibName );
+        else                             LIBRARIES.append ( path, dupLibName );
+      }
+      
+      hlibrary = getParentLibrary()->getLibrary( dupLibName );
+      if (not hlibrary)
+        hlibrary = Library::create( getParentLibrary(), dupLibName );
+      
+      alibrary = new AllianceLibrary( path, hlibrary );
+      
+      AllianceLibraries::iterator ilib = _libraries.begin();
+      if (LIBRARIES.getIndex() != SearchPath::npos)
+        for ( size_t i=0 ; i<LIBRARIES.getIndex() ; ++i, ++ilib );
+      else
+        ilib = _libraries.end();
+      _libraries.insert( ilib, alibrary );
     }
-
-    SearchPath& LIBRARIES = _environment.getLIBRARIES();
-    LIBRARIES.select( path );
-    if (not LIBRARIES.hasSelected()) {
-      if (not (flags & AppendLibrary)) LIBRARIES.prepend( path, dupLibName );
-      else                             LIBRARIES.append ( path, dupLibName );
-    }
-
-    Library* hlibrary = getParentLibrary()->getLibrary( dupLibName );
-    if (not hlibrary)
-      hlibrary = Library::create( getParentLibrary(), dupLibName );
-    
-    AllianceLibrary* alibrary = new AllianceLibrary( path, hlibrary );
-
-    AllianceLibraries::iterator ilib = _libraries.begin();
-    if (LIBRARIES.getIndex() != SearchPath::npos)
-      for ( size_t i=0 ; i<LIBRARIES.getIndex() ; ++i, ++ilib );
-    else
-      ilib = _libraries.end();
-
-    _libraries.insert( ilib, alibrary );
 
     string catalog = path + "/" + _environment.getCATALOG();
 

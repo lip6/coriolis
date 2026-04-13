@@ -44,6 +44,7 @@ namespace Katana {
       virtual bool           isVertical             () const;
       virtual bool           isFixed                () const;
       virtual bool           isPriorityLocked       () const;
+      virtual bool           canReduce              () const;
       virtual unsigned long  getId                  () const;
       virtual Flags          getDirection           () const;
       virtual Net*           getNet                 () const;

@@ -51,7 +51,6 @@ class QAction;
 namespace Hurricane {
 
   using std::vector;
-  using std::unary_function;
   using std::shared_ptr;
 
   class Technology;
@@ -105,6 +104,7 @@ namespace Hurricane {
                              , Right   =0x0080
                              , Top     =0x0100
                              , FillBox =0x0200
+                             , PosFlags=Center|Left|Right|Top
                              };
       enum    Flag           { NoFlags        =0x0000
                              , NoResetCommands=0x0001
@@ -294,7 +294,7 @@ namespace Hurricane {
               void                      updatePalette              ();
               void                      cellPreModificate          ();
               void                      cellPostModificate         ();
-      inline  void                      refresh                    ();
+      inline  void                      refresh                    ( bool fullRedraw=true );
               void                      _redraw                    ( QRect redrawArea );
       inline  void                      redrawSelection            ();
               void                      redrawSelection            ( QRect redrawArea );
@@ -638,7 +638,7 @@ namespace Hurricane {
           bool                _historyEnable;
       };
     public:
-      class FindStateName : public unary_function< const shared_ptr<State>&, bool > {
+      class FindStateName {
         public:
           inline      FindStateName ( const Name& );
           inline bool operator()    ( const shared_ptr<State>& );
@@ -663,10 +663,9 @@ namespace Hurricane {
               shared_ptr<State>          _state;
               bool                       _isPrinter;
               bool                       _cellChanged;
-              bool                       _selectionHasChanged;
-              int                        _delaySelectionChanged;
-              bool                       _cellModificated;
+              bool                       _fullRedraw;
               bool                       _enableRedrawInterrupt;
+              int                        _delaySelectionChanged;
               SelectorSet                _selectors;
               Command*                   _activeCommand;
               vector<Command*>           _commands;
@@ -946,7 +945,8 @@ namespace Hurricane {
     , _ihistory           (0)
     , _historyEnable      (false)
   {
-    _scaleHistory.push_back ( ScaleEntry(1.0,Point(0,0)) );
+    DbU::getStringMode( _dbuMode, _unitPower );
+    _scaleHistory.push_back( ScaleEntry(1.0,Point(0,0)) );
     if (_cell) _hierarchicalName = Name( _cell->getHierarchicalName() );
   }
 
@@ -1131,8 +1131,7 @@ namespace Hurricane {
 
 
   inline CellWidget::FindStateName::FindStateName ( const Name& cellHierName )
-    : unary_function< const shared_ptr<State>&, bool >()
-    , _cellHierName(cellHierName)
+    : _cellHierName(cellHierName)
   { }
 
 
@@ -1239,8 +1238,8 @@ namespace Hurricane {
   { _state->getRulers().clear (); refresh(); }
 
 
-  inline  void  CellWidget::refresh ()
-  { _redrawManager.refresh(); }
+  inline  void  CellWidget::refresh ( bool fullRedraw )
+  { _fullRedraw |= fullRedraw; _redrawManager.refresh(); }
 
 
   inline void  CellWidget::redrawSelection ()
@@ -1424,7 +1423,7 @@ namespace Hurricane {
   inline void  CellWidget::setRubberShape ( RubberShape shape )
   {
     _state->setRubberShape ( shape );
-    _redrawManager.refresh ();
+   refresh ();
     emit queryFilterChanged ();
   }
 

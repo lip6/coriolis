@@ -36,6 +36,7 @@ using namespace std;
 #include "hurricane/Vertical.h"
 #include "hurricane/Diagonal.h"
 #include "hurricane/Rectilinear.h"
+#include "hurricane/Polygon.h"
 #include "hurricane/Pad.h"
 #include "hurricane/Text.h"
 #include "hurricane/Net.h"
@@ -130,89 +131,91 @@ namespace {
       static const uint16_t  SRFNAME         = 0x3a00 | String;
       static const uint16_t  LIBSECUR        = 0x3b00 | TwoByteInteger;
     public:
-                                     GdsRecord      ();
-      inline       bool              isHEADER       () const;   
-      inline       bool              isBGNLIB       () const;   
-      inline       bool              isLIBNAME      () const;   
-      inline       bool              isUNITS        () const;   
-      inline       bool              isENDLIB       () const;   
-      inline       bool              isBGNSTR       () const;   
-      inline       bool              isSTRNAME      () const;   
-      inline       bool              isENDSTR       () const;   
-      inline       bool              isBOUNDARY     () const;   
-      inline       bool              isPATH         () const;   
-      inline       bool              isSREF         () const;   
-      inline       bool              isAREF         () const;   
-      inline       bool              isTEXT         () const;   
-      inline       bool              isLAYER        () const;   
-      inline       bool              isDATATYPE     () const;   
-      inline       bool              isWIDTH        () const;
-      inline       bool              isXY           () const;
-      inline       bool              isENDEL        () const;   
-      inline       bool              isSNAME        () const;   
-      inline       bool              isCOLROW       () const;   
-      inline       bool              isTEXTNODE     () const;
-      inline       bool              isNODE         () const;   
-      inline       bool              isTEXTTYPE     () const;   
-      inline       bool              isPRESENTATION () const;   
-      inline       bool              isSPACING      () const;
-      inline       bool              isSTRING       () const;   
-      inline       bool              isSTRANS       () const;   
-      inline       bool              isMAG          () const;   
-      inline       bool              isANGLE        () const;   
-      inline       bool              isREFLIBS      () const;   
-      inline       bool              isFONTS        () const;   
-      inline       bool              isPATHTYPE     () const;   
-      inline       bool              isGENERATIONS  () const;   
-      inline       bool              isATTRTABLE    () const;   
-      inline       bool              isSTYPTABLE    () const;
-      inline       bool              isSTRTYPE      () const;
-      inline       bool              isELFLAGS      () const;   
-      inline       bool              isELKEY        () const;
-      inline       bool              isLINKTYPE     () const;
-      inline       bool              isLINKKEYS     () const;
-      inline       bool              isNODETYPE     () const;   
-      inline       bool              isPROPATTR     () const;   
-      inline       bool              isPROPVALUE    () const;   
-      inline       bool              isBOX          () const;   
-      inline       bool              isBOXTYPE      () const;   
-      inline       bool              isPLEX         () const;
-      inline       bool              isBGNEXTN      () const;
-      inline       bool              isENDEXTN      () const;
-      inline       bool              isTAPENUM      () const;   
-      inline       bool              isTAPECODE     () const;   
-      inline       bool              isSTRCLASS     () const;
-      inline       bool              isRESERVED     () const;
-      inline       bool              isFORMAT       () const;   
-      inline       bool              isMASK         () const;
-      inline       bool              isENDMASKS     () const;
-      inline       bool              isLIBDIRSIZE   () const;   
-      inline       bool              isSRFNAME      () const;   
-      inline       bool              isLIBSECUR     () const;   
-      inline       bool              hasXReflection () const;
-      inline       uint16_t          getType        () const;
-      inline       uint16_t          getLength      () const;
-      inline const vector<uint16_t>& getMasks       () const;
-      inline const vector<int16_t >& getInt16s      () const;
-      inline const vector<int32_t >& getInt32s      () const;
-      inline const vector<double  >& getDoubles     () const;
-      inline       string            getName        () const;
-                   void              clear          ();
-                   void              read           ( istream* );
-                   void              readDummy      ( bool showError );
-                   void              readStrans     ();
-                   void              readString     ();
-                   void              readUnits      ();
-                   void              readLayer      ();
-                   void              readDatatype   ();
-                   void              readWidth      ();
-                   void              readBgnextn    ();
-                   void              readEndextn    ();
-                   void              readPathtype   ();
-                   void              readStrname    ();
-                   void              readXy         ();
-      static       string            toStrType      ( uint16_t );
-                   GdsRecord&        operator=      ( const GdsRecord& );
+                                     GdsRecord        ();
+      inline       bool              isHEADER         () const;   
+      inline       bool              isBGNLIB         () const;   
+      inline       bool              isLIBNAME        () const;   
+      inline       bool              isUNITS          () const;   
+      inline       bool              isENDLIB         () const;   
+      inline       bool              isBGNSTR         () const;   
+      inline       bool              isSTRNAME        () const;   
+      inline       bool              isENDSTR         () const;   
+      inline       bool              isBOUNDARY       () const;   
+      inline       bool              isPATH           () const;   
+      inline       bool              isSREF           () const;   
+      inline       bool              isAREF           () const;   
+      inline       bool              isTEXT           () const;   
+      inline       bool              isLAYER          () const;   
+      inline       bool              isDATATYPE       () const;   
+      inline       bool              isWIDTH          () const;
+      inline       bool              isXY             () const;
+      inline       bool              isENDEL          () const;   
+      inline       bool              isSNAME          () const;   
+      inline       bool              isCOLROW         () const;   
+      inline       bool              isTEXTNODE       () const;
+      inline       bool              isNODE           () const;   
+      inline       bool              isTEXTTYPE       () const;   
+      inline       bool              isPRESENTATION   () const;   
+      inline       bool              isSPACING        () const;
+      inline       bool              isSTRING         () const;   
+      inline       bool              isSTRANS         () const;   
+      inline       bool              isMAG            () const;   
+      inline       bool              isANGLE          () const;   
+      inline       bool              isREFLIBS        () const;   
+      inline       bool              isFONTS          () const;   
+      inline       bool              isPATHTYPE       () const;   
+      inline       bool              isGENERATIONS    () const;   
+      inline       bool              isATTRTABLE      () const;   
+      inline       bool              isSTYPTABLE      () const;
+      inline       bool              isSTRTYPE        () const;
+      inline       bool              isELFLAGS        () const;   
+      inline       bool              isELKEY          () const;
+      inline       bool              isLINKTYPE       () const;
+      inline       bool              isLINKKEYS       () const;
+      inline       bool              isNODETYPE       () const;   
+      inline       bool              isPROPATTR       () const;   
+      inline       bool              isPROPVALUE      () const;   
+      inline       bool              isBOX            () const;   
+      inline       bool              isBOXTYPE        () const;   
+      inline       bool              isPLEX           () const;
+      inline       bool              isBGNEXTN        () const;
+      inline       bool              isENDEXTN        () const;
+      inline       bool              isTAPENUM        () const;   
+      inline       bool              isTAPECODE       () const;   
+      inline       bool              isSTRCLASS       () const;
+      inline       bool              isRESERVED       () const;
+      inline       bool              isFORMAT         () const;   
+      inline       bool              isMASK           () const;
+      inline       bool              isENDMASKS       () const;
+      inline       bool              isLIBDIRSIZE     () const;   
+      inline       bool              isSRFNAME        () const;   
+      inline       bool              isLIBSECUR       () const;   
+      inline       bool              hasXReflection   () const;
+      inline       uint16_t          getType          () const;
+      inline       uint16_t          getLength        () const;
+      inline const vector<uint16_t>& getMasks         () const;
+      inline const vector<int16_t >& getInt16s        () const;
+      inline const vector<int32_t >& getInt32s        () const;
+      inline const vector<double  >& getDoubles       () const;
+      inline       string            getName          () const;
+                   void              clear            ();
+                   void              read             ( istream* );
+                   void              readDummy        ( bool showError );
+                   void              readStrans       ();
+                   void              readWord         ();
+                   void              readString       ();
+                   void              readUnits        ();
+                   void              readLayer        ();
+                   void              readDatatype     ();
+                   void              readWidth        ();
+                   void              readBgnextn      ();
+                   void              readEndextn      ();
+                   void              readPathtype     ();
+                   void              readStrname      ();
+                   void              readColrow       ();
+                   void              readXy           ();
+      static       string            toStrType        ( uint16_t );
+                   GdsRecord&        operator=        ( const GdsRecord& );
     private:
       template< typename IntType> IntType  _readInt    ();
                                   string   _readString ();
@@ -225,7 +228,6 @@ namespace {
       uint16_t          _type;
       bool              _xReflection;
       string            _name;
-      vector<uint16_t>  _masks;
       vector<int16_t>   _int16s;
       vector<int32_t>   _int32s;
       vector<double>    _doubles;
@@ -233,98 +235,94 @@ namespace {
   };
 
 
-  inline       bool              GdsRecord::isHEADER       () const { return (_type == HEADER      ); }   
-  inline       bool              GdsRecord::isBGNLIB       () const { return (_type == BGNLIB      ); }   
-  inline       bool              GdsRecord::isLIBNAME      () const { return (_type == LIBNAME     ); }   
-  inline       bool              GdsRecord::isUNITS        () const { return (_type == UNITS       ); }   
-  inline       bool              GdsRecord::isENDLIB       () const { return (_type == ENDLIB      ); }   
-  inline       bool              GdsRecord::isBGNSTR       () const { return (_type == BGNSTR      ); }   
-  inline       bool              GdsRecord::isSTRNAME      () const { return (_type == STRNAME     ); }   
-  inline       bool              GdsRecord::isENDSTR       () const { return (_type == ENDSTR      ); }   
-  inline       bool              GdsRecord::isBOUNDARY     () const { return (_type == BOUNDARY    ); }   
-  inline       bool              GdsRecord::isPATH         () const { return (_type == PATH        ); }   
-  inline       bool              GdsRecord::isSREF         () const { return (_type == SREF        ); }   
-  inline       bool              GdsRecord::isAREF         () const { return (_type == AREF        ); }   
-  inline       bool              GdsRecord::isTEXT         () const { return (_type == TEXT        ); }   
-  inline       bool              GdsRecord::isLAYER        () const { return (_type == LAYER       ); }   
-  inline       bool              GdsRecord::isDATATYPE     () const { return (_type == DATATYPE    ); }   
-  inline       bool              GdsRecord::isWIDTH        () const { return (_type == WIDTH       ); }
-  inline       bool              GdsRecord::isXY           () const { return (_type == XY          ); }
-  inline       bool              GdsRecord::isENDEL        () const { return (_type == ENDEL       ); }   
-  inline       bool              GdsRecord::isSNAME        () const { return (_type == SNAME       ); }   
-  inline       bool              GdsRecord::isCOLROW       () const { return (_type == COLROW      ); }   
-  inline       bool              GdsRecord::isTEXTNODE     () const { return (_type == TEXTNODE    ); }
-  inline       bool              GdsRecord::isNODE         () const { return (_type == NODE        ); }   
-  inline       bool              GdsRecord::isTEXTTYPE     () const { return (_type == TEXTTYPE    ); }   
-  inline       bool              GdsRecord::isPRESENTATION () const { return (_type == PRESENTATION); }   
-  inline       bool              GdsRecord::isSPACING      () const { return (_type == SPACING     ); }
-  inline       bool              GdsRecord::isSTRING       () const { return (_type == STRING      ); }   
-  inline       bool              GdsRecord::isSTRANS       () const { return (_type == STRANS      ); }   
-  inline       bool              GdsRecord::isMAG          () const { return (_type == MAG         ); }   
-  inline       bool              GdsRecord::isANGLE        () const { return (_type == ANGLE       ); }   
-  inline       bool              GdsRecord::isREFLIBS      () const { return (_type == REFLIBS     ); }   
-  inline       bool              GdsRecord::isFONTS        () const { return (_type == FONTS       ); }   
-  inline       bool              GdsRecord::isPATHTYPE     () const { return (_type == PATHTYPE    ); }   
-  inline       bool              GdsRecord::isGENERATIONS  () const { return (_type == GENERATIONS ); }   
-  inline       bool              GdsRecord::isATTRTABLE    () const { return (_type == ATTRTABLE   ); }   
-  inline       bool              GdsRecord::isSTYPTABLE    () const { return (_type == STYPTABLE   ); }
-  inline       bool              GdsRecord::isSTRTYPE      () const { return (_type == STRTYPE     ); }
-  inline       bool              GdsRecord::isELFLAGS      () const { return (_type == ELFLAGS     ); }   
-  inline       bool              GdsRecord::isELKEY        () const { return (_type == ELKEY       ); }
-  inline       bool              GdsRecord::isLINKTYPE     () const { return (_type == LINKTYPE    ); }
-  inline       bool              GdsRecord::isLINKKEYS     () const { return (_type == LINKKEYS    ); }
-  inline       bool              GdsRecord::isNODETYPE     () const { return (_type == NODETYPE    ); }   
-  inline       bool              GdsRecord::isPROPATTR     () const { return (_type == PROPATTR    ); }   
-  inline       bool              GdsRecord::isPROPVALUE    () const { return (_type == PROPVALUE   ); }   
-  inline       bool              GdsRecord::isBOX          () const { return (_type == BOX         ); }   
-  inline       bool              GdsRecord::isBOXTYPE      () const { return (_type == BOXTYPE     ); }   
-  inline       bool              GdsRecord::isPLEX         () const { return (_type == PLEX        ); }
-  inline       bool              GdsRecord::isBGNEXTN      () const { return (_type == BGNEXTN     ); }
-  inline       bool              GdsRecord::isENDEXTN      () const { return (_type == ENDEXTN     ); }
-  inline       bool              GdsRecord::isTAPENUM      () const { return (_type == TAPENUM     ); }   
-  inline       bool              GdsRecord::isTAPECODE     () const { return (_type == TAPECODE    ); }   
-  inline       bool              GdsRecord::isSTRCLASS     () const { return (_type == STRCLASS    ); }
-  inline       bool              GdsRecord::isRESERVED     () const { return (_type == RESERVED    ); }
-  inline       bool              GdsRecord::isFORMAT       () const { return (_type == FORMAT      ); }   
-  inline       bool              GdsRecord::isMASK         () const { return (_type == MASK        ); }
-  inline       bool              GdsRecord::isENDMASKS     () const { return (_type == ENDMASKS    ); }
-  inline       bool              GdsRecord::isLIBDIRSIZE   () const { return (_type == LIBDIRSIZE  ); }   
-  inline       bool              GdsRecord::isSRFNAME      () const { return (_type == SRFNAME     ); }   
-  inline       bool              GdsRecord::isLIBSECUR     () const { return (_type == LIBSECUR    ); }   
-  inline       bool              GdsRecord::hasXReflection () const { return _xReflection; }   
-  inline       uint16_t          GdsRecord::getType        () const { return _type; }
-  inline       uint16_t          GdsRecord::getLength      () const { return _length; }
-  inline const vector<uint16_t>& GdsRecord::getMasks       () const { return _masks; }
-  inline const vector<int16_t >& GdsRecord::getInt16s      () const { return _int16s; }
-  inline const vector<int32_t >& GdsRecord::getInt32s      () const { return _int32s; }
-  inline const vector<double  >& GdsRecord::getDoubles     () const { return _doubles; }
-  inline       string            GdsRecord::getName        () const { return _name; }
+  inline       bool              GdsRecord::isHEADER         () const { return (_type == HEADER      ); }   
+  inline       bool              GdsRecord::isBGNLIB         () const { return (_type == BGNLIB      ); }   
+  inline       bool              GdsRecord::isLIBNAME        () const { return (_type == LIBNAME     ); }   
+  inline       bool              GdsRecord::isUNITS          () const { return (_type == UNITS       ); }   
+  inline       bool              GdsRecord::isENDLIB         () const { return (_type == ENDLIB      ); }   
+  inline       bool              GdsRecord::isBGNSTR         () const { return (_type == BGNSTR      ); }   
+  inline       bool              GdsRecord::isSTRNAME        () const { return (_type == STRNAME     ); }   
+  inline       bool              GdsRecord::isENDSTR         () const { return (_type == ENDSTR      ); }   
+  inline       bool              GdsRecord::isBOUNDARY       () const { return (_type == BOUNDARY    ); }   
+  inline       bool              GdsRecord::isPATH           () const { return (_type == PATH        ); }   
+  inline       bool              GdsRecord::isSREF           () const { return (_type == SREF        ); }   
+  inline       bool              GdsRecord::isAREF           () const { return (_type == AREF        ); }   
+  inline       bool              GdsRecord::isTEXT           () const { return (_type == TEXT        ); }   
+  inline       bool              GdsRecord::isLAYER          () const { return (_type == LAYER       ); }   
+  inline       bool              GdsRecord::isDATATYPE       () const { return (_type == DATATYPE    ); }   
+  inline       bool              GdsRecord::isWIDTH          () const { return (_type == WIDTH       ); }
+  inline       bool              GdsRecord::isXY             () const { return (_type == XY          ); }
+  inline       bool              GdsRecord::isENDEL          () const { return (_type == ENDEL       ); }   
+  inline       bool              GdsRecord::isSNAME          () const { return (_type == SNAME       ); }   
+  inline       bool              GdsRecord::isCOLROW         () const { return (_type == COLROW      ); }   
+  inline       bool              GdsRecord::isTEXTNODE       () const { return (_type == TEXTNODE    ); }
+  inline       bool              GdsRecord::isNODE           () const { return (_type == NODE        ); }   
+  inline       bool              GdsRecord::isTEXTTYPE       () const { return (_type == TEXTTYPE    ); }   
+  inline       bool              GdsRecord::isPRESENTATION   () const { return (_type == PRESENTATION); }   
+  inline       bool              GdsRecord::isSPACING        () const { return (_type == SPACING     ); }
+  inline       bool              GdsRecord::isSTRING         () const { return (_type == STRING      ); }   
+  inline       bool              GdsRecord::isSTRANS         () const { return (_type == STRANS      ); }   
+  inline       bool              GdsRecord::isMAG            () const { return (_type == MAG         ); }   
+  inline       bool              GdsRecord::isANGLE          () const { return (_type == ANGLE       ); }   
+  inline       bool              GdsRecord::isREFLIBS        () const { return (_type == REFLIBS     ); }   
+  inline       bool              GdsRecord::isFONTS          () const { return (_type == FONTS       ); }   
+  inline       bool              GdsRecord::isPATHTYPE       () const { return (_type == PATHTYPE    ); }   
+  inline       bool              GdsRecord::isGENERATIONS    () const { return (_type == GENERATIONS ); }   
+  inline       bool              GdsRecord::isATTRTABLE      () const { return (_type == ATTRTABLE   ); }   
+  inline       bool              GdsRecord::isSTYPTABLE      () const { return (_type == STYPTABLE   ); }
+  inline       bool              GdsRecord::isSTRTYPE        () const { return (_type == STRTYPE     ); }
+  inline       bool              GdsRecord::isELFLAGS        () const { return (_type == ELFLAGS     ); }   
+  inline       bool              GdsRecord::isELKEY          () const { return (_type == ELKEY       ); }
+  inline       bool              GdsRecord::isLINKTYPE       () const { return (_type == LINKTYPE    ); }
+  inline       bool              GdsRecord::isLINKKEYS       () const { return (_type == LINKKEYS    ); }
+  inline       bool              GdsRecord::isNODETYPE       () const { return (_type == NODETYPE    ); }   
+  inline       bool              GdsRecord::isPROPATTR       () const { return (_type == PROPATTR    ); }   
+  inline       bool              GdsRecord::isPROPVALUE      () const { return (_type == PROPVALUE   ); }   
+  inline       bool              GdsRecord::isBOX            () const { return (_type == BOX         ); }   
+  inline       bool              GdsRecord::isBOXTYPE        () const { return (_type == BOXTYPE     ); }   
+  inline       bool              GdsRecord::isPLEX           () const { return (_type == PLEX        ); }
+  inline       bool              GdsRecord::isBGNEXTN        () const { return (_type == BGNEXTN     ); }
+  inline       bool              GdsRecord::isENDEXTN        () const { return (_type == ENDEXTN     ); }
+  inline       bool              GdsRecord::isTAPENUM        () const { return (_type == TAPENUM     ); }   
+  inline       bool              GdsRecord::isTAPECODE       () const { return (_type == TAPECODE    ); }   
+  inline       bool              GdsRecord::isSTRCLASS       () const { return (_type == STRCLASS    ); }
+  inline       bool              GdsRecord::isRESERVED       () const { return (_type == RESERVED    ); }
+  inline       bool              GdsRecord::isFORMAT         () const { return (_type == FORMAT      ); }   
+  inline       bool              GdsRecord::isMASK           () const { return (_type == MASK        ); }
+  inline       bool              GdsRecord::isENDMASKS       () const { return (_type == ENDMASKS    ); }
+  inline       bool              GdsRecord::isLIBDIRSIZE     () const { return (_type == LIBDIRSIZE  ); }   
+  inline       bool              GdsRecord::isSRFNAME        () const { return (_type == SRFNAME     ); }   
+  inline       bool              GdsRecord::isLIBSECUR       () const { return (_type == LIBSECUR    ); }   
+  inline       bool              GdsRecord::hasXReflection   () const { return _xReflection; }   
+  inline       uint16_t          GdsRecord::getType          () const { return _type; }
+  inline       uint16_t          GdsRecord::getLength        () const { return _length; }
+  inline const vector<int16_t >& GdsRecord::getInt16s        () const { return _int16s; }
+  inline const vector<int32_t >& GdsRecord::getInt32s        () const { return _int32s; }
+  inline const vector<double  >& GdsRecord::getDoubles       () const { return _doubles; }
+  inline       string            GdsRecord::getName          () const { return _name; }
 
 
   GdsRecord::GdsRecord ()
-    : _stream     (NULL)
-    , _offset     (0)
-    , _length     (0)
-    , _count      (0)
-    , _type       (0)
-    , _xReflection(false)
-    , _name       ()
-    , _masks      ()
-    , _int16s     ()
-    , _int32s     ()
-    , _doubles    ()
+    : _stream       (NULL)
+    , _offset       (0)
+    , _length       (0)
+    , _count        (0)
+    , _type         (0)
+    , _xReflection  (false)
+    , _name         ()
+    , _int16s       ()
+    , _int32s       ()
+    , _doubles      ()
   { }
 
 
   void  GdsRecord::clear ()
-  {
-    _stream      = NULL;
-    _length      = 0;
-    _count       = 0;
-    _type        = 0;
-    _xReflection = false;
+  { _stream        = NULL;
+    _length        = 0;
+    _count         = 0;
+    _type          = 0;
+    _xReflection   = false;
     _name   .clear();
-    _masks  .clear();
     _int16s .clear();
     _int32s .clear();
     _doubles.clear();
@@ -359,15 +357,15 @@ namespace {
       case XY:           readXy();           break;
       case ENDEL:        readDummy( false ); break;
       case SNAME:        readStrname();      break;
-      case COLROW:       readDummy( false ); break;
+      case COLROW:       readColrow();       break;
       case TEXTNODE:     readDummy( false ); break;
       case NODE:         readDummy( false ); break;
-      case TEXTTYPE:     readDummy( false ); break;
-      case PRESENTATION: readDummy( false ); break;
+      case TEXTTYPE:     readDatatype();     break;
+      case PRESENTATION: readWord();         break;
       case SPACING:      readDummy( false ); break;
       case STRING:       readString();       break;
       case STRANS:       readStrans();       break;
-      case MAG:          readDummy( false ); break;
+      case MAG:          _doubles.push_back( _readDouble() ); break;
       case ANGLE:        _doubles.push_back( _readDouble() ); break;
       case REFLIBS:      readDummy( false ); break;
       case FONTS:        readDummy( false ); break;
@@ -416,7 +414,6 @@ namespace {
     _count    = other._count;
     _type     = other._type;
     _name     = other._name;
-    _masks    = other._masks;
     _int16s   = other._int16s;
     _int32s   = other._int32s;
     _doubles  = other._doubles;
@@ -485,7 +482,7 @@ namespace {
 
   string  GdsRecord::_readString ()
   {
-    cdebug_log(101,0) << "GdsRecord::_readDouble() " << endl;
+    cdebug_log(101,0) << "GdsRecord::_readString() " << endl;
     string s;
     char c;
     for ( ; _count<_length ; ++_count ) {
@@ -540,6 +537,10 @@ namespace {
   { _name = _readString(); }
 
 
+  void  GdsRecord::readWord ()
+  { _int16s.push_back( _readInt<uint16_t>() ); }
+
+
   void  GdsRecord::readLayer ()
   { _int16s.push_back( _readInt<uint16_t>() ); }
 
@@ -562,6 +563,13 @@ namespace {
 
   void  GdsRecord::readPathtype ()
   { _int16s.push_back( _readInt<uint16_t>() ); }
+
+
+  void  GdsRecord::readColrow ()
+  {
+    _int16s.push_back( _readInt<uint16_t>() );
+    _int16s.push_back( _readInt<uint16_t>() );
+  }
 
 
   void  GdsRecord::readXy ()
@@ -651,6 +659,7 @@ namespace {
       static       void    _staticInit          ();
                            GdsStream            ( string gdsPath, uint32_t flags );
                    Cell*   getCell              ( string cellName, bool create=false );
+      inline       bool    isLefForeign         () const;
       inline       bool    useGdsPrefix         () const;
       inline       bool    useLayer0AsBoundary  () const;
       inline       bool    isValidSyntax        () const;
@@ -659,7 +668,7 @@ namespace {
                    bool    read                 ( Library* );
                    bool    readFormatType       ();
                    bool    readStructure        ();
-             const Layer*  readLayerAndDatatype ();
+             const Layer*  readLayerAndDatatype ( bool& isBoundary );
                    bool    readBoundary         ();
                    bool    readPath             ();
                    bool    readSref             ();
@@ -667,9 +676,10 @@ namespace {
                    bool    readNode             ();
                    bool    readBox              ();
                    bool    readText             ();
-                   bool    readTextbody         ( const Layer* );
+                   bool    readTextbody         ( uint16_t gdsLayer );
                    bool    readStrans           ();
                    bool    readProperty         ();
+                   bool    readPresentation     ();
                    void    xyToAbutmentBox      ();
                    void    xyToComponent        ( const Layer* );
                    void    xyToPath             ( uint16_t pathtype
@@ -698,12 +708,17 @@ namespace {
     private:
       static map<uint32_t,const Layer*>  _gdsLayerTable;
              vector<DelayedInstance>     _delayedInstances;
+             vector<Cell*>               _cells;
              uint32_t                    _flags;
              string                      _gdsPath;
              ifstream                    _stream;
              GdsRecord                   _record;
              double                      _angle;
+             double                      _mag;
              bool                        _xReflection;
+             uint32_t                    _fontNb;
+             uint32_t                    _hPresentation;
+             uint32_t                    _vPresentation;
              Library*                    _library;
              Cell*                       _cell;
              Component*                  _component;
@@ -758,18 +773,24 @@ namespace {
 
 
   inline bool  GdsStream::isValidSyntax       () const { return _validSyntax; }
+  inline bool  GdsStream::isLefForeign        () const { return    (_flags & Gds::LefForeign); }
   inline bool  GdsStream::useGdsPrefix        () const { return not(_flags & Gds::NoGdsPrefix); }
   inline bool  GdsStream::useLayer0AsBoundary () const { return    (_flags & Gds::Layer_0_IsBoundary); }
 
 
   GdsStream::GdsStream ( string gdsPath, uint32_t flags )
     : _delayedInstances()
+    , _cells           ()
     , _flags           (flags)
     , _gdsPath         (gdsPath)
     , _stream          ()
     , _record          ()
     , _angle           (0.0)
+    , _mag             (1.0)
     , _xReflection     (false)
+    , _fontNb          (0)
+    , _hPresentation   (0)
+    , _vPresentation   (0)
     , _library         (NULL)
     , _cell            (NULL)
     , _component       (NULL)
@@ -809,7 +830,11 @@ namespace {
     Cell*    cell        = workLibrary->getCell( cellName );
     if (cell) return cell;
 
-    if (not Gds::getTopCellName().empty() and (cellName != Gds::getTopCellName())) {
+    string lefImportTopCellName = Gds::getTopCellName();
+    if (isLefForeign())
+      lefImportTopCellName += "_lef_foreign";
+      
+    if (not Gds::getTopCellName().empty() and (cellName != lefImportTopCellName)) {
       cellName.insert( 0, "." );
       cellName.insert( 0, Gds::getTopCellName() );
       workLibrary = _library->getLibrary( Gds::getTopCellName() );
@@ -828,7 +853,8 @@ namespace {
                         , cellName.c_str()
                         , getString(_library).c_str()
                         ) << endl;
-    return Cell::create( workLibrary, cellName );
+    _cells.push_back( Cell::create( workLibrary, cellName ));
+    return _cells.back();
   }
 
 
@@ -900,6 +926,12 @@ namespace {
       makeExternals();
     }
 
+    for ( Cell* cell : _cells ) {
+      if (not useLayer0AsBoundary() or cell->getAbutmentBox().isEmpty()) {
+        cell->setAbutmentBox( cell->getBoundingBox() );
+      }
+    }
+
     _library = NULL;
     cdebug_log(101,-1) << "    GdsStream::read(Library*) - return:" << _validSyntax << endl;
     return _validSyntax;
@@ -930,10 +962,13 @@ namespace {
     cdebug_log(101,1) << "GdsStream::readStructure()" << endl;
     
     if (_record.isSTRNAME()) {
+      cdebug_log(101,0) << "name " << _record.getName() << endl;
       if (_library) {
         string cellName = _record.getName();
+        if (isLefForeign()) cellName += "_lef_foreign";
         _cell = getCell( cellName, true );
         _stream >> _record;
+        cdebug_log(101,0) << "LEF name " << cellName << endl;
       }
     }
 
@@ -965,11 +1000,6 @@ namespace {
 
     if (_validSyntax) _stream >> _record;
 
-    if (not useLayer0AsBoundary() or _cell->getAbutmentBox().isEmpty()) {
-      UpdateSession::close();
-      _cell->setAbutmentBox( _cell->getBoundingBox() );
-      UpdateSession::open();
-    }
     _cell = NULL;
     cdebug_log(101,-1) << "    GdsStream::readStructure() - return:" << _validSyntax << endl;
 
@@ -977,8 +1007,11 @@ namespace {
   }
 
 
-  const Layer* GdsStream::readLayerAndDatatype ()
+  const Layer* GdsStream::readLayerAndDatatype ( bool& isBoundary )
   {
+    cdebug_log(101,1) << "GdsStream::readLayerAndDatatype()" << endl;
+    
+    isBoundary = false;
     uint16_t  gdsLayer    = 0;
     uint16_t  gdsDatatype = 0;
 
@@ -990,6 +1023,7 @@ namespace {
                    , GdsRecord::toStrType(_record.getType()).c_str()
                    ) << endl;
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return NULL;;
     }
 
@@ -1001,67 +1035,87 @@ namespace {
                    , GdsRecord::toStrType(_record.getType()).c_str()
                    ) << endl;
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return NULL;;
     }
 
     const Layer* layer = gdsToLayer( gdsLayer, gdsDatatype );
     if ((gdsLayer == 0) and not useLayer0AsBoundary()) {
-      cdebug_log(101,0) << "Layer id+datatype:" << gdsLayer << "+" << gdsDatatype << " " << layer << endl;
       if (not layer) {
         cerr << Error( "GdsStream::readLayerAndDatatype(): No BasicLayer id:%d+%d in GDS conversion table (skipped)."
                      , gdsLayer, gdsDatatype
                      ) << endl;
       }
     }
+    isBoundary = (not layer and (gdsLayer == 0) and useLayer0AsBoundary());
 
+    cdebug_log(101,0) << "Layer id+datatype:" << gdsLayer << "+" << gdsDatatype << " " << layer << endl;
+    cdebug_tabw(101,-1);
     return layer;
   }
 
 
   bool  GdsStream::readText ()
   {
-    const Layer* layer = NULL;
+    uint16_t gdsLayer = 0;
     
-    cdebug_log(101,0) << "GdsStream::readText()" << endl;
+    cdebug_log(101,1) << "GdsStream::readText()" << endl;
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
     if (_record.isLAYER  ()) {
-      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0], 0 );
-      if (not layer) {
-        cerr << Error( "GdsStream::readText(): No BasicLayer id:%d in GDS conversion table (skipped)."
-                     , _record.getInt16s()[0]
-                     ) << endl;
-      }
+      gdsLayer = (uint16_t)_record.getInt16s()[0];
       _stream >> _record;
-    } else { _validSyntax = false; return _validSyntax; }
+    } else {
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
+    }
 
-    readTextbody( layer );
+    readTextbody( gdsLayer );
 
   //cdebug(101,0) << "GdsStream::readText() - return:" << _validSyntax << endl;
+    cdebug_tabw(101,-1);
     return _validSyntax;
   }
 
 
-  bool  GdsStream::readTextbody ( const Layer* layer )
+  bool  GdsStream::readTextbody ( uint16_t gdsLayer )
   {
+    const Layer* layer = NULL;
     cdebug_log(101,1) << "GdsStream::readTextbody()" << endl;
 
     DbU::Unit xpos = 0;
     DbU::Unit ypos = 0;
 
-    if (_record.isTEXTTYPE()) { _stream >> _record; }
+    if (_record.isTEXTTYPE()) {
+      uint16_t texttype = (uint16_t)_record.getInt16s()[0];
+      layer = gdsToLayer( gdsLayer, texttype );
+      if (not layer) {
+        cerr << Error( "GdsStream::readText(): No BasicLayer %d:%d in GDS conversion table (skipped)."
+                     , gdsLayer
+                     , texttype
+                     ) << endl;
+      }
+       _stream >> _record;
+    }
     else {
       _validSyntax = false;
       cdebug_tabw(101,-1);
       return _validSyntax;
     }
 
-    if (_record.isPRESENTATION()) { _stream >> _record; }
-    if (_record.isPATH        ()) { _stream >> _record; }
-    if (_record.isWIDTH       ()) { _stream >> _record; }
+    if (_record.isPRESENTATION()) {
+      readPresentation();
+      if (not _validSyntax) {
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
+    }
+    if (_record.isPATH ()) { _stream >> _record; }
+    if (_record.isWIDTH()) { _stream >> _record; }
 
     if (_record.isSTRANS()) {
-      _stream >> _record;
+      cdebug_log(101,0) << "Calling readStrans()" << endl;
       readStrans();
       if (not _validSyntax) {
         cdebug_tabw(101,-1);
@@ -1070,6 +1124,7 @@ namespace {
     }
 
     if (_record.isXY()) {
+      cdebug_log(101,0) << "Current record is XY" << endl;
       vector<int32_t> coordinates = _record.getInt32s();
       if (coordinates.size() != 2) {
         _validSyntax = false;
@@ -1092,16 +1147,21 @@ namespace {
         cerr << Error( "GdsStream::readTextbody(): Discarted text is \"%s\"."
                      , _text.c_str()
                      ) << endl;
+        cdebug_tabw(101,-1);
+        return _validSyntax;
       }
-    }
-    else {
+      cdebug_log(101,0) << "STRING record found and layer is valid." << endl;
+    } else {
+      cdebug_log(101,0) << "No STRING record found." << endl;
       _validSyntax = false;
       cdebug_tabw(101,-1);
       return _validSyntax;
     }
 
     if (not _text.empty()) {
-      if (static_cast<const BasicLayer*>(layer)->getMaterial() != BasicLayer::Material::other) {
+      const BasicLayer* basicLayer = static_cast<const BasicLayer*>( layer );
+      if (   (basicLayer->getMaterial() != BasicLayer::Material::other)
+         and (basicLayer->getMaterial() != BasicLayer::Material::info ) ) {
         Net* net = _cell->getNet( _text );
         if (not net) {
           net = Net::create( _cell, _text );
@@ -1112,8 +1172,19 @@ namespace {
         }
         addNetReference( net, layer, xpos, ypos );
       } else {
-        DbU::Unit textHeight = _scale * 500;
-        DbU::Unit textWidth  = _scale * 500 * _text.size();
+        DbU::Unit textHeight = (double)(_scale * 500               ) * _mag;
+        DbU::Unit textWidth  = (double)(_scale * 500 * _text.size()) * _mag;
+        switch ( _hPresentation ) {
+          case 0: break;
+          case 1: xpos += textWidth / 2; break;
+          case 2: xpos -= textWidth;     break;
+        }
+        switch ( _vPresentation ) {
+          case 0: break;
+          case 1: ypos += textHeight / 2; break;
+          case 2: ypos -= textHeight;     break; 
+        }
+        
         Text::create( _cell, layer, Box( xpos
                                        , ypos
                                        , xpos + textWidth
@@ -1132,12 +1203,34 @@ namespace {
     cdebug_log(101,0) << "GdsStream::readStrans()" << endl;
     
     _angle       = 0.0;
+    _mag         = 1.0;
     _xReflection = _record.hasXReflection();
     _stream >> _record;
-    if (_record.isMAG  ()) { _stream >> _record; }
+    if (_record.isMAG  ()) { _mag   = _record.getDoubles()[0]; _stream >> _record; }
     if (_record.isANGLE()) { _angle = _record.getDoubles()[0]; _stream >> _record; }
 
   //cdebug(101,0) << "GdsStream::readStrans() - return:" << _validSyntax << endl;
+    return _validSyntax;
+  }
+
+
+  bool  GdsStream::readPresentation ()
+  {
+    cdebug_log(101,0) << "GdsStream::readPresentation()" << endl;
+
+    uint32_t  flags = _record.getInt16s()[0];
+    _fontNb        = (flags >> 10) & 0x3;
+    _vPresentation = (flags >> 12) & 0x3;
+    _hPresentation = (flags >> 14) & 0x3;
+    
+    // cerr << "GdsRecord::readPresentation(): "
+    //      << " flags:"         << flags
+    //      << " flags >> 8:"    << (flags >> 8)
+    //      << " fontNb:"        << _fontNb 
+    //      << " hPresentation:" << _hPresentation
+    //      << " vPresentation:" << _vPresentation << endl;
+    
+    _stream >> _record;
     return _validSyntax;
   }
 
@@ -1149,7 +1242,8 @@ namespace {
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    const Layer* layer = readLayerAndDatatype();
+    bool isBoundary = false;
+    const Layer* layer = readLayerAndDatatype( isBoundary );
     if (not _validSyntax) {
       cdebug_tabw(101,-1);
       return _validSyntax;
@@ -1161,9 +1255,12 @@ namespace {
       else if (not layer and useLayer0AsBoundary()) {
         xyToAbutmentBox();
       }
-      else
+      else {
+        cdebug_log(101,0) << "Cannot translate XY RECORD, missing Cell or Layer" << endl;
         _stream >> _record;
+      }
     } else {
+      cdebug_log(101,0) << "Unsupported RECORD type " << _record.getName() << endl;
       _validSyntax = false;
       cdebug_tabw(101,-1);
       return _validSyntax;
@@ -1186,8 +1283,10 @@ namespace {
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    const Layer* layer = readLayerAndDatatype();
-    if (not layer) {
+    bool isBoundary = false;
+    const Layer* layer = readLayerAndDatatype( isBoundary );
+    if (not layer and not isBoundary) {
+      cdebug_log(101,0) << "NULL layer and not a boundary, missing layer?" << endl;
       cdebug_tabw(101,-1);
       return _validSyntax;
     }
@@ -1210,7 +1309,7 @@ namespace {
     }
 
     if (_record.isXY()) {
-      if (_cell and layer) xyToPath( pathtype, layer, width, bgnextn, endextn );
+      if (_cell) xyToPath( pathtype, layer, width, bgnextn, endextn );
     } else {
       _validSyntax = false;
       cdebug_tabw(101,-1);
@@ -1236,6 +1335,7 @@ namespace {
 
     if (_record.isSNAME()) {
       masterName = _record.getName();
+      if (isLefForeign()) masterName += "_lef_foreign";
       _stream >> _record;
     } else {
       _validSyntax = false;
@@ -1253,7 +1353,7 @@ namespace {
     }
 
     if (_record.isXY()) {
-      vector<int32_t> coordinates = _record.getInt32s();
+      const vector<int32_t>& coordinates = _record.getInt32s();
       if (coordinates.size() != 2) {
         _validSyntax = false;
         cdebug_tabw(101,-1);
@@ -1268,6 +1368,17 @@ namespace {
       _validSyntax = false;
       cdebug_tabw(101,-1);
       return _validSyntax;
+    }
+
+    while (_record.getType() == GdsRecord::PROPATTR) {
+      _stream >> _record;
+      if (_record.isPROPVALUE()) { _stream >> _record; }
+      else {
+        cdebug_log(101,1) << "Missing PROPVALUE" << endl;
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
     }
 
     if (not masterName.empty()) {
@@ -1292,10 +1403,10 @@ namespace {
         }
       }
 
-      // cerr << "Delayed Instance: "  << masterName
-      //      << " XR:" << _xReflection << " angle:" << _angle
-      //      << " " << Transformation(xpos,ypos,orient)
-      //      << " in " << _cell << endl;
+      cdebug_log(101,0) << "Delayed Instance: "  << masterName
+                        << " XR:" << _xReflection << " angle:" << _angle
+                        << " " << Transformation(xpos,ypos,orient)
+                        << " in " << _cell << endl;
       _delayedInstances.push_back( DelayedInstance( _cell
                                                   , masterName
                                                   , Transformation(xpos,ypos,orient)) );
@@ -1308,39 +1419,139 @@ namespace {
 
   bool  GdsStream::readAref ()
   {
-    cdebug_log(101,0) << "GdsStream::readAref()" << endl;
+    cdebug_log(101,1) << "GdsStream::readAref() " << _cell << endl;
+    resetStrans();
     
-    const Layer* layer = NULL;
+    string         masterName;
+    uint16_t       columns = 0;
+    uint16_t       rows    = 0;
+    Point          vx, vy;
+    Point                       origin;
+    Transformation::Orientation orient = Transformation::Orientation::ID;
 
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
     if (_record.isSNAME()) {
+      masterName = _record.getName();
+      cdebug_log(101,0) << "SNAME " << masterName << endl;
+      if (isLefForeign()) masterName += "_lef_foreign";
       _stream >> _record;
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
     if (_record.isSTRANS()) {
-      _stream >> _record;
       readStrans();
-      if (not _validSyntax) return _validSyntax;
+      if (not _validSyntax) {
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
+      if (_angle ==  90.0) {
+        orient = Transformation::Orientation::R1;
+      } else if (_angle == 180.0) {
+        orient = Transformation::Orientation::R2;
+      } else if (_angle == 270.0) {
+        orient = Transformation::Orientation::R3;
+      } else if (_angle !=   0.0) {
+        cerr << Warning( "GdsStream::readAref(): Unsupported angle %d.2 for AREF (Instance) of \"%s\""
+                       , _angle, masterName.c_str() ) << endl;
+      }
+      if (_xReflection) {
+        switch ( orient ) {
+          case Transformation::Orientation::ID: orient = Transformation::Orientation::MY; break;
+          case Transformation::Orientation::R1: orient = Transformation::Orientation::XR; break;
+          case Transformation::Orientation::R2: orient = Transformation::Orientation::MX; break;
+          case Transformation::Orientation::R3: orient = Transformation::Orientation::YR; break;
+          default:  
+            cerr << Warning( "GdsStream::readAref(): Unsupported MX+Orientation (%s) combination for AREF (Instance) of \"%s\""
+                           , getString(orient).c_str(), masterName.c_str() ) << endl;
+        }
+      }
     }
 
     if (_record.isCOLROW()) {
+      const vector<int16_t>& colrow = _record.getInt16s();
+      if (colrow.size() != 2) {
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
+      columns = colrow[ 0 ];
+      rows    = colrow[ 1 ];
+      cdebug_log(101,0) << "ROWCOL rows=" << rows << " columns=" << columns << endl;
       _stream >> _record;
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
     if (_record.isXY()) {
-      if (_cell and layer) xyToComponent( layer );
+      if (_cell) {
+        DbU::Unit       oneGrid = DbU::fromGrid( 1 );
+        const vector<int32_t> coordinates = _record.getInt32s();
+        if (coordinates.size() != 6) {
+          _validSyntax = false;
+          cdebug_tabw(101,-1);
+          return _validSyntax;
+        }
+        origin.setX(coordinates[0] * _scale);
+        origin.setY(coordinates[1] * _scale);
+        if ( (origin.getX() % oneGrid) or (origin.getY() % oneGrid) ) {
+          cerr << Error( "GdsStream::readAref(): Offgrid (%s, %s) origin point (foundry grid: %s).\n"
+                       , DbU::getValueString(origin.getX()).c_str()
+                       , DbU::getValueString(origin.getY()).c_str()
+                       , DbU::getValueString(oneGrid).c_str() ) << endl;
+        }
+        else {
+          cdebug_log(101,0) << "arrayOrigin: " << origin << endl;
+        }
+        vx.setX((coordinates[2] * _scale - origin.getX()) / columns);
+        vx.setY((coordinates[3] * _scale - origin.getY()) / columns);
+        vy.setX((coordinates[4] * _scale - origin.getX()) / rows);
+        vy.setY((coordinates[5] * _scale - origin.getY()) / rows);
+        cdebug_log(101,0) << "vx=("
+                          << DbU::getValueString(vx.getX())
+                          << DbU::getValueString(vx.getY()) << ")" << endl;
+        cdebug_log(101,0) << "vy=("
+                          << DbU::getValueString(vy.getX())
+                          << DbU::getValueString(vy.getY()) << ")" << endl;
+        if (not vx.getX() and not vx.getY() and (columns > 1))
+            cerr << Error( "GdsStream::readAref(): Null dx, but more than one column (%d)."
+                        , columns ) << endl;
+        if (not vy.getX() and not vy.getY() and (rows > 1))
+            cerr << Error( "GdsStream::readAref(): Null dy, but more than one row (%d)."
+                        , rows ) << endl;
+      }
       _stream >> _record;
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
-    cdebug_log(101,0) << "GdsStream::readAref() - return:" << _validSyntax << endl;
+    if (_cell) {
+      for ( uint32_t column=0 ; column < (uint32_t)columns ; ++column ) {
+        for ( uint32_t row=0 ; row < (uint32_t)rows ; ++row ) {
+          DbU::Unit xpos = origin.getX() + column*vx.getX() + row*vy.getX();
+          DbU::Unit ypos = origin.getY() + column*vx.getY() + row*vy.getY();
+          Transformation itemTransf = Transformation( xpos, ypos, orient );
+          
+          cdebug_log(101,0) << "column=" << column
+                            << " row="   << row
+                            << " x=" << DbU::getValueString(xpos)
+                            << " y=" << DbU::getValueString(ypos)
+                            << " orient=" << orient
+                            << " transf=" << itemTransf << endl;
+          _delayedInstances.push_back( DelayedInstance( _cell, masterName, itemTransf ));
+        }
+      }
+    }
+
+    cdebug_log(101,-1) << "GdsStream::readAref() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
@@ -1437,6 +1648,8 @@ namespace {
 
   void  GdsStream::xyToAbutmentBox ()
   {
+    cdebug_log(101,1) << "GdsStream::xyToAbutmetBox()" << endl;
+    
     DbU::Unit oneGrid = DbU::fromGrid( 1 );
     
     vector<Point>   points;
@@ -1445,8 +1658,8 @@ namespace {
     for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
-      if ( (points.back().getX() % oneGrid) or (points.back().getX() % oneGrid) ) {
-        offgrids.push_back( i );
+      if ( (points.back().getX() % oneGrid) or (points.back().getY() % oneGrid) ) {
+        offgrids.push_back( i/2 );
       }
     }
     if (not offgrids.empty()) {
@@ -1455,24 +1668,37 @@ namespace {
       for ( size_t i=0 ; i<points.size() ; ++i ) {
         if (i) m << "\n";
         m << "        | " << points[i];
-        if ((offgrid < offgrids.size()) and (i == offgrid)) {
+        if ((offgrid < offgrids.size()) and (i == offgrids[offgrid])) {
           m << " offgrid";
           ++offgrid;
         }
       }
-      cerr << Error( "GdsStream::xyToComponent(): Offgrid points on abutment box (foundry grid: %s).\n"
+      cerr << Error( "GdsStream::xyToAbutmentBox(): %u offgrid points on abutment box (foundry grid: %s).\n"
                      "%s"
+                   , offgrids.size()
                    , DbU::getValueString(oneGrid).c_str()
                    , m.str().c_str() ) << endl;
     } 
 
     _stream >> _record;
+    while ( _record.getType() == GdsRecord::PROPATTR) {
+      _stream >> _record;
+      if (_record.isPROPVALUE()) { _stream >> _record; }
+      else {
+        cdebug_log(101,1) << "Missing PROPVALUE" << endl;
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return;
+      }
+    }
 
     if (  (_record.getType() == GdsRecord::ENDEL)
        or (_record.getType() == GdsRecord::STRING)) {
     //_stream >> _record;
     } else {
+      cdebug_log(101,1) << "Missing ENDEL or STRING" << endl;
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return;
     }
     
@@ -1496,48 +1722,47 @@ namespace {
       _cell->setAbutmentBox( ab );
       cdebug_log(101,0) << "| Abutment box =" << ab << endl;
     }
+
+    cdebug_tabw(101,-1);
   }
 
 
   void  GdsStream::xyToComponent ( const Layer* layer )
   {
+    cdebug_log(101,1) << "GdsStream::xyToAbutmetBox()" << endl;
+    
     DbU::Unit oneGrid = DbU::fromGrid( 1 );
     
     vector<Point>   points;
     vector<int32_t> coordinates = _record.getInt32s();
     vector<size_t>  offgrids;
+    bool            isRectilinear = true;
     for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
-      if ( (points.back().getX() % oneGrid) or (points.back().getX() % oneGrid) ) {
-        offgrids.push_back( i );
+      if ( (points.back().getX() % oneGrid) or (points.back().getY() % oneGrid) ) {
+        offgrids.push_back( i/2 );
       }
     }
-    if (not offgrids.empty()) {
-      size_t offgrid = 0;
-      ostringstream m;
-      for ( size_t i=0 ; i<points.size() ; ++i ) {
-        if (i) m << "\n";
-        m << "        | " << points[i];
-        if ((offgrid < offgrids.size()) and (i == offgrid)) {
-          m << " offgrid";
-          ++offgrid;
-        }
-      }
-      cerr << Error( "GdsStream::xyToComponent(): Offgrid points on layer \"%s\" (foundry grid: %s).\n"
-                     "%s"
-                   , getString(layer->getName()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
-                   , m.str().c_str() ) << endl;
-    } 
 
     _stream >> _record;
+    while ( _record.getType() == GdsRecord::PROPATTR) {
+      _stream >> _record;
+      if (_record.isPROPVALUE()) { _stream >> _record; }
+      else {
+        cdebug_log(101,1) << "Missing PROPVALUE" << endl;
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return;
+      }
+    }
 
     if (  (_record.getType() == GdsRecord::ENDEL)
        or (_record.getType() == GdsRecord::STRING)) {
     //_stream >> _record;
     } else {
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return;
     }
     
@@ -1559,10 +1784,34 @@ namespace {
     } else
       _skipENDEL = true;
 
-    if (layer->isBlockage() and (_flags & Gds::NoBlockages))
+    if (layer->isBlockage() and (_flags & Gds::NoBlockages)) {
+      cdebug_tabw(101,-1);
       return;
+    }
 
     if (not net) net = fusedNet();
+
+    if (not offgrids.empty()) {
+      size_t offgrid = 0;
+      ostringstream m;
+      for ( size_t i=0 ; i<points.size() ; ++i ) {
+        if (i) m << "\n";
+        m << "        | " << points[i];
+        if ((offgrid < offgrids.size()) and (i == offgrids[offgrid])) {
+          m << " offgrid";
+          ++offgrid;
+        }
+      }
+      cerr << Error( "GdsStream::xyToComponent(): %u offgrid points on layer \"%s\" (foundry grid: %s),\n"
+                     "        In net \"%s\" of cell \"%s\".\n"
+                     "%s"
+                   , offgrids.size()
+                   , getString(layer->getName()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   , getString(net->getName()).c_str()
+                   , getString(net->getCell()->getName()).c_str()
+                   , m.str().c_str() ) << endl;
+    } 
     
     if (points.size() > 2) {
       bool isRectilinear = true;
@@ -1579,13 +1828,18 @@ namespace {
         for ( Point p : points ) boundingBox.merge( p );
         _component = Pad::create( net, layer, boundingBox );
       } else {
-        _component = Rectilinear::create( net, layer, points );
+        if (isRectilinear)
+          _component = Rectilinear::create( net, layer, points );
+        else
+          _component = Polygon::create( net, layer, points );
       }
       // cdebug_log(101,0) << "| " << net->getCell() << endl;
       cdebug_log(101,0) << "| " << _component << endl;
 
       if (not net->isAutomatic()) NetExternalComponents::setExternal( _component );
     }
+
+    cdebug_tabw(101,-1);
   }
 
 
@@ -1596,7 +1850,7 @@ namespace {
                             , DbU::Unit    endextn )
   {
     cdebug_log(101,0) << "GdsStream::xyToPath(): pathtype=" << pathtype
-                      << " layer=" << layer->getName()
+                      << " layer=" << ((layer) ? layer->getName() : "N/A")
                       << " width=" << DbU::getValueString(width)
                       << " bgnextn=" << DbU::getValueString(bgnextn)
                       << " endextn=" << DbU::getValueString(endextn) << endl;
@@ -1617,10 +1871,21 @@ namespace {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
     _stream >> _record;
+    while ( _record.getType() == GdsRecord::PROPATTR) {
+      _stream >> _record;
+      if (_record.isPROPVALUE()) { _stream >> _record; }
+      else {
+        cdebug_log(101,1) << "Missing PROPVALUE" << endl;
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return;
+      }
+    }
     if (_record.getType() != GdsRecord::ENDEL) {
       _validSyntax = false;
       return;
     }
+    if (not layer) return;
 
     Net* net = fusedNet();
 
@@ -1749,6 +2014,7 @@ namespace {
     cdebug_log(101,1) << "GdsStream::makeInstances(): " << endl;
 
     for ( const DelayedInstance& di : _delayedInstances ) {
+      cdebug_log(101,0) << "> " << di._masterName << " @" << di._transformation << " in " << di._owner << endl;
       Cell* masterCell = getCell( di._masterName );
 
       if (masterCell) {
@@ -1900,7 +2166,8 @@ namespace CRL {
 
   bool  Gds::load ( Library* library, string gdsPath, uint32_t flags )
   {
-  //DebugSession::open( 101, 110 );
+    // if (library->getName() == "working")
+    //   DebugSession::open( 101, 110 );
     UpdateSession::open();
     Contact::disableCheckMinSize();
 
@@ -1915,7 +2182,10 @@ namespace CRL {
     Contact::enableCheckMinSize();
     UpdateSession::close();
     Gds::setTopCellName( "" );
-  //DebugSession::close();
+    // if (library->getName() == "working")
+    //   DebugSession::close();
+
+    Cell* sram = library->getCell( "RM_IHPSG13_1P_256x64_c2_bm_bist_lef_foreign" );
 
     return true;
   }

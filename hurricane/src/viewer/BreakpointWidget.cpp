@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <QSettings>
 #include <QPointer>
 #include <QApplication>
 #include <QLabel>
@@ -27,6 +28,30 @@
 
 
 namespace Hurricane {
+
+
+  QByteArray  BreakpointWidget::_geometry;
+
+
+  void  BreakpointWidget::readQtSettings ()
+  {
+    QSettings settings;
+    QString   sizeKey = QString( "BreakpointWidget/geometry" );
+    if (not settings.contains(sizeKey)) return;
+    settings.beginGroup( QString("BreakpointWidget") );
+    _geometry = settings.value( "geometry" ).toByteArray();
+    settings.endGroup();
+  }
+
+
+  void  BreakpointWidget::saveQtSettings ()
+  {
+    if (_geometry.isNull()) return;
+    QSettings settings;
+    settings.beginGroup( QString("BreakpointWidget") );
+    settings.setValue( "geometry", _geometry );
+    settings.endGroup();
+  }
 
 
   BreakpointWidget::BreakpointWidget ( QWidget* parent )
@@ -43,14 +68,16 @@ namespace Hurricane {
 
   //_message->setTextFormat ( Qt::RichText );
     _message->setText       ( "<b>No Message Yet</b>" );
+    _message->setSizePolicy ( QSizePolicy::Expanding, QSizePolicy::Expanding );
 
     QLabel* stopLabel = new QLabel ();
     stopLabel->setText ( "Adjust Stop Level:" );
 
     QPushButton* ok = new QPushButton ();
-    ok->setIcon      ( QIcon(":/images/angry-birds-chuck.png") );
-    ok->setFlat      ( true );
-    ok->setIconSize  ( (Graphics::isHighDpi() ? QSize(200,200) : QSize(80,80)) );
+    ok->setIcon       ( QIcon(":/images/angry-birds-chuck.png") );
+    ok->setFlat       ( true );
+    ok->setIconSize   ( (Graphics::isHighDpi() ? QSize(200,200) : QSize(80,80)) );
+    ok->setSizePolicy ( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
     QFrame* vLine = new QFrame ();
     vLine->setFrameShape  ( QFrame::VLine );
@@ -58,7 +85,7 @@ namespace Hurricane {
 
     QGridLayout* layout = new QGridLayout ();
   //layout->setSizeConstraint  ( QLayout::SetFixedSize );
-    layout->addWidget          ( _message  , 0, 0 );
+    layout->addWidget          ( _message  , 0, 0, 1, 2 );
     layout->addWidget          ( stopLabel , 1, 0 );
     layout->addWidget          ( _stopLevel, 1, 1 );
     layout->addWidget          ( vLine     , 0, 2, 2, 1 );
@@ -83,6 +110,7 @@ namespace Hurricane {
 
     _isFinished = false;
     show ();
+    if (not _geometry.isNull()) restoreGeometry( _geometry );
 
   // Snipet code from Qt's QDialog.
     _eventLoop = new QEventLoop ();
@@ -90,6 +118,7 @@ namespace Hurricane {
     _eventLoop->exec( QEventLoop::DialogExec );
     _eventLoop = NULL;
 
+    _geometry = saveGeometry();
     if (guard.isNull()) return QDialog::Rejected;
 
     return result();

@@ -1,4 +1,0 @@
-
-FROM debian10.libresoc
-
-CMD [ "/bin/bash", "-i" ]

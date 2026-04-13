@@ -229,7 +229,7 @@ class CoreToChip ( BaseCoreToChip ):
         Remove the supplied internal power grid and slightly shrink
         the central P&R area so that I/O pins are fully outside of it.
         """
-        self.harness = DefImport.load( self.conf.cfg.harness.path )
+        self.harness = DefImport.load( self.conf.cfg.harness.path, DefImport.VHDLRename )
         innerAb  = self.harness.getAbutmentBox()
         wholeBb  = self.harness.getBoundingBox()
         filterBb = Box( wholeBb.getXMin(), innerAb.getYMin()

@@ -235,7 +235,7 @@ namespace {
       if (xtie           >= xmax) break;
       if (xtie+feedWidth >  xmax) {
       // Feed is too big, try to find a smaller one.
-        int pitch = (int)((xmax-xtie) / getEtesian()->getSliceStep());
+        int pitch = (int)((xmax-xtie) / getEtesian()->getSliceHStep());
         for ( ; pitch > 0 ; --pitch ) {
           feed = getEtesian()->getFeedCells().getFeed( pitch );
           if (feed == NULL) continue;

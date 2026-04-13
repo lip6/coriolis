@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
 import sys
-from   Hurricane import DataBase, Net, \
-                        DbU, Point, Box, Rectilinear
-from   CRL       import AllianceFramework, Catalog, Gds
-from   helpers   import l, u
-from   helpers.overlay import UpdateSession
+from   coriolis.Hurricane import DataBase, Net, \
+                                 DbU, Point, Box, Rectilinear
+from   coriolis.CRL       import AllianceFramework, Catalog, Gds
+from   coriolis.helpers   import l, u
+from   coriolis.helpers.overlay import UpdateSession
 
 
 def buildRectilinear ( editor ):

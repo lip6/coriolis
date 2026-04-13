@@ -29,7 +29,7 @@
 #include "hurricane/Layer.h"
 #include "anabatic/AutoContact.h"
 #include "katana/DataNegociate.h"
-#include "katana/TrackSegment.h"
+#include "katana/TrackSegmentNonPref.h"
 #include "katana/Track.h"
 #include "katana/Tracks.h"
 #include "katana/RoutingPlane.h"
@@ -62,7 +62,6 @@ namespace Katana {
   using Hurricane::Net;
   using Hurricane::Layer;
   using Anabatic::GCell;
-  using Anabatic::AutoSegment;
 
 
 // -------------------------------------------------------------------
@@ -99,6 +98,11 @@ namespace Katana {
   //if ((lhs._layerDepth == 1) and (rhs._layerDepth != 1)) return false;
   //if ((lhs._layerDepth != 1) and (rhs._layerDepth == 1)) return true;
 
+    if ((lhs._layerDepth == rhs._layerDepth) and (lhs.isNonPref() or rhs.isNonPref())) {
+      if (lhs.isNonPref() xor rhs.isNonPref())
+        return lhs.isNonPref();
+    }
+
   // For VH gauge, process fixed axis first.
     if (    (lhs._segFlags & AutoSegment::SegFixedAxis) and not (rhs._segFlags & AutoSegment::SegFixedAxis)) return false;
     if (not (lhs._segFlags & AutoSegment::SegFixedAxis) and     (rhs._segFlags & AutoSegment::SegFixedAxis)) return true;
@@ -120,7 +124,7 @@ namespace Katana {
     if (lhs._length > rhs._length) return false;
     if (lhs._length < rhs._length) return true;
 
-    if ((lhs._segFlags & AutoSegment::SegHorizontal) xor (rhs._segFlags & AutoSegment::SegHorizontal))
+    if ((lhs.isHorizontal()) xor (rhs.isHorizontal()))
       return (rhs._segFlags & AutoSegment::SegHorizontal);
 
     if (lhs._axis > rhs._axis) return true;
@@ -141,8 +145,8 @@ namespace Katana {
     , _rpDistance  (event->getSegment()->base()->getRpDistance())
     , _priority    (event->getPriority())
     , _eventLevel  (event->getEventLevel())
-    , _segFlags    (event->getSegment()->base()->getFlags())
     , _layerDepth  (Session::getRoutingGauge()->getLayerDepth(event->getSegment()->getLayer()))
+    , _segFlags    (event->getSegment()->base()->getFlags())
     , _length      (event->getSegment()->getLength())
     , _axis        (event->getSegment()->getAxis())
     , _sourceU     (event->getSegment()->getSourceU())
@@ -207,6 +211,7 @@ namespace Katana {
     , _eventLevel          (0)
     , _key                 (this)
   {
+  //cerr << "RoutingEvent::RoutingEvent() " << (void*)this << endl;
     if (_idCounter == std::numeric_limits<uint32_t>::max()) {
       throw Error( "RoutingEvent::RoutingEvent(): Identifier counter has reached it's limit (%d bits)."
                  , std::numeric_limits<uint32_t>::digits );
@@ -253,8 +258,8 @@ namespace Katana {
     clone->_disabled   = false;
     clone->_eventLevel = 0;
 
-    cdebug_log(159,0) << "RoutingEvent::clone() " << clone
-                << " (from: " << ")" <<  endl;
+    cdebug_log(159,0) << "RoutingEvent::clone() " << clone << endl;
+    cdebug_log(159,0) << "  (from: " << this << ")" <<  endl;
 
     return clone;
   }
@@ -262,6 +267,7 @@ namespace Katana {
 
   RoutingEvent::~RoutingEvent ()
   {
+  //cerr << "RoutingEvent::~RoutingEvent() " << (void*)this << endl;
     cdebug_log(159,0) << "~RoutingEvent() " << endl;
 
     DataNegociate* data = _segment->getDataNegociate();
@@ -290,10 +296,10 @@ namespace Katana {
   }
 
 
-  void  RoutingEvent::setState ( uint32_t state )
+  void  RoutingEvent::setState ( uint32_t state, Flags flags )
   {
     DataNegociate* data = _segment->getDataNegociate();
-    if (data) data->setState( state );
+    if (data) data->setState( state, flags );
   }
 
 
@@ -306,7 +312,7 @@ namespace Katana {
 
   void  RoutingEvent::setAxisHintFromParent ()
   {
-    if (Session::getStage() == StageRepair) return;
+    if (Session::getStage() == Anabatic::StageRepair) return;
 
     TrackElement* parent = _segment->getParent();
     if (not parent) return;
@@ -333,17 +339,18 @@ namespace Katana {
   {
     RoutingEvent* active = _segment->getDataNegociate()->getRoutingEvent();
     if (active != this) return active->reschedule( queue, eventLevel );
+    if (isDisabled()) return nullptr;
 
-    RoutingEvent* fork = NULL;
+    RoutingEvent* fork = nullptr;
 
     if (getState() == DataNegociate::RepairFailed) {
       cdebug_log(159,0) << "Reschedule: cancelled (RepairFailed) -> " << fork << endl;
-      return NULL;
+      return nullptr;
     }
 
-    if ( (Session::getStage() != StageRepair) and isUnimplemented() ) {
+    if ( (Session::getStage() != Anabatic::StageRepair) and isUnimplemented() ) {
       cdebug_log(159,0) << "Reschedule: cancelled (Unimplemented) -> " << fork << endl;
-      return NULL;
+      return nullptr;
     }
 
     if (not isProcessed()) {
@@ -363,7 +370,7 @@ namespace Katana {
     if (fork->_eventLevel < eventLevel)
       fork->_eventLevel = eventLevel;
 
-    if (Session::getStage() == StageRepair) {
+    if (Session::getStage() == Anabatic::StageRepair) {
       if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
         _segment->getDataNegociate()->resetRipupCount();
       _segment->getDataNegociate()->setState( DataNegociate::Repair );
@@ -427,7 +434,7 @@ namespace Katana {
   //DebugSession::open( _segment->getNet(), 155, 160 );
     DebugSession::open( _segment->getNet(), 149, 160 );
 
-    cdebug_log(9000,0) << "Deter| Event "
+    cdebug_log(159,0) << "Event "
                      <<         getProcesseds()
                      << ","  << getEventLevel()
                      << ","  << tsetw(6) << getPriority()
@@ -445,26 +452,28 @@ namespace Katana {
   //_preCheck( _segment );
     _eventLevel = 0;
 
-    if (Session::getStage() != StagePack) history.push( this );
+    history.push( this );
 
     if ( isProcessed() or isDisabled() ) {
       cdebug_log(159,0) << "Already processed or disabled." << endl;
     } else {
-      if (_segment->hasSymmetric()) {
-      }
-
       setProcessed();
       setTimeStamp( _processeds );
 
-      switch ( Session::getStage() ) {
-        case StageNegociate: _processNegociate( queue, history ); break;
-        case StagePack:      _processPack     ( queue, history ); break;
-        case StageRepair:    _processRepair   ( queue, history ); break;
-        case StageRealign:   _processRealign  ( queue, history ); break;
-        default:
-          cerr << Bug( "RoutingEvent::process() - Unknown stage value:%d.", Session::getStage() ) << endl;
-          break;
+      if (_segment->canPromoteToPref(Flags::NoFlags)) {
+        _rescheduleAsPref();
+      } else {
+        switch ( Session::getStage() ) {
+          case Anabatic::StageNegociate: _processNegociate( queue, history ); break;
+          case Anabatic::StagePack:      _processPack     ( queue, history ); break;
+          case Anabatic::StageRepair:    _processRepair   ( queue, history ); break;
+          case Anabatic::StageRealign:   _processRealign  ( queue, history ); break;
+          default:
+            cerr << Bug( "RoutingEvent::process() - Unknown stage value:%d.", Session::getStage() ) << endl;
+            break;
+        }
       }
+      _forceToHint = false;
     }
     cdebug_tabw(159,-1);
 
@@ -521,14 +530,9 @@ namespace Katana {
           fsm.ripupPerpandiculars();
         } else {
           if (fsm.canRipup(Manipulator::NotOnLastRipup)) {
-            if (cdebug.enabled(9000)) {
-              for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
-                cdebug_log(9000,0) << "Deter| | Candidate Track: " << fsm.getCost(itrack) << endl;
-              }
-            }
             for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
               cdebug_log(159,0) << "Trying Track: " << itrack << endl;
-              if (fsm.getCost(itrack)->isInfinite()) break;
+              if (fsm.getCost(itrack)->isInfiniteOrSpanRp()) break;
               if (fsm.insertInTrack(itrack)) break;
               resetInsertState();
             } // Next ripup is possible.
@@ -546,26 +550,36 @@ namespace Katana {
         fsm.setDataState( DataNegociate::Slacken );
       }
       if (not fsm.slackenTopology()) {
-        fsm.setState( SegmentFsm::SelfMaximumSlack );
+        if (fsm.getCosts().empty() or fsm.getCost(0)->isOverlapSpanRpOnly()) {
+          fsm.setState( SegmentFsm::SelfMaximumSlack );
+        } else {
+          fsm.clearSpanRpFromTrack( 0 );
+        }
       }
     }
 
     fsm.doActions();
 
-    if (itrack < fsm.getCosts().size()) {
-      cdebug_log(159,0) << "Placed: @" << DbU::getValueString(fsm.getTrack1(itrack)->getAxis())
-                  << " " << this << endl;
-    }
-
     cdebug_tabw(159,-1);
   }
 
+
+  bool  RoutingEvent::_rescheduleAsPref ()
+  {
+    TrackSegmentNonPref* nonPref = dynamic_cast<TrackSegmentNonPref*>( _segment );
+    if (nonPref) {
+      nonPref->promoteToPref();
+      cdebug_log(159,0) << "non-pref *after* " << nonPref << endl;
+    }
+    return true;
+  }
+  
 
   void  RoutingEvent::_processPack ( RoutingEventQueue& queue, RoutingEventHistory& history )
   {
     cdebug_log(159,0) << "* Mode:Pack." << endl;
 
-    if (not _segment->isUTurn()) return;
+  //if (not _segment->isUTurn()) return;
 
     SegmentFsm fsm ( this, queue, history );
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
@@ -576,14 +590,14 @@ namespace Katana {
       cdebug_log(159,0) << "| " << fsm.getCost(i) << endl;
     cdebug_tabw(159,-1);
 
-    if (    _segment->getTrack()
-       and  fsm.getCosts().size()
-       and  fsm.getCost(0)->isFree()
-       and (fsm.getTrack1(0) != _segment->getTrack()) ) {
-
-      cerr << "_processPack(): move to " << fsm.getTrack1(0) << endl;
-      fsm.moveToTrack( 0 );
+    if (fsm.getCosts().size() and fsm.getCost(0)->isFree()) {
+      setInsertState( 0 );
+      if (_segment->getTrack()) fsm.moveToTrack( 0 );
+      else                      fsm.bindToTrack( 0 );
     }
+
+    fsm.doActions();
+    queue.commit();
   }
 
 
@@ -591,16 +605,24 @@ namespace Katana {
   {
     cdebug_log(159,0) << "* Mode:Repair." << endl;
 
-    if ( _segment->getTrack() != NULL ) {
+    if (_segment->getTrack() != NULL) {
       cdebug_log(159,0) << "* Cancel: already in Track." << endl;
       return;
     }
+    // if (_segment->isNonPref()) {
+    //   cdebug_log(159,0) << "* Cancel: cannot repair non-prefs." << endl;
+    //   return;
+    // }
 
     SegmentFsm fsm ( this, queue, history );
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
     if (fsm.getState() == SegmentFsm::EmptyTrackList) return;
     if (fsm.isSymmetric()) return;
 
+    // DataNegociate* dataSelf = getDataNegociate();
+    // if (dataSelf and (dataSelf->getState() < DataNegociate::Repair)) {
+    //   dataSelf->setState( DataNegociate::Repair, Flags::ResetCount );
+    // }
 
     cdebug_log(159,0) << "| Candidate Tracks:" << endl;
     size_t itrack = 0;
@@ -611,42 +633,52 @@ namespace Katana {
       cdebug_log(159,0) << "Insert in free space." << endl;
       fsm.bindToTrack( 0 );
 
-      cdebug_log(159,0) << "Re-try perpandiculars:" << endl;
-      for ( TrackElement* perpandicular : getPerpandiculars() ) {
-        if (not perpandicular->getTrack() ) {
-          cdebug_log(159,0) << "| " << perpandicular << endl;
-          fsm.addAction( perpandicular, SegmentAction::SelfInsert );
-          DataNegociate* data = perpandicular->getDataNegociate();
-          if (data and (data->getState() < DataNegociate::Repair)) {
-            data->setState( DataNegociate::Repair );
-            data->resetRipupCount();
+      if (not _segment->isNonPref()) {
+        cdebug_log(159,0) << "Re-try perpandiculars:" << endl;
+        for ( TrackElement* perpandicular : getPerpandiculars() ) {
+          if (not perpandicular->getTrack() ) {
+            cdebug_log(159,0) << "| " << perpandicular << endl;
+            fsm.addAction( perpandicular, SegmentAction::SelfInsert );
+            DataNegociate* data = perpandicular->getDataNegociate();
+            if (data and (data->getState() < DataNegociate::Repair)) {
+              data->setState( DataNegociate::Repair );
+              if (not perpandicular->isNonPref())
+                data->resetRipupCount();
+            }
           }
         }
       }
       fsm.doActions();
       queue.commit();
     } else {
-      switch ( fsm.getData()->getStateCount() ) {
-        case 1:
-        // First try: minimize or replace perpandiculars first.
-          if (Manipulator(_segment,fsm).minimize())
-            fsm.addAction( _segment, SegmentAction::SelfInsert );
-          else
-            Manipulator(_segment,fsm).repackPerpandiculars( Manipulator::PerpandicularsFirst );
-          fsm.doActions();
-          queue.commit();
-          break;
-        case 2:
-        // Second try: failed re-inserted first.
-          Manipulator(_segment,fsm).repackPerpandiculars( 0 );
-        //fsm.addAction( _segment, SegmentAction::SelfInsert );
-          fsm.doActions();
-          queue.commit();
-          break;
-        default:
-          cdebug_log(159,0) << "Repair failed." << endl;
-          setState( DataNegociate::RepairFailed );
-          break;
+      cdebug_log(159,0) << "State: " << fsm.getData()->getState()
+                        << " State count: " << fsm.getData()->getStateCount() << endl;
+      if (not _segment->isNonPref()) {
+        switch ( fsm.getData()->getStateCount() ) {
+          case 1:
+          // First try: minimize or replace perpandiculars first.
+            if (Manipulator(_segment,fsm).minimize())
+              fsm.addAction( _segment, SegmentAction::SelfInsert );
+            else
+              Manipulator(_segment,fsm).repackPerpandiculars( Manipulator::PerpandicularsFirst );
+            fsm.doActions();
+            queue.commit();
+            break;
+          case 2:
+          // Second try: failed re-inserted first.
+            Manipulator(_segment,fsm).repackPerpandiculars( 0 );
+          //fsm.addAction( _segment, SegmentAction::SelfInsert );
+            fsm.doActions();
+            queue.commit();
+            break;
+          default:
+            cdebug_log(159,0) << "Repair failed." << endl;
+            setState( DataNegociate::RepairFailed );
+            break;
+        }
+      } else {
+        cdebug_log(159,0) << "Repair failed." << endl;
+        setState( DataNegociate::RepairFailed );
       }
     }
   }
@@ -655,6 +687,7 @@ namespace Katana {
   void  RoutingEvent::_processRealign ( RoutingEventQueue& queue, RoutingEventHistory& history )
   {
     cdebug_log(159,0) << "* Mode:Realign." << endl;
+    if (getSegment()->isReduced()) return;
 
     SegmentFsm fsm ( this, queue, history );
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
@@ -697,7 +730,7 @@ namespace Katana {
     _segment->base()->getOptimal    ( _optimal );
 
     cdebug_log(159,0) << "Stage:" << RoutingEvent::getStage() << endl;
-    if (Session::getStage() == StageRepair) {
+    if (Session::getStage() == Anabatic::StageRepair) {
       if (_segment->isStrongTerminal(Flags::Propagate)) {
         cdebug_log(159,0) << "Not expanding on Terminals:" << _constraints << endl;
       } else if (  _segment->base()->getAutoSource()->isFixed()
@@ -711,6 +744,10 @@ namespace Katana {
         cdebug_log(159,0) << "Expanding:" << _constraints << endl;
         _constraints.inflate( Session::getSliceHeight() );
         cdebug_log(159,0) << "Expanding (after):" << _constraints << endl;
+      }
+    } else {
+      if (_segment->isForOffgrid()) {
+        _constraints.inflate( _segment->getPitch() );
       }
     }
 
@@ -849,6 +886,7 @@ namespace Katana {
     s += " "  + getString(_segment->getDataNegociate()->getRipupCount());
     s += " ";
     s +=        (isCloned       ()?"C":"-");
+    s +=        (isForcedToHint ()?"H":"-");
     s +=        (isDisabled     ()?"d":"-");
     s +=        (isUnimplemented()?"u":"-");
     s += ">";

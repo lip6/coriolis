@@ -196,14 +196,14 @@ extern "C" {
     Pad* pad = dynamic_cast<Pad*>( entity );
     if (pad) return PyPad_Link( pad );
     
+    Pin* pin = dynamic_cast<Pin*>( entity );
+    if (pin) return PyPin_Link( pin );
+    
     Contact* contact = dynamic_cast<Contact*>( entity );
     if (contact) return PyContact_Link( contact );
     
     Plug* plug = dynamic_cast<Plug*>( entity );
     if (plug) return PyPlug_Link( plug );
-    
-    Pin* pin = dynamic_cast<Pin*>( entity );
-    if (pin) return PyPin_Link( pin );
     
     Polygon* polygon = dynamic_cast<Polygon*>( entity );
     if (polygon) return PyPolygon_Link( polygon );

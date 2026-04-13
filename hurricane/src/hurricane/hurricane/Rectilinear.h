@@ -41,10 +41,16 @@ namespace Hurricane {
 // Class  :  "Rectilinear".
 
   class Rectilinear : public Component {
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
     public:
       typedef Component Super;
       static const uint32_t IsRectilinear = (1<<0);
-  
+      static const uint32_t VSliced       = (1<<1);
+      static const uint32_t HSliced       = (1<<2);
     public:
       static        Rectilinear*   create            ( Net*, const Layer*, const vector<Point>& );
     // Accessors.                  
@@ -58,7 +64,11 @@ namespace Hurricane {
       virtual       Point          getPoint          ( size_t i ) const;
       virtual const Layer*         getLayer          () const;
       inline        Points         getContour        () const;
-                    bool           getAsRectangles   ( std::vector<Box>& ) const;
+                    bool           getAsRectangles   ( std::vector<Box>&, uint32_t flags=VSliced ) const;
+                    bool           getAsBiggestRectangles
+                                                     ( std::vector<Box>&
+                                                     , DbU::Unit xThreshold=0
+                                                     , DbU::Unit yThreshold=0 ) const;
       inline  const vector<Point>& getPoints         () const;
                     Box            getNearestHSide   ( DbU::Unit y ) const;
     // Mutators.
@@ -80,6 +90,7 @@ namespace Hurricane {
   };
 
   
+  inline  const FastRTTI&      Rectilinear::fastRTTI      () { return _fastRTTI; }
   inline        bool           Rectilinear::isRectilinear () const { return _flags & IsRectilinear; }
   inline        Points         Rectilinear::getContour    () const { return new VectorCollection<Point>(_points); }
   inline  const vector<Point>& Rectilinear::getPoints     () const { return _points; }

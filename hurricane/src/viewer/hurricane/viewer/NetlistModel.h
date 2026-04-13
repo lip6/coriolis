@@ -1,22 +1,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2024.
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./hurricane/viewer/NetlistModel.h"        |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_NETLIST_MODEL_H
-#define  HURRICANE_NETLIST_MODEL_H
-
+#pragma  once
 #include <vector>
 #include <QFont>
 #include <QApplication>
@@ -42,11 +40,14 @@ namespace Hurricane {
                                             NetlistModel ( QObject* parent=NULL );
                                            ~NetlistModel ();
       template<typename InformationType>
-             void                           setCell      ( Cell* cell );
+             void                           setCell      ( Cell* );
+      template<typename InformationType>
+             void                           add          ( const Net* );
              int                            rowCount     ( const QModelIndex& parent=QModelIndex() ) const;
              int                            columnCount  ( const QModelIndex& parent=QModelIndex() ) const;
              QVariant                       data         ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
              QVariant                       headerData   ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
+             void                           clear        ();
       inline Cell*                          getCell      ();
              const Net*                     getNet       ( int row );
 
@@ -59,6 +60,7 @@ namespace Hurricane {
 // Inline Functions.
 
   inline Cell* NetlistModel::getCell () { return _cell; }
+  inline void  NetlistModel::clear   () { if (_netlist) _netlist->clear(); }
 
 
 // Template Functions.
@@ -83,6 +85,15 @@ namespace Hurricane {
   }
 
 
-} // Hurricane namespace.
+  template<typename InformationType>
+  void  NetlistModel::add ( const Net* net )
+  {
+    if (not _netlist) _netlist = new NetInformationsVector<InformationType>();
+    if (_netlist->find(net)) return;
+    emit layoutAboutToBeChanged ();
+    _netlist->addNet( net );
+    emit layoutChanged ();
+  }
 
-#endif // HURRICANE_NETLIST_MODEL_H
+
+} // Hurricane namespace.

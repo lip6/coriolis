@@ -17,6 +17,7 @@
 #include <map>
 #include <list>
 #include "hurricane/DebugSession.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
@@ -37,7 +38,9 @@
 #include "crlcore/AllianceFramework.h"
 #include "anabatic/GCell.h"
 #include "katana/RoutingPlane.h"
+#include "katana/TrackMarkerSpacing.h"
 #include "katana/TrackFixedSegment.h"
+#include "katana/TrackFixedSpan.h"
 #include "katana/Track.h"
 #include "katana/KatanaEngine.h"
 
@@ -46,6 +49,7 @@ namespace {
 
   using namespace std;
   using Hurricane::DebugSession;
+  using Hurricane::Breakpoint;
   using Hurricane::Warning;
   using Hurricane::Error;
   using Hurricane::DbU;
@@ -68,6 +72,7 @@ namespace {
   using Hurricane::Go;
   using Hurricane::Rubber;
   using Hurricane::Layer;
+  using Hurricane::ParallelSpacings;
   using Hurricane::BasicLayer;
   using Hurricane::RegularLayer;
   using Hurricane::Transformation;
@@ -316,7 +321,7 @@ namespace {
           bool operator() ( const Rail* lhs, const Rail* rhs );
       };
 
-      class RailMatch : public unary_function<Rail*,bool> {
+      class RailMatch {
         public:
           inline      RailMatch  ( DbU::Unit axis, DbU::Unit width );
           inline bool operator() ( const Rail* );
@@ -510,8 +515,8 @@ namespace {
                       << " , ww/2:" << DbU::getValueString(plane->getLayerGauge()->getHalfWireWidth())
                       << ")" << endl;
 
-    // if ( type == Constant::PinOnly ) {
-    //   cdebug_log(159,0) << "  Layer is PinOnly." << endl;
+    // if ( (type == Constant::PinOnly) or (type == Constant::LocalOnly) ) {
+    //   cdebug_log(159,0) << "  Layer is PinOnly or LocalOnly." << endl;
     //   return;
     // }
 
@@ -521,7 +526,6 @@ namespace {
       ++ichunknext;
 
       for ( ; ichunk != _chunks.end() ; ++ichunk, ++ichunknext ) {
-
         if (ichunknext != _chunks.end()) {
           if ((*ichunk).intersect(*ichunknext))
             cerr << Error( "Overlaping consecutive chunks in %s %s Rail @%s:\n"
@@ -559,6 +563,18 @@ namespace {
           cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
           element->setFlags( TElemUseBlockageNet );
         }
+
+        Box bb = segment->getBoundingBox();
+        ParallelSpacings spacings = layer->getParallelSpacings( bb, true );
+        if (spacings.size() > 1) {
+          cdebug_log(159,0) << "Wider spacing for " << segment << endl;
+          for ( size_t i=0 ; i<spacings.size() ; ++i ) {
+            cdebug_log(159,9) << "[" << i << "] parallel=" << DbU::getValueString(spacings.parallelLength(i))
+                              <<               " spacing=" << DbU::getValueString(spacings.spacing(i)) << endl;
+          }
+
+          TrackMarkerSpacing::create( segment );
+        }
       }
     } else {
       list<Interval>::iterator ichunk = _chunks.begin();
@@ -595,6 +611,11 @@ namespace {
                             << endl;
           element->setFlags( TElemUseBlockageNet );
         }
+
+        Box bb = segment->getBoundingBox();
+        ParallelSpacings spacings = layer->getParallelSpacings( bb, false );
+        if (spacings.size() > 1)
+          TrackMarkerSpacing::create( segment );
       }
     }
   }
@@ -813,9 +834,10 @@ namespace {
 
       _planes.insert( make_pair(basicLayer,new Plane(lg->getLayer(),rp)) );
 
-    //if (lg->getType() == Constant::PinOnly) continue;
+    //if (not lg->isUsable()) continue;
       const BasicLayer* blockageLayer = dynamic_cast<const BasicLayer*>( lg->getBlockageLayer() );
       if (not blockageLayer) continue;
+      if (lg->getType() == Constant::PinOnly) continue;
 
       _planes.insert( make_pair(blockageLayer,new Plane(blockageLayer,rp)) );
     }
@@ -982,6 +1004,12 @@ namespace {
     if (not activePlane) return;
 
     cmess1 << "     - PowerRails in " << activePlane->getLayer()->getName() << " ..." << endl;
+    if (static_cast<const BasicLayer*>(activePlane->getLayer())->getMaterial()
+       != BasicLayer::Material::blockage)
+      setStopCellFlags( Cell::Flags::AbstractedSupply );
+    else
+      unsetStopCellFlags( Cell::Flags::AbstractedSupply );
+
     Query::doQuery();
   }
 
@@ -1008,8 +1036,8 @@ namespace {
                                         , const Transformation&  transformation
                                         )
   {
-    const Component* component = dynamic_cast<const Component*>(go);
-    if ( component ) {
+    const Component* component = dynamic_cast<const Component*>( go );
+    if (component) {
       if (    _framework->isPad(getMasterCell())
          and ( (_routingGauge->getLayerDepth(component->getLayer()) < 2)
              or (component->getLayer()->getBasicLayers().getFirst()->getMaterial() != BasicLayer::Material::blockage) ) )
@@ -1017,19 +1045,19 @@ namespace {
 
       Net* rootNet = _katana->getBlockageNet();
       if (not _isBlockagePlane) {
-        rootNet = _powerRailsPlanes.getRootNet(component->getNet(),getPath());
+        rootNet = _powerRailsPlanes.getRootNet( component->getNet(), getPath() );
       }
 
 #if 0
-      Net* rootNet = NULL;
-      if ( not _isBlockagePlane )
-        rootNet = _powerRailsPlanes.getRootNet(component->getNet(),getPath());
+      Net* rootNet = nullptr;
+      if (not _isBlockagePlane)
+        rootNet = _powerRailsPlanes.getRootNet( component->getNet(), getPath() );
       else {
         rootNet = _katana->getBlockageNet();
       }
 #endif
 
-      if ( rootNet == NULL ) {
+      if (not rootNet) {
         cdebug_log(159,0) << "  rootNet is NULL, not taken into account." << endl;
         return;
       }
@@ -1043,14 +1071,13 @@ namespace {
           return;
       }
 
-      const Segment* segment = dynamic_cast<const Segment*>(component);
-      if ( segment != NULL ) {
+      const Segment* segment = dynamic_cast<const Segment*>( component );
+      if (segment) {
         _goMatchCount++;
         cdebug_log(159,0) << "  Merging PowerRail element: " << segment << endl;
 
-        Box bb = segment->getBoundingBox ( basicLayer );
-
-        uint32_t depth = _routingGauge->getLayerDepth ( segment->getLayer() );
+        Box      bb    = segment->getBoundingBox( basicLayer );
+        uint32_t depth = _routingGauge->getLayerDepth( segment->getLayer() );
 
         if (    _chipTools.isChip()
            and ((depth == 2) or (depth == 3))
@@ -1058,54 +1085,80 @@ namespace {
            and (segment->getLength() >  _chipTools.getPadWidth())
            and (_katana->getChipTools().getCorona().contains(bb)) ) {
           switch ( depth ) {
-            case 2: _vRingSegments.push_back ( segment ); break; // M3 V.
-            case 3: _hRingSegments.push_back ( segment ); break; // M4 H.
+            case 2: _vRingSegments.push_back( segment ); break; // M3 V.
+            case 3: _hRingSegments.push_back( segment ); break; // M4 H.
           }
           return;
         }
 
-        transformation.applyOn ( bb );
+        transformation.applyOn( bb );
+        _powerRailsPlanes.merge( bb, rootNet );
+        return;
+      }
 
-        _powerRailsPlanes.merge ( bb, rootNet );
-      } else {
-        const Contact* contact = dynamic_cast<const Contact*>(component);
-        if ( contact != NULL ) {
+      const Contact* contact = dynamic_cast<const Contact*>( component );
+      if (contact) {
+        _goMatchCount++;
+
+        Box bb = contact->getBoundingBox ( basicLayer );
+        transformation.applyOn( bb );
+
+        cdebug_log(159,0) << "  Merging PowerRail element: " << contact << " bb:" << bb
+                          << " " << basicLayer << endl;
+          
+        _powerRailsPlanes.merge( bb, rootNet );
+        return;
+      }
+
+      const Pad* pad = dynamic_cast<const Pad*>( component );
+      if (pad) {
+        _goMatchCount++;
+
+        Box bb = pad->getBoundingBox( basicLayer );
+        transformation.applyOn( bb );
+          
+        cdebug_log(159,0) << "  Merging PowerRail element: " << pad << " bb:" << bb
+                          << " " << basicLayer << endl;
+        
+        _powerRailsPlanes.merge( bb, rootNet );
+        return;
+      }
+
+      const Rectilinear* rectilinear = dynamic_cast<const Rectilinear*>( component );
+      if (rectilinear) {
+        if (not _powerRailsPlanes.getActivePlane()->getLayer()->isBlockage()) {
           _goMatchCount++;
-
-          Box bb = contact->getBoundingBox ( basicLayer );
-          transformation.applyOn ( bb );
-
-          cdebug_log(159,0) << "  Merging PowerRail element: " << contact << " bb:" << bb
-                      << " " << basicLayer << endl;
-          
-          _powerRailsPlanes.merge ( bb, rootNet );
-        } else {
-          const Pad* pad = dynamic_cast<const Pad*>(component);
-          if (pad != NULL) {
-            _goMatchCount++;
-
-            Box bb = pad->getBoundingBox( basicLayer );
+          vector<Box> boxes;
+          rectilinear->getAsRectangles( boxes, Rectilinear::VSliced );
+          for ( Box bb : boxes ) {
             transformation.applyOn( bb );
-          
-            cdebug_log(159,0) << "  Merging PowerRail element: " << pad << " bb:" << bb
+            cdebug_log(159,0) << "  Merging PowerRail element: " << rectilinear << " bb:" << bb
                               << " " << basicLayer << endl;
-            
             _powerRailsPlanes.merge( bb, rootNet );
-          } else {
-            const Rectilinear* rectilinear = dynamic_cast<const Rectilinear*>(component);
-            if (rectilinear and (rectilinear->getPoints().size() == 5)) {
-              _goMatchCount++;
+          }
+          return;
+        }
 
-              Box bb = rectilinear->getBoundingBox( basicLayer );
-              transformation.applyOn( bb );
-          
-              cdebug_log(159,0) << "  Merging PowerRail element: " << rectilinear << " bb:" << bb
-                                << " " << basicLayer << endl;
-            
-              _powerRailsPlanes.merge( bb, rootNet );
+        _goMatchCount++;
+        RoutingPlane*      plane = _powerRailsPlanes.getActivePlane()->getRoutingPlane();
+        RoutingLayerGauge* rlg   = plane->getLayerGauge();
+        DbU::Unit          delta = plane->getLayerGauge()->getPitch() - 1;
+        vector<Box> boxes;
+        rectilinear->getAsRectangles( boxes );
+        if (rlg->isHorizontal()) {
+          for ( Box bb : boxes ) {
+            transformation.applyOn( bb );
+            DbU::Unit axisMin = bb.getYMin() - delta;
+            DbU::Unit axisMax = bb.getYMax() + delta;
+
+            Track* track = plane->getTrackByPosition( axisMin, Constant::Superior );
+            for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
+              TrackElement* element = TrackFixedSpan::create ( nullptr, bb, track );
+              cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
             }
           }
         }
+        return;
       }
     }
   }
@@ -1195,7 +1248,6 @@ namespace Katana {
     QueryPowerRails query ( this );
     Technology*     technology = DataBase::getDB()->getTechnology();
 
-    query.setStopCellFlags( Cell::Flags::AbstractedSupply );
     for ( BasicLayer* layer : technology->getBasicLayers() ) {
       if (   (layer->getMaterial() != BasicLayer::Material::metal)
          and (layer->getMaterial() != BasicLayer::Material::blockage) )
@@ -1217,6 +1269,9 @@ namespace Katana {
 
     Session::close();
   //DebugSession::close();
+
+    printCompletion();
+    Breakpoint::stop( 100, "PowerRails setup done." );
   }
 
 

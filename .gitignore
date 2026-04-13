@@ -3,6 +3,7 @@
 *.pyc
 *.log
 *.bak
+.#*
 
 TAGS
 GTAGS
@@ -10,6 +11,8 @@ GPATH
 GRTAGS
 .dir-locals.el
 .projectile
+.vscode
+.venv
 
 lefdef/src/lef/lef/lef.tab.h
 lefdef/src/def/def/def.tab.h
@@ -22,6 +25,8 @@ latex/
 build/
 venv/
 coriolis.egg-info/
+.pdm-python
+.doit.db
 
 bootstrap/coriolis2.spec
 

@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <QSettings>
 #include <QFontMetrics>
 #include <QLabel>
 #include <QLineEdit>
@@ -28,14 +29,6 @@
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/NetlistModel.h"
 #include "hurricane/viewer/NetlistWidget.h"
-
-
-namespace {
-
-  using namespace Hurricane;
-
-
-} // End of anonymous namespace.
 
 
 namespace Hurricane {
@@ -161,8 +154,9 @@ namespace Hurricane {
     }
     isel = _selecteds.begin ();
     while ( isel != _selecteds.end() ) {
-      if ( isel->getAccesses() == 64 )
+      if ( isel->getAccesses() == 64 ) {
         emit netSelected ( Occurrence(isel->getNet()) );
+      }
       ++isel;
     }
 
@@ -184,5 +178,24 @@ namespace Hurricane {
     if ( net ) emit netFitted ( net );
   }
 
+
+  void  NetlistWidget::readQtSettings ( size_t viewerId )
+  {
+    QSettings settings;
+    QString   checkKey = QString( "CellViewer/%1/controller/netlist/filterPattern" ).arg( viewerId );
+    if (not settings.contains(checkKey)) return;
+    settings.beginGroup( QString("CellViewer/%1/controller/netlist").arg(viewerId) );
+    _filterPatternLineEdit->setText( settings.value( "filterPattern" ).toString() );
+    settings.endGroup();
+  }
+  
+
+  void  NetlistWidget::saveQtSettings ( size_t viewerId ) const
+  {
+    QSettings settings;
+    settings.beginGroup( QString("CellViewer/%1/controller/netlist").arg(viewerId) );
+    settings.setValue( "filterPattern", _filterPatternLineEdit->text() );
+    settings.endGroup();
+  }
 
 } // End of Hurricane namespace.

@@ -25,7 +25,6 @@ namespace Katana {
   using std::string;
   using std::map;
   using std::set;
-  using std::binary_function;
   using Hurricane::Record;
   using Hurricane::Interval;
   using Hurricane::DbU;
@@ -51,6 +50,7 @@ namespace Katana {
       virtual void                 _postCreate         ();
       virtual void                 _preDestroy         ();
       virtual bool                 isNonPref           () const;
+      virtual bool                 canPromoteToPref    ( Flags ) const;
       virtual size_t               getTrackSpan        () const;
       virtual uint32_t             getTrackCount       () const;
       virtual void                 addOverlapCost      ( TrackCost& ) const;

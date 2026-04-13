@@ -17,10 +17,9 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_BOX
-#define HURRICANE_BOX
-
+#pragma  once
 #include "hurricane/Point.h"
+#include "hurricane/Interval.h"
 
 namespace Hurricane {
 
@@ -79,6 +78,8 @@ class Box {
     public: DbU::Unit getHalfWidth() const {return (getWidth() / 2);};
     public: DbU::Unit getHeight() const {return (_yMax - _yMin);};
     public: DbU::Unit getHalfHeight() const {return (getHeight() / 2);};
+    public: Interval getVerticalSide() const { return Interval(_yMin,_yMax); }
+    public: Interval getHorizontalSide() const { return Interval(_xMin,_xMax); }
 
     public: Box getUnion(const Box& box) const;
 
@@ -118,6 +119,7 @@ class Box {
     public: Box& merge(const Box& box);
 
     public: Box& translate(const DbU::Unit& dx, const DbU::Unit& dy);
+    public: Box& translate(const Point& p);
 
 // Others
 // ******
@@ -146,9 +148,6 @@ class JsonBox : public JsonObject {
 
 
 INSPECTOR_PR_SUPPORT(Hurricane::Box);
-
-
-#endif // HURRICANE_BOX
 
 
 // ****************************************************************************************************

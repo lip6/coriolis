@@ -29,9 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_RECORD_H
-#define  HURRICANE_RECORD_H
-
+#pragma  once
 #ifndef  HURRICANE_COMMONS_H
 #error "Record.h musn't be included alone, please uses Commons.h."
 #endif
@@ -43,33 +41,25 @@ namespace Hurricane {
 
 
   class Record {
-
     public:
-    // Types.
       typedef vector<Slot*>  SlotVector;
-
+      static const uint32_t  NoFlags  =  0;
+      static const uint32_t  Overload = (1 << 0);
     public:
-    // Constructor & Destructor.
                             Record         ( const string& name );
       virtual              ~Record         ();
-    // Methods.                            
       static  size_t        getAllocateds  ();
       inline  const string& getName        () const;
               Slot*         getSlot        ( unsigned no ) const;
-              void          add            ( Slot* slot );
+              void          add            ( Slot* slot, uint32_t flags=NoFlags );
       inline  SlotVector&   _getSlotVector ();
-
 	private:
-    // Internal: Static Attributes.
       static  size_t        _allocateds;
-    // Internal: Attributes
               string        _name;
               SlotVector    _slots;
-
 	private:
-    // Forbidden: Constructors
-                            Record        ( const Record& record );
-              Record&       operator=     ( const Record& record );
+                            Record        ( const Record& record ) = delete;
+              Record&       operator=     ( const Record& record ) = delete;
 };
 
 
@@ -79,6 +69,3 @@ namespace Hurricane {
 
 
 } // Hurricane namespace.
-
-
-#endif  // HURRICANE_RECORD_H

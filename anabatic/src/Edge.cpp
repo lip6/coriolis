@@ -218,6 +218,24 @@ namespace Anabatic {
   }
 
 
+  int  Edge::decreaseCapacity ( int delta, size_t depth )
+  {
+    if (not _capacities) return 0;
+    if (_capacities->getCapacity(depth) == 0) return delta;
+    // if (getId() == 236678) {
+    //   std::cerr << "decreaseCapacity() id:" << getId()
+    //             << " capacity=" << _capacities->getCapacity()
+    //             << " " << (void*)_capacities << std::endl;
+    // }
+    if (not _capacities->isUnique()) {
+      _capacities = Session::getAnabatic()->_cloneCapacity( _capacities );
+    }
+    int remains = _capacities->decreaseCapacity( delta, depth );
+    cdebug_log(159,0) << "decreaseCapacity() " << this << std::endl;
+    return remains;
+  }
+
+
   void  Edge::incRealOccupancy ( int delta )
   {
     unsigned int occupancy = 0;
@@ -411,6 +429,25 @@ namespace Anabatic {
   }
 
 
+  size_t  Edge::ripupAll ()
+  {
+    AnabaticEngine* anabatic = getAnabatic();
+    size_t          netCount = 0;
+
+    sort( _segments.begin(), _segments.end(), SortSegmentByLength(anabatic) );
+    for ( size_t i=0 ; i<_segments.size() ; ) {
+      if ((not _segments[i]) or isEnding(_segments[i])) {
+	++i; continue;
+      }
+      NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+      if (netData->isGlobalFixed ()) continue;
+      if (netData->isGlobalRouted()) ++netCount;
+      anabatic->ripup( _segments[i], Flags::Propagate );
+    }
+    return netCount;
+  }
+
+
   void  Edge::_setSource ( GCell* source )
   {
     if (source == _target)
@@ -453,7 +490,8 @@ namespace Anabatic {
     if      (getSource()->isStdCellRow() and getTarget()->isStdCellRow()) flags |= Flags::NullCapacity;
     else if (getSource()->isChannelRow() and getTarget()->isChannelRow()) flags |= Flags::InfiniteCapacity;
 
-    _capacities = getAnabatic()->_createCapacity( _flags, side );
+    if (not _capacities)
+      _capacities = getAnabatic()->_createCapacity( _flags, side );
 
     _flags.reset( Flags::Invalidated );
     cdebug_log(110,0) << "Edge::materialize() " << this << endl;
@@ -524,6 +562,7 @@ namespace Anabatic {
     s.insert( s.size()-1, "] "  +DbU::getValueString(_axis) );
     s.insert( s.size()-1, " "   +getString(_realOccupancy) );
     s.insert( s.size()-1, "/"   +getString(getCapacity()) );
+    s.insert( s.size()-1, "-"   +getString(getReservedCapacity()) );
     s.insert( s.size()-1, " h:" +getString(_historicCost) );
     s.insert( s.size()-1, " "   +getString(_flags) );
     return s;

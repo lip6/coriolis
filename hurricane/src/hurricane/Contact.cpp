@@ -21,7 +21,7 @@
 #include "hurricane/Technology.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Net.h"
-#include "hurricane/Layer.h"
+#include "hurricane/ViaLayer.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Error.h"
@@ -103,7 +103,8 @@ class Contact_Hooks : public Collection<Hook*> {
 // Contact implementation
 // ****************************************************************************************************
 
-bool  Contact::_checkMinSize = true;
+FastRTTI  Contact::_fastRTTI     ( demangle(typeid(Contact).name()), &Contact::Inherit::fastRTTI() );
+bool      Contact::_checkMinSize = true;
 
 
 Contact::Contact(Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Unit width, DbU::Unit height)
@@ -111,6 +112,7 @@ Contact::Contact(Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Un
 :  Inherit(net),
     _anchorHook(this),
     _layer(layer),
+    _flags(0),
     _dx(x),
     _dy(y),
     _width(width),
@@ -130,6 +132,7 @@ Contact::Contact(Net* net, Component* anchor, const Layer* layer, DbU::Unit dx, 
 :  Inherit(net),
     _anchorHook(this),
     _layer(layer),
+    _flags(0),
     _dx(dx),
     _dy(dy),
     _width(width),
@@ -231,6 +234,11 @@ Contact* Contact::create(Component* anchor, const Layer* layer, DbU::Unit dx, Db
     return rvalue;
   }
   
+
+const FastRTTI& Contact::vfastRTTI () const
+// ****************************************
+{ return _fastRTTI; }
+
 Hooks Contact::getHooks() const
 // ****************************
 {
@@ -274,6 +282,15 @@ Box Contact::getBoundingBox(const BasicLayer* basicLayer) const
 
   DbU::Unit enclosureH = getLayer()->getEnclosure( basicLayer, Layer::EnclosureH );
   DbU::Unit enclosureV = getLayer()->getEnclosure( basicLayer, Layer::EnclosureV );
+
+  if (_flags & AllRotate) {
+    const ViaLayer* viaLayer = dynamic_cast<const ViaLayer*>( getLayer() );
+    if (viaLayer) {
+      if (  ((basicLayer == viaLayer->getTop   ()) and (_flags & RotateTopMetal   )) 
+         or ((basicLayer == viaLayer->getBottom()) and (_flags & RotateBottomMetal)) ) 
+        std::swap( enclosureH, enclosureV );
+    }
+  }
 
   return Box(getPosition()).inflate(getHalfWidth() + enclosureH, getHalfHeight() + enclosureV );
 }
@@ -428,6 +445,7 @@ Record* Contact::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI), Record::Overload );
         record->add(getSlot("AnchorHook", &_anchorHook));
         record->add(getSlot("Anchor", getAnchor()));
         record->add(getSlot("Layer", _layer));

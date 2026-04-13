@@ -16,6 +16,7 @@
 
 #include "crlcore/PyLefImport.h"
 #include "hurricane/isobar/PyLibrary.h"
+#include "hurricane/isobar/PyLayer.h"
 #include <string>
 #include <sstream>
 
@@ -33,11 +34,13 @@ namespace  CRL {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Library;
+  using Hurricane::Layer;
   using Isobar::ProxyProperty;
   using Isobar::ProxyError;
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::PyAny_AsLong;
   using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
@@ -45,6 +48,10 @@ namespace  CRL {
   using Isobar::PyLibrary_Link;
   using Isobar::PyTypeLibrary;
   using Isobar::PyLibrary;
+  using Isobar::PyLayer_Link;
+  using Isobar::PyTypeLayer;
+  using Isobar::PyLayer;
+  using Isobar::IsPyDerivedLayer;
 
 
 extern "C" {
@@ -109,6 +116,27 @@ extern "C" {
   }
 
 
+  static PyObject* PyLefImport_setGdsForeignLibrary ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLefImport_setGdsForeignLibrary()" << endl;
+    HTRY
+      PyObject* pyLibrary = NULL;
+      if (PyArg_ParseTuple( args, "O:LefImport.setGdsForeignLibrary", &pyLibrary )) {
+        if (IsPyLibrary(pyLibrary)) {
+          LefImport::setGdsForeignLibrary( PYLIBRARY_O(pyLibrary) );
+        } else {
+          PyErr_SetString( ConstructorError, "LefImport.setGdsForeignLibrary(): Bad parameter type (not a Library)." );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString( ConstructorError, "LefImport.setGdsForeignLibrary(): Bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyLefImport_setGdsForeignDirectory ( PyObject*, PyObject* args )
   {
     cdebug_log(30,0) << "PyLefImport_setGdsForeignDirectory()" << endl;
@@ -125,6 +153,78 @@ extern "C" {
   }
 
 
+  static PyObject* PyLefImport_setPinFilter ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLefImport_setPinFilter()" << endl;
+    HTRY
+      PyObject*     pyXThreshold = NULL;
+      PyObject*     pyYThreshold = NULL;
+      unsigned int  flags        = 0;
+      if (PyArg_ParseTuple( args, "OOI:LefImport.setPinFilter", &pyXThreshold, &pyYThreshold, &flags )) {
+        LefImport::setPinFilter( PyAny_AsLong(pyXThreshold), PyAny_AsLong(pyYThreshold), flags );
+      } else {
+        PyErr_SetString ( ConstructorError, "LefImport.setPinFilter(): Bad type or bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+  static PyObject* PyLefImport_getLayer ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLefImport_getLayer()" << endl;
+    Layer* layer = NULL;
+    HTRY
+      char* name = NULL;
+      if (PyArg_ParseTuple( args, "s:LefImport.getLayer", &name )) {
+        layer = LefImport::getLayer( name );
+      } else {
+        PyErr_SetString ( ConstructorError, "LefImport.getLayer(): Bad type or bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    return (PyObject*)PyLayer_Link(layer);
+  }
+
+
+  static PyObject* PyLefImport_addLayer ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLefImport_addLayer()" << endl;
+    HTRY
+      char*     name    = NULL;
+      PyObject* pyLayer = NULL;
+      if (PyArg_ParseTuple( args, "sO:LefImport.addLayer", &name, &pyLayer )) {
+        if (not IsPyDerivedLayer(pyLayer)) {
+          PyErr_SetString( ConstructorError
+                        , "PyLefImport.addLayer(): Second parameter is not of Layer type" );
+          return NULL;
+        }
+        Layer* layer = PYLAYER_O(pyLayer);
+        LefImport::addLayer( name, layer );
+      } else {
+        PyErr_SetString ( ConstructorError, "LefImport.addLayer(): Bad type or bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyLefImport_clearLayer ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLefImport_clearLayer()" << endl;
+    HTRY
+      char* name = NULL;
+      if (PyArg_ParseTuple( args, "s:LefImport.clearLayer", &name )) {
+        LefImport::clearLayer( name );
+      } else {
+        PyErr_SetString ( ConstructorError, "LefImport.clearLayer(): Bad type or bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
   // Standart Destroy (Attribute).
 
 
@@ -133,10 +233,20 @@ extern "C" {
                                 , "Load a complete Cadence LEF library." }
     , { "reset"                 , (PyCFunction)PyLefImport_reset                 , METH_NOARGS|METH_STATIC
                                 , "Reset the Cadence LEF parser (clear technology)." }
+    , { "setGdsForeignLibrary"  , (PyCFunction)PyLefImport_setGdsForeignLibrary  , METH_VARARGS|METH_STATIC
+                                , "Sets the library from which FOREIGN GDS cells will be searched." }
     , { "setMergeLibrary"       , (PyCFunction)PyLefImport_setMergeLibrary       , METH_VARARGS|METH_STATIC
                                 , "Merge into this library instead of creating a new one." }
     , { "setGdsForeignDirectory", (PyCFunction)PyLefImport_setGdsForeignDirectory, METH_VARARGS|METH_STATIC
                                 , "Set the directory where to find FOREIGN GDS files." }
+    , { "setPinFilter"          , (PyCFunction)PyLefImport_setPinFilter          , METH_VARARGS|METH_STATIC
+                                , "Select the way Rectilinear pins are converted to one rectangle." }
+    , { "getLayer"              , (PyCFunction)PyLefImport_getLayer              , METH_VARARGS|METH_STATIC
+                                , "Get Layer from LefImport map." }
+    , { "addLayer"              , (PyCFunction)PyLefImport_addLayer              , METH_VARARGS|METH_STATIC
+                                , "Add Layer to LefImport map." }
+    , { "clearLayer"              , (PyCFunction)PyLefImport_clearLayer          , METH_VARARGS|METH_STATIC
+                                , "Remove Layer from LefImport map." }
   //, { "destroy"               , (PyCFunction)PyLefImport_destroy  , METH_VARARGS
   //                            , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
@@ -156,6 +266,16 @@ extern "C" {
 
   // Type Definition.
   PyTypeObjectDefinitionsOfModule(CRL,LefImport)
+
+
+  extern  void  PyLefImport_postModuleInit ()
+  {
+    PyObject* constant;
+    LoadObjectConstant(PyTypeLefImport.tp_dict,LefImport::PinFilter_NOFLAGS,"PinFilter_NOFLAGS");
+    LoadObjectConstant(PyTypeLefImport.tp_dict,LefImport::PinFilter_TALLEST,"PinFilter_TALLEST");
+    LoadObjectConstant(PyTypeLefImport.tp_dict,LefImport::PinFilter_WIDEST ,"PinFilter_WIDEST" );
+    LoadObjectConstant(PyTypeLefImport.tp_dict,LefImport::PinFilter_LARGEST,"PinFilter_LARGEST" );
+  }
 
 
 #endif  // End of Shared Library Code Part.

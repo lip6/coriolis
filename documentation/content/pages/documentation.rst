@@ -48,6 +48,9 @@ Coriolis Documentation
       :width:  5
       :offset: 1
 
+      `Presentations <{filename}/pages/presentations/Presentations_HTML.rst>`_ |br|
+      Various presentations made around Coriolis
+
       `Coriolis User's Guide <{filename}/pages/users-guide/UsersGuide_HTML.rst>`_ |br|
       Using the software
 
@@ -104,6 +107,12 @@ Coriolis Documentation
         
          `Oroshi Reference <../doc/oroshi/index.html>`_ |br|
          Analog devices generators
+        
+         `Packaging Notes <{filename}/pages/packaging/Packaging_HTML.rst>`_ |br|
+         Some hints about how to package Coriolis.
+        
+         `Technical Log <{filename}/pages/technical-log/TechnicalLog_HTML.rst>`_ |br|
+         Technical logs (history of changes & fixes).
 
 
 Third Party Documentation

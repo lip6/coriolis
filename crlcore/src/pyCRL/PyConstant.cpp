@@ -62,6 +62,7 @@ extern "C" {
     LoadObjectConstant( dictionnary, Constant::Vertical  , "Vertical"   )
     LoadObjectConstant( dictionnary, Constant::Default   , "Default"    )
     LoadObjectConstant( dictionnary, Constant::PinOnly   , "PinOnly"    )
+    LoadObjectConstant( dictionnary, Constant::LocalOnly , "LocalOnly"  )
     LoadObjectConstant( dictionnary, Constant::Superior  , "Superior"   )
     LoadObjectConstant( dictionnary, Constant::Inferior  , "Inferior"   )
     LoadObjectConstant( dictionnary, Constant::Nearest   , "Nearest"    )

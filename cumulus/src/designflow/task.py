@@ -17,7 +17,13 @@ class ShellEnv ( object ):
 
     * ``ALLIANCE_TOP``, usually identical to ``CORIOLIS_TOP``.
     * ``RDS_TECHNO_NAME``.
+    * ``GRAAL_TECHNO_NAME``.
+    * ``DREAL_TECHNO_NAME``.
     * ``CHECK_TOOLKIT``, where the ``alliance-check-toolkit`` is installed.
+    * ``PDK_ROOT``, parent directory where all the PDKs should be storeds
+    * ``PDK``, name of the selected PDK.
+    * ``KLAYOUT_PATH``, technologies & scripts for Klayout.
+    * ``KLAYOUT_HOME``, user's work directory for Klayout.
 
     Mutable environment variables, could be changed in each instance.
     Their initial values are extracted from the Coriolis Alliance Framework.
@@ -30,15 +36,25 @@ class ShellEnv ( object ):
     * ``MBK_IN_PH``.
     * ``MBK_OUT_PH``.
     * ``MBK_CATAL_NAME``.
+    * ``MBK_SPI_MODEL``.
     * ``RDS_IN``.
     * ``RDS_OUT``.
     """
 
-    ALLIANCE_TOP    = None
-    RDS_TECHNO_NAME = None
-    CHECK_TOOLKIT   = None
+    Show              = 0x0001
+    CHECK_TOOLKIT     = None
+    ALLIANCE_TOP      = None
+    MBK_SPI_MODEL     = 'MBK_SPI_MODEL_not_set'
+    RDS_TECHNO_NAME   = None
+    GRAAL_TECHNO_NAME = None
+    DREAL_TECHNO_NAME = None
+    PDK_ROOT          = None
+    PDK               = None
+    KLAYOUT_PATH      = None
+    KLAYOUT_HOME      = None
 
-    def __init__ ( self ):
+    def __init__ ( self, name='unamed_env' ):
+        self.name     = name
         self.shellEnv = {}
         self.capture()
 
@@ -72,23 +88,81 @@ class ShellEnv ( object ):
         if ShellEnv.ALLIANCE_TOP:
             self.shellEnv[ 'ALLIANCE_TOP'   ] = ShellEnv.ALLIANCE_TOP
             libPath         = ShellEnv.ALLIANCE_TOP + '/lib'
-            LD_LIBRARY_PATH = os.environ[ 'LD_LIBRARY_PATH' ]
+            LD_LIBRARY_PATH = ''
+            if 'LD_LIBRARY_PATH' in os.environ:
+                LD_LIBRARY_PATH = os.environ[ 'LD_LIBRARY_PATH' ]
             if LD_LIBRARY_PATH != '':
                 libPath += ':' + LD_LIBRARY_PATH
             self.shellEnv[ 'LD_LIBRARY_PATH' ] = libPath
 
-    def export ( self ):
+    def export ( self, flags=0 ):
         """
         Write back the variables into the environement for usage by the
         sub-processes.
         """
+        if flags & ShellEnv.Show:
+            print( 'ShellEnv:' )
+            print( '  Name:', self.name )
+            print( '  Variable:' )
         for variable, value in self.shellEnv.items():
             if value is None: continue
             os.environ[ variable ] = value
+            if flags & ShellEnv.Show:
+                print( '    {}: {}'.format( variable, value ))
+        if ShellEnv.MBK_SPI_MODEL is not None:
+            if isinstance(ShellEnv.MBK_SPI_MODEL,Path): value = ShellEnv.MBK_SPI_MODEL.as_posix()
+            else:                                       value = ShellEnv.MBK_SPI_MODEL
+            os.environ[ 'MBK_SPI_MODEL' ] = value
         if ShellEnv.RDS_TECHNO_NAME is not None:
             os.environ[ 'RDS_TECHNO_NAME' ] = ShellEnv.RDS_TECHNO_NAME
+        if ShellEnv.GRAAL_TECHNO_NAME is not None:
+            os.environ[ 'GRAAL_TECHNO_NAME' ] = ShellEnv.GRAAL_TECHNO_NAME
+        if ShellEnv.DREAL_TECHNO_NAME is not None:
+            os.environ[ 'DREAL_TECHNO_NAME' ] = ShellEnv.DREAL_TECHNO_NAME
         if ShellEnv.CHECK_TOOLKIT is not None:
             os.environ[ 'CHECK_TOOLKIT' ] = ShellEnv.CHECK_TOOLKIT
+        if ShellEnv.PDK_ROOT is not None:
+            os.environ[ 'PDK_ROOT' ] = ShellEnv.PDK_ROOT
+        if ShellEnv.PDK is not None:
+            os.environ[ 'PDK' ] = ShellEnv.PDK
+        if ShellEnv.KLAYOUT_PATH is not None:
+            os.environ[ 'KLAYOUT_PATH' ] = ShellEnv.KLAYOUT_PATH
+        if ShellEnv.KLAYOUT_HOME is not None:
+            os.environ[ 'KLAYOUT_HOME' ] = ShellEnv.KLAYOUT_HOME
+            
+
+class Tasks ( object ):
+    """
+    Gather all the FlowTask to execute and provides them to doit through
+    the ``create_doit_tasks()`` class method.
+
+    In order for the tasks to be taken into account by doit, this class
+    *must* be imported into the ``dodo.py``:
+
+    .. code:: python
+
+              from coriolis.designflow.task import Tasks
+    """
+
+    tasks = []
+
+    @staticmethod
+    def hasRule ( name ):
+        for rule in Tasks.tasks:
+            if name == rule.basename: return True
+        return False
+
+    @staticmethod
+    def append ( task ):
+        Tasks.tasks.append( task )
+
+    @classmethod
+    def create_doit_tasks ( selfClass ):
+        """
+        Return the recorded tasks one by one.
+        """
+        for task in selfClass.tasks:
+            yield task.asDoitTask()
             
 
 class FlowTask ( object ):
@@ -111,8 +185,8 @@ class FlowTask ( object ):
        the special ``clean_flow`` task.
     """
 
-    rules        = {}
     cleanTargets = []
+    cleanGlobs   = []
 
     @staticmethod
     def _normFile ( depend ):
@@ -132,17 +206,16 @@ class FlowTask ( object ):
         Promote ``targets`` and ``depends`` arguments to list if needed.
         Check for duplicated rules, then register the rule name at class level.
         """
-        if FlowTask.hasRule(basename):
+        if Tasks.hasRule(basename):
             raise DuplicatedRule( 'FlowTask.__init__(): Duplicated rule "{}"'.format(basename) )
         self.basename = basename
         self.depends  = FlowTask._normFileList( depends )
         self.targets  = FlowTask._normFileList( targets )
-        FlowTask.rules[ self.basename ] = self
+        Tasks.append( self )
 
     @staticmethod
     def hasRule ( name ):
-        if name in FlowTask.rules: return True
-        return False
+        return Tasks.hasRule( name )
 
     @property
     def file_dep ( self ):
@@ -194,9 +267,16 @@ class FlowTask ( object ):
 
     def addClean ( self, targets ):
         """
-        Add the targets list to the global list. This is a helper method
+        Add the targets to be deleted to the global list. This is a helper method
         that has to be explicitely called in derived classes.
         """
         FlowTask.cleanTargets += FlowTask._normFileList( targets )
+
+    def addCleanGlob ( self, directory, glob ):
+        """
+        Add pattern of files or directories to be deleted. This is a helper method
+        that has to be explicitely called in derived classes.
+        """
+        FlowTask.cleanGlobs.append(( FlowTask._normFile(directory), glob ))
         
         

@@ -57,6 +57,7 @@ namespace Anabatic {
       inline        bool              isVertical           () const;
       inline        bool              isHorizontal         () const;
       inline        bool              hasNet               ( const Net* ) const;
+      inline const  EdgeCapacity*     getCapacities        () const;
       inline        unsigned int      getCapacity          () const;
       inline        unsigned int      getRawCapacity       () const;
       inline        unsigned int      getReservedCapacity  () const;
@@ -78,6 +79,7 @@ namespace Anabatic {
     //inline        void              incCapacity          ( int );
       inline        void              forceCapacity        ( int );
       inline        void              reserveCapacity      ( int );
+                    int               decreaseCapacity     ( int delta, size_t depth );
       inline        void              setRealOccupancy     ( int );
                     void              incRealOccupancy     ( int );
                     void              incRealOccupancy2    ( int );
@@ -88,6 +90,7 @@ namespace Anabatic {
                     void              remove               ( Segment* );
                     void              replace              ( Segment* orig, Segment* repl );
                     size_t            ripup                ();
+                    size_t            ripupAll             ();
       inline const  Flags&            flags                () const;
       inline        Flags&            flags                ();
       inline        void              revalidate           () const;
@@ -135,6 +138,7 @@ namespace Anabatic {
   inline       bool              Edge::isVertical           () const { return _flags.isset(Flags::Vertical); }
   inline       bool              Edge::isHorizontal         () const { return _flags.isset(Flags::Horizontal); }
   inline       bool              Edge::hasNet               ( const Net* owner ) const { return getSegment(owner); }
+  inline const EdgeCapacity*     Edge::getCapacities        () const { return _capacities; }
   inline       unsigned int      Edge::getCapacity          ( size_t depth ) const { return (_capacities) ? _capacities->getCapacity(depth) : 0; }
   inline       unsigned int      Edge::getRawCapacity       () const { return (_capacities) ? _capacities->getCapacity() : 0; }
   inline       unsigned int      Edge::getReservedCapacity  () const { return _reservedCapacity; }
@@ -145,7 +149,6 @@ namespace Anabatic {
   inline       GCell*            Edge::getTarget            () const { return _target; }
   inline       DbU::Unit         Edge::getAxis              () const { return _axis; }
   inline const vector<Segment*>& Edge::getSegments          () const { return _segments; }
-  inline       void              Edge::forceCapacity        ( int capacity ) { if (_capacities) _capacities->forceCapacity(capacity); }
 //inline       void              Edge::incCapacity          ( int delta ) { _capacity  = ((int)_capacity+delta > 0) ? _capacity+delta : 0; }
 //inline       void              Edge::setCapacity          ( int c     ) { _capacity  = ((int) c > 0) ? c : 0; }
   inline       void              Edge::setRealOccupancy     ( int c     ) { _realOccupancy = ((int) c > 0) ? c : 0; }
@@ -156,9 +159,17 @@ namespace Anabatic {
   inline       Flags&            Edge::setFlags             ( Flags mask ) { _flags |= mask; return _flags; }
   inline       void              Edge::reserveCapacity      ( int delta ) { _reservedCapacity = ((int)_reservedCapacity+delta > 0) ? _reservedCapacity+delta : 0; }
 
+  inline void  Edge::forceCapacity ( int capacity )
+  { if (_capacities) _capacities->forceCapacity( capacity ); }
+
   inline unsigned int  Edge::getCapacity () const
   {
     if (not _capacities) return 0;
+    // if (getId() == 236678) {
+    //   std::cerr << "getCapacity() id:" << getId()
+    //             << " capacity=" << _capacities->getCapacity()
+    //             << " " << (void*)_capacities << std::endl;
+    // }
     return (_capacities->getCapacity() > (int)_reservedCapacity) ? _capacities->getCapacity()-_reservedCapacity : 0;
   }
  

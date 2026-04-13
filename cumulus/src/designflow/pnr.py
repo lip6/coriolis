@@ -75,7 +75,11 @@ class PnR ( FlowTask ):
         if self.script:
             if self.topName:
                 kw[ 'loadCell' ] = self.topName
-            self.script( **kw )
+            rv = self.script( **kw )
+            if rv is not True:
+                e = ErrorMessage( 1, 'PnR.doTask(): The script "{}()" of rule "{}" failed.' \
+                                     .format( self.script.__name__, self.basename ))
+                return TaskFailed( e )
         if not PnR.textMode:
            # Run in graphic mode.
             ha = Viewer.HApplication.create( [] )
@@ -98,13 +102,16 @@ class PnR ( FlowTask ):
 
         return self.checkTargets( 'PnR.doTask' )
 
-    def create_doit_tasks ( self ):
-        if self.design: doc = 'Run {}.'.format( self )
-        else:           doc = 'Run plain CGT (no loaded design)'
-        return { 'basename' : self.basename
-               , 'actions'  : [ self.doTask ]
-               , 'doc'      : doc
-               , 'targets'  : self.targets
-               , 'file_dep' : self.file_dep
-               }
+    def asDoitTask ( self ):
+        taskDatas = { 'basename' : self.basename
+                    , 'actions'  : [ self.doTask ]
+                    , 'targets'  : self.targets
+                    , 'file_dep' : self.file_dep
+                    }
+        if self.design:
+            taskDatas[ 'doc' ] = 'Run {}.'.format( self )
+        else:
+            taskDatas[ 'doc'      ] = 'Run plain CGT (no loaded design)'
+            taskDatas[ 'uptodate' ] = [ False ]
+        return taskDatas
         

@@ -38,8 +38,12 @@ namespace Tramontana {
 
   class QueryTiles : public Query {
     public:
+      static  uint32_t  doAreaQuery         ( SweepLine*, const Box& );
+    public:
                         QueryTiles          ( SweepLine* );
               bool      isProcessed         ( Component* ) const;
+              bool      isLeftMostWindow    () const;
+              bool      isRightMostWindow   () const;
       virtual void      setBasicLayer       ( const BasicLayer* );
       virtual bool      hasGoCallback       () const;
       virtual void      goCallback          ( Go*     );

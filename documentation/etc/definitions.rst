@@ -165,8 +165,17 @@
 .. |Makefile|                       replace:: :cb:`Makefile`
 .. |dodo|                           replace:: :cb:`dodo`
 .. |man|                            replace:: :cb:`man`
+.. |pip|                            replace:: :cb:`pip`
+.. |pdm|                            replace:: :cb:`pdm`
+.. |meson|                          replace:: :cb:`meson`
+.. |pelican|                        replace:: :cb:`pelican`
+.. |doxygen|                        replace:: :cb:`doxygen`
+.. |ghostscript|                    replace:: :cb:`ghostscript`
 
 
+.. |BUG|                            replace:: **BUG** |
+.. |NEW|                            replace:: **NEW** |
+.. |CHANGE|                         replace:: **CHANGE** |
 .. |KeyUp|                          replace:: :fboxtt:`Up`
 .. |KeyDown|                        replace:: :fboxtt:`Down`
 .. |KeyLeft|                        replace:: :fboxtt:`Left`
@@ -261,3 +270,11 @@
 .. |blif|                           replace:: :cb:`blif`
 .. |kgr|                            replace:: :cb:`kgr`
 .. |dot_conf|                       replace:: :cb:`.conf`
+
+.. Link to Hurricane doc (Doxygen)
+.. _RoutingPad:                     {static}/doc/hurricane/classHurricane_1_1RoutingPad.html
+.. |AutoSegment|                    replace:: :cb:`AutoSegment`
+.. |AutoSegments|                   replace:: :cb:`AutoSegments`
+.. |TrackElement|                   replace:: :cb:`TrackElement`
+.. |TrackElements|                  replace:: :cb:`TrackElements`
+

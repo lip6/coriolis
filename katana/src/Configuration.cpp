@@ -40,7 +40,9 @@ namespace Katana {
   Configuration::Configuration ()
     : Anabatic::Configuration()
     , _postEventCb         ()
+    , _bloat               (Cfg::getParamString("etesian.bloat"               ,"disabled")->asString() )
     , _searchHalo          (Cfg::getParamInt   ("katana.searchHalo"           ,      1)->asInt())
+    , _maxFlatEdgeOverflow (Cfg::getParamInt   ("katana.maxFlatEdgeOverflow"  ,     10)->asInt())
     , _longWireUpThreshold1(Cfg::getParamInt   ("katana.longWireUpThreshold1" ,     60)->asInt())
     , _longWireUpReserve1  (Cfg::getParamDouble("katana.longWireUpReserve1"   ,    1.0)->asDouble())
     , _hTracksReservedLocal(Cfg::getParamInt   ("katana.hTracksReservedLocal" ,      3)->asInt())
@@ -59,11 +61,13 @@ namespace Katana {
     , _runRealignStage     (Cfg::getParamBool  ("katana.runRealignStage"      ,true   )->asBool())
     , _disableStackedVias  (Cfg::getParamBool  ("katana.disableStackedVias"   ,false  )->asBool())
   {
+    _ripupLimits[NonPrefRipupLimit]    = Cfg::getParamInt("katana.nonPrefRipupLimit"    , 5)->asInt();
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("katana.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("katana.localRipupLimit"      , 7)->asInt();
-    _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("katana.globalRipupLimit"     , 5)->asInt();
+    _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("katana.globalRipupLimit"     , 6)->asInt();
     _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamInt("katana.longGlobalRipupLimit" , 5)->asInt();
     _ripupLimits[ShortNetRipupLimit]   = Cfg::getParamInt("katana.shortNetRipupLimit"   ,16)->asInt();
+    _ripupLimits[NonPrefRipupLimit]    = Cfg::getParamInt("katana.nonPrefRipupLimit"    , 7)->asInt();
 
     if (Cfg::getParamBool("katana.useGlobalEstimate"    ,false)->asBool()) _flags |= UseGlobalEstimate;
     if (Cfg::getParamBool("katana.useStaticBloatProfile",true )->asBool()) _flags |= UseStaticBloatProfile;
@@ -92,7 +96,9 @@ namespace Katana {
   Configuration::Configuration ( const Configuration& other )
     : Anabatic::Configuration(*other.base())
     , _postEventCb         (other._postEventCb)
+    , _bloat               (other._bloat)
     , _searchHalo          (other._searchHalo)
+    , _maxFlatEdgeOverflow (other._maxFlatEdgeOverflow)
     , _longWireUpThreshold1(other._longWireUpThreshold1)
     , _longWireUpReserve1  (other._longWireUpReserve1)
     , _hTracksReservedLocal(other._hTracksReservedLocal)
@@ -115,6 +121,7 @@ namespace Katana {
     _ripupLimits[LocalRipupLimit]      = other._ripupLimits[LocalRipupLimit];
     _ripupLimits[GlobalRipupLimit]     = other._ripupLimits[GlobalRipupLimit];
     _ripupLimits[LongGlobalRipupLimit] = other._ripupLimits[LongGlobalRipupLimit];
+    _ripupLimits[NonPrefRipupLimit]    = other._ripupLimits[NonPrefRipupLimit];
   }
 
 
@@ -198,6 +205,7 @@ namespace Katana {
     cout << Dots::asUInt  ("     - Terminal saturated edge capacity"   ,_termSatReservedLocal) << endl;
     cout << Dots::asUInt  ("     - Terminal saturated GCell threshold" ,_termSatThreshold) << endl;
     cout << Dots::asULong ("     - Events limit (iterations)"          ,_eventsLimit) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, non-preferreds"        ,_ripupLimits[NonPrefRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, straps & unbreakables" ,_ripupLimits[StrapRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
@@ -227,6 +235,7 @@ namespace Katana {
   {
     Record* record = Super::_getRecord();
     if ( record ) {
+      record->add ( getSlot("_bloat"                ,_bloat                ) );
       record->add ( getSlot("_searchHalo"           ,_searchHalo           ) );
       record->add ( getSlot("_longWireUpThreshold1" ,_longWireUpThreshold1 ) );
       record->add ( getSlot("_longWireUpReserved1"  ,_longWireUpReserve1   ) );
@@ -237,6 +246,7 @@ namespace Katana {
       record->add ( getSlot("_ripupCost"            ,_ripupCost            ) );
       record->add ( getSlot("_eventsLimit"          ,_eventsLimit          ) );
 
+      record->add ( getSlot("_ripupLimits[NonPrefRipupLimit]"    ,_ripupLimits[NonPrefRipupLimit]   ) );
       record->add ( getSlot("_ripupLimits[StrapRipupLimit]"      ,_ripupLimits[StrapRipupLimit]     ) );
       record->add ( getSlot("_ripupLimits[LocalRipupLimit]"      ,_ripupLimits[LocalRipupLimit]     ) );
       record->add ( getSlot("_ripupLimits[GlobalRipupLimit]"     ,_ripupLimits[GlobalRipupLimit]    ) );

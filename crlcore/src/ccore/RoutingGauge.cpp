@@ -161,7 +161,7 @@ namespace CRL {
     for ( size_t i=_firstRoutingLayer ; i<_layerGauges.size() ; ++i ) {
       RoutingLayerGauge* gauge = _layerGauges[i];
       if (gauge->isHorizontal()) {
-        if (gauge->getType() != Constant::LayerGaugeType::PinOnly)
+        if (gauge->isUsable())
           return gauge;
         else if (not pinOnly)
           pinOnly = gauge;
@@ -177,13 +177,23 @@ namespace CRL {
     for ( size_t i=_firstRoutingLayer ; i<_layerGauges.size() ; ++i ) {
       RoutingLayerGauge* gauge = _layerGauges[i];
       if (gauge->isVertical()) {
-        if (gauge->getType() != Constant::LayerGaugeType::PinOnly)
+        if (gauge->isUsable())
           return gauge;
         else if (not pinOnly)
           pinOnly = gauge;
       }
     }
     return pinOnly;
+  }
+
+
+  bool  RoutingGauge::isUsable ( const Layer* layer ) const
+  {
+    for ( size_t i=0 ; i < _layerGauges.size() ; i++ ) {
+      if (_layerGauges[i]->getLayer()->getMask() == layer->getMask())
+        return _layerGauges[i]->isUsable();
+    }
+    return false;
   }
   
  
@@ -358,8 +368,8 @@ namespace CRL {
                      ,getString(_layerGauges[i  ]->getLayer()).c_str()
                      ,getString(_layerGauges[i+1]->getLayer()).c_str()) << endl;
       }
-      if ( _layerGauges[i+1]->getType() == Constant::PinOnly ) {
-        cerr << Error("In %s: only first layer can be PinOnly.\n"
+      if ( not _layerGauges[i+1]->isUsable() ) {
+        cerr << Error("In %s: only first layer can be PinOnly or LocalOnly.\n"
                       "          (%s  at depth %d)"
                      ,getString(this).c_str()
                      ,getString(_layerGauges[i+1]).c_str()

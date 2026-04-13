@@ -20,6 +20,7 @@
 #include "hurricane/Warning.h"
 #include "hurricane/Net.h"
 #include "hurricane/Name.h"
+#include "hurricane/DebugSession.h"
 #include "anabatic/AutoContact.h"
 #include "anabatic/GCell.h"
 #include "crlcore/RoutingGauge.h"
@@ -56,6 +57,7 @@ namespace Katana {
   using Hurricane::Bug;
   using Hurricane::Net;
   using Hurricane::Name;
+  using Hurricane::DebugSession;
   using Anabatic::GCell;
 
 
@@ -143,6 +145,7 @@ namespace Katana {
   bool           TrackElement::isStrongTerminal     ( Flags ) const { return false; }
   bool           TrackElement::isStrap              () const { return false; }
   bool           TrackElement::isUnbreakable        () const { return false; }
+  bool           TrackElement::isForOffgrid         () const { return false; }
   bool           TrackElement::isSlackened          () const { return false; }
   bool           TrackElement::isDogleg             () const { return false; }
   bool           TrackElement::isShortDogleg        () const { return false; }
@@ -155,6 +158,8 @@ namespace Katana {
   bool           TrackElement::isNonPrefOnVSmall    () const { return false; }
   bool           TrackElement::isShortNet           () const { return false; }
 // Predicates.
+  bool           TrackElement::isFixedSpan          () const { return false; }
+  bool           TrackElement::isFixedSpanRp        () const { return false; }
   bool           TrackElement::hasSymmetric         () const { return false; }
   bool           TrackElement::canSlacken           () const { return false; }
   bool           TrackElement::canPivotUp           ( float, Flags ) const { return false; };
@@ -164,6 +169,7 @@ namespace Katana {
   bool           TrackElement::canDogleg            ( Interval ) { return false; };
   bool           TrackElement::canDogleg            ( Anabatic::GCell*, Flags ) { return false; };
   bool           TrackElement::canRealign           () const { return false; };
+  bool           TrackElement::canPromoteToPref     ( Flags ) const { return false; };
 // Accessors.
   unsigned long  TrackElement::getId                () const { return 0; }
   unsigned long  TrackElement::getFreedomDegree     () const { return 0; }
@@ -174,6 +180,7 @@ namespace Katana {
   DbU::Unit      TrackElement::getExtensionCap      ( Flags ) const { return 0; }
   float          TrackElement::getMaxUnderDensity   ( Flags ) const { return 0.0; };
   uint32_t       TrackElement::getDoglegLevel       () const { return 0; }
+  uint32_t       TrackElement::getBreakLevel        () const { return 0; }
   TrackElement*  TrackElement::getParent            () const { return NULL; }
   Interval       TrackElement::getSourceConstraints () const { return Interval(); }
   Interval       TrackElement::getTargetConstraints () const { return Interval(); }
@@ -185,26 +192,27 @@ namespace Katana {
   TrackElement*  TrackElement::getSymmetric         () { return NULL; }
 // Mutators.
   void           TrackElement::addTrackCount        ( int32_t ) { }
-  void           TrackElement::setTrack             ( Track* track ) { _track = track; }
   void           TrackElement::setSymmetric         ( TrackElement* ) { }
   void           TrackElement::updateFreedomDegree  () { }
   void           TrackElement::setDoglegLevel       ( uint32_t ) { }
   void           TrackElement::swapTrack            ( TrackElement* ) { }
   void           TrackElement::reschedule           ( uint32_t ) { }
-//void           TrackElement::detach               () { }
-//void           TrackElement::detach               ( TrackSet& ) { }
+  void           TrackElement::forcePositions       ( const Interval& ) { }
+  void           TrackElement::forcePositions       ( DbU::Unit, DbU::Unit ) { }
   void           TrackElement::revalidate           () { }
   void           TrackElement::updatePPitch         () { }
   void           TrackElement::updateTrackSpan      () { }
-  void           TrackElement::setAxis              ( DbU::Unit, uint32_t flags ) { }
-  TrackElement*  TrackElement::makeDogleg           () { return NULL; }
-  Flags          TrackElement::makeDogleg           ( Interval, TrackElement*&, TrackElement*&, Flags  ) { return Flags::NoFlags; }
-  TrackElement*  TrackElement::makeDogleg           ( Anabatic::GCell*, TrackElement*&, TrackElement*& ) { return NULL; }
+  void           TrackElement::setAxis              ( DbU::Unit, Flags flags ) { }
+  TrackElement*  TrackElement::promoteToPref        () { return nullptr; }
+  TrackElement*  TrackElement::makeDogleg           () { return nullptr; }
+  Flags          TrackElement::makeDogleg           ( Interval, TrackElement*&, TrackElement*&, Flags )         { return Flags::NoFlags; }
+  TrackElement*  TrackElement::makeDogleg           ( Anabatic::GCell*, TrackElement*&, TrackElement*&, Flags ) { return nullptr; }
   void           TrackElement::_postDoglegs         ( TrackElement*&, TrackElement*& ) { }
   bool           TrackElement::moveAside            ( Flags ) { return false; }
   bool           TrackElement::slacken              ( Flags ) { return false; }
   bool           TrackElement::moveUp               ( Flags ) { return false; }
   bool           TrackElement::moveDown             ( Flags ) { return false; }
+  void           TrackElement::reduce               () { }
 #if THIS_IS_DISABLED
   void           TrackElement::desalignate          () { }
 #endif
@@ -234,8 +242,25 @@ namespace Katana {
 
   void  TrackElement::destroy ()
   {
+    bool debugging = false;
+    if (base()) {
+      debugging = true;
+      DebugSession::open( base()->getNet(), 159, 160 );
+    }
+
     _preDestroy ();
     delete this;
+
+    if (debugging)
+      DebugSession::close();
+  }
+
+
+  Box  TrackElement::getBoundingBox () const
+  {
+    if (getDirection() & Flags::Horizontal)
+      return Box( getSourceU(), getAxis()-DbU::lambda(1.0), getTargetU(), getAxis()+DbU::lambda(1.0) );
+    return Box( getAxis()-DbU::lambda(1.0), getSourceU(), getAxis()+DbU::lambda(1.0), getTargetU() );
   }
 
 
@@ -259,7 +284,7 @@ namespace Katana {
 
     size_t  begin = _track->find( this );
     size_t  end   = begin;
-    return _track->expandFreeInterval( begin, end, Track::InsideElement, getNet() );
+    return _track->expandFreeInterval( getCenterU(), begin, end, Track::InsideElement, getNet() );
   }
 
 
@@ -274,6 +299,33 @@ namespace Katana {
   {
     if (not _track or (getNet() == cost.getNet())) return;
     _overlapCostCallback( this, cost );
+  }
+
+
+  void  TrackElement::setTrack ( Track* track )
+  {
+    cdebug_log(155,0) << "TrackElement::setTrack(): " << this << endl;
+    cdebug_log(155,0) << "  -> " << track << endl;
+    _track = track;
+  }
+
+
+  void  TrackElement::detach ( TrackSet& removeds )
+  {
+    cdebug_log(159,1) << "TrackElement::detach(TrackSet&) - <id:" << getId() << "> trackSpan:"
+                      << getTrackSpan() << endl;
+
+    Track* wtrack = getTrack();
+    for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
+      removeds.insert( wtrack );
+      cdebug_log(159,0) << "| " << wtrack << endl;
+      wtrack = wtrack->getNextTrack();
+    }
+    addTrackCount( -getTrackSpan()  );
+    setTrack( NULL );
+    setFlags( TElemLocked );
+
+    cdebug_tabw(159,-1);
   }
 
 

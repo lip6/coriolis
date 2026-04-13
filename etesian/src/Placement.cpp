@@ -204,18 +204,23 @@ namespace Etesian {
   }
   
 
-  void  Slice::insertTies ( DbU::Unit latchUpMax )
+  uint32_t  Slice::insertTies ( DbU::Unit latchUpMax, size_t islice )
   {
     cdebug_log(121,1) << "Slice::insertTies() @" << DbU::getValueString(_ybottom) << endl;
-    for ( SubSlice& subSlice : _subSlices ) subSlice.insertTies( latchUpMax );
+    uint32_t status = EtesianEngine::NoFlags;
+    for ( SubSlice& subSlice : _subSlices )
+      status |= subSlice.insertTies( latchUpMax, islice%2 );
     cdebug_tabw(121,-1);
+    return status;
   }
 
 
   void  Slice::addFeeds ( size_t islice )
   {
+    cdebug_log(121,1) << "Slice::addFeeds() [" << islice << "]" << endl;
     if (_tiles.empty()) {
       fillHole( _tiles.end(), getXMin(), getXMax(), getYBottom(), islice%2 );
+      cdebug_tabw(121,-1);
       return;
     }
 
@@ -238,6 +243,7 @@ namespace Etesian {
     if ((*itile).getXMax() < getXMax()) {
       fillHole( _tiles.end(), (*itile).getXMax(), getXMax(), getYBottom(), (islice+getSpinSlice0())%2 );
     }
+    cdebug_tabw(121,-1);
   }
 
 
@@ -247,16 +253,24 @@ namespace Etesian {
                         , DbU::Unit ybottom
                         , size_t yspin )
   {
+    cdebug_log(147,1) << "Slice::fillHole() @" << DbU::getValueString(ybottom)
+                      << " hole=[" << DbU::getValueString(xmin)
+                      << " "       << DbU::getValueString(xmax)
+                      << "]" << endl;
+  //cdebug_log(147,0) << "before=" << (*before).getInstance() << endl;
     Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
     if (feed == NULL) {
       cerr << Error("Slice::fillHole(): No feed has been registered, ignoring.") << endl;
+      cdebug_tabw(147,-1);
       return;
     }
 
-    DbU::Unit xtie   = xmin;
-    DbU::Unit modulo = (xmin - getXMin()) % getEtesian()->getSliceStep();
+    bool      addEndTie = false;
+    DbU::Unit xtie      = xmin;
+    DbU::Unit modulo    = (xmin - getXMin()) % getEtesian()->getSliceHStep();
+    DbU::Unit latchUpMax = getEtesian()->getLatchUpMax();
     if (modulo) {
-      xtie += getEtesian()->getSliceStep() - modulo;
+      xtie += getEtesian()->getSliceHStep() - modulo;
       // cerr << "Misaligned hole @" << yspin
       //      << " ybottom=" << DbU::getValueString(ybottom)
       //      << " xmin=" <<  DbU::getValueString(xmin)
@@ -264,16 +278,58 @@ namespace Etesian {
       //      << " getXMin()=" <<  DbU::getValueString(getXMin())
       //      << endl;
     }
-    modulo = (xmax - getXMin()) % getEtesian()->getSliceStep();
+    modulo = (xmax - getXMin()) % getEtesian()->getSliceHStep();
     if (modulo) xmax -= modulo;
 
-    DbU::Unit feedWidth = feed->getAbutmentBox().getWidth();
+    Cell* tie = nullptr;
+    if (getEtesian()->putTiesInEmptyArea())
+      tie = getEtesian()->getFeedCells().getTie();
+
+    DbU::Unit feedWidth = 0;
+    if (tie) {
+      feedWidth = tie->getAbutmentBox().getWidth();
+      if (xtie+feedWidth <= xmax) {
+        cdebug_log(147,0) << "feedWidth (tie) = " << DbU::getValueString(feedWidth) << endl;
+        Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
+        Instance* instance   = Instance::create
+          ( getEtesian()->getBlockCell()
+          , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
+          , tie
+          , getTransformation( tie->getAbutmentBox()
+                             , blockPoint.getX()
+                             , blockPoint.getY()
+                             , (yspin) ? Transformation::Orientation::MY
+                             : Transformation::Orientation::ID
+                             )
+          , Instance::PlacementStatus::PLACED
+          );
+        _tiles.insert( before
+                     , Tile( xtie
+                           , tie->getAbutmentBox().getWidth()
+                           , getEtesian()->toCell( Occurrence(instance) )));
+        cdebug_log(147,0) << "  Tie " << instance << " @" << instance->getTransformation() << endl;
+        xtie += feedWidth;
+      }
+      if (xtie + feedWidth < xmax) {
+        xmax -= feedWidth;
+        addEndTie = true;
+      }
+    }
+
+    DbU::Unit feedLength = 0;
+    feedWidth = feed->getAbutmentBox().getWidth();
     while ( true ) {
-      if (xtie           >= xmax) return;
-      if (xtie+feedWidth >  xmax) {
+      if (xtie >= xmax) break;
+
+      if (tie and (feedLength >= getEtesian()->getLatchUpMax())) {
+        feed = tie;
+        feedWidth = tie->getAbutmentBox().getWidth();
+      }
+      
+      if (xtie+feedWidth > xmax) {
       // Feed is too big, try to find a smaller one.
         feed = NULL;
-        int pitch = (int)((xmax-xtie) / getEtesian()->getSliceStep());
+        int pitch = (int)((xmax-xtie) / getEtesian()->getSliceHStep());
         for ( ; pitch > 0 ; --pitch ) {
           feed = getEtesian()->getFeedCells().getFeed( pitch );
           if (feed == NULL) continue;
@@ -301,77 +357,87 @@ namespace Etesian {
                    , Tile( xtie
                          , feed->getAbutmentBox().getWidth()
                          , getEtesian()->toCell( Occurrence(instance) )));
+      cdebug_log(147,0) << "  " << instance << " @" << instance->getTransformation() << endl;
+
       xtie += feedWidth;
+      if (feed == tie) {
+        feedLength = 0;
+        feed       = getEtesian()->getFeedCells().getBiggestFeed();
+        feedWidth  = feed->getAbutmentBox().getWidth();
+      } else
+        feedLength += feedWidth;
     }
 
-    Cell* tie = getEtesian()->getFeedCells().getTie();
-    feedWidth = 0;
-    if (tie) {
-      DbU::Unit feedWidth = tie->getAbutmentBox().getWidth();
-      if (xtie+feedWidth < xmax) {
-        Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
-        Instance* instance   = Instance::create
-          ( getEtesian()->getBlockCell()
-          , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
-          , tie
-          , getTransformation( tie->getAbutmentBox()
-                             , blockPoint.getX()
-                             , blockPoint.getY()
-                             , (yspin) ? Transformation::Orientation::MY
-                             : Transformation::Orientation::ID
-                             )
-          , Instance::PlacementStatus::PLACED
-          );
-        _tiles.insert( before
-                     , Tile( xtie
-                           , tie->getAbutmentBox().getWidth()
-                           , getEtesian()->toCell( Occurrence(instance) )));
-        xtie += feedWidth;
-      }
-
-      if (xtie+feedWidth < xmax) {
-        Point     blockPoint = getEtesian()->toBlock( Point(xmax-feedWidth,_ybottom) );
-        Instance* instance   = Instance::create
-          ( getEtesian()->getBlockCell()
-          , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
-          , tie
-          , getTransformation( tie->getAbutmentBox()
-                             , blockPoint.getX()
-                             , blockPoint.getY()
-                             , (yspin) ? Transformation::Orientation::MY
-                             : Transformation::Orientation::ID
-                             )
-          , Instance::PlacementStatus::PLACED
-          );
-        _tiles.insert( before
-                     , Tile( xmax-feedWidth
-                           , tie->getAbutmentBox().getWidth()
-                           , getEtesian()->toCell( Occurrence(instance) )));
-        xmax -= feedWidth;
-        before--;
-      }
-    } else {
-      cerr << Error("Slice::fillHole(): No tie has been registered, not inserting.") << endl;
+    if (addEndTie) {
+      Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
+      Instance* instance   = Instance::create
+        ( getEtesian()->getBlockCell()
+        , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
+        , tie
+        , getTransformation( tie->getAbutmentBox()
+                           , blockPoint.getX()
+                           , blockPoint.getY()
+                           , (yspin) ? Transformation::Orientation::MY
+                           : Transformation::Orientation::ID
+                           )
+        , Instance::PlacementStatus::PLACED
+        );
+      _tiles.insert( before
+                   , Tile( xtie
+                         , tie->getAbutmentBox().getWidth()
+                         , getEtesian()->toCell( Occurrence(instance) )));
+      cdebug_log(147,0) << "  Tie " << instance << " @" << instance->getTransformation() << endl;
     }
+
+    cdebug_tabw(147,-1);
+  }
+
+
+  uint64_t  Slice::check ( string& message ) const
+  {
+    if (_tiles.size() < 2) return 0;
+
+    uint64_t  overlaps  = 0;
+    auto      iTile     = _tiles.begin();
+    auto      iTileNext = iTile;
+    ++iTileNext;
+    while ( true ) {
+      if (iTile->getXMax() > iTileNext->getXMin()) {
+        ++overlaps;
+        message += "        Slice::check(): @Y=" + DbU::getValueString(_ybottom) + " overlap between:\n"
+                +  "          @X=" + DbU::getValueString(iTile    ->getXMin()) + " " + getString(iTile    ->getOccurrence()) + "\n"
+                +  "          @X=" + DbU::getValueString(iTileNext->getXMin()) + " " + getString(iTileNext->getOccurrence()) + "\n";
+      } 
+
+      ++iTile;
+      ++iTileNext;
+      if (iTileNext == _tiles.end()) break;
+    }
+    return overlaps;
   }
 
   
-  Instance* Slice::createDiodeUnder ( RoutingPad* rp, const Box& diodeArea, DbU::Unit xHint )
+  Instance* Slice::createDiodeUnder ( RoutingPad* rp, const Box& diodeArea, DbU::Unit xHint, size_t yspin )
   {
     Cell* diode = getEtesian()->getDiodeCell();
-    if (diode == NULL) {
+    if (not diode) {
       cerr << Error("Slice::createDiodeUnder(): No diode cell has been registered, ignoring.") << endl;
-      return NULL;
+      return nullptr;
     }
+    DbU::Unit  diodeWidth  = diode->getAbutmentBox().getWidth();
     Cell* feed  = getEtesian()->getFeedCells().getBiggestFeed();
-    if (feed == NULL) {
+    if (not feed) {
       cerr << Error("Slice::createDiodeUnder(): No feed has been registered, ignoring.") << endl;
-      return NULL;
+      return nullptr;
     }
     Cell* tie = getEtesian()->getFeedCells().getTie();
     if (not feed and not tie) {
       cerr << Error("Slice::createDiodeUnder(): No tie has been registered, ignoring.") << endl;
-      return NULL;
+      return nullptr;
+    }
+    if (getEtesian()->getFeedCells().isFeed(tie)) {
+      cerr << Error("Slice::createDiodeUnder(): Cannot discriminate between tie and feed, ignoring.") << endl;
+      return nullptr;
     }
 
     cdebug_log(147,0) << "Slice::createDiodeUnder(): xHint=" << DbU::getValueString(xHint) << endl;
@@ -384,12 +450,12 @@ namespace Etesian {
     auto      iCandidate     = _tiles.begin();
     DbU::Unit dCandidate     = 0;
     for ( auto iTile=_tiles.begin() ; iTile != _tiles.end() ; ++iTile ) {
-      if ((*iTile).getXMax() <= diodeArea.getXMin()) continue;
-      if ((*iTile).getXMin() <  diodeArea.getXMin()) continue;
-      if ((*iTile).getXMin() >= diodeArea.getXMax()) break;
+      if ((*iTile).getXMax()  <= diodeArea.getXMin()) continue;
+      if ((*iTile).getXMin()  <  diodeArea.getXMin()) continue;
+      if ((*iTile).getXMin()  >= diodeArea.getXMax()) break;
+      if ((*iTile).getWidth() <  diodeWidth) continue;
       cdebug_log(147,0) << "| " << (*iTile) << endl;
-      if (   ((*iTile).getMasterCell() != feed)
-         and ((*iTile).getMasterCell() != tie )) continue;
+      if (not getEtesian()->getFeedCells().isFeed((*iTile).getMasterCell())) continue;
       if (blockInst) {
         if ((*iTile).getOccurrence().getPath().getHeadInstance() != blockInst) {
           cdebug_log(147,0) << "> Reject, not in block instance" << endl;
@@ -405,14 +471,17 @@ namespace Etesian {
       }
     }
     
-    if (not foundCandidate) return NULL;
+    if (not foundCandidate) {
+      cdebug_log(147,0) << "No candidate found" << endl;
+      return NULL;
+    }
 
     auto before = iCandidate;
     before++;
 
     DbU::Unit  xmin        = (*iCandidate).getXMin(); 
     DbU::Unit  width       = (*iCandidate).getWidth(); 
-    DbU::Unit  fillerWidth = width - diode->getAbutmentBox().getWidth();
+    DbU::Unit  fillerWidth = width - diodeWidth;
     diodeInst = (*iCandidate).getInstance();
     Transformation refTransf = diodeInst->getTransformation();
     _tiles.erase( iCandidate );
@@ -437,23 +506,9 @@ namespace Etesian {
     _tiles.insert( before, Tile(xmin,width,Occurrence(diodeInst,instancePath)) );
     cdebug_log(147,0) << "  " << diodeInst << " @" << transf << endl;
 
-    if (fillerWidth > 0) {
-      Cell* filler = getEtesian()->getFeedCells().getFeedByWidth( fillerWidth );
-      if (not filler) {
-        cerr << Error("Slice::createDiodeUnder(): No gap filler of width %s."
-                     , DbU::getValueString(fillerWidth).c_str() ) << endl;
-        return diodeInst;
-      }
-      transf = refTransf;
-      Transformation( fillerWidth, 0 ).applyOn( transf );
-      Instance* fillerInst = Instance::create( getEtesian()->getBlockCell()
-                                             , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
-                                             , filler
-                                             , transf
-                                             , Instance::PlacementStatus::FIXED );
-      _tiles.insert( before, Tile(xmin+width,fillerWidth,Occurrence(fillerInst,instancePath)) );
-      cdebug_log(147,0) << "  " << fillerInst << " @" << transf << endl;
-    }
+    cdebug_log(147,0) << "fillerWidth=" << DbU::getValueString(fillerWidth) << endl;
+    if (fillerWidth > 0)
+      fillHole( before, xmin+diodeWidth, xmin+width, _ybottom, yspin );
 
     return diodeInst;
   }
@@ -514,6 +569,14 @@ namespace Etesian {
   }
 
 
+  uint64_t  Area::check ( string& message ) const
+  {
+    uint64_t overlaps = 0;
+    for ( Slice* slice : _slices ) overlaps += slice->check( message );
+    return overlaps;
+  }
+  
+
   bool  Area::validate ( DbU::Unit latchUpMax ) const
   {
     bool validated = true;
@@ -530,16 +593,16 @@ namespace Etesian {
       return;
     }
 
-    DbU::Unit modulo = (flatAb.getXMin() - getXMin()) % getEtesian()->getSliceStep();
+    DbU::Unit modulo = (flatAb.getXMin() - getXMin()) % getEtesian()->getSliceHStep();
     if (modulo) {
       cerr << Warning( "Area::merge(): Misaligned instance %s\n"
-                       "           y=%s (%d) x=%d (%d) area.getXMin()=%s sliceStep=%s (%d)"
+                       "           y=%s (%d) x=%s (%d) area.getXMin()=%s sliceHStep=%s (%d)"
                      , occurrence.getCompactString().c_str()
                      , DbU::getValueString(flatAb.getYMin()).c_str(), flatAb.getYMin()
                      , DbU::getValueString(flatAb.getXMin()).c_str(), flatAb.getXMin()
                      , DbU::getValueString(getXMin()).c_str()
-                     , DbU::getValueString(getEtesian()->getSliceStep()).c_str()
-                     , getEtesian()->getSliceStep()
+                     , DbU::getValueString(getEtesian()->getSliceHStep()).c_str()
+                     , getEtesian()->getSliceHStep()
                      ) << endl;
     }
 
@@ -590,10 +653,22 @@ namespace Etesian {
   }
 
 
-  void  Area::insertTies ( DbU::Unit latchUpMax )
+  uint32_t  Area::insertTies ()
   {
-    for ( Slice* slice : _slices ) slice->insertTies( latchUpMax );
+    DbU::Unit latchUpMax = getEtesian()->getLatchUpMax();
+    if (latchUpMax == 0) return EtesianEngine::NoFlags;
+
+    if (not getEtesian()->getFeedCells().getTie()) {
+      cerr << Error( "SubSlice::insertTies(): No feed has been registered, ignoring." ) << endl;
+      return EtesianEngine::NoFlags;
+    }
+
+    uint32_t status = EtesianEngine::NoFlags;
+    for ( size_t islice=0 ; islice<_slices.size() ; islice++ ) {
+      status |= _slices[islice]->insertTies( latchUpMax, islice );
+    }
     validate( latchUpMax );
+    return status;
   }
 
 
@@ -626,7 +701,7 @@ namespace Etesian {
   size_t  SubSlice::getUsedVTracks ( const Tile& tile, set<DbU::Unit>& vtracks )
   {
     RoutingGauge* rg     = _slice->getArea()->getEtesian()->getGauge();
-    DbU::Unit     vpitch = _slice->getArea()->getEtesian()->getSliceStep();
+    DbU::Unit     vpitch = _slice->getArea()->getEtesian()->getSliceHStep();
     Cell* cell = tile.getMasterCell();
     for ( Net* net : cell->getNets() ) {
       if (not net->isExternal()) {
@@ -681,9 +756,9 @@ namespace Etesian {
   DbU::Unit  SubSlice::getAverageChunk ( size_t& count ) const
   {
     count = 0;
-    Cell* feed = _slice->getEtesian()->getFeedCells().getBiggestFeed();
+    Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
     if (feed == NULL) {
-      cerr << Error("SubSlice::getAverageChunk(): No feed has been registered, ignoring.") << endl;
+    //cerr << Error("SubSlice::getAverageChunk(): No feed has been registered, ignoring.") << endl;
       return -1;
     }
     DbU::Unit  feedWidth  = feed->getAbutmentBox().getWidth();
@@ -694,7 +769,10 @@ namespace Etesian {
     for ( ; iTile != _endTile ; ++iTile, ++count )
       usedLength += (*iTile).getWidth();
 
-    if (xmax - xmin - usedLength == 0) return 0;
+    cdebug_log(121,0) << "SubSlice::getAverageChunk(): length=" << DbU::getValueString(xmax-xmin)
+                      << " used=" << DbU::getValueString(usedLength) << endl;
+
+    if (xmax - xmin - usedLength == 0) return DbU::Max;
     return (feedWidth * (xmax - xmin)) / (xmax - xmin - usedLength);
   }
 
@@ -730,7 +808,7 @@ namespace Etesian {
           cdebug_log(121,0) << "| V-Track @" << DbU::getValueString(x) << endl;
         if (not usedVTracks.count(xTrack)) break;
 
-        DbU::Unit vpitch     = _slice->getArea()->getEtesian()->getSliceStep();
+        DbU::Unit vpitch     = _slice->getArea()->getEtesian()->getSliceHStep();
         DbU::Unit maxDxLeft  = 0;
         DbU::Unit maxDxRight = 0;
         if (iTile != beginTile) {
@@ -775,8 +853,9 @@ namespace Etesian {
   }
   
 
-  void  SubSlice::insertTies ( DbU::Unit latchUpMax )
+  uint32_t  SubSlice::insertTies ( DbU::Unit latchUpMax, size_t yspin )
   {
+    uint32_t  status       = EtesianEngine::NoFlags;
     size_t    count        = 0;
     DbU::Unit averageChunk = getAverageChunk( count );
     if (averageChunk > latchUpMax) {
@@ -785,18 +864,20 @@ namespace Etesian {
                    , getString(DbU::getValueString(getYBottom())).c_str()
                    , getString((*_beginTile).getOccurrence()).c_str()
                    ) << endl;
+      return EtesianEngine::FailedPolarizationTies;
     }
     
-    Cell* feed = _slice->getEtesian()->getFeedCells().getBiggestFeed();
+    Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
     if (feed == NULL) {
       cerr << Error( "SubSlice::insertTies(): No feed has been registered, ignoring." ) << endl;
-      return;
+      return EtesianEngine::NoFlags;
     }
-    DbU::Unit  feedWidth  = feed->getAbutmentBox().getWidth();
+    DbU::Unit  feedWidth = feed->getAbutmentBox().getWidth();
 
-    cdebug_log(121,1) << "SubSlice::insterTies(): LatchUpMax:" << DbU::getValueString( latchUpMax ) << endl;
+    cdebug_log(121,1) << "SubSlice::insertTies(): LatchUpMax:" << DbU::getValueString( latchUpMax ) << endl;
     cdebug_log(121,1) << "Direct subSlice walkthrough." << endl;
 
+    vector<DbU::Unit>  tiePositions;
     DbU::Unit xMin      = getXMin();
     DbU::Unit xMax      = getXMax();
     auto      beginTile = _beginTile;
@@ -901,6 +982,7 @@ namespace Etesian {
         tileLength   += (*iTile).getWidth();
 
         if (iTile == _beginTile) {
+          status |= EtesianEngine::FailedPolarizationTies;
           cerr << Error( "SubSlice::insertTies(): Not enough free space to insert polarization ties.\n"
                          "        @Y=%s, begin=%s"
                        , getString(DbU::getValueString(getYBottom())).c_str()
@@ -911,7 +993,9 @@ namespace Etesian {
         --iTile;
       } 
     }
+
     cdebug_tabw(121,-2);
+    return status;
   }
 
   
@@ -929,7 +1013,7 @@ namespace Etesian {
     if (not blockDiodeArea.intersect(_placeArea)) return NULL;
 
     size_t islice = (y - _placeArea.getYMin()) / _sliceHeight;
-    return _slices[islice]->createDiodeUnder( rp, blockDiodeArea, xHint );
+    return _slices[islice]->createDiodeUnder( rp, blockDiodeArea, xHint, islice%2 );
   }
 
 
@@ -948,7 +1032,7 @@ namespace Etesian {
   //Breakpoint::stop( 100, "Before adding feeds." );
     cmess2 << "  o  Adding feed cells." << endl;
 
-  //DebugSession::open( 145, 150 );
+  //DebugSession::open( 120, 150 );
     UpdateSession::open();
 
     if (_area) delete _area;
@@ -1015,23 +1099,30 @@ namespace Etesian {
 
     _area->buildSubSlices();
     _area->showSubSlices();
+    string   errors;
+    uint64_t overlaps = _area->check( errors );
+    if (overlaps) {
+      throw Error( "EtesianEngine::toHurricane(): Found %d overlaps in placement.\n"
+                   "        The placement area may be too small or too much very wide cells (likely flip-flops).\n%s"
+                 , overlaps, errors.c_str() );
+    }
+
     for ( const Box& trackAvoid : _trackAvoids )
       _area->trackAvoid( trackAvoid );
-#if DISABLED_TIE_INSERTION
-    if (getConfiguration()->getLatchUpDistance()) {
-      Cell*     feed       = getFeedCells().getBiggestFeed();
-      DbU::Unit tieSpacing = getConfiguration()->getLatchUpDistance()*2 - feed->getAbutmentBox().getWidth();
-      if (feed != NULL)
-        tieSpacing -= feed->getAbutmentBox().getWidth();
-      _area->insertTies( tieSpacing );
-    }
-#endif
+    _status |= _area->insertTies();
     _area->addFeeds();
 
     UpdateSession::close();
   //DebugSession::close();
 
     if (_viewer) _viewer->getCellWidget()->refresh();
+
+    if (_status & FailedPolarizationTies) {
+      throw Error( "EtesianEngine::toHurricane(): Not enough space to insert all the polarization ties.\n"
+                   "        You should increase free space on %s."
+                 , getString(getCell()).c_str()
+                 );
+    }
 
     Breakpoint::stop( 101, "EtesianEngine::toHurricane() finished." );
   }

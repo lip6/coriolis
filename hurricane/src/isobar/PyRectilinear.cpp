@@ -45,18 +45,18 @@ namespace  Isobar {
   }
 
 
-  PyObject* VectorToList ( const std::vector<Box>& v )
+  static PyObject* VectorToList ( const std::vector<Point>& v )
   {
     PyObject* pyList = PyList_New( v.size() );
 
     for ( size_t i=0 ; i<v.size() ; ++i ) {
-      PyBox* pyBox = PyObject_NEW( PyBox, &PyTypeBox );
-      if (not pyBox) { return NULL; }
+      PyPoint* pyPoint = PyObject_NEW( PyPoint, &PyTypePoint );
+      if (not pyPoint) { return NULL; }
     
       HTRY
-        pyBox->_object = new Box ( v[i] );
+        pyPoint->_object = new Point ( v[i] );
       HCATCH    
-      PyList_SetItem( pyList, i, (PyObject*)pyBox );
+      PyList_SetItem( pyList, i, (PyObject*)pyPoint );
     }
 
     return pyList;
@@ -160,6 +160,20 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
+
+  static PyObject *PyRectilinear_getPoints ( PyRectilinear *self )
+  {
+    cdebug_log(20,0) << "Rectilinear.getPoints()" << endl;
+
+    HTRY
+      METHOD_HEAD( "Rectilinear.getPoints()" )
+  
+      return VectorToList(rectilinear->getPoints());
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
   
   static PyObject* PyRectilinear_translate ( PyRectilinear *self, PyObject* args )
   {
@@ -193,8 +207,9 @@ extern "C" {
     HTRY
       METHOD_HEAD( "Rectilinear.getAsRectangles()" )
       
-      PyObject* pyList = NULL;
-      if (not PyArg_ParseTuple( args, "O:Rectilinear.getAsRectangles", &pyList )) {
+      PyObject*    pyList  = NULL;
+      unsigned int pyFlags = Rectilinear::VSliced;
+      if (not PyArg_ParseTuple( args, "O|I:Rectilinear.getAsRectangles", &pyList, &pyFlags )) {
         PyErr_SetString( ConstructorError, "Rectilinear.getAsRectangles(): Must have exactly one parameter." );
         return NULL;
       }
@@ -205,7 +220,45 @@ extern "C" {
 
       PyList_SetSlice( pyList, 0, PyList_Size(pyList), NULL );
       vector<Box> boxes;
-      rectilinear->getAsRectangles( boxes );
+      rectilinear->getAsRectangles( boxes, pyFlags );
+      for ( size_t i=0 ; i<boxes.size() ; ++i ) {
+        PyBox* pyBox = PyObject_NEW( PyBox, &PyTypeBox );
+        if (not pyBox) { return NULL; }
+    
+        pyBox->_object = new Box ( boxes[i] );
+        PyList_Append( pyList, (PyObject*)pyBox );
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyRectilinear_getAsBiggestRectangles ( PyRectilinear *self, PyObject* args )
+  {
+    cdebug_log(20,0) << "Rectilinear.getAsBiggestRectangles()" << endl;
+
+    HTRY
+      METHOD_HEAD( "Rectilinear.getAsBiggestRectangles()" )
+      
+      PyObject* pyList = NULL;
+      PyObject* pyHT   = NULL;
+      PyObject* pyVT   = NULL;
+      if (not PyArg_ParseTuple( args, "O|OO:Rectilinear.getAsBiggestRectangles", &pyList, &pyHT, &pyVT )) {
+        PyErr_SetString( ConstructorError, "Rectilinear.getAsBiggestRectangles(): Must have exactly one parameter." );
+        return NULL;
+      }
+      if (not PyList_Check(pyList)) {
+        PyErr_SetString( ConstructorError, "Rectilinear.getAsBiggestRectangles(): Argument must be a list." );
+        return NULL;
+      }
+
+      PyList_SetSlice( pyList, 0, PyList_Size(pyList), NULL );
+      vector<Box> boxes;
+      if (pyHT and pyVT)
+        rectilinear->getAsBiggestRectangles( boxes, PyAny_AsLong(pyHT), PyAny_AsLong(pyVT) );
+      else
+        rectilinear->getAsBiggestRectangles( boxes );
       for ( size_t i=0 ; i<boxes.size() ; ++i ) {
         PyBox* pyBox = PyObject_NEW( PyBox, &PyTypeBox );
         if (not pyBox) { return NULL; }
@@ -230,8 +283,12 @@ extern "C" {
     , { "getY"           , (PyCFunction)PyRectilinear_getY           , METH_NOARGS , "Return the Rectilinear Y value." }
     , { "getBoundingBox" , (PyCFunction)PyRectilinear_getBoundingBox , METH_NOARGS , "Return the Rectilinear Bounding Box." }
     , { "setPoints"      , (PyCFunction)PyRectilinear_setPoints      , METH_VARARGS, "Sets the Rectilinear Bounding Box." }
+    , { "getPoints"      , (PyCFunction)PyRectilinear_getPoints,       METH_NOARGS , "Gets the Rectilinear points." }
     , { "translate"      , (PyCFunction)PyRectilinear_translate      , METH_VARARGS, "Translates the Rectilinear of dx and dy." }
-    , { "getAsRectangles", (PyCFunction)PyRectilinear_getAsRectangles, METH_VARARGS, "Return the rectangle coverage." }
+    , { "getAsRectangles", (PyCFunction)PyRectilinear_getAsRectangles, METH_VARARGS, "Return the rectangle vertical coverage." }
+    , { "getAsBiggestRectangles"
+                         , (PyCFunction)PyRectilinear_getAsBiggestRectangles
+                                                                     , METH_VARARGS, "Return the biggest rectangle coverage." }
     , { "destroy"        , (PyCFunction)PyRectilinear_destroy        , METH_NOARGS
                          , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}  /* sentinel */
@@ -253,6 +310,15 @@ extern "C" {
   // Link/Creation Method.
   DBoLinkCreateMethod(Rectilinear)
   PyTypeInheritedObjectDefinitions(Rectilinear,Component)
+
+
+  extern  void  PyRectilinear_postModuleInit ()
+  {
+    PyObject* constant;
+
+    LoadObjectConstant(PyTypeRectilinear.tp_dict,Rectilinear::VSliced,"VSliced");
+    LoadObjectConstant(PyTypeRectilinear.tp_dict,Rectilinear::HSliced,"HSliced");
+  }
 
 #endif  // Shared Library Code Part.
 

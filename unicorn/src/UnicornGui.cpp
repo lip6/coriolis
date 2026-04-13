@@ -23,6 +23,7 @@
 #include "hurricane/isobar/Script.h"
 #include "hurricane/viewer/CellViewer.h"
 #include "hurricane/viewer/PyCellViewer.h"
+#include "hurricane/viewer/BreakpointWidget.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Catalog.h"
 #include "crlcore/AllianceFramework.h"
@@ -54,6 +55,7 @@ namespace Unicorn {
   using Hurricane::jsonCellParse;
   using Hurricane::DataBase;
   using Hurricane::Library;
+  using Hurricane::BreakpointWidget;
   using CRL::System;
   using CRL::Catalog;
   using CRL::AllianceFramework;
@@ -118,22 +120,9 @@ namespace Unicorn {
 
   void  UnicornGui::_runUnicornInit ()
   {
-    Utilities::Path pythonSitePackages = System::getPath("pythonSitePackages");
-    Utilities::Path confFile           = "coriolis/unicorn/initHook.py";
-    Utilities::Path systemConfFile     = pythonSitePackages / confFile;
-
-    if (systemConfFile.exists()) {
-    //Isobar::Script::addPath( systemConfDir.toString() );
-
-      dbo_ptr<Isobar::Script> script = Isobar::Script::create( confFile.toPyModPath() );
-      script->addKwArgument( "editor"          , (PyObject*)PyCellViewer_Link(this) );
-      script->runFunction  ( "unicornConfigure", getCell() );
-
-    //Isobar::Script::removePath( systemConfDir.toString() );
-    } else {
-      cerr << Warning("Unicorn system configuration file:\n  <%s> not found."
-                     ,systemConfFile.toString().c_str()) << endl;
-    }
+    dbo_ptr<Isobar::Script> script = Isobar::Script::create( "coriolis.unicorn.initHook" );
+    script->addKwArgument( "editor"          , (PyObject*)PyCellViewer_Link(this) );
+    script->runFunction  ( "unicornConfigure", getCell() );
   }
 
 
@@ -184,15 +173,24 @@ namespace Unicorn {
       connect ( exportAction, SIGNAL(triggered()), this, SLOT(exportCell()) );
     }
 
-    QAction* action = addToMenu( "tools.libraryManager"
-                               , tr("Library Manager")
-                               , tr("Browse through Views, Cells & Libraries")
-                               , QKeySequence(tr("CTRL+M"))
-                               , QIcon()
-                               , "tools.script"
+    QAction* action = addToMenu( "file.saveSettings"
+                               , tr("Save settings")
+                               , tr("Save windows size & positions")
+                               , QKeySequence()
                                );
+    connect( action, SIGNAL(triggered()), this, SLOT(saveQtSettings()) );
+
+    action = addToMenu( "tools.libraryManager"
+                      , tr("Library Manager")
+                      , tr("Browse through Views, Cells & Libraries")
+                      , QKeySequence(tr("CTRL+M"))
+                      , QIcon()
+                      , "tools.script"
+                      );
     connect( action, SIGNAL(triggered()), _libraryManager, SLOT(toggleShow()) );
     connect( this  , SIGNAL(cellLoadedFromDisk(Cell*)), _libraryManager, SLOT(updateLibrary(Cell*)) );
+
+    readQtSettings();
   }
 
 
@@ -203,6 +201,22 @@ namespace Unicorn {
       (*itool)->release ();
   }
 
+
+  void  UnicornGui::readQtSettings ()
+  {
+    CellViewer::readQtSettings();
+    BreakpointWidget::readQtSettings();
+    _libraryManager->readQtSettings();
+  }
+
+
+  void  UnicornGui::saveQtSettings ()
+  {
+    CellViewer::saveQtSettings();
+    BreakpointWidget::saveQtSettings();
+    _libraryManager->saveQtSettings();
+  }
+  
 
   Cell* UnicornGui::getCellFromDb ( const char* name )
   {

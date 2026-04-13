@@ -18,6 +18,7 @@ pyCRL_files = files([
   'PyGraphicToolEngine.cpp',
   'PyAcmSigda.cpp',
   'PySpice.cpp',
+  'PyVerilog.cpp',
   'PyBlif.cpp',
   'PyGds.cpp',
   'PyLefImport.cpp',

@@ -17,6 +17,7 @@
 
 
 #include <QFont>
+#include <QBrush>
 #include <QApplication>
 #include "hurricane/Name.h"
 #include "hurricane/Net.h"
@@ -39,26 +40,42 @@ namespace Tramontana {
 
   QVariant  EquipotentialsModel::data ( const QModelIndex& index, int role ) const
   {
-    static QFont nameFont  = Graphics::getFixedFont ( QFont::Bold );
-    static QFont valueFont = Graphics::getFixedFont ( QFont::Normal, true );
+    static QFont  nameFont          = Graphics::getFixedFont( QFont::Bold );
+    static QFont  valueFont         = Graphics::getFixedFont( QFont::Normal, true );
+    static QFont  shortedFont       = Graphics::getFixedFont( QFont::Bold, false );
+    static QBrush shortedForeground = QBrush( QColor(255,0,0) );
+
+    Equipotential* equi = _equipotentials[ index.row() ];
 
     if (role == Qt::FontRole) {
+      if (equi->hasOpens() or equi->hasShorts()) {
+        return QVariant( shortedFont );
+      }
       switch (index.column()) {
         case 0:  return nameFont;
         default: return valueFont;
+      }
+    }
+
+    if (role == Qt::ForegroundRole) {
+      if (equi->hasOpens() or equi->hasShorts()) {
+        return QVariant( shortedForeground );
       }
       return QVariant();
     }
 
     if (not index.isValid()) return QVariant ();
 
+    string status;
+    if (equi->hasOpens ()) status += "O";
+    if (equi->hasShorts()) status += "S";
     if (role == Qt::DisplayRole) {
-      Equipotential* equi = _equipotentials[ index.row() ];
       switch ( index.column() ) {
-        case 0: return QString::fromStdString(            equi->getName() );
-        case 1: return QString::fromStdString(            equi->getFlagsAsString() );
-        case 2: return QString::fromStdString( getString( equi->getType() ));
-        case 3: return QString::fromStdString( getString( equi->getDirection() ));
+        case 0: return QString::fromStdString( status );
+        case 1: return QString::fromStdString(            equi->getName() );
+        case 2: return QString::fromStdString(            equi->getFlagsAsString() );
+        case 3: return QString::fromStdString( getString( equi->getType() ));
+        case 4: return QString::fromStdString( getString( equi->getDirection() ));
       }
     }
     return QVariant();
@@ -75,10 +92,13 @@ namespace Tramontana {
 
     if (role == Qt::FontRole   ) return headerFont;
     if (role != Qt::DisplayRole) return QVariant();
-    if (section == 0) return QVariant( "Name" );
-    if (section == 1) return QVariant( "Flags" );
-    if (section == 2) return QVariant( "Type" );
-    if (section == 3) return QVariant( "Direction" );
+    switch ( section ) {
+      case 0: return QVariant( "Status" );
+      case 1: return QVariant( "Name" );
+      case 2: return QVariant( "Flags" );
+      case 3: return QVariant( "Type" );
+      case 4: return QVariant( "Direction" );
+    }
     return QVariant();
   }
 
@@ -88,7 +108,7 @@ namespace Tramontana {
 
 
   int  EquipotentialsModel::columnCount ( const QModelIndex& parent ) const
-  { return 4; }
+  { return 5; }
 
 
   const Equipotential* EquipotentialsModel::getEqui ( int row )

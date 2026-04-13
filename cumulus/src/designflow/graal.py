@@ -24,7 +24,9 @@ class Graal ( FlowTask ):
         super().__init__( rule, [], depends )
         self.flags         = flags
         self.layoutFile    = self.file_depend(0)
-        self.command       = [ 'graal', '-l', self.layoutFile.stem ]
+        self.command       = [ 'graal' ]
+        if self.layoutFile:
+            self.command += [ '-l', self.layoutFile.stem ]
         if flags & Graal.Debug:   self.command.append( '-debug' )
         if flags & Graal.Xor:     self.command.append( '-xor' )
         if flags & Graal.Install: self.command.append( '-install' )
@@ -34,10 +36,11 @@ class Graal ( FlowTask ):
         return '<{}>'.format( ' '.join(self.command) )
 
     def doTask ( self ):
-        from helpers.io import ErrorMessage
+        from ..helpers.io import ErrorMessage
 
         shellEnv = ShellEnv()
-        shellEnv[ 'MBK_IN_PH' ] = self.layoutFile.suffix[1:]
+        if self.layoutFile:
+            shellEnv[ 'MBK_IN_PH' ] = self.layoutFile.suffix[1:]
         shellEnv.export()
         state = subprocess.run( self.command )
         if state.returncode:
@@ -46,7 +49,7 @@ class Graal ( FlowTask ):
             return TaskFailed( e )
         return self.checkTargets( 'Graal.doTask' )
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )

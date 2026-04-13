@@ -50,6 +50,47 @@
 #include "anabatic/AnabaticEngine.h"
 
 
+
+namespace {
+
+  using namespace Hurricane;
+  using namespace Anabatic;
+
+
+  AutoSegment* createEastWestPinSegment ( AutoContact* pinContact, AutoContact* contact )
+  {
+    size_t       rpDepth = Session::getLayerDepth( pinContact->getLayer() );
+    AutoSegment* segment = AutoSegment::create( pinContact, contact, Flags::Horizontal );
+    if (rpDepth == 3) {
+      segment->setLayer( Session::getBuildRoutingLayer( rpDepth ));
+      segment->setWidth( Session::getWireWidth( rpDepth ));
+    }
+    return segment;
+  }
+
+
+  bool  closelyAlignedRp ( RoutingPad* rp1, RoutingPad* rp2 )
+  {
+    if (rp1->getLayer() != rp2->getLayer()) return false;
+
+    size_t rpDepth = Session::getLayerDepth( rp1->getLayer() );
+    if (rpDepth > 0) return false;
+
+    Box bb1 = rp1->getBoundingBox();
+    Box bb2 = rp2->getBoundingBox();
+    if (bb1.getXMin() > bb2.getXMin()) std::swap( bb1, bb2 );
+
+    cdebug_log(145,0) << "bb1=" << bb1 << endl;
+    cdebug_log(145,0) << "bb2=" << bb2 << endl;
+    if (bb2.getXMin() - bb1.getXMax() > 2*Session::getDVerticalPitch()) return false;
+    if (not bb2.getVerticalSide().intersect(bb1.getVerticalSide())) return false;
+    return true;
+  }
+
+
+}  // Anoymous namespace.
+
+
 namespace Anabatic {
 
   using std::swap;
@@ -72,7 +113,7 @@ namespace Anabatic {
 
   
   void  NetBuilderHV::doRp_AutoContacts ( GCell*        gcell
-                                        , Component*    rp
+                                        , RoutingPad*   rp
                                         , AutoContact*& source
                                         , AutoContact*& target
                                         , uint64_t      flags
@@ -97,7 +138,7 @@ namespace Anabatic {
     Flags        direction      = Session::getDirection ( rpDepth );
     DbU::Unit    viaSide        = Session::getViaWidth  ( rpDepth );
 
-    getPositions( rp, sourcePosition, targetPosition );
+    Session::getPositions( rp, sourcePosition, targetPosition );
 
     GCell* sourceGCell = Session::getAnabatic()->getGCellUnder( sourcePosition );
     GCell* targetGCell = Session::getAnabatic()->getGCellUnder( targetPosition );
@@ -106,109 +147,6 @@ namespace Anabatic {
       rpLayer   = Session::getBuildContactLayer(0);
       direction = Flags::Horizontal;
       viaSide   = Session::getViaWidth( rpDepth );
-    }
-
-#if THIS_IS_DISABLED
-  // Non-M1 terminal or punctual M1 protections.
-    if ( ((rpDepth != 0) or (sourcePosition == targetPosition)) and not (flags & NoProtect) ) {
-      map<Component*,AutoSegment*>::iterator irp = getRpLookup().find( rp );
-      if (irp == getRpLookup().end()) {
-        Box rpBb = rp->getBoundingBox();
-        if (rpDepth != 0) {
-          DbU::Unit hborder = 0;
-          DbU::Unit vborder = 0;
-          if (direction.contains(Flags::Horizontal)) {
-            vborder = Session::getWireWidth(rpDepth) / 2;
-            rpBb.inflate( hborder, vborder );
-            if (not rpBb.isEmpty()) {
-              DbU::Unit trackAxis =  Session::getNearestTrackAxis( rp->getLayer()
-                                                                 , sourcePosition.getY()
-                                                                 , Constant::Nearest );
-              if (trackAxis != sourcePosition.getY()) {
-                cerr << Warning( "NetBuilderHV::doRp_AutoContacts(): Adjust Y position to nearest H track of %s\n"
-                                 "           (%s -> %s)"
-                               , getString(rp).c_str()
-                               , DbU::getValueString(sourcePosition.getY()).c_str()
-                               , DbU::getValueString(trackAxis).c_str()
-                               ) << endl;
-                sourcePosition.setY( trackAxis );
-                targetPosition.setY( trackAxis );
-              }
-            } else {
-              cdebug_log(145,0) << "rpBb is too narrow to adjust: " << rp->getBoundingBox() << endl;
-            }
-          } else {
-            hborder = Session::getWireWidth(rpDepth) / 2;
-            rpBb.inflate( hborder, vborder );
-            if (not rpBb.isEmpty()) {
-              DbU::Unit trackAxis =  Session::getNearestTrackAxis( rp->getLayer()
-                                                                 , sourcePosition.getX()
-                                                                 , Constant::Nearest );
-              if (trackAxis != sourcePosition.getX()) {
-                cerr << Warning( "NetBuilderHV::doRp_AutoContacts(): Adjust X position to nearest V track of %s\n"
-                                 "           (%s -> %s)"
-                               , getString(rp).c_str()
-                               , DbU::getValueString(sourcePosition.getX()).c_str()
-                               , DbU::getValueString(trackAxis).c_str()
-                               ) << endl;
-                sourcePosition.setX( trackAxis );
-                targetPosition.setX( trackAxis );
-              }
-            } else {
-              cdebug_log(145,0) << "rpBb is too narrow to adjust: " << rp->getBoundingBox() << endl;
-            }
-          }
-        }
-        
-        AutoContact* sourceProtect = AutoContactTerminal::create( sourceGCell
-                                                                , rp
-                                                                , rpLayer
-                                                                , sourcePosition
-                                                                , viaSide, viaSide
-                                                                );
-        AutoContact* targetProtect = AutoContactTerminal::create( targetGCell
-                                                                , rp
-                                                                , rpLayer
-                                                                , targetPosition
-                                                                , viaSide, viaSide
-                                                                );
-        sourceProtect->setFlags( CntFixed );
-        targetProtect->setFlags( CntFixed );
-
-        if (rpDepth == 0) rpDepth = 1;
-        AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction, rpDepth );
-        segment->setFlags( AutoSegment::SegFixed );
-
-        getRpLookup().insert( make_pair(rp,segment) );
-      }
-    }
-#endif
-  // Non-M1 terminal or punctual M1 protections.
-    if (isInsideBlockage(gcell,rp)) flags |= NoProtect;
-    if ( ((rpDepth != 0) or (sourcePosition == targetPosition)) and not (flags & NoProtect) ) {
-      if (rpDepth == 0) rpDepth = 1;
-      map<Component*,AutoSegment*>::iterator irp = getRpLookup().find( rp );
-      if (irp == getRpLookup().end()) {
-        AutoContact* sourceProtect = AutoContactTerminal::create( sourceGCell
-                                                                , rp
-                                                                , rpLayer
-                                                                , sourcePosition
-                                                                , viaSide, viaSide
-                                                                );
-        AutoContact* targetProtect = AutoContactTerminal::create( targetGCell
-                                                                , rp
-                                                                , rpLayer
-                                                                , targetPosition
-                                                                , viaSide, viaSide
-                                                                );
-        sourceProtect->setFlags( CntFixed );
-        targetProtect->setFlags( CntFixed );
-
-        AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction, rpDepth );
-        segment->setFlags( AutoSegment::SegFixed );
-
-        getRpLookup().insert( make_pair(rp,segment) );
-      }
     }
 
     if (sourcePosition != targetPosition) {
@@ -242,16 +180,23 @@ namespace Anabatic {
   }
 
 
-  AutoContact* NetBuilderHV::doRp_Access ( GCell* gcell, Component* rp, uint64_t flags )
+  AutoContact* NetBuilderHV::doRp_Access ( GCell* gcell, RoutingPad* rp, uint64_t flags )
   {
     cdebug_log(145,1) << getTypeName() << "::doRp_Access() - flags:" << flags << endl;
+    if (rp->isM1Offgrid() or (useVSmallAsOffgrid() and rp->isVSmall())) {
+      cdebug_tabw(145,-1);
+      return doRp_AccessOffgrid( gcell, rp, flags );
+    }
 
     size_t       rpDepth         = Session::getLayerDepth( rp->getLayer() );
     AutoContact* rpSourceContact = NULL;
     AutoContact* rpContactTarget = NULL;
 
     Flags useNonPref = Flags::NoFlags;
-    if (flags & UseNonPref) useNonPref |= Flags::UseNonPref;
+    if (flags & UseNonPref) {
+      useNonPref |= Flags::UseNonPref;
+      cdebug_log(145,0) << "useNonPref=" << useNonPref << endl;
+    }
     
     flags |= checkRoutingPadSize( rp );
 
@@ -259,16 +204,42 @@ namespace Anabatic {
 
     cdebug_log(145,0) << "flags: " << flags << endl;
     if ((rpDepth == 0) or (rpDepth == 2)) {
+      const Layer* contactLayer = Session::getBuildContactLayer( 1 );
+      size_t       wireDepth    = RoutingGauge::nlayerdepth;
       cdebug_log(145,0) << "case: METAL1 or METAL3 RoutingPad." << endl;
+      if (rpDepth == 2) {
+        cdebug_log(145,0) << "METAL3 override." << endl;
+        contactLayer = Session::getRoutingLayer( 2 );
+        wireDepth    = 2;
+        flags       &= ~(Punctual|VSmall);
+      }
 
       if (flags & HAccess) {
         cdebug_log(145,0) << "case: HAccess" << endl;
-  
+#ifdef NEW_IMPL
+        if ((flags & Punctual) or ((flags & VSmall) and not (flags & UseNonPref)) ) {
+          cdebug_log(145,0) << "case: Punctual or (VSmall and not UseNonPref)" << endl;
+          AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), contactLayer );
+          AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal, wireDepth );
+          rpSourceContact = subContact1;
+          subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
+          AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical );
+          rpSourceContact = subContact1;
+        } else {
+          cdebug_log(145,0) << "case: VSmall or UseNonPref" << endl;
+          if ((flags & VSmall) or (flags & UseNonPref)) {
+            AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
+            AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical|Flags::UseNonPref );
+            rpSourceContact = subContact1;
+          }
+        }
+#endif
+
         if ( ((flags & VSmall) and not ((flags & UseNonPref))) or (flags & Punctual) ) {
           cdebug_log(145,0) << "case: VSmall and *not* UseNonPref" << endl;
   
-          AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(1) );
-          AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal );
+          AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), contactLayer );
+          AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal, wireDepth );
           rpSourceContact = subContact1;
 
           flags &= ~UseNonPref;
@@ -278,8 +249,9 @@ namespace Anabatic {
         if (flags & (VSmall|UseNonPref)) {
           cdebug_log(145,0) << "case: UseNonPref" << endl;
 
-          if (flags & VSmall) 
+          if (flags & VSmall) {
             useNonPref.reset( Flags::UseNonPref );
+          }
           AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
           AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical|useNonPref );
           rpSourceContact = subContact1;
@@ -319,7 +291,9 @@ namespace Anabatic {
         } else
           subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
 
-        AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical, rpDepth+1 );
+        AutoSegment* segment = AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical, rpDepth+1 );
+        if (rp->isPunctual())
+          segment->setFlags( AutoSegment::SegFixed );
       } else {
 #if OFFGRID_M2_DISABLED
         Box                cellAb    = getAnabatic()->getCell()->getAbutmentBox();
@@ -349,6 +323,44 @@ namespace Anabatic {
     }
 
     cdebug_tabw(145,-1);
+    return rpSourceContact;
+  }
+
+
+  AutoContact* NetBuilderHV::doRp_AccessOffgrid ( GCell* gcell, RoutingPad* rp, uint64_t flags )
+  {
+    cdebug_log(145,1) << getTypeName() << "::doRp_AccessOffgrid() - flags:" << flags << endl;
+
+    size_t       rpDepth         = Session::getLayerDepth( rp->getLayer() );
+    AutoContact* rpSourceContact = NULL;
+    AutoContact* rpContactTarget = NULL;
+    doRp_AutoContacts( gcell, rp, rpSourceContact, rpContactTarget, flags );
+
+    AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildRoutingLayer(rpDepth+1) );
+    AutoSegment* nonPref     = AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical|Flags::UseNonPref );
+    if (rp->isM1Offgrid())
+      nonPref->setFlags( AutoSegment::SegForOffgrid );
+    rpSourceContact = subContact1;
+
+    if (rp->isM1Offgrid()) {
+      cdebug_log(145,0) << "Truly offgrid terminal, add Metal3 vertical." << endl;
+      subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
+      AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal );
+      rpSourceContact = subContact1;
+     
+      subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
+      AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical );
+      rpSourceContact = subContact1;
+    }
+
+    if (not (flags & HAccess)) {
+      subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
+      AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal );
+      rpSourceContact = subContact1;
+    }
+
+    cdebug_log(145,0) << "::doRp_AccessOffgrid() - finished" << endl;
+    cdebug_tabw(145,-1);
 
     return rpSourceContact;
   }
@@ -367,26 +379,25 @@ namespace Anabatic {
     Net* net = rp->getNet();
     Pin* pin = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
     Pin::AccessDirection pinDir = pin->getAccessDirection();
+    turn = AutoContactTurn::create( gcell, net, Session::getBuildRoutingLayer(1) );
+    AutoSegment* segment = AutoSegment::create( rpSourceContact, turn, Flags::Vertical );
+    segment->setAxis( rp->getX(), Flags::Force );
+    segment->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+    rpSourceContact = turn;
+
+    turn    = AutoContactTurn::create( gcell, net, Session::getBuildContactLayer(1) );
+    segment = AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+    rpSourceContact = turn;
+
+    DbU::Unit axis = gcell->getYMin() + Session::getDHorizontalPitch();
     if (pinDir == Pin::AccessDirection::NORTH) {
-      turn = AutoContactTurn::create( gcell, net, Session::getBuildRoutingLayer(1) );
-      AutoSegment* segment = AutoSegment::create( rpSourceContact, turn, Flags::Vertical );
-      segment->setAxis( rp->getX(), Flags::Force );
-      segment->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
-      rpSourceContact = turn;
-
-      turn    = AutoContactTurn::create( gcell, net, Session::getBuildContactLayer(1) );
-      segment = AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
-      rpSourceContact = turn;
-
       DbU::Unit axis = gcell->getYMax() - Session::getDHorizontalPitch();
-      cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
-      
-      segment->setAxis( axis, Flags::Force );
-    //segment->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
-      cdebug_log(145,0) << segment << endl;
-    } else {
-      turn = rpSourceContact;
     }
+    cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
+      
+    segment->setAxis( axis, Flags::Force );
+  //segment->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+    cdebug_log(145,0) << segment << endl;
 
     cdebug_tabw(145,-1);
     return turn;
@@ -458,18 +469,9 @@ namespace Anabatic {
     cdebug_log(145,1) << getTypeName() << "::_do_1G_" << (int)getConnexity().fields.M1 << "M1() [Managed Configuration]" << endl;
 
     sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
-    for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess|UseNonPref );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess|UseNonPref );
-      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
-    }
 
-    Component* globalRp = NULL;
-    if      (east()) globalRp = getRoutingPads()[getRoutingPads().size()-1];
-    else if (west()) globalRp = getRoutingPads()[0];
-    else {
-      globalRp = getRoutingPads()[0];
-
+    RoutingPad* globalRp = getRoutingPads()[0];
+    if (north() or south()) {
       cdebug_log(145,0) << "| Initial N/S Global RP: " << globalRp << endl;
       for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
         if (getRoutingPads()[i]->getBoundingBox().getHeight() > globalRp->getBoundingBox().getHeight()) {
@@ -477,7 +479,21 @@ namespace Anabatic {
           globalRp = getRoutingPads()[i];
         }
       }
+
+      if (globalRp->getBoundingBox().getHeight() < 7*Session::getDHorizontalPitch()) {
+        cdebug_tabw(145,-1);
+        return _do_xG_xM1();
+      }
     }
+
+    for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
+      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess|UseNonPref );
+      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess|UseNonPref );
+      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
+    }
+
+    if      (east()) globalRp = getRoutingPads()[getRoutingPads().size()-1];
+    else if (west()) globalRp = getRoutingPads()[0];
     
     AutoContact* globalContact = doRp_Access( getGCell(), globalRp, HAccess );
 
@@ -516,20 +532,20 @@ namespace Anabatic {
         setNorthEastContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer ) );
         if (south()) swapCornerContacts();
 
-        AutoSegment::create( getSouthWestContact(), getNorthEastContact(), Flags::Vertical, vDepth );
+        AutoSegment::create( getSouthContact(), getNorthContact(), Flags::Vertical, vDepth );
       } else {
         setSouthWestContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer ) );
         setNorthEastContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer ) );
         if (west()) swapCornerContacts();
 
-        AutoSegment::create( getSouthWestContact(), getNorthEastContact(), Flags::Horizontal, hDepth );
+        AutoSegment::create( getWestContact(), getEastContact(), Flags::Horizontal, hDepth );
       }
     } else { // fields.globals == 4.
       AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), viaLayer );
       setSouthWestContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer ) );
       setNorthEastContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer ) );
-      AutoSegment::create( getSouthWestContact(), turn, Flags::Horizontal, hDepth );
-      AutoSegment::create( turn, getNorthEastContact(), Flags::Vertical  , vDepth );
+      AutoSegment::create( getWestContact(), turn, Flags::Horizontal, hDepth );
+      AutoSegment::create( turn, getNorthContact(), Flags::Vertical  , vDepth );
     } 
     cdebug_tabw(145,-1);
     return true;
@@ -553,11 +569,11 @@ namespace Anabatic {
     if (east() and west()) {
       setSouthWestContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer ) );
       setNorthEastContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer ) );
-      AutoSegment::create( getSouthWestContact(), getNorthEastContact(), Flags::Vertical, vDepth );
+      AutoSegment::create( getSouthContact(), getNorthContact(), Flags::Vertical, vDepth );
     } else if (south() and north()) {
       setSouthWestContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer ) );
       setNorthEastContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer ) );
-      AutoSegment::create( getSouthWestContact(), getNorthEastContact(), Flags::Horizontal, hDepth );
+      AutoSegment::create( getWestContact(), getEastContact(), Flags::Horizontal, hDepth );
     } else {
       setBothCornerContacts( AutoContactTurn::create( getGCell(), getNet(), viaLayer ) );
     }
@@ -623,7 +639,7 @@ namespace Anabatic {
         AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
         setBothCornerContacts( AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) ) );
         AutoSegment::create( source, turn, Flags::Horizontal );
-        AutoSegment::create( turn, getNorthEastContact(), Flags::Vertical );
+        AutoSegment::create( turn, getNorthContact(), Flags::Vertical );
         cdebug_tabw(145,-1);
         return true;
       } else if (  (southPad and (north() != NULL))
@@ -631,7 +647,7 @@ namespace Anabatic {
         AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
         setBothCornerContacts( AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) ) );
         AutoSegment::create( source, turn, Flags::Vertical );
-        AutoSegment::create( turn, getNorthEastContact(), Flags::Horizontal );
+        AutoSegment::create( turn, getEastContact(), Flags::Horizontal );
         cdebug_tabw(145,-1);
         return true;
       }
@@ -648,19 +664,19 @@ namespace Anabatic {
     _do_xG();
 
     if (westPad) {
-      AutoSegment::create( source, getSouthWestContact(), Flags::Horizontal );
+      AutoSegment::create( source, getWestContact(), Flags::Horizontal );
       clearWests();
     }
     if (eastPad) {
-      AutoSegment::create( source, getNorthEastContact(), Flags::Horizontal );
+      AutoSegment::create( source, getEastContact(), Flags::Horizontal );
       clearEasts();
     }
     if (southPad) {
-      AutoSegment::create( source, getSouthWestContact(), Flags::Vertical );
+      AutoSegment::create( source, getSouthContact(), Flags::Vertical );
       clearSouths();
     }
     if (northPad) {
-      AutoSegment::create( source, getNorthEastContact(), Flags::Vertical );
+      AutoSegment::create( source, getNorthContact(), Flags::Vertical );
       clearNorths();
     }
     --(getConnexity().fields.globals);
@@ -679,8 +695,8 @@ namespace Anabatic {
 
     doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpSourceContact, rpContactTarget, NoFlags );
 
-    AutoContact* turn1   = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
-    AutoSegment::create( rpSourceContact, turn1, Flags::Horizontal );
+    AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
+    createEastWestPinSegment( rpSourceContact, turn1 );
 
     if (east() or west()) {
       AutoContact* turn2 = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
@@ -857,7 +873,7 @@ namespace Anabatic {
     if (  (pinDir == Pin::AccessDirection::EAST)
        or (pinDir == Pin::AccessDirection::WEST) ) {
       turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
-      AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+      createEastWestPinSegment( rpSourceContact, turn );
       rpSourceContact = turn;
 
       turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
@@ -878,7 +894,7 @@ namespace Anabatic {
       cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
       
       vertical->setAxis( axis, Flags::Force );
-      vertical->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+      vertical->setFlags( AutoSegment::SegFixedAxis );
     }
 
     if (getConnexity().fields.globals == 2) {
@@ -969,10 +985,7 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::_do_xG_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
 
-    AutoContact* rpSourceContact = NULL;
-    AutoContact* rpContactTarget = NULL;
-
-    doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpSourceContact, rpContactTarget, NoFlags );
+    AutoContact* rpSourceContact = doRp_AccessNorthSouthPin( getGCell(), getRoutingPads()[0] );
 
     if (getConnexity().fields.globals == 2) {
       if (west() and south()) {
@@ -1057,11 +1070,13 @@ namespace Anabatic {
       else rpsM1.push_back( rp );
     }
     
+    cdebug_log(145,0) << "Linking M1 terminals together" << endl;
     for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoContact* leftContact  = doRp_Access( getGCell(), rpsM1[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), rpsM1[i  ], HAccess );
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
+    cdebug_log(145,0) << "Linking M1 terminals together - Done" << endl;
 
     doRp_AutoContacts( getGCell(), pinM3, pinContact, dummy, NoFlags );
 
@@ -1071,10 +1086,23 @@ namespace Anabatic {
     AutoSegment::create( m1contact , vtee1, Flags::Horizontal );
     AutoSegment::create( pinContact, vtee1, Flags::Vertical );
 
-    AutoContact* vtee2 = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
-    AutoSegment::create( vtee1, vtee2, Flags::Vertical );
+    AutoContact* gtee = nullptr;
+    if (getStateG() == 1) {
+      if (north() or south()) {
+        gtee = vtee1;
+      } else {
+        gtee = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
+        AutoSegment::create( vtee1, gtee, Flags::Vertical );
+      }
+    } else if (getStateG() == 2) {
+      if (east() and west())
+        gtee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
+      else
+        gtee = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
+      AutoSegment::create( vtee1, gtee, Flags::Vertical );
+    }
 
-    setBothCornerContacts( vtee2 );
+    setBothCornerContacts( gtee );
 
     cdebug_tabw(145,-1);
     return true;
@@ -1098,8 +1126,8 @@ namespace Anabatic {
     }
     
     for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoContact* leftContact  = doRp_Access( getGCell(), rpsM1[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), rpsM1[i  ], HAccess );
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 
@@ -1150,7 +1178,7 @@ namespace Anabatic {
     sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
 
     vector<RoutingPad*> rpsM1;
-    RoutingPad*         pinM2 = NULL;
+    RoutingPad*         pinM2 = nullptr;
     for ( RoutingPad* rp : getRoutingPads() ) {
       if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) pinM2 = rp;
       else rpsM1.push_back( rp );
@@ -1162,10 +1190,10 @@ namespace Anabatic {
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 
-    AutoContact* turn         = NULL;
-    AutoContact* tee          = NULL;
-    AutoContact* pinM2Contact = NULL;
-    AutoContact* rpM1Contact  = NULL;
+    AutoContact* turn         = nullptr;
+    AutoContact* tee          = nullptr;
+    AutoContact* pinM2Contact = nullptr;
+    AutoContact* rpM1Contact  = nullptr;
     doRp_AutoContacts( getGCell(), pinM2, pinM2Contact, rpM1Contact, NoProtect );
     rpM1Contact = doRp_Access( getGCell(), rpsM1[0], (north() or south()) ? HAccess : NoFlags );
 
@@ -1173,8 +1201,8 @@ namespace Anabatic {
       turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
       tee  = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
 
+      createEastWestPinSegment( pinM2Contact, turn );
       AutoSegment::create( rpM1Contact , tee , Flags::Horizontal );
-      AutoSegment::create( pinM2Contact, turn, Flags::Horizontal );
       AutoSegment::create( tee         , turn, Flags::Vertical );
 
       setBothCornerContacts( tee );
@@ -1182,8 +1210,8 @@ namespace Anabatic {
       turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
       tee  = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
 
+      createEastWestPinSegment( pinM2Contact, tee );
       AutoSegment::create( rpM1Contact , tee , Flags::Vertical );
-      AutoSegment::create( pinM2Contact, tee , Flags::Horizontal );
       AutoSegment::create( tee         , turn, Flags::Vertical );
 
       setBothCornerContacts( turn );
@@ -1217,7 +1245,7 @@ namespace Anabatic {
       AutoContact* htee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
       AutoContact* vtee = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
 
-      AutoSegment::create( pinM2Contact, htee, Flags::Horizontal );
+      createEastWestPinSegment( pinM2Contact, htee );
       AutoSegment::create( rpM1Contact , htee, Flags::Vertical   );
       AutoSegment::create( htee        , vtee, Flags::Horizontal );
       setBothCornerContacts( vtee );
@@ -1227,7 +1255,7 @@ namespace Anabatic {
       AutoContact* htee2 = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
       AutoContact* turn  = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
 
-      AutoSegment::create( pinM2Contact, htee1, Flags::Horizontal );
+      createEastWestPinSegment( pinM2Contact, htee1 );
       AutoSegment::create( rpM1Contact , htee1, Flags::Vertical   );
       AutoSegment::create( htee1       , turn , Flags::Horizontal );
       AutoSegment::create( htee2       , turn , Flags::Vertical   );
@@ -1238,7 +1266,7 @@ namespace Anabatic {
       AutoContact* htee2 = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
       AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
 
-      AutoSegment::create( pinM2Contact, vtee1, Flags::Horizontal );
+      createEastWestPinSegment( pinM2Contact, vtee1 );
       AutoSegment::create( rpM1Contact , vtee1, Flags::Vertical   );
       AutoSegment::create( vtee1       , turn1, Flags::Vertical   );
       AutoSegment::create( turn1       , htee2, Flags::Horizontal );
@@ -1247,8 +1275,8 @@ namespace Anabatic {
 
     cdebug_log(145,0) << "Wiring all M1 together." << endl;
     for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoContact* leftContact  = doRp_Access( getGCell(), rpsM1[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), rpsM1[i  ], HAccess );
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 
@@ -1307,10 +1335,13 @@ namespace Anabatic {
     cdebug_log(145,0) << "west:      " << west () << endl;
 
     const Layer* viaLayer1 = Session::getBuildContactLayer(1);
+    uint64_t     flagsRp   = checkRoutingPadSize( getRoutingPads()[0] );
 
     if (getConnexity().fields.globals == 2) {
       if (north() and south()) {
-        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
+        AutoContact* contact1 = doRp_Access( getGCell()
+                                           , getRoutingPads()[0]
+                                           , HAccess | ((flagsRp & VLarge) ? 0 : UseNonPref) );
         AutoContact* contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
         AutoSegment::create( contact1, contact2, Flags::Horizontal );
         contact1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
@@ -1318,25 +1349,21 @@ namespace Anabatic {
         setNorthEastContact( contact1 );
         setSouthWestContact( contact2 );
       } else if (east() and west()) {
-        // AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
-        // AutoContact* contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
-        // AutoSegment::create( contact1, contact2, Flags::Vertical );
-        // setBothCornerContacts( contact2 );
         AutoContact* contact1  = NULL;
         AutoContact* contact2  = NULL;
         uint64_t     flags     = checkRoutingPadSize( getRoutingPads()[0] );
 
         if (flags & VSmall) {
-          doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
+          contact1 = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
           contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
           AutoSegment::create( contact1, contact2, Flags::Vertical );
 
           setBothCornerContacts( contact2 );
         } else {
-          doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
+          contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
           setSouthWestContact( contact1 );
 
-          doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
+          contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
           setNorthEastContact( contact1 );
         }
       } else {
@@ -1359,8 +1386,11 @@ namespace Anabatic {
         setSouthWestContact( (east()) ? contact2 : contact3 );
         setNorthEastContact( (east()) ? contact3 : contact2 );
       } else {
-        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
-        AutoContact* contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer1 );
+        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
+        AutoContact* contact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        AutoSegment::create( contact1, contact2, Flags::Horizontal );
+        contact1 = contact2;
+        contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer1 );
         AutoSegment::create( contact1, contact2, Flags::Vertical );
         AutoContact* contact3 = AutoContactVTee::create( getGCell(), getNet(), viaLayer1 );
         AutoSegment::create( contact2, contact3, Flags::Vertical );
@@ -1386,12 +1416,114 @@ namespace Anabatic {
   }
 
 
+  bool  NetBuilderHV::_do_xG_xM1 ()
+  {
+    cdebug_log(145,1) << getTypeName()
+                      << "::_do_xG_" << (int)getConnexity().fields.M1
+                      << "M1() [G:"  << (int)getConnexity().fields.globals << " Managed Configuration]" << endl;
+    cdebug_log(145,0) << "getConnexity(): " << getConnexity().connexity << endl;
+    cdebug_log(145,0) << "north:     " << north() << endl;
+    cdebug_log(145,0) << "south:     " << south() << endl;
+    cdebug_log(145,0) << "east:      " << east() << endl;
+    cdebug_log(145,0) << "west:      " << west() << endl;
+
+    sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
+
+    const Layer* viaLayer1       = Session::getBuildContactLayer(1);
+    RoutingPad*  northSouthRp    = nullptr;
+    bool         northSouthRight = false;
+
+    if (north() or south()) {
+      northSouthRp = getRoutingPads()[ 0 ];
+      cdebug_log(145,0) << "| Initial N-S Global RP: " << northSouthRp << endl;
+      for ( size_t i=1 ; i<getRoutingPads().size(); ++i ) {
+        if (northSouthRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
+        if (getRoutingPads()[i]->getBoundingBox().getHeight() > northSouthRp->getBoundingBox().getHeight()) {
+          cdebug_log(145,0) << "| Better N-S RP: " << northSouthRp << endl;
+          northSouthRp    = getRoutingPads()[i];
+          northSouthRight = (i == getRoutingPads().size()-1);
+        }
+      } 
+    }
+
+    AutoContact* rpContact      = nullptr;
+    AutoContact* hteeContact1   = nullptr;
+    AutoContact* hteeContact2   = nullptr;
+    bool         closeTerminals = false;
+    for ( size_t i=0 ; i<getRoutingPads().size(); ++i ) {
+      if ((i+1 < getRoutingPads().size()) and not ((i == 0) and west())) {
+        closeTerminals = closelyAlignedRp( getRoutingPads()[i], getRoutingPads()[i+1] );
+      }
+      cdebug_log(145,0) << "closeTerminals=" << closeTerminals << endl;
+
+      rpContact = doRp_Access( getGCell(), getRoutingPads()[i], HAccess );
+      if (i == 0) {
+        if (closeTerminals) hteeContact1 = rpContact;
+        else {
+          hteeContact1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+          AutoSegment::create( rpContact, hteeContact1, Flags::Horizontal );
+          rpContact = hteeContact1;
+          if (west()) {
+            hteeContact1 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
+            setWestContact( hteeContact1 );
+          } else {
+            hteeContact1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+          }
+          AutoSegment::create( rpContact, hteeContact1, Flags::Vertical );
+        }
+      } else {
+        hteeContact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        AutoSegment::create( rpContact, hteeContact2, Flags::Horizontal );
+        rpContact = hteeContact2;
+        if (northSouthRight or east() or (i < getRoutingPads().size()-1))
+          hteeContact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
+        else
+          hteeContact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        AutoSegment::create( rpContact   , hteeContact2, Flags::Vertical );
+        AutoSegment::create( hteeContact1, hteeContact2, Flags::Horizontal );
+        hteeContact1 = hteeContact2;
+
+        if ((i == getRoutingPads().size()-1) and not northSouthRight and east())
+          setEastContact( hteeContact2 );
+      }
+
+      if (getRoutingPads()[i] == northSouthRp) {
+        if (north()) {
+          if (northSouthRight and not south() and not east())
+            hteeContact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+          else
+            hteeContact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
+          AutoSegment::create( hteeContact1, hteeContact2, Flags::Horizontal );
+          setNorthContact( hteeContact2 );
+          if (not south() and east())
+            setEastContact( hteeContact2 );
+          hteeContact1 = hteeContact2;
+        }
+        if (south()) {
+          if (northSouthRight and not east())
+            hteeContact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+          else
+            hteeContact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
+          AutoSegment::create( hteeContact1, hteeContact2, Flags::Horizontal );
+          setSouthContact( hteeContact2 );
+          if (east())
+            setEastContact( hteeContact2 );
+          hteeContact1 = hteeContact2;
+        }
+      }
+    }
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
   bool  NetBuilderHV::_do_xG_1M1_1M2 ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_xG_1M1_1M2() [Managed Configuration]" << endl;
 
-    Component* rpL1;
-    Component* rpL2;
+    RoutingPad* rpL1;
+    RoutingPad* rpL2;
     if (getRoutingPads()[0]->getLayer() == Session::getBuildRoutingLayer(0)) {
       rpL1 = getRoutingPads()[0];
       rpL2 = getRoutingPads()[1];
@@ -1421,11 +1553,11 @@ namespace Anabatic {
       doRp_AutoContacts( getGCell(), rpL2, rpL2ContactSource, rpL2ContactTarget, DoSourceContact );
       if (south() and west()) {
         setSouthWestContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer2 ) );
-        AutoSegment::create( rpL2ContactSource, getSouthWestContact(), Flags::Horizontal );
+        AutoSegment::create( rpL2ContactSource, getWestContact(), Flags::Horizontal );
       } else {
         if (south()) {
           setSouthWestContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer2 ) );
-          AutoSegment::create( rpL2ContactSource, getSouthWestContact(), Flags::Horizontal );
+          AutoSegment::create( rpL2ContactSource, getWestContact(), Flags::Horizontal );
         } else {
           setSouthWestContact( rpL2ContactSource );
         }
@@ -1436,11 +1568,11 @@ namespace Anabatic {
       doRp_AutoContacts( getGCell(), rpL2, rpL2ContactSource, rpL2ContactTarget, DoTargetContact );
       if (north() and east()) {
         setNorthEastContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer2 ) );
-        AutoSegment::create( rpL2ContactTarget, getNorthEastContact(), Flags::Horizontal );
+        AutoSegment::create( rpL2ContactTarget, getEastContact(), Flags::Horizontal );
       } else {
         if (north()) {
           setNorthEastContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer2 ) );
-          AutoSegment::create( rpL2ContactTarget, getNorthEastContact(), Flags::Horizontal );
+          AutoSegment::create( rpL2ContactTarget, getEastContact(), Flags::Horizontal );
         } else {
           setNorthEastContact( rpL2ContactTarget );
         }
@@ -1464,7 +1596,12 @@ namespace Anabatic {
     cdebug_log(145,0) << "east:      " << east() << endl;
     cdebug_log(145,0) << "west:      " << west() << endl;
 
-    Component* rpM3 = NULL;
+    if (not getConnexity().fields.M3) {
+      cdebug_tabw(145,-1);
+      return _do_xG_xM1();
+    }
+
+    RoutingPad* rpM3 = NULL;
     if (getRoutingPads()[0]->getLayer() == Session::getBuildRoutingLayer(2))
       rpM3 = getRoutingPads()[0];
 
@@ -1486,23 +1623,27 @@ namespace Anabatic {
       if (west() and not south()) {
         setSouthWestContact( doRp_Access( getGCell(), getRoutingPads()[0], HAccess ) );
       } else if (not west() and south()) {
-        doRp_AutoContacts( getGCell(), rpM3, getSouthWestContact(), subContact1, DoSourceContact );
+        AutoContact* rpContact = nullptr;
+        doRp_AutoContacts( getGCell(), rpM3, rpContact, subContact1, DoSourceContact );
+        setSouthWestContact( rpContact );
       } else if (west() and south()) {
-        AutoContact* rpContact = NULL;
+        AutoContact* rpContact = nullptr;
         doRp_AutoContacts( getGCell(), rpM3, rpContact, subContact1, DoSourceContact );
         setSouthWestContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer1 ) );
-        AutoSegment::create( rpContact, getSouthWestContact(), Flags::Vertical );
+        AutoSegment::create( rpContact, getSouthContact(), Flags::Vertical );
       }
 
       if (east() and not north()) {
         setNorthEastContact( doRp_Access( getGCell(), getRoutingPads()[getRoutingPads().size()-1], HAccess ) );
       } else if (not east() and north()) {
-        doRp_AutoContacts( getGCell(), rpM3, subContact1, getNorthEastContact(), DoTargetContact );
+        AutoContact* rpContact = nullptr;
+        doRp_AutoContacts( getGCell(), rpM3, subContact1, rpContact, DoTargetContact );
+        setNorthEastContact( rpContact );
       } else if (east() and north()) {
-        AutoContact* rpContact = NULL;
+        AutoContact* rpContact = nullptr;
         doRp_AutoContacts( getGCell(), rpM3, subContact1, rpContact, DoTargetContact );
         setNorthEastContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer1 ) );
-        AutoSegment::create( rpContact, getNorthEastContact(), Flags::Vertical );
+        AutoSegment::create( rpContact, getNorthContact(), Flags::Vertical );
       }
     } else {
       cdebug_log(145,0) << "getRoutingPads().size():" << getRoutingPads().size()<< endl;
@@ -1528,7 +1669,7 @@ namespace Anabatic {
       }
       
     // All RoutingPad are M1.
-      Component* southWestRp = getRoutingPads()[0];
+      RoutingPad* southWestRp = getRoutingPads()[0];
       cdebug_log(145,0) << "| Initial S-W Global RP: " << southWestRp << endl;
       // for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
       //   if (southWestRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
@@ -1543,14 +1684,14 @@ namespace Anabatic {
       } else if (not west() and south()) {
         AutoContact* rpContact = doRp_Access( getGCell(), southWestRp, HAccess );
         setSouthWestContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer1 ) );
-        AutoSegment::create( rpContact, getSouthWestContact(), Flags::Horizontal );
+        AutoSegment::create( rpContact, getSouthContact(), Flags::Horizontal );
       } else if (west() and south()) {
         AutoContact* rpContact = doRp_Access( getGCell(), southWestRp, HAccess );
         setSouthWestContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer1 ) );
-        AutoSegment::create( rpContact, getSouthWestContact(), Flags::Horizontal );
+        AutoSegment::create( rpContact, getSouthContact(), Flags::Horizontal );
       }
 
-      Component* northEastRp = getRoutingPads()[getRoutingPads().size()-1];
+      RoutingPad* northEastRp = getRoutingPads()[getRoutingPads().size()-1];
       cdebug_log(145,0) << "| Initial N-E Global RP: " << northEastRp << endl;
 
       if (getRoutingPads().size() > 1) {
@@ -1569,11 +1710,11 @@ namespace Anabatic {
       } else if (not east() and north()) {
         AutoContact* rpContact = doRp_Access( getGCell(), northEastRp, HAccess );
         setNorthEastContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer1 ) );
-        AutoSegment::create( rpContact, getNorthEastContact(), Flags::Horizontal );
+        AutoSegment::create( rpContact, getNorthContact(), Flags::Horizontal );
       } else if (east() and north()) {
         AutoContact* rpContact = doRp_Access( getGCell(), northEastRp, HAccess );
         setNorthEastContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer1 ) );
-        AutoSegment::create( rpContact, getNorthEastContact(), Flags::Horizontal );
+        AutoSegment::create( rpContact, getNorthContact(), Flags::Horizontal );
       }
     }
 
@@ -1586,7 +1727,7 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::_do_4G_1M2() [Managed Configuration]" << endl;
 
-    Component* rpL2 = getRoutingPads()[0];
+    RoutingPad* rpL2 = getRoutingPads()[0];
     cdebug_log(145,0) << "rpL2 := " << rpL2 << endl;
 
     AutoContact* rpL2ContactSource = NULL;
@@ -1599,8 +1740,8 @@ namespace Anabatic {
     setSouthWestContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer2 ) );
     setNorthEastContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer2 ) );
 
-    AutoSegment::create( getSouthWestContact(), rpL2ContactSource, Flags::Horizontal );
-    AutoSegment::create( rpL2ContactTarget, getNorthEastContact(), Flags::Horizontal );
+    AutoSegment::create( getWestContact(), rpL2ContactSource, Flags::Horizontal );
+    AutoSegment::create( rpL2ContactTarget, getEastContact(), Flags::Horizontal );
 
     cdebug_tabw(145,-1);
     return true;
@@ -1613,7 +1754,7 @@ namespace Anabatic {
                       << (int)getConnexity().fields.globals << "G_"
                       << (int)getConnexity().fields.M2 << "M2() [Managed Configuration - x]" << endl;
 
-    Component* biggestRp = getRoutingPads()[0];
+    RoutingPad* biggestRp = getRoutingPads()[0];
     for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
       doRp_StairCaseH( getGCell(), getRoutingPads()[i-1], getRoutingPads()[i] );
       if (getRoutingPads()[i]->getBoundingBox().getWidth() > biggestRp->getBoundingBox().getWidth())
@@ -1632,23 +1773,23 @@ namespace Anabatic {
     if (west() and not south()) {
       setSouthWestContact( doRp_Access( getGCell(), getRoutingPads()[0], HAccess ) );
     } else if (not west() and south()) {
-      cdebug_log(145,1) << "case: not west and south" << endl;
+      cdebug_log(145,0) << "case: not west and south" << endl;
       setSouthWestContact( doRp_Access( getGCell(), biggestRp, NoFlags ) );
     } else if (west() and south()) {
       AutoContact* rpContact = doRp_Access( getGCell(), biggestRp, NoFlags );
       setSouthWestContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer1 ) );
-      AutoSegment::create( rpContact, getSouthWestContact(), Flags::Vertical );
+      AutoSegment::create( rpContact, getSouthContact(), Flags::Vertical );
     }
 
     if (east() and not north()) {
       setNorthEastContact( doRp_Access( getGCell(), getRoutingPads()[getRoutingPads().size()-1], HAccess ) );
     } else if (not east() and north()) {
-      cdebug_log(145,1) << "case: not east and north" << endl;
+      cdebug_log(145,0) << "case: not east and north" << endl;
       setNorthEastContact( doRp_Access( getGCell(), biggestRp, NoFlags ) );
     } else if (east() and north()) {
       AutoContact* rpContact = doRp_Access( getGCell(), biggestRp, NoFlags );
       setNorthEastContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer1 ) );
-      AutoSegment::create( rpContact, getNorthEastContact(), Flags::Vertical );
+      AutoSegment::create( rpContact, getNorthContact(), Flags::Vertical );
     }
 
     cdebug_tabw(145,-1);
@@ -1665,21 +1806,25 @@ namespace Anabatic {
     flags |= (north()) ? DoTargetContact : NoFlags;
     flags |= (south()) ? DoSourceContact : NoFlags;
 
+    AutoContact* sourceContact = nullptr;
+    AutoContact* targetContact = nullptr;
     doRp_AutoContacts( getGCell()
                      , getRoutingPads()[0]
-                     , getSouthWestContact()
-                     , getNorthEastContact()
+                     , sourceContact
+                     , targetContact
                      , flags
                      );
-    if (not getSouthWestContact()) setSouthWestContact( getNorthEastContact() );
-    if (not getNorthEastContact()) setNorthEastContact( getSouthWestContact() );
+    setSouthWestContact( sourceContact );
+    setNorthEastContact( targetContact );
+    if (not getSouthContact()) setSouthContact( getNorthContact() );
+    if (not getNorthContact()) setNorthContact( getSouthContact() );
 
-    cdebug_log(145,0) << "_southWest: " << getSouthWestContact() << endl;
-    cdebug_log(145,0) << "_northEast: " << getNorthEastContact() << endl;
+    cdebug_log(145,0) << "_southWest: " << getSouthContact() << endl;
+    cdebug_log(145,0) << "_northEast: " << getNorthContact() << endl;
 
     if (not (east() or west())) {
       AutoContact* subContact = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
-      AutoSegment::create( getSouthWestContact(), subContact, Flags::Horizontal, rpDepth+1 );
+      AutoSegment::create( getWestContact(), subContact, Flags::Horizontal, rpDepth+1 );
       setBothCornerContacts( subContact );
     }
 
@@ -1729,7 +1874,8 @@ namespace Anabatic {
   bool  NetBuilderHV::_do_xG_xM3 ()
   {
     size_t rpDepth  = Session::getLayerDepth( getRoutingPads()[0]->getLayer() );
-    if (getGCell()->getDensity(rpDepth) > 0.5)
+    cdebug_log(145,0) << "In StdCellarea? : " << getGCell()->isStdCellArea() << endl;
+    if (not getGCell()->isStdCellArea() or (getGCell()->getDensity(rpDepth) > 0.5))
       return  _do_xG_xM3_upperRouting();
     return _do_xG_xM3_baseRouting();
   }
@@ -1761,21 +1907,23 @@ namespace Anabatic {
     }
 
     AutoContact* unusedContact = NULL;
-    Component*   rp            = getRoutingPads()[0];
+    RoutingPad*  rp            = getRoutingPads()[0];
 
     if (west() and not south()) {
       setSouthWestContact( doRp_Access( getGCell(), rp, HAccess ) );
     } else if (not west() and south()) {
-      doRp_AutoContacts( getGCell(), rp, getSouthWestContact(), unusedContact, DoSourceContact );
+      AutoContact* rpContact = nullptr;
+      doRp_AutoContacts( getGCell(), rp, rpContact, unusedContact, DoSourceContact );
+      setSouthWestContact( rpContact );
       if (getSourceContact()) {
-        if (getSourceContact()->getX() != getSouthWestContact()->getX()) {
+        if (getSourceContact()->getX() != getSouthContact()->getX()) {
           cdebug_log(149,0) << "Misaligned South: _source:" << DbU::getValueString(getSourceContact()->getX())
-                            << "_southWest:"                << DbU::getValueString(getSouthWestContact()->getX()) << endl;
+                            << "_southWest:"                << DbU::getValueString(getSouthContact()->getX()) << endl;
 
           AutoContactTurn* turn1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer );
           AutoContactTurn* turn2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer );
-          AutoSegment::create( getSouthWestContact(), turn1, Flags::Vertical  , vDepth );
-          AutoSegment::create( turn1                , turn2, Flags::Horizontal, hDepth );
+          AutoSegment::create( getSouthContact(), turn1, Flags::Vertical  , vDepth );
+          AutoSegment::create( turn1            , turn2, Flags::Horizontal, hDepth );
           setSouthWestContact( turn2 );
         }
       }
@@ -1783,23 +1931,25 @@ namespace Anabatic {
       AutoContact* rpContact = NULL;
       doRp_AutoContacts( getGCell(), rp, rpContact, unusedContact, DoSourceContact );
       setSouthWestContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer ) );
-      AutoSegment::create( rpContact, getSouthWestContact(), Flags::Vertical, vDepth );
+      AutoSegment::create( rpContact, getSouthContact(), Flags::Vertical, vDepth );
     }
 
     rp = getRoutingPads()[getRoutingPads().size()-1];
     if (east() and not north()) {
       setNorthEastContact( doRp_Access( getGCell(), rp, HAccess ) );
     } else if (not east() and north()) {
-      doRp_AutoContacts( getGCell(), rp, unusedContact, getNorthEastContact(), DoTargetContact );
+      AutoContact* rpContact = nullptr;
+      doRp_AutoContacts( getGCell(), rp, unusedContact, rpContact, DoTargetContact );
+      setNorthEastContact( rpContact );
       if (getSourceContact()) {
-        if (getSourceContact()->getX() != getNorthEastContact()->getX()) {
+        if (getSourceContact()->getX() != getNorthContact()->getX()) {
           cdebug_log(149,0) << "Misaligned North: _source:" << DbU::getValueString(getSourceContact()->getX())
-                            << "_southWest:"                << DbU::getValueString(getNorthEastContact()->getX()) << endl;
+                            << "_southWest:"                << DbU::getValueString(getNorthContact()->getX()) << endl;
 
           AutoContactTurn* turn1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer );
           AutoContactTurn* turn2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer );
-          AutoSegment::create( getNorthEastContact(), turn1, Flags::Vertical  , vDepth );
-          AutoSegment::create( turn1                , turn2, Flags::Horizontal, hDepth );
+          AutoSegment::create( getNorthContact(), turn1, Flags::Vertical  , vDepth );
+          AutoSegment::create( turn1            , turn2, Flags::Horizontal, hDepth );
           setNorthEastContact( turn2 );
         }
       }
@@ -1807,7 +1957,7 @@ namespace Anabatic {
       AutoContact* rpContact = NULL;
       doRp_AutoContacts( getGCell(), rp, unusedContact, rpContact, DoTargetContact );
       setNorthEastContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer ) );
-      AutoSegment::create( rpContact, getNorthEastContact(), Flags::Vertical, vDepth );
+      AutoSegment::create( rpContact, getNorthContact(), Flags::Vertical, vDepth );
     }
 
     cdebug_tabw(145,-1);
@@ -1835,26 +1985,28 @@ namespace Anabatic {
     if ((int)getConnexity().fields.M3 != 1) return false;
 
     const Layer* viaLayer2 = Session::getBuildContactLayer(rpDepth);
+    AutoContact* contact1  = nullptr;
+    AutoContact* contact2  = nullptr;
+    AutoContact* contact3  = nullptr;
+    AutoContact* contact4  = nullptr;
 
     if (getConnexity().fields.globals == 2) {
       if (north() and south()) {
-        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
-        AutoContact* contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer2 );
+        doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact1, NoFlags );
+        contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer2 );
         AutoSegment::create( contact1, contact2, Flags::Horizontal, rpDepth+1 );
         contact1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer2 );
         AutoSegment::create( contact1, contact2, Flags::Horizontal, rpDepth+1 );
         setNorthEastContact( contact1 );
         setSouthWestContact( contact2 );
       } else if (east() and west()) {
-        AutoContact* contact1  = NULL;
-        AutoContact* contact2  = NULL;
         doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
         setSouthWestContact( contact1 );
         doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
         setNorthEastContact( contact1 );
       } else {
-        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
-        AutoContact* contact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer2 );
+        doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact1, NoFlags );
+        contact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer2 );
         AutoSegment::create( contact1, contact2, Flags::Horizontal, rpDepth+1 );
 
         contact1 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
@@ -1863,31 +2015,31 @@ namespace Anabatic {
       }
     } else if (getConnexity().fields.globals == 3) {
       if (not west() or not east()) {
-        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
-        AutoContact* contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
+        doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact1, NoFlags );
+        contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
         AutoSegment::create( contact1, contact2, Flags::Horizontal, rpDepth+1 );
-        AutoContact* contact3 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
+        contact3 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
         AutoSegment::create( contact2, contact3, Flags::Vertical, rpDepth+2 );
 
         setSouthWestContact( (east()) ? contact2 : contact3 );
         setNorthEastContact( (east()) ? contact3 : contact2 );
       } else {
-        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
-        AutoContact* contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
+        doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact1, NoFlags );
+        contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
         AutoSegment::create( contact1, contact2, Flags::Vertical, rpDepth+2 );
-        AutoContact* contact3 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
+        contact3 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
         AutoSegment::create( contact2, contact3, Flags::Vertical, rpDepth+2 );
 
         setSouthWestContact( (north()) ? contact2 : contact3 );
         setNorthEastContact( (north()) ? contact3 : contact2 );
       }
     } else {
-      AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
-      AutoContact* contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
+      doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact1, NoFlags );
+      contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
       AutoSegment::create( contact1, contact2, Flags::Horizontal, rpDepth+1 );
-      AutoContact* contact3 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
+      contact3 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
       AutoSegment::create( contact2, contact3, Flags::Vertical, rpDepth+2 );
-      AutoContact* contact4 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
+      contact4 = AutoContactVTee::create( getGCell(), getNet(), viaLayer2 );
       AutoSegment::create( contact2, contact4, Flags::Vertical, rpDepth+2 );
 
       setSouthWestContact( contact3 );
@@ -1898,31 +2050,197 @@ namespace Anabatic {
     return true;
   }
 
+  
+  bool  NetBuilderHV::_do_xG_1M4 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_xG_1M4() [Optimised Configuration]" << endl;
+    size_t rpDepth = Session::getLayerDepth( getRoutingPads()[0]->getLayer() );
+    
+    AutoContact* rpContact = nullptr;
+    doRp_AutoContacts( getGCell()
+                     , getRoutingPads()[0]
+                     , rpContact
+                     , rpContact
+                     , NoFlags
+                     );
+
+    if (getConnexity().fields.globals == 1) {
+      if (not (east() or west())) {
+        AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( rpContact, turn, Flags::Horizontal, rpDepth );
+        rpContact = turn;
+      }
+      setBothCornerContacts( rpContact );
+    } else if (getConnexity().fields.globals == 2) {
+      if (east() and west()) {
+        AutoContact* htee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( rpContact, htee, Flags::Vertical, rpDepth+1 );
+        rpContact = htee;
+      } else if (north() and south()) {
+        AutoContact* vtee = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( rpContact, vtee, Flags::Horizontal, rpDepth );
+        rpContact = vtee;
+      } else {
+        AutoContact* htee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( rpContact, htee, Flags::Horizontal, rpDepth );
+        rpContact = htee;
+      }
+      setBothCornerContacts( rpContact );
+    } else if (getConnexity().fields.globals == 3) {
+      if (not east() or not west()) {
+        AutoContact* vtee = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( rpContact, vtee, Flags::Horizontal, rpDepth );
+        AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( vtee, turn, Flags::Vertical, rpDepth+1 );
+        AutoContact* htee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( turn, htee, Flags::Horizontal, rpDepth );
+
+        if (not west()) std::swap( vtee, htee );
+        setSouthWestContact( htee );
+        setNorthEastContact( vtee );
+      } else {
+        AutoContact* htee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( rpContact, htee, Flags::Vertical, rpDepth+1 );
+        AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( htee, turn, Flags::Horizontal, rpDepth );
+        AutoContact* vtee = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+        AutoSegment::create( turn, vtee, Flags::Vertical, rpDepth+1 );
+
+        if (not south()) std::swap( vtee, htee );
+        setSouthWestContact( htee );
+        setNorthEastContact( vtee );
+      }
+    }
+
+    cdebug_log(145,0) << "_southWest: " << getSouthContact() << endl;
+    cdebug_log(145,0) << "_northEast: " << getNorthContact() << endl;
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+  
+  bool  NetBuilderHV::_do_1G_1M5 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_1G_1M5() [Optimised Configuration]" << endl;
+    size_t rpDepth = Session::getLayerDepth( getRoutingPads()[0]->getLayer() );
+    
+    AutoContact* rpContact = nullptr;
+    doRp_AutoContacts( getGCell()
+                     , getRoutingPads()[0]
+                     , rpContact
+                     , rpContact
+                     , NoFlags
+                     );
+
+    if (not (east() or west())) {
+      AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+      AutoSegment::create( rpContact, turn, Flags::Horizontal, rpDepth+1 );
+      rpContact = turn;
+    }
+    setBothCornerContacts( rpContact );
+
+    cdebug_log(145,0) << "_southWest: " << getSouthContact() << endl;
+    cdebug_log(145,0) << "_northEast: " << getNorthContact() << endl;
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+  
+  bool  NetBuilderHV::_do_2G_1M5 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_2G_1M5() [Optimised Configuration]" << endl;
+    size_t rpDepth = Session::getLayerDepth( getRoutingPads()[0]->getLayer() );
+    
+    AutoContact* rpContact = nullptr;
+    doRp_AutoContacts( getGCell()
+                     , getRoutingPads()[0]
+                     , rpContact
+                     , rpContact
+                     , NoFlags
+                     );
+
+    if (east() and west()) {
+      AutoContact* htee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+      AutoSegment::create( rpContact, htee, Flags::Vertical, rpDepth );
+      rpContact = htee;
+    } else if (north() and south()) {
+      AutoContact* vtee = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+      AutoSegment::create( rpContact, vtee, Flags::Horizontal, rpDepth+1 );
+      rpContact = vtee;
+    } else {
+      AutoContact* htee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer((rpDepth)) );
+      AutoSegment::create( rpContact, htee, Flags::Horizontal, rpDepth+1 );
+      rpContact = htee;
+    }
+    setBothCornerContacts( rpContact );
+
+    cdebug_log(145,0) << "_southWest: " << getSouthContact() << endl;
+    cdebug_log(145,0) << "_northEast: " << getNorthContact() << endl;
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
 
   bool  NetBuilderHV::_do_globalSegment ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_globalSegment()" << endl;
     cdebug_log(145,0) << "getSourceFlags():" << getSourceFlags()
                       << " getFlags():" << getFlags() << endl;
+    cdebug_log(145,0) << "globals=" << getConnexity().fields.globals << endl;
+    cdebug_log(145,0) << "getFromHook() " << getFromHook() << endl;
+    cdebug_log(145,0) << "hookType=" << functionFlagsToStr(getSegmentHookType(getFromHook())) << endl;
 
     if (getSourceContact()) {
-      AutoContact* targetContact
-        = ( getSegmentHookType(getFromHook()) & (NorthBound|EastBound) )
-        ? getNorthEastContact() : getSouthWestContact() ;
+      AutoContact* toContact = nullptr;
+      switch ( getSegmentHookType(getFromHook()) ) {
+        case EastBound:  toContact = getEastContact (); break;
+        case WestBound:  toContact = getWestContact (); break;
+        case NorthBound: toContact = getNorthContact(); break;
+        case SouthBound: toContact = getSouthContact(); break;
+      }
       if (not getFromHook()) cerr << "getFromHook() is NULL !" << endl;
+      if (not toContact) {
+        throw Error( "NetBuilderHV::_do_globalSegment(): NULL target contact while building\n"
+                     "        %s\n"
+                     "        in %s"
+                   , getString(getNet()).c_str()
+                   , getString(getGCell()).c_str() );
+      }
 
       Segment* baseSegment = static_cast<Segment*>( getFromHook()->getComponent() );
       if ( (getSourceFlags() | getFlags()) & ToUpperRouting) {
         cdebug_log(145,0) << "Moving up global" << endl;
+        vector<GCell*> gcells;
         size_t gdepth = Session::getGHorizontalDepth();
-        if (dynamic_cast<Vertical*>(baseSegment))
+        if (dynamic_cast<Vertical*>(baseSegment)) {
           gdepth = Session::getGVerticalDepth();
-        baseSegment->setLayer( Session::getBuildRoutingLayer( gdepth+2 ));
-        baseSegment->setWidth( Session::getWireWidth( gdepth+2 ));
+          GCell::getVGCellsUnder( gcells
+                                , getSourceContact()->getGCell()
+                                , toContact->getGCell()
+                                , baseSegment->getX() );
+        } else {
+          GCell::getHGCellsUnder( gcells
+                                , getSourceContact()->getGCell()
+                                , toContact->getGCell()
+                                , baseSegment->getY() );
+        }
+        bool canMoveUp = true;
+        for ( GCell* gcell : gcells ) {
+          if (not gcell->hasFreeTrack(gdepth+2,2.0,Flags::AllAbove)) {
+            canMoveUp = false;
+            break;
+          }
+        }
+        if (canMoveUp) {
+          baseSegment->setLayer( Session::getBuildRoutingLayer( gdepth+2 ));
+          baseSegment->setWidth( Session::getWireWidth( gdepth+2 ));
+        } else {
+          cdebug_log(145,0) << "-> Cancel move up, not enough up free track" << endl;
+        }
       }
 
       AutoSegment* globalSegment = AutoSegment::create( getSourceContact()
-                                                      , targetContact
+                                                      , toContact
                                                       , baseSegment
                                                       );
       globalSegment->setFlags( (getDegree() == 2) ? AutoSegment::SegBipoint : 0 );
@@ -1939,13 +2257,15 @@ namespace Anabatic {
         cdebug_tabw(145,-1);
         return false;
       }
-    } else
+    } else {
       setFromHook( NULL );
+      cdebug_log(145,0) << "No source contact, should be the first built GCell" << endl;
+    }
     
-    push( east (), getNorthEastContact() );
-    push( west (), getSouthWestContact() );
-    push( north(), getNorthEastContact() );
-    push( south(), getSouthWestContact() );
+    push( east (), getEastContact() );
+    push( west (), getWestContact() );
+    push( north(), getNorthContact() );
+    push( south(), getSouthContact() );
 
     cdebug_tabw(145,-1);
     return true;
@@ -1957,7 +2277,7 @@ namespace Anabatic {
     cdebug_log(145,1) << "NetBuilderHV::singleGCell() " << net << endl;
 
     vector<RoutingPad*>  rpM1s;
-    Component*           rpM2  = NULL;
+    RoutingPad*          rpM2  = NULL;
     RoutingPad*          rpPin = NULL;
 
     for ( RoutingPad* rp : net->getRoutingPads() ) {
@@ -2005,34 +2325,42 @@ namespace Anabatic {
 
     cdebug_log(145,0) << "singleGCell " << gcell1 << endl;
 
+    RoutingLayerGauge* lg = Session::getLayerGauge( 2 );
+    DbU::Unit ppitch = lg->getPitch();
+
     AutoContact* turn1  = NULL;
     AutoContact* turn2  = NULL;
     AutoContact* source = NULL;
     AutoContact* target = NULL;
 
+    uint64_t rpFlags = HAccess;
+    if (not Session::getRoutingGauge()->isSymbolic())
+      rpFlags |= UseNonPref;
+
     for ( size_t irp=1 ; irp<rpM1s.size() ; ++irp ) {
-      doRp_AutoContacts( gcell1, rpM1s[irp-1], source, turn1, DoSourceContact );
-      doRp_AutoContacts( gcell1, rpM1s[irp  ], target, turn1, DoSourceContact );
+      source = doRp_Access( gcell1, rpM1s[irp-1], rpFlags );
+      target = doRp_Access( gcell1, rpM1s[irp  ], rpFlags );
 
       if (source->getUConstraints(Flags::Vertical).intersect(target->getUConstraints(Flags::Vertical))) {
-        uint64_t flags = checkRoutingPadSize( rpM1s[irp-1] );
-        if ((flags & VSmall) or Session::getConfiguration()->isVH()) {
-          if (Session::getConfiguration()->isHV()) {
-            turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
-            AutoSegment::create( source, turn1, Flags::Horizontal   );
-            source = turn1;
-          }
+        uint64_t flagsRp0 = checkRoutingPadSize( rpM1s[irp-1] );
+        uint64_t flagsRp1 = checkRoutingPadSize( rpM1s[irp] );
+
+        bool shortNet = (rpM1s[irp]->getX() - rpM1s[irp-1]->getX() < 4*ppitch)
+                        and not ((flagsRp0 & VSmall) and (flagsRp1 & VSmall)) ;
+
+        cdebug_log(145,0) << "shortNet=" << shortNet << endl;
+        if (not shortNet and (flagsRp0 & VSmall)) {
+          turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+          AutoSegment::create( source, turn1, Flags::Horizontal   );
+          source = turn1;
           turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
           AutoSegment::create( source, turn1 , Flags::Vertical   );
           source = turn1;
         }
-        flags = checkRoutingPadSize( rpM1s[irp] );
-        if ((flags & VSmall) or Session::getConfiguration()->isVH()) {
-          if (Session::getConfiguration()->isHV()) {
-            turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
-            AutoSegment::create( target, turn1, Flags::Horizontal   );
-            target = turn1;
-          }
+        if (not shortNet and (flagsRp1 & VSmall)) {
+          turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+          AutoSegment::create( target, turn1, Flags::Horizontal   );
+          target = turn1;
           turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
           AutoSegment::create( target, turn1 , Flags::Vertical   );
           target = turn1;
@@ -2048,8 +2376,8 @@ namespace Anabatic {
     }
 
     if (rpM2) {
-      doRp_AutoContacts( gcell1, rpM1s[0], source, turn1, DoSourceContact );
-      doRp_AutoContacts( gcell1, rpM2    , target, turn1, DoSourceContact );
+      source = doRp_Access( gcell1, rpM1s[0], HAccess );
+      target = doRp_Access( gcell1, rpM2    , HAccess );
       turn1 = AutoContactTurn::create( gcell1, rpM2->getNet(), Session::getBuildContactLayer(1) );
       AutoSegment::create( source, turn1 , Flags::Horizontal );
       AutoSegment::create( turn1 , target, Flags::Vertical );
@@ -2061,7 +2389,7 @@ namespace Anabatic {
 
       if (  (pinDir == Pin::AccessDirection::NORTH)
          or (pinDir == Pin::AccessDirection::SOUTH) ) {
-        doRp_AutoContacts( gcell1, rpM1s[0], source, turn1, DoSourceContact );
+        source = doRp_Access( gcell1, rpM1s[0], HAccess );
         target = doRp_AccessNorthSouthPin( gcell1, rpPin );
         turn1  = AutoContactTurn::create( gcell1, rpPin->getNet(), Session::getBuildContactLayer(1) );
         AutoSegment::create( source, turn1 , Flags::Horizontal );
@@ -2072,7 +2400,7 @@ namespace Anabatic {
         if (pinDir == Pin::AccessDirection::EAST) closest = rpM1s.back();
         else                                      closest = rpM1s.front();
 
-        doRp_AutoContacts( gcell1, closest, source, turn1, DoSourceContact );
+        source = doRp_Access( gcell1, closest, HAccess );
         target = doRp_AccessEastWestPin( gcell1, rpPin );
         AutoSegment::create( source, target , Flags::Horizontal );
       }

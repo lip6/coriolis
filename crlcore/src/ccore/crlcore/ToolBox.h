@@ -72,15 +72,16 @@ namespace CRL {
                 , UniquifyUpperCase = 0x0008
                 };
     public:
-      typedef std::function< Name(const Name&,uint32_t) >  converter_t;
+      typedef std::function< Name(Name,uint32_t) >  converter_t;
     public:
-      static Name  vhdlToVlog           ( const Name& vhdlName );
-      static Name  vlogToVhdl           ( const Name& vlogName, uint32_t flags );
-      static void  toVhdl               ( Cell* topCell, uint32_t flags );
-                   NamingScheme         ( uint32_t flags );
-      inline void  setNoLowerCase       ( bool state );
-      inline void  setUniquifyUpperCase ( bool state );
-             Name  convert              ( const Name& ) const;
+      static Name         vhdlToVlog           ( Name vhdlName );
+      static Name         vlogToVhdl           ( Name vlogName, uint32_t flags );
+      static void         toVhdl               ( Cell* topCell, uint32_t flags );
+                          NamingScheme         ( uint32_t flags );
+      inline void         setNoLowerCase       ( bool state );
+      inline void         setUniquifyUpperCase ( bool state );
+             Name         convert              ( const Name& ) const;
+             std::string  convert              ( std::string ) const;
     private:
       uint32_t     _flags;
       converter_t  _converter;

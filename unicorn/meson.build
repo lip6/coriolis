@@ -1,5 +1,6 @@
 subdir('src')
 subdir('python')
+subdir('doc/unicorn')
 
 Unicorn = declare_dependency(
   link_with: [unicorn],

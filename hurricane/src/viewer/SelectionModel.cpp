@@ -74,6 +74,20 @@ namespace Hurricane {
   }
 
 
+  void  SelectionModel::clearNotIn ( const SelectorSet& cwSelection )
+  {
+    beginResetModel();
+    for ( Selector* selector : _selection ) {
+      if (cwSelection.find(selector) != cwSelection.end()) continue;
+      selector->resetFlags( _cellWidget, Selector::InModel|Selector::Selected );
+    }
+    auto erased = remove_if( _selection.begin(), _selection.end()
+                           , [this](const Selector* s){return (s->getFlags(_cellWidget) & Selector::InModel);} );
+    _selection.erase( erased, _selection.end() );
+    endResetModel();
+  }
+
+
   void  SelectionModel::unlink ( Selector* selector )
   {
     beginResetModel();
@@ -91,14 +105,14 @@ namespace Hurricane {
   {
     if (not _cellWidget) return;
     
-    if (not isCumulative()) clear ();
+    if (not isCumulative()) clearNotIn( selection );
     beginResetModel();
 
     for ( Selector* selector : selection ) {
       if (not selector->isInModel(_cellWidget)) {
         _selection.push_back( selector );
+        selector->setFlags( _cellWidget, Selector::InModel|Selector::Selected );
       }
-      selector->setFlags( _cellWidget, Selector::InModel|Selector::Selected );
     }
 
     endResetModel();
@@ -267,7 +281,7 @@ namespace Hurricane {
 
   const Selector* SelectionModel::getSelector ( int row )
   {
-    if (row >= (int)_selection.size()) return NULL;
+    if ((row < 0) or (row >= (int)_selection.size())) return NULL;
     return _selection[ row ];
   }
 

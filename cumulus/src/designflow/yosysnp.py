@@ -84,7 +84,7 @@ class YosysNp ( FlowTask ):
         status = subprocess.call( command )
         return status == 0
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )

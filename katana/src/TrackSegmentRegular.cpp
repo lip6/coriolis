@@ -81,6 +81,7 @@ namespace Katana {
 
   void  TrackSegmentRegular::addOverlapCost ( TrackCost& cost ) const
   {
+    uint32_t  ripupLimit      = Session::getKatanaEngine()->getRipupLimit( this );
     uint32_t  depth           = Session::getRoutingGauge()->getLayerDepth(getLayer());
     bool      inLocalDepth    = (depth < 3);
     bool      isOneLocalTrack = (isLocal()) and (base()->getAutoSource()->getGCell()->getGlobalsCount(depth) >= 9.0);
@@ -97,6 +98,11 @@ namespace Katana {
     cost.setDistanceToFixed();
     cost.incAxisWeight     ( getDataNegociate()->getRoutingEvent()->getAxisWeight(track->getAxis()) );
     cost.incDeltaPerpand   ( getDataNegociate()->getWiringDelta(track->getAxis()) );
+
+    if (   (getDataNegociate()->getSameRipup() + 2 >= ripupLimit)
+       and (getAxis() == track->getAxis())) {
+      cost.setForcedAxisChange();
+    }
 
     if ( inLocalDepth and (cost.getDataState() == DataNegociate::MaximumSlack) )
       cost.setInfinite();

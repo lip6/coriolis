@@ -30,6 +30,8 @@ namespace Etesian {
     public:
       inline               FeedCells             ( EtesianEngine* );
       inline  size_t       feedNumbers           () const;
+              bool         isFeedOrTie           ( Cell* ) const;
+              bool         isFeed                ( Cell* ) const;
               void         useTie                ( Cell* );
               void         useFeed               ( Cell* );
               Cell*        getBiggestFeed        () const;

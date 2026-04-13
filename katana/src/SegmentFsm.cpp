@@ -17,7 +17,7 @@
 #include <algorithm>
 #include "hurricane/Bug.h"
 #include "hurricane/DebugSession.h"
-#include "katana/TrackElement.h"
+#include "katana/TrackFixedSpanRp.h"
 #include "katana/Tracks.h"
 #include "katana/RoutingPlane.h"
 #include "katana/DataNegociate.h"
@@ -45,7 +45,7 @@ namespace {
       inline Track*     getTrack           () const;
       inline size_t     getBegin           () const;
       inline size_t     getEnd             () const;
-      inline size_t     getLength          () const;
+      inline size_t     getSize            () const;
       inline Interval   getConflict        ( size_t );
       inline Interval   getLongestConflict () const;
       inline DbU::Unit  getBreakPos        () const;
@@ -82,7 +82,7 @@ namespace {
   inline Track*     Cs1Candidate::getTrack           () const { return _track; }
   inline size_t     Cs1Candidate::getBegin           () const { return _begin; }
   inline size_t     Cs1Candidate::getEnd             () const { return _end; }
-  inline size_t     Cs1Candidate::getLength          () const { return _conflicts.size(); }
+  inline size_t     Cs1Candidate::getSize            () const { return _conflicts.size(); }
   inline Interval   Cs1Candidate::getLongestConflict () const { return _longestConflict; }
   inline DbU::Unit  Cs1Candidate::getBreakPos        () const { return _breakPos; }
   inline void       Cs1Candidate::setBegin           ( size_t i ) { _begin=i; }
@@ -364,22 +364,41 @@ namespace Katana {
   //   must be re-inserted *before* any parallel. Must look to solve the redundancy.
 
     DebugSession::open( _segment->getNet(), 156, 160 );
-
-    if (_type & Lock) {
-      cdebug_log(159,1) << "* Lock // " << _segment << endl;
-    } else if (_type & Perpandicular) {
-      cdebug_log(159,1) << "* Riping Pp " << _segment << endl;
-    } else if (_type & OtherRipup) {
-      cdebug_log(159,1) << "* Riping Other " << _segment << endl;
-    } else {
-      cdebug_log(159,1) << "* Riping // " << _segment << endl;
-    }
-
-    if (_segment->isFixed  ()) { DebugSession::close(); return true; }
-  //if (_segment->isReduced()) { DebugSession::close(); return true; }
+    cdebug_log(159,1) << "* doAction() on "<< _segment << endl;
 
     DataNegociate* data = _segment->getDataNegociate();
     if (data == NULL) {
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return true;
+    }
+
+    RoutingEvent* event = data->getRoutingEvent();
+    if (event == NULL) {
+      cerr << Bug( "Missing Event on %p:%s"
+                 , _segment->base()->base(),getString(_segment).c_str() ) << endl;
+      DebugSession::close();
+      return true;
+    }
+
+    if (event->isDisabled()) {
+      cdebug_log(159,0) << "* Disabled, skip." << endl;
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return true;
+    }
+
+    if (_type & Lock) {
+      cdebug_log(159,0) << "* Lock // " << _segment << endl;
+    } else if (_type & Perpandicular) {
+      cdebug_log(159,0) << "* Riping Pp " << _segment << endl;
+    } else if (_type & OtherRipup) {
+      cdebug_log(159,0) << "* Riping Other " << _segment << endl;
+    } else {
+      cdebug_log(159,0) << "* Riping // " << _segment << endl;
+    }
+
+    if (_segment->isFixed()) {
       cdebug_tabw(159,-1);
       DebugSession::close();
       return true;
@@ -394,14 +413,6 @@ namespace Katana {
     }
 
     if (_segment->getTrack()) Session::addRemoveEvent( _segment );
-
-    RoutingEvent* event = data->getRoutingEvent();
-    if (event == NULL) {
-      cerr << Bug( "Missing Event on %p:%s"
-                 , _segment->base()->base(),getString(_segment).c_str() ) << endl;
-      DebugSession::close();
-      return true;
-    }
 
     if (_type&Lock) Session::addLockEvent( _segment );
 
@@ -432,8 +443,10 @@ namespace Katana {
     if (_type & EventLevel5) eventLevel = 5;
     event->setRipedByLocal( _type&RipedByLocal );
 
-  //RoutingEvent* fork =
-    event->reschedule( queue, eventLevel );
+    if (_type & ToPref)
+      event->_rescheduleAsPref();
+    else
+      event->reschedule( queue, eventLevel );
 
     cdebug_tabw(159,-1);
     DebugSession::close();
@@ -504,7 +517,7 @@ namespace Katana {
     _constraint = _event1->getConstraints();
     cdebug_log(159,0) << "* Constraints:    "  << _constraint    << " (" << _constraint.getVMin() << " " << _constraint.getVMax() << ")" << endl;
 
-    _optimal    = _event1->getOptimal();
+    _optimal = _event1->getOptimal();
     if (_event2) {
       if (_sameAxis) {
         _constraint  .intersection( _event2->getConstraints() );
@@ -555,11 +568,24 @@ namespace Katana {
     RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment1->getLayer());
 
     if (segment1->isNonPref()) {
-      Track*        baseTrack = plane->getTrackByPosition( segment1->base()->getSourcePosition(), Constant::Superior );
+      DbU::Unit     baseAxis  = segment1->base()->getNonPrefSourcePosition()
+                                - (segment1->getLayer()->getMinimalSpacing()
+                                  + Session::getWireWidth(segment1->getLayer())) / 2;
+      Track*        baseTrack = plane->getTrackByPosition( baseAxis, Constant::Superior );
       RoutingPlane* perpPlane = plane->getTop();
       if (not perpPlane) perpPlane = plane->getBottom();
+      cdebug_log(155,0) << "sourcePosition():" << DbU::getValueString(segment1->base()->getSourcePosition())
+                        <<        " baseAxis:" << DbU::getValueString(baseAxis)
+                        << endl;
+      cdebug_log(155,0) << "  -> baseTrack:" << baseTrack << endl;
+
+      if (Session::getStage() == Anabatic::StagePack) {
+        cdebug_log(155,0) << "Cost at initial position in pack mode: " << endl;
+        _costs.push_back( new TrackCost(segment1,NULL,baseTrack,NULL,segment1->getAxis(),0) );
+      }
 
       for ( Track* ptrack : Tracks_Range::get(perpPlane,_constraint) ) {
+        cdebug_log(155,0) << "Align on (top) preferred: " << ptrack << endl;
         _costs.push_back( new TrackCost(segment1,NULL,baseTrack,NULL,ptrack->getAxis(),0) );
       
         cdebug_log(155,0) << "AxisWeight:" << DbU::getValueString(_costs.back()->getRefCandidateAxis())
@@ -626,6 +652,7 @@ namespace Katana {
                    , getString(_constraint).c_str()
                    ) << endl;
       }
+      cdebug_log(155,0) << "-> No candidate track found." << endl;
       _state = EmptyTrackList;
     }
 
@@ -635,9 +662,9 @@ namespace Katana {
              and (_data1->getState() < DataNegociate::Minimize)
              and (_data1->getRipupCount() < 5))
              ? TrackCost::DiscardGlobals : 0;
-    flags |= (Session::getStage() == StageRepair ) ? TrackCost::IgnoreSharedLength : 0;
-    flags |= (Session::getStage() == StageRealign) ? TrackCost::IgnoreTerminals    : 0;
-
+    flags |= (Session::getStage() == Anabatic::StageRepair ) ? TrackCost::IgnoreSharedLength : 0;
+    flags |= (Session::getStage() == Anabatic::StageRealign) ? TrackCost::IgnoreTerminals    : 0;
+    flags |= (Session::getStage() == Anabatic::StagePack   ) ? TrackCost::IgnoreTerminals    : 0; 
     if (flags & TrackCost::DiscardGlobals) {
       cdebug_log(159,0) << "TrackCost::Compare() - DiscardGlobals" << endl;
     }
@@ -645,6 +672,12 @@ namespace Katana {
   // FOR ANALOG ONLY.
   //flags |= TrackCost::IgnoreSharedLength;
     sort( _costs.begin(), _costs.end(), TrackCost::Compare(flags) );
+
+    if ((_costs.size() == 1) and (segment1->base()->getRpDistance() == 0)) {
+      segment1->setFlags( TElemOneTrack );
+    } else {
+      segment1->unsetFlags( TElemOneTrack );
+    }
 
     size_t i=0;
     for ( ; (i<_costs.size()) and _costs[i]->isFree() ; i++ );
@@ -682,16 +715,24 @@ namespace Katana {
                               , DbU::Unit     axisHint
                               , uint32_t      toSegmentFsm  )
   {
-    if ( not segment->isFixed() ) {
-      _actions.push_back ( SegmentAction(segment,type,axisHint,toSegmentFsm) );
-      cdebug_log(159,0) << "SegmentFsm::addAction(): " << segment << endl;
-    }
+    if (segment->isFixed()) return;
+    
+    _actions.push_back ( SegmentAction(segment,type,axisHint,toSegmentFsm) );
+    cdebug_log(159,0) << "SegmentFsm::addAction(): " << segment << endl;
   }
 
 
   void  SegmentFsm::doActions ()
   {
     cdebug_log(159,1) << "SegmentFsm::doActions() - " << _actions.size() << endl;
+
+    for ( AutoSegment* base : Session::getInvalidateds() ) {
+      if (not base->isInvalidatedLayer()) continue;
+      TrackElement* segment = Session::lookup( base );
+      if (not segment) continue;
+      if (hasAction(segment)) continue;
+      addAction( segment, SegmentAction::SelfRipup );
+    }
 
     bool ripupOthersParallel = false;
     bool ripedByLocal        = getEvent()->getSegment()->isLocal();
@@ -766,6 +807,18 @@ namespace Katana {
   }
 
 
+  void  SegmentFsm::clearSpanRpFromTrack ( size_t i )
+  {
+    cdebug_log(159,0) << "SegmentFsm::clearSpanRpFromTrack() track:" << i << endl;
+    Track*        track     = _costs[i]->getTrack();
+    Interval      canonical = _costs[i]->getInterval1();
+    vector<TrackElement*> spanRps;
+    track->getSpanRpUnder( canonical, spanRps );
+    for ( TrackElement* fixedSpan : spanRps )
+      Session::addRemoveEvent( fixedSpan );
+  }
+
+
   void  SegmentFsm::bindToTrack ( size_t i )
   {
     cdebug_log(159,0) << "SegmentFsm::bindToTrack() track:" << i << endl;
@@ -775,6 +828,8 @@ namespace Katana {
     _event1->setEventLevel( 0 );
 
     cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getTrack1(i) << endl;
+    if (not (getSegment1()->isGlobal() or getSegment1()->isFixed()))
+      getSegment1()->forcePositions( getCost(i)->getRefTrackFree() );
     Session::addInsertEvent( getSegment1(), getTrack1(i), getCandidateAxis1(i) );
 
     if (_event2) {
@@ -869,7 +924,7 @@ namespace Katana {
         Anabatic::GCell* dogLegGCell = Session::getGCellUnder( breakPoint.getX(), breakPoint.getY() );
         if (dogLegGCell) {
           if (segment->canDogleg(dogLegGCell))
-            success = segment->makeDogleg(dogLegGCell);
+            success = segment->makeDogleg(dogLegGCell,Flags::NoFlags);
         } else {
           cerr << Bug( "No GCell under source %s for:\n      %s."
                      , getString(breakPoint).c_str(), getString(segment).c_str() ) << endl;
@@ -888,7 +943,7 @@ namespace Katana {
         Anabatic::GCell* dogLegGCell = Session::getGCellUnder( breakPoint.getX(), breakPoint.getY() );
         if (dogLegGCell) {
           if (segment->canDogleg(dogLegGCell)) {
-            success = segment->makeDogleg(dogLegGCell);
+            success = segment->makeDogleg(dogLegGCell,Flags::NoFlags);
           }
         } else {
           cerr << Bug( "No GCell under target %s for:\n      %s."
@@ -947,10 +1002,10 @@ namespace Katana {
     for ( ; track and track->getAxis() <= constraints.getVMax() ; track = track->getNextTrack() ) {
       candidates.push_back( Cs1Candidate(track,segment->getPPitch()) );
 
-      size_t        begin;
-      size_t        end;
-      TrackElement* other;
-      Net*          otherNet      = NULL;
+      size_t        begin         = Track::npos;
+      size_t        end           = Track::npos;
+      TrackElement* other         = nullptr;
+      Net*          otherNet      = nullptr;
       Interval      otherOverlap;
       bool          otherIsGlobal = false;
 
@@ -1011,7 +1066,7 @@ namespace Katana {
     sort( candidates.begin(), candidates.end() );
 
     for ( size_t icandidate=0 ; icandidate<candidates.size() ; ++icandidate ) {
-      cdebug_log(159,0) << "Trying l:" << candidates[icandidate].getLength()
+      cdebug_log(159,0) << "Trying l:" << candidates[icandidate].getSize()
                   << " " << candidates[icandidate].getTrack() << endl;
 
       Interval overlap0 = candidates[icandidate].getLongestConflict();
@@ -1034,6 +1089,7 @@ namespace Katana {
         }
       }
       cdebug_log(159,0) << "| other: " << other << endl;
+      cdebug_log(159,0) << "| overlap0: " << overlap0 << endl;
 
       if (Session::getConfiguration()->isVH() and (segment->getDepth() == 1)) {
         if (Manipulator(segment,*this).makeDogleg(overlap0,Flags::ShortDogleg)) {
@@ -1049,7 +1105,8 @@ namespace Katana {
         }
         
         cdebug_log(159,0) << "conflictSolveByPlaceds() - Relaxing self" << endl;
-        
+        cdebug_log(159,0) << "| overlap0: " << overlap0 << endl;
+
         if (Manipulator(segment,*this).relax(overlap0,relaxFlags)) {
           success = true;
           break;
@@ -1063,6 +1120,11 @@ namespace Katana {
           }
         }
       }
+    }
+
+    if (not success and Session::getConfiguration()->isVH() and (segment->getDepth() == 1)) {
+      cdebug_log(159,0) << "Fallback for VH topologies, try break in low density area." << endl;
+      success = Manipulator(segment,*this).relaxVH( Manipulator::NoExpand|Manipulator::NoDoglegReuse );
     }
 
     if ( not success and segment->isGlobal() and (_costs.size() <= 1) ) {
@@ -1231,6 +1293,7 @@ namespace Katana {
       success = manipulator.avoidBlockage();
     }
 
+    Flags slackenFlags = Flags::NoFlags;
     if (not success) {
       switch ( data->getState() ) {
         case DataNegociate::RipupPerpandiculars:
@@ -1238,6 +1301,7 @@ namespace Katana {
           success = manipulator.ripupPerpandiculars();
           if (success) break;
         case DataNegociate::Minimize:
+          slackenFlags |= Flags::ToMinimize;
           if (data->getStateCount() >= 2) {
             nextState = DataNegociate::Slacken;
           }
@@ -1245,7 +1309,7 @@ namespace Katana {
           if (success) break;
         case DataNegociate::Dogleg:
         case DataNegociate::Slacken:
-          if ((success = manipulator.slacken(Flags::HalfSlacken))) {
+          if ((success = manipulator.slacken(slackenFlags|Flags::HalfSlacken))) {
             nextState = DataNegociate::LocalVsGlobal;
             break;
           }
@@ -1270,7 +1334,9 @@ namespace Katana {
 
     // if (not (flags&NoTransition)) {
       data->setState( nextState );
-      cdebug_log(159,0) << "Incrementing state (after): " << nextState << " count:" << data->getStateCount() << endl;
+      cdebug_log(159,0) << "Incrementing state (after): " << nextState
+                        << " count:" << data->getStateCount()
+                        << " ripup:" << data->getRipupCount() << endl;
     // }
 
     return success;
@@ -1285,10 +1351,9 @@ namespace Katana {
     uint32_t    nextState   = data->getState();
     Manipulator manipulator ( segment, *this );
 
-
     switch (data->getState()) {
       case DataNegociate::RipupPerpandiculars:
-        if (segment->isDrag() and getCost(0)->isInfinite()) {
+        if (segment->isDrag() and getCost(0)->isInfiniteOrSpanRp()) {
           nextState = DataNegociate::Slacken;
           success   = manipulator.dragMinimize();
           if (success) _minimizeDrag = true;
@@ -1299,17 +1364,31 @@ namespace Katana {
         if (success) break;
       case DataNegociate::Minimize:
         if (nextState == DataNegociate::Minimize) {
-          if (isFullBlocked() and not segment->isTerminal()) {
-            cdebug_log(159,0) << "Is Fully blocked." << endl;
-            if (_costs.size() > 7) {
-              success = manipulator.moveUp( Manipulator::AllowLocalMoveUp );
+          if (not segment->isTerminal()) {
+            if (isFullBlocked()) {
+              cdebug_log(159,0) << "Is Fully blocked." << endl;
+              if (_costs.size() > 7) {
+                success = manipulator.moveUp( Manipulator::AllowLocalMoveUp );
+                if (success) {
+                  cdebug_log(159,0) << "Was able to move up." << endl;
+                  break;
+                }
+              }
+              if (data->getRipupCount() > 1) {
+                cdebug_log(159,0) << "Already gone through Minimize once ("
+                                  << data->getRipupCount() << ")." << endl;
+                nextState = DataNegociate::Unimplemented;
+                break;
+              }
+            }
+            if (segment->isNonPref() and (data->getRipupCount() > 3)) {
+              cdebug_log(159,0) << "Non pref. "  << data->getRipupCount() << endl;
+              success = manipulator.moveUp( Manipulator::AllowLocalMoveUp|Manipulator::IgnoreContacts );
               if (success) {
                 cdebug_log(159,0) << "Was able to move up." << endl;
                 break;
               }
             }
-            nextState = DataNegociate::Unimplemented;
-            break;
           }
           nextState = DataNegociate::Dogleg;
           success   = manipulator.minimize();
@@ -1401,10 +1480,13 @@ namespace Katana {
           success = manipulator.makeDogleg( segment->getCanonicalInterval().getCenter() );
           if (success) break;
         } else {
-          cdebug_log(159,0) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
+          nextState = DataNegociate::Slacken;
+          if (Session::getConfiguration()->isVH()
+             and segment->getLength() < 6*Session::getSliceHeight()) {
+            cdebug_log(159,0) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
+            break;
+          }
         }
-        nextState = DataNegociate::Slacken;
-        break;
       case DataNegociate::Slacken:
         cdebug_log(159,0) << "Global, SegmentFsm: Slacken "
                           << ((manipulator.getEvent())
@@ -1420,6 +1502,12 @@ namespace Katana {
             nextState = DataNegociate::RipupPerpandiculars;
             cdebug_log(159,0) << "Next state: RipupPerpandiculars (half-slacken succeeded)." << endl;
             break;
+          } else {
+            if (isFullBlocked() and (_costs.size() < 4)) {
+              cdebug_log(159,0) << "Fully blocked and less than 4 tracks" << endl;
+              success = manipulator.makeDogleg( segment->getCanonicalInterval().getCenter() );
+              if (success) break;
+            }
           }
         }
       case DataNegociate::MoveUp:
@@ -1516,30 +1604,32 @@ namespace Katana {
 
     if (not segment1 or not _data1) { cdebug_tabw(159,-1); DebugSession::close(); return false; }
 
-    _event1->resetInsertState();
-    _data1->resetRipupCount();
-    if (_event2) {
-      _event2->resetInsertState();
-      _data2->resetRipupCount();
-    }
-
-    if (segment1->isStrap() or segment1->isUnbreakable())
+    if (segment1->isStrap() or (segment1->isUnbreakable() and not segment1->isGlobal()))
       success = _slackenStrap ( segment1, _data1, flags );
     else if (segment1->isLocal())
       success = _slackenLocal ( segment1, _data1, flags );
     else
       success = _slackenGlobal( segment1, _data1, flags );
 
+    _event1->resetInsertState();
+    if (not segment1->isNonPref()) _data1->resetRipupCount();
+    if (_event2) {
+      _event2->resetInsertState();
+      if (not segment1->isNonPref()) _data2->resetRipupCount();
+    }
+
     if (success) {
-      actionFlags |= SegmentAction::ResetRipup;
-      if (isMinimizeDrag()) {
-        actionFlags &= ~SegmentAction::EventLevel5;
-        actionFlags |=  SegmentAction::EventLevel3;
+      if (not hasAction(segment1)) {
+        actionFlags |= SegmentAction::ResetRipup;
+        if (isMinimizeDrag()) {
+          actionFlags &= ~SegmentAction::EventLevel5;
+          actionFlags |=  SegmentAction::EventLevel3;
+        }
+        if (segment1->isNonPref()) {
+          actionFlags &= ~SegmentAction::AllEventLevels;
+        }
+        addAction( segment1, actionFlags );
       }
-      if (segment1->isNonPref()) {
-        actionFlags &= ~SegmentAction::AllEventLevels;
-      }
-      addAction( segment1, actionFlags );
     } else {
       clearActions();
       if (_data1->getState() == DataNegociate::Unimplemented) {

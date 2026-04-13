@@ -31,6 +31,7 @@ namespace Katana {
   using CRL::RoutingLayerGauge;
 
   class TrackMarker;
+  class TrackMarkerSpacing;
   class RoutingPlane;
   class KatanaEngine;
 
@@ -86,6 +87,7 @@ namespace Katana {
               TrackElement*      getNext             ( size_t& index, Net* ) const;
               TrackElement*      getPrevious         ( size_t& index, Net* ) const;
               TrackElement*      getNextFixed        ( size_t& index ) const;
+              size_t             getSpanRpUnder      ( const Interval&, std::vector<TrackElement*>& ) const;
               size_t             find                ( const TrackElement* ) const;
               DbU::Unit          getSourcePosition   ( std::vector<TrackElement*>::iterator ) const;
               DbU::Unit          getMinimalPosition  ( size_t index, uint32_t state ) const;
@@ -95,7 +97,7 @@ namespace Katana {
               Interval           getPreviousFree     ( size_t index, Net* net );
               bool               hasViaMarker        ( Net* net, Interval span );
               Interval           getOccupiedInterval ( size_t& begin ) const;
-              Interval           expandFreeInterval  ( size_t& begin, size_t& end, uint32_t state, Net* ) const;
+              Interval           expandFreeInterval  ( DbU::Unit position, size_t& begin, size_t& end, uint32_t state, Net* ) const;
               void               getBeginIndex       ( DbU::Unit position, size_t& begin, uint32_t& state ) const;
               void               getOverlapBounds    ( Interval, size_t& begin, size_t& end ) const;
               TrackCost&         addOverlapCost      ( TrackCost& ) const;
@@ -111,6 +113,8 @@ namespace Katana {
               void               invalidate          ();
               void               insert              ( TrackElement* );
               void               insert              ( TrackMarker* );
+              void               insert              ( TrackMarkerSpacing* );
+      inline  void               updateInvalidBounds ( TrackElement* );
               void               setSegment          ( TrackElement*, size_t );
               size_t             doRemoval           ();
               void               doReorder           ();
@@ -120,16 +124,20 @@ namespace Katana {
 
     protected:
     // Attributes.
-      RoutingPlane*               _routingPlane;
-      size_t                      _index;
-      DbU::Unit                   _axis;
-      DbU::Unit                   _min;
-      DbU::Unit                   _max;
-      std::vector<TrackElement*>  _segments;
-      std::vector<TrackMarker*>   _markers;
-      bool                        _localAssigned;
-      bool                        _segmentsValid;
-      bool                        _markersValid;
+      RoutingPlane*                    _routingPlane;
+      size_t                           _index;
+      DbU::Unit                        _axis;
+      DbU::Unit                        _min;
+      DbU::Unit                        _max;
+      std::vector<TrackElement*>       _segments;
+      std::vector<TrackMarker*>        _markers;
+      std::vector<TrackMarkerSpacing*> _markersSpacing;
+      bool                             _localAssigned;
+      bool                             _segmentsValid;
+      bool                             _markersValid;
+      bool                             _markersSpacingValid;
+      DbU::Unit                        _minInvalid;
+      DbU::Unit                        _maxInvalid;
 
     protected:
     // Constructors & Destructors.
@@ -219,6 +227,13 @@ namespace Katana {
     return state;
   }
 
+
+  inline  void  Track::updateInvalidBounds ( TrackElement* element )
+  {
+    _minInvalid = std::min( _minInvalid, element->getSourceU() );
+    _maxInvalid = std::max( _maxInvalid, element->getTargetU() );
+  }
+  
 
   inline bool Track::Compare::operator() ( const Track* lhs, const Track* rhs ) const
   {

@@ -17,6 +17,7 @@
 #include <iostream>
 #include <QFrame>
 #include <QLabel>
+#include <QSettings>
 #include <QAction>
 #include <QVBoxLayout>
 #include <QSplitter>
@@ -168,6 +169,26 @@ namespace CRL {
 
   void  LibraryManager::updateLibrary ( Cell* )
   { _cellsWidget->updateLibrary(); }
+
+
+  void  LibraryManager::readQtSettings ()
+  {
+    QSettings settings;
+    QString sizeKey = QString( "LibraryManager/geometry" );
+    if (not settings.contains(sizeKey)) return;
+    settings.beginGroup( QString("LibraryManager") );
+    restoreGeometry( settings.value( "geometry" ).toByteArray() );
+    settings.endGroup();
+  }
+
+
+  void  LibraryManager::saveQtSettings ()
+  {
+    QSettings settings;
+    settings.beginGroup( QString("LibraryManager") );
+    settings.setValue( "geometry", saveGeometry() );
+    settings.endGroup();
+  }
 
 
 }  // CRL namespace.

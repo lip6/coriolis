@@ -1,22 +1,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2024.
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./hurricane/viewer/NetInformations.h"     |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_NET_INFORMATIONS_H
-#define  HURRICANE_NET_INFORMATIONS_H
-
+#pragma  once
 #include <vector>
 #include <QVariant>
 #include "hurricane/Commons.h"
@@ -87,11 +85,13 @@ namespace Hurricane {
   class AbstractNetInformationsVector {
     public:
       virtual                        ~AbstractNetInformationsVector  ();
-      virtual void                    addNet                         ( const Net* net )   = 0;
+      virtual NetInformations*        find                           ( const Net* )       = 0;
+      virtual void                    addNet                         ( const Net* )       = 0;
       virtual NetInformations*        getRow                         ( int row )          = 0;
       virtual int                     getColumnCount                 () const             = 0;
       virtual QVariant                getColumnName                  ( int column ) const = 0;
       virtual int                     size                           () const             = 0;
+      virtual void                    clear                          ()                   = 0;
   };
 
 
@@ -103,11 +103,13 @@ namespace Hurricane {
   class NetInformationsVector : public AbstractNetInformationsVector {
     public:
       virtual                        ~NetInformationsVector ();
-      virtual void                    addNet                ( const Net* net );
+      virtual void                    addNet                ( const Net* );
+      virtual InformationType*        find                  ( const Net* );
       virtual InformationType*        getRow                ( int row );
       virtual int                     getColumnCount        () const;
       virtual QVariant                getColumnName         ( int column ) const;
       virtual int                     size                  () const;
+      virtual void                    clear                 ();
     protected:
       vector<InformationType>  _netlist;
   };
@@ -135,6 +137,17 @@ namespace Hurricane {
 
 
   template<typename InformationType>
+  InformationType* NetInformationsVector<InformationType>::find ( const Net* net )
+  {
+    for ( size_t i=0; i<_netlist.size() ; ++i ) {
+      if (_netlist[i].getNet() == net)
+        return &_netlist[i];
+    }
+    return nullptr;
+  }
+
+
+  template<typename InformationType>
   int  NetInformationsVector<InformationType>::getColumnCount () const
   {
     return InformationType::getColumnCount();
@@ -155,6 +168,9 @@ namespace Hurricane {
   }
 
 
-}  // Hurricane namespace.
+  template<typename InformationType>
+  void  NetInformationsVector<InformationType>::clear ()
+  { _netlist.clear(); }
 
-#endif // HURRICANE_NET_INFORMATIONS_H
+
+}  // Hurricane namespace.

@@ -25,7 +25,6 @@ namespace Katana {
   using std::string;
   using std::map;
   using std::set;
-  using std::binary_function;
   using Hurricane::Record;
   using Hurricane::Interval;
   using Hurricane::DbU;
@@ -48,7 +47,7 @@ namespace Katana {
 
   class TrackSegment : public TrackElement {
     public:
-      class CompareById : public binary_function<const TrackSegment*,const TrackSegment*,bool> {
+      class CompareById {
         public:
           inline bool  operator() ( const TrackSegment* lhs, const TrackSegment* rhs ) const;
       };
@@ -73,6 +72,7 @@ namespace Katana {
       virtual bool                  isStrongTerminal       ( Flags flags=Flags::NoFlags ) const;
       virtual bool                  isStrap                () const;
       virtual bool                  isUnbreakable          () const;
+      virtual bool                  isForOffgrid           () const;
       virtual bool                  isSlackened            () const;
       virtual bool                  isDogleg               () const;
       virtual bool                  isShortDogleg          () const;
@@ -94,6 +94,7 @@ namespace Katana {
       virtual bool                  canMoveUp              ( float reserve, Flags ) const;
       virtual bool                  canSlacken             () const;
       virtual bool                  canRealign             () const;
+      virtual bool                  canReduce              () const;
       virtual float                 getMaxUnderDensity     ( Flags ) const;
       virtual unsigned long         getId                  () const;
       virtual Flags                 getDirection           () const;
@@ -106,7 +107,7 @@ namespace Katana {
       virtual DbU::Unit             getExtensionCap        ( Flags ) const;
       virtual unsigned long         getFreedomDegree       () const;
       virtual float                 getPriority            () const;
-      virtual uint32_t              getDoglegLevel         () const;
+      virtual uint32_t              getBreakLevel          () const;
       virtual TrackElement*         getNext                () const;
       virtual TrackElement*         getPrevious            () const;
       virtual TrackElement*         getParent              () const;
@@ -131,23 +132,24 @@ namespace Katana {
       virtual void                  computePriority        ();
       virtual void                  computeAlignedPriority ();
       virtual void                  updateFreedomDegree    ();
-      virtual void                  setDoglegLevel         ( uint32_t );
       virtual void                  swapTrack              ( TrackElement* );
       virtual void                  reschedule             ( uint32_t level );
-    //virtual void                  detach                 ();
-      virtual void                  detach                 ( TrackSet& );
       virtual void                  invalidate             ();
       virtual void                  revalidate             ();
       virtual void                  updatePPitch           ();
-      virtual void                  setAxis                ( DbU::Unit, uint32_t flags );
+      virtual void                  forcePositions         ( const Interval& freeSpan );
+      virtual void                  forcePositions         ( DbU::Unit source, DbU::Unit target );
+      virtual void                  setAxis                ( DbU::Unit, Flags flags );
+      virtual TrackElement*         promoteToPref          ();
       virtual TrackElement*         makeDogleg             ();
-      virtual TrackElement*         makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual Flags                 makeDogleg             ( Interval, TrackElement*& perpandicular, TrackElement*& parallel, Flags flags );
+      virtual TrackElement*         makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel, Flags );
+      virtual Flags                 makeDogleg             ( Interval, TrackElement*& perpandicular, TrackElement*& parallel, Flags );
       virtual void                  _postDoglegs           ( TrackElement*& perpandicular, TrackElement*& parallel );
       virtual bool                  moveAside              ( Flags );
       virtual bool                  slacken                ( Flags flags=Flags::NoFlags );
       virtual bool                  moveUp                 ( Flags );
       virtual bool                  moveDown               ( Flags );
+      virtual void                  reduce                 ();
 #if THIS_IS_DISABLED
       virtual void                  desalignate            ();
 #endif
@@ -165,7 +167,6 @@ namespace Katana {
              DbU::Unit      _ppitch;
              DataNegociate* _data;
              float          _priority;
-             unsigned int   _dogLegLevel:4;
              uint32_t       _flags; 
 
     protected:

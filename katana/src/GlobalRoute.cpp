@@ -16,6 +16,7 @@
 
 #include "flute.h"
 #include "hurricane/utilities/Dots.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/RoutingPad.h"
@@ -41,6 +42,7 @@ namespace {
   using std::left;
   using std::right;
   using std::set;
+  using Hurricane::DebugSession;
   using Hurricane::DbU;
   using Hurricane::Interval;
   using Hurricane::DBo;
@@ -51,6 +53,7 @@ namespace {
   using Anabatic::Edge;
   using Anabatic::GCell;
   using Anabatic::Vertex;
+  using Anabatic::EdgeCapacity;
   using Anabatic::AnabaticEngine;
   using Etesian::BloatExtension;
   using namespace Katana;
@@ -58,7 +61,7 @@ namespace {
 
   class DigitalDistance {
     public:
-      inline            DigitalDistance ( float h, float k, float hScaling );
+      inline            DigitalDistance ( float h, float k, float gcellAspectRatio, float hScaling );
       inline void       setNet          ( Net* );
              DbU::Unit  operator()      ( const Vertex* source ,const Vertex* target,const Edge* edge ) const;
     private:
@@ -66,13 +69,23 @@ namespace {
     //     "KNIK, routeur global pour la plateforme Coriolis", p. 52.
       float  _h;
       float  _k;
+      float  _gcellAspectRatio;
       float  _hScaling;
       Net*   _net;
   };
 
 
-  inline       DigitalDistance::DigitalDistance ( float h, float k, float hScaling ) : _h(h), _k(k), _hScaling(hScaling), _net(NULL) { }
-  inline void  DigitalDistance::setNet          ( Net* net ) { _net = net; }
+  inline       DigitalDistance::DigitalDistance ( float h
+                                                , float k
+                                                , float gcellAspectRatio
+                                                , float hScaling )
+    : _h(h)
+    , _k(k)
+    , _gcellAspectRatio(gcellAspectRatio)
+    , _hScaling(hScaling)
+    , _net(NULL)
+  { }
+  inline void  DigitalDistance::setNet ( Net* net ) { _net = net; }
 
 
   DbU::Unit  DigitalDistance::operator() ( const Vertex* source, const Vertex* target, const Edge* edge ) const
@@ -129,15 +142,21 @@ namespace {
        or (source->getGCell()->isStdCellRow() and target->getGCell()->isChannelRow()) )
       edgeDistance *= 10.0;
 
-    float hvScaling = (edge->isHorizontal()) ? _hScaling : 1.0 ;
+    float hvScaling = 1.0;
+    if (edge->isHorizontal()) {
+      hvScaling = _hScaling;
+      viaCost  /= _gcellAspectRatio;
+    }
+    
     float distance
       = (float)source->getDistance()
-      + (congestionCost + viaCost + historicCost) * edgeDistance * hvScaling;
+      + (congestionCost + historicCost + viaCost) * edgeDistance * hvScaling;
 
     cdebug_log(112,0) << "distance:"
                       << DbU::getValueString(source->getDistance()) << " + ("
                       << congestionCost << " + "
-                      << viaCost << " + "
+                      << viaCost << "/"
+                      << _gcellAspectRatio << " + "
                     //<< edge->getHistoricCost() << ") * "
                       << historicCost << ") * "
                       << DbU::getValueString(edgeDistance) << " * "
@@ -362,7 +381,6 @@ namespace Katana {
   using Hurricane::RoutingPad;
   using Hurricane::Instance;
   using CRL::Histogram;
-  using Anabatic::EngineState;
   using Anabatic::Dijkstra;
   using Anabatic::NetData;
 
@@ -380,12 +398,15 @@ namespace Katana {
   }
 
 
-  void  KatanaEngine::setupGlobalGraph ( uint32_t mode )
+  void  KatanaEngine::setupGlobalGraph ( Flags flags )
   {
     Cell* cell = getCell();
 
     cell->flattenNets( Cell::Flags::BuildRings|Cell::Flags::WarnOnUnplacedInstances );
-    cell->createRoutingPadRings( Cell::Flags::BuildRings );
+
+    if (!(flags & Flags::PlacementCallback)) {
+      cell->createRoutingPadRings( Cell::Flags::BuildRings );
+    }
 
     startMeasures();
 
@@ -397,7 +418,10 @@ namespace Katana {
     } else {
       cmess1 << "  o  Reusing existing grid." << endl;
     }
-    cmess1 << ::Dots::asInt("     - GCells"               ,getGCells().size()) << endl;
+    cmess1 << ::Dots::asInt("     - GCells",getGCells().size()) << endl;
+    ostringstream result;
+    result << EdgeCapacity::getAllocateds() << " (" << getEdgeCapacities().size() << "u)";
+    cmess1 << ::Dots::asString("     - Edge capacities",result.str()) << endl;
 
     stopMeasures();
     printMeasures( "Anabatic Grid" );
@@ -494,18 +518,30 @@ namespace Katana {
 
   void  KatanaEngine::runGlobalRouter ( Flags flags )
   {
-    if (getState() >= EngineState::EngineGlobalLoaded)
+    if (getStage() >= Anabatic::StageGlobalRouted)
       throw Error ("KatanaEngine::runGlobalRouter(): Global routing already done or loaded.");
 
     if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
     Breakpoint::stop( 100, "Bloated cells from previous placement iteration." );
 
+    if (not isChannelStyle()) {
+      if (!(flags & Flags::PlacementCallback)) {
+        setupPowerRails();
+        Flags protectFlags = Flags::NoFlags;
+        if (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
+          protectFlags |= Flags::ProtectSelf;
+        if (getConfiguration()->getLayerGauge(0)->getType() == Constant::LocalOnly)
+          protectFlags |= Flags::ProtectSelf;
+        protectRoutingPads( protectFlags );
+      }
+    }
+
     startMeasures();
-    cmess1 << "  o  Running global routing." << endl;
 
     openSession();
 
     annotateGlobalGraph();
+    cmess1 << "  o  Running global routing." << endl;
 
     float   edgeHInc         = getConfiguration()->getEdgeHInc();
     size_t  globalIterations = getConfiguration()->getGlobalIterations();;
@@ -515,6 +551,7 @@ namespace Katana {
     DigitalDistance*    distance =
       dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
                                             , getConfiguration()->getEdgeCostK()
+                                            , getConfiguration()->getGCellAspectRatio()
                                             , getConfiguration()->getEdgeHScaling() ));
     const vector<Edge*>& ovEdges = getOvEdges();
 
@@ -522,6 +559,11 @@ namespace Katana {
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*10 );
     else
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*getSearchHalo() );
+
+    // cerr << "Net ordering:" << endl;
+    // for ( NetData* netData : getNetOrdering() ) {
+    //   cerr << netData << endl;
+    // }
 
     bool     globalEstimated = false;
     size_t   iteration       = 0;
@@ -532,6 +574,8 @@ namespace Katana {
 
       long   wireLength = 0;
       long   viaCount   = 0;
+
+    //if (iteration == 1) DebugSession::open( 112, 120 );
 
       netCount = 0;
       for ( NetData* netData : getNetOrdering() ) {
@@ -617,6 +661,8 @@ namespace Katana {
              << " " << setw(6) << Timer::getStringTime  (getTimer().getCombTime()) << endl;
       resumeMeasures();
 
+    //if (iteration == 1) DebugSession::close();
+
       ++iteration;
     } while ( (netCount > 0) and (iteration < globalIterations) );
 
@@ -685,7 +731,7 @@ namespace Katana {
       addMeasure<uint32_t>( "H-ovE", hoverflow, 12 );
       addMeasure<uint32_t>( "V-ovE", voverflow, 12 );
 
-      if (not Session::isChannelStyle())
+      if (not Session::isChannelStyle() and (getConfiguration()->getBloat() != "disabled"))
         _buildBloatProfile();
 
       if (flags & Flags::ShowFailedNets      ) selectNets            ( this, nets );
@@ -708,11 +754,14 @@ namespace Katana {
     Session::close();
     if (isChannelStyle()) {
       setupRoutingPlanes();
-      setupPowerRails();
-      protectRoutingPads();
+
+      if (!(flags & Flags::PlacementCallback)) {
+        setupPowerRails();
+        protectRoutingPads();
+      }
     }
 
-    setState( EngineState::EngineGlobalLoaded );
+    setStage( Anabatic::StageGlobalRouted );
     setGlobalRoutingSuccess( ovEdges.empty() );
 
     // for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() ) {
@@ -721,6 +770,20 @@ namespace Katana {
     //     cerr << occurrence << " " << occurrence.getPath().getTransformation() << endl;
     //   }
     // }
+
+    uint32_t maxFlatEdgeOverflow = getConfiguration()->getMaxFlatEdgeOverflow();
+    if (hoverflow + voverflow > maxFlatEdgeOverflow) {
+      throw Error( "KatanaEngine::runGlobalRouter(): Total edge overflow of %u above maximum threshold %u.\n"
+                   "        On %s."
+                 , (hoverflow + voverflow)
+                 , maxFlatEdgeOverflow
+                 , getString(getCell()).c_str()
+                 );
+    } else {
+      if (hoverflow + voverflow > 0)
+        cerr << Warning( "KatanaEngine::runGlobalRouter(): Total edge overflow of %u below maximum threshold %u, continuing."
+                       , (hoverflow + voverflow), maxFlatEdgeOverflow ) << endl;
+    }
   }
 
 

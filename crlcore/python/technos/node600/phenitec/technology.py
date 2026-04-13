@@ -177,4 +177,4 @@ gdsLayersTable = \
     ]
 
 
-common.loadGdsLayers( gdsLayersTable )
+loadGdsLayers( gdsLayersTable )

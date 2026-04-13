@@ -29,6 +29,8 @@ namespace Hurricane {
 // Pin implementation
 // ****************************************************************************************************
 
+FastRTTI  Pin::_fastRTTI ( demangle(typeid(Pin).name()), &Pin::Inherit::fastRTTI() );
+
 Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Unit width, DbU::Unit height)
 // **************************************************************************************************************************************************************************************************
 :  Inherit(net, layer, x, y, width, height),
@@ -89,6 +91,10 @@ Pin* Pin::create(Net* net, const Name& name, const AccessDirection& accessDirect
     return rvalue;
   }
 
+const FastRTTI& Pin::vfastRTTI () const
+// ************************************
+{ return _fastRTTI; }
+
 void Pin::setPlacementStatus(const PlacementStatus& placementstatus)
 // *****************************************************************
 {
@@ -127,6 +133,7 @@ Record* Pin::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI), Record::Overload );
         record->add(getSlot("Name", &_name));
         record->add(getSlot("AccessDirection", &_accessDirection));
         record->add(getSlot("PlacementStatus", &_placementStatus));

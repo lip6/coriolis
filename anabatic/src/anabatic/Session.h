@@ -85,7 +85,12 @@ namespace Anabatic {
       static  inline const Configuration*              getConfiguration      ();
       static         float                             getSaturateRatio      ();
       static         size_t                            getSaturateRp         ();
+      static  inline DbU::Unit                         getSmallNetWidth      ();
+      static  inline DbU::Unit                         getSmallNetHeight     ();
       static  inline size_t                            getAllowedDepth       ();
+      static  inline float                             getLowDensity         ();
+      static  inline float                             getLowUpDensity       ();
+      static  inline float                             getMoveUpReserve      ();
       static         DbU::Unit                         getExtensionCap       ();
       static  inline CellGauge*                        getCellGauge          ();
       static  inline DbU::Unit                         getSliceHeight        ();
@@ -111,6 +116,7 @@ namespace Anabatic {
       static  inline DbU::Unit                         getDContactWidth      ();
       static  inline DbU::Unit                         getDContactPitch      ();
       static  inline RoutingGauge*                     getRoutingGauge       ();
+      static         uint32_t                          getStage              ();
       static  inline bool                              isGLayer              ( const Layer* );
       static  inline bool                              isGMetal              ( const Layer* );
       static  inline bool                              isGContact            ( const Layer* );
@@ -138,8 +144,10 @@ namespace Anabatic {
       static  inline DbU::Unit                         getExtensionCap       ( const Layer* );
       static  inline DbU::Unit                         getNearestTrackAxis   ( const Layer*,  DbU::Unit, uint32_t mode );
       static  inline Point                             getNearestGridPoint   ( Point, Box constraints );
+      static  inline void                              getPositions          ( RoutingPad*, Point&, Point& );
       static  inline size_t                            getSegmentStackSize   ();
       static  inline size_t                            getContactStackSize   ();
+      static  inline const vector<AutoContact*>&       getInvalidatedContacts(); 
       static  inline const vector<AutoSegment*>&       getInvalidateds       (); 
       static  inline const vector<AutoSegment*>&       getRevalidateds       (); 
       static  inline const set<AutoSegment*>&          getDestroyeds         (); 
@@ -147,6 +155,7 @@ namespace Anabatic {
       static  inline const set<Net*,DBo::CompareById>& getNetsModificateds   (); 
       static         void                              close                 ();
       static         void                              setAnabaticFlags      ( Flags );
+      static         void                              setStage              ( uint32_t );
       static  inline void                              dogleg                ( AutoSegment* );
       static  inline void                              doglegReset           ();
       static  inline void                              revalidateTopology    ();
@@ -224,6 +233,7 @@ namespace Anabatic {
   inline size_t                            Session::revalidate           () { return get("revalidate()")->_revalidate(); }
   inline size_t                            Session::getSegmentStackSize  () { return get("getSegmentStackSize()")->_segmentInvalidateds.size(); }
   inline size_t                            Session::getContactStackSize  () { return get("getContactStackSize()")->_autoContacts.size(); }
+  inline const vector<AutoContact*>&       Session::getInvalidatedContacts () { return get("getInvalidatedContacts()")->_autoContacts; }
   inline const vector<AutoSegment*>&       Session::getInvalidateds      () { return get("getInvalidateds()")->_segmentInvalidateds; }
   inline const vector<AutoSegment*>&       Session::getRevalidateds      () { return get("getRevalidateds()")->_segmentRevalidateds; }
   inline const set<AutoSegment*>&          Session::getDestroyeds        () { return get("getDestroyeds()")->_destroyedSegments; }
@@ -236,8 +246,12 @@ namespace Anabatic {
   inline void                              Session::dogleg               ( AutoSegment* autoSegment ) { return get("dogleg(AutoSegment*)")->_dogleg(autoSegment); }
   inline void                              Session::destroyRequest       ( AutoSegment* autoSegment ) { return get("destroyRequest(AutoSegment*)")->_destroyRequest(autoSegment); }
                                            
-  inline size_t                            Session::getAllowedDepth      () { return getConfiguration()->getAllowedDepth(); }
-                                           
+  inline DbU::Unit                         Session::getSmallNetWidth     ()                     { return getConfiguration()->getSmallNetWidth(); }
+  inline DbU::Unit                         Session::getSmallNetHeight    ()                     { return getConfiguration()->getSmallNetHeight(); }
+  inline size_t                            Session::getAllowedDepth      ()                     { return getConfiguration()->getAllowedDepth(); }
+  inline float                             Session::getLowDensity        ()                     { return getConfiguration()->getLowDensity(); }
+  inline float                             Session::getLowUpDensity      ()                     { return getConfiguration()->getLowUpDensity(); }
+  inline float                             Session::getMoveUpReserve     ()                     { return getConfiguration()->getMoveUpReserve(); }
   inline DbU::Unit                         Session::getSliceHeight       ()                     { return getCellGauge()->getSliceHeight(); }
   inline DbU::Unit                         Session::getSliceStep         ()                     { return getCellGauge()->getSliceStep(); }
   inline size_t                            Session::getGVerticalDepth    ()                     { return getConfiguration()->getGVerticalDepth(); }
@@ -286,6 +300,7 @@ namespace Anabatic {
   inline Flags                             Session::getDirection         ( const Layer* layer ) { return getDirection( getLayerDepth(layer) ); }
   inline Point                             Session::getNearestGridPoint  ( Point p, Box b )     { return get("getNearestGridPoint()")->_getNearestGridPoint(p,b); }
   inline DbU::Unit                         Session::getNearestTrackAxis  ( const Layer* layer, DbU::Unit axis, uint32_t mode ) { return get("getNearestTrackAxis()")->_getNearestTrackAxis(layer,axis,mode); }
+  inline void                              Session::getPositions         ( RoutingPad* rp, Point& source, Point& target ) { getConfiguration()->getPositions(rp,source,target); }
                                            
   inline void                              Session::_dogleg              ( AutoSegment* segment ) { _doglegs.push_back(segment); }
   inline void                              Session::_doglegReset         () { _doglegs.clear(); }

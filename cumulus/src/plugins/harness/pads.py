@@ -285,7 +285,7 @@ class Corona ( object ):
     def doPowerLayout ( self ):
         if not self.conf.routingGauge.hasPowerSupply(): return
         with UpdateSession():
-            capViaWidth   = self.conf.vDeepRG.getPitch()*4
+            capViaWidth   = self.conf.vDeepRG.getPitch()*10
             coreAb        = self.conf.coreAb
             powerNet      = None
             groundNet     = None
@@ -446,7 +446,7 @@ class Corona ( object ):
                                 , viaAxis2
                                 , stripeWidth
                                 , width
-                                , BigVia.AllowAllExpand
+                                , BigVia.FitToVias
                                 )
                     via.mergeDepth( supplyLayerDepth-1 )
                     via.doLayout()
@@ -463,7 +463,7 @@ class Corona ( object ):
                             , viaAxis1
                             , stripeWidth
                             , width
-                            , BigVia.AllowAllExpand
+                            , BigVia.FitToVias
                             )
                 trace( 550, '\tpower depth: {}\n'.format( self.conf.routingGauge.getPowerSupplyGauge().getDepth() ))
                 via.mergeDepth( self.conf.routingGauge.getPowerSupplyGauge().getDepth()-1 )

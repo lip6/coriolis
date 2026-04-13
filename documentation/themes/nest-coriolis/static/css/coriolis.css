@@ -63,6 +63,10 @@ div#contents {
     float:            left;
     top:              260px;
     left:             20px;
+    width:            23%;
+    max-height:       60vh;
+    z-index:          2;
+    overflow-y:       scroll;
   }
 }
 

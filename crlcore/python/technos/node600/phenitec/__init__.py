@@ -27,16 +27,16 @@ Cfg.Configuration.pushDefaultPriority( Cfg.Parameter.Priority.ConfigurationFile 
 if not DataBase.getDB(): DataBase.create()
 System.get()
 
-from .phenitec import misc
-from .phenitec import technology
-from .phenitec import display
-from .phenitec import analog
-from .phenitec import alliance
-from .phenitec import etesian
-from .phenitec import kite
-from .phenitec import plugins
-from .phenitec import stratus1
-from .phenitec import devices
+from . import misc
+from . import technology
+from . import display
+from . import analog
+from . import alliance
+from . import etesian
+from . import kite
+from . import plugins
+from . import stratus1
+from . import devices
 
 Cfg.Configuration.popDefaultPriority()
 

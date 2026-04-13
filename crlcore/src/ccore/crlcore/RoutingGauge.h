@@ -74,6 +74,7 @@ namespace CRL {
               RoutingLayerGauge*  getVerticalGauge      () const;
               RoutingLayerGauge*  getPowerSupplyGauge   () const;
               RoutingLayerGauge*  getLayerGauge         ( const Layer* ) const;
+              bool                isUsable              ( const Layer* ) const;
               size_t              getViaDepth           ( const Layer* ) const;
               size_t              getLayerDepth         ( const Layer* ) const;
               unsigned int        getLayerType          ( const Layer* ) const;
@@ -86,8 +87,9 @@ namespace CRL {
               RoutingLayerGauge*  getLayerGauge         ( size_t depth ) const;
               const Layer*        getRoutingLayer       ( size_t depth ) const;
               Layer*              getContactLayer       ( size_t depth ) const;
-      inline  unsigned int        getLayerDirection     ( size_t depth ) const;
+      inline  bool                isUsable              ( size_t depth ) const;
       inline  unsigned int        getLayerType          ( size_t depth ) const;
+      inline  unsigned int        getLayerDirection     ( size_t depth ) const;
       inline  DbU::Unit           getLayerPitch         ( size_t depth ) const;
       inline  DbU::Unit           getLayerOffset        ( size_t depth ) const;
       inline  DbU::Unit           getLayerWireWidth     ( size_t depth ) const;
@@ -140,6 +142,7 @@ namespace CRL {
   inline DbU::Unit          RoutingGauge::getVerticalPitch      () const { return getVerticalGauge  ()->getPitch(); }
   inline size_t             RoutingGauge::getDepth              () const { return _layerGauges.size(); }
   inline DbU::Unit          RoutingGauge::getViaWidth           ( size_t depth ) const { return getLayerGauge(depth)->getViaWidth(); }
+  inline bool               RoutingGauge::isUsable              ( size_t depth ) const { return getLayerGauge(depth)->isUsable(); }
   inline unsigned int       RoutingGauge::getLayerType          ( size_t depth ) const { return getLayerGauge(depth)->getType(); }
   inline unsigned int       RoutingGauge::getLayerDirection     ( size_t depth ) const { return getLayerGauge(depth)->getDirection(); }
   inline DbU::Unit          RoutingGauge::getLayerPitch         ( size_t depth ) const { return getLayerGauge(depth)->getPitch(); }

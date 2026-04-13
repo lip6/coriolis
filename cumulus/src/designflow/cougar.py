@@ -17,6 +17,7 @@ class Cougar ( FlowTask ):
     Core       = 0x0008
     GroundCap  = 0x0010
     WireRC     = 0x0020
+    NoErrors   = 0x0040
 
     @staticmethod
     def mkRule ( rule, targets, depends=[], flags=0 ):
@@ -34,6 +35,7 @@ class Cougar ( FlowTask ):
         if flags & Cougar.Core:       self.command.append( '-c' )
         if flags & Cougar.GroundCap:  self.command.append( '-ac' )
         if flags & Cougar.WireRC:     self.command.append( '-ar' )
+        if flags & Cougar.NoErrors:   self.command.append( '-w' )
         self.command   += [ self.inputFile.stem, self.outputFile.stem ]
         self.addClean( self.targets )
 
@@ -47,6 +49,10 @@ class Cougar ( FlowTask ):
         shellEnv = ShellEnv()
         shellEnv[ 'MBK_OUT_LO' ] = self.outputFile.suffix[1:]
         shellEnv[ 'MBK_IN_PH'  ] = self.inputFile .suffix[1:]
+        if self.flags & (Cougar.Transistor|Cougar.GroundCap|Cougar.WireRC) \
+           and ShellEnv.MBK_SPI_MODEL == 'MBK_SPI_MODEL_not_set':
+            e = ErrorMessage( 1, 'Cougar.doTask(): MBK_SPI_MODEL has not been set.'.format( 1 ))
+            return TaskFailed( e )
         shellEnv.export()
         state = subprocess.run( self.command )
         if state.returncode:
@@ -55,7 +61,7 @@ class Cougar ( FlowTask ):
             return TaskFailed( e )
         return self.checkTargets( 'Cougar.doTask' )
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )

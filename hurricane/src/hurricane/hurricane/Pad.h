@@ -35,6 +35,11 @@ class Layer;
 
 class Pad : public Component {
 // *************************
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
 // Types
 // *****
@@ -80,6 +85,9 @@ class Pad : public Component {
     public: virtual Record* _getRecord() const;
 
 };
+
+  
+  inline const FastRTTI& Pad::fastRTTI () { return _fastRTTI; }
 
 
 class JsonPad : public JsonComponent {

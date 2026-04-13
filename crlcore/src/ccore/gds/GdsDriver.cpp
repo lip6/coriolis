@@ -43,6 +43,7 @@ using namespace std;
 #include "hurricane/Cell.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Instance.h"
+#include "hurricane/Library.h"
 using namespace Hurricane;
 
 #include "crlcore/Utilities.h"
@@ -103,49 +104,63 @@ namespace {
 
   bool  isOnGrid ( Component* component, const Box& bb )
   {
-    bool      error   = false;
-    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
-    if (bb.getXMin() % oneGrid) {
+    bool error = false;
+    if (bb.getXMin() % DbU::oneGrid) {
       error = true;
       cerr << Error( "isOnGrid(): On %s of %s,\n"
                      "        X-Min %s is not on grid (%s)"
                    , getString(component).c_str()
                    , getString(component->getCell()).c_str()
                    , DbU::getValueString(bb.getXMin()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
+                   , DbU::getValueString(DbU::oneGrid).c_str()
                    ) << endl;
     }
-    if (bb.getXMax() % oneGrid) {
+    if (bb.getXMax() % DbU::oneGrid) {
       error = true;
       cerr << Error( "isOnGrid(): On %s of %s,\n"
                      "        X-Max %s is not on grid (%s)"
                    , getString(component).c_str()
                    , getString(component->getCell()).c_str()
                    , DbU::getValueString(bb.getXMax()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
+                   , DbU::getValueString(DbU::oneGrid).c_str()
                    ) << endl;
     }
-    if (bb.getYMin() % oneGrid) {
+    if (bb.getYMin() % DbU::oneGrid) {
       error = true;
       cerr << Error( "isOnGrid(): On %s of %s,\n"
                      "        Y-Min %s is not on grid (%s)"
                    , getString(component).c_str()
                    , getString(component->getCell()).c_str()
                    , DbU::getValueString(bb.getYMin()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
+                   , DbU::getValueString(DbU::oneGrid).c_str()
                    ) << endl;
     }
-    if (bb.getYMax() % oneGrid) {
+    if (bb.getYMax() % DbU::oneGrid) {
       error = true;
       cerr << Error( "isOnGrid(): On %s of %s,\n"
                      "        Y-Max %s is not on grid (%s)"
                    , getString(component).c_str()
                    , getString(component->getCell()).c_str()
                    , DbU::getValueString(bb.getYMax()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
+                   , DbU::getValueString(DbU::oneGrid).c_str()
                    ) << endl;
     }
     return error;
+  }
+
+
+  Box& putOnGrid ( Box& bb )
+  {
+    DbU::Unit xMinShrink = bb.getXMin() % DbU::oneGrid;
+    DbU::Unit yMinShrink = bb.getYMin() % DbU::oneGrid;
+    DbU::Unit xMaxShrink = bb.getXMax() % DbU::oneGrid;
+    DbU::Unit yMaxShrink = bb.getYMax() % DbU::oneGrid;
+
+    if (xMinShrink) xMinShrink -= DbU::oneGrid;
+    if (yMinShrink) yMinShrink -= DbU::oneGrid;
+
+    bb.inflate( xMinShrink, yMinShrink, -xMaxShrink, -yMaxShrink );
+    return bb;
   }
 
 
@@ -769,7 +784,6 @@ namespace {
     for ( Instance* instance : cell->getInstances() ) {
       if (instance->getMasterCell()->getName() == "control_r") continue;
       if (not hasLayout(instance->getMasterCell())) continue;
-    //cerr << "| " << getString(instance) << endl;
 
       if (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED) continue;
 
@@ -786,17 +800,28 @@ namespace {
         cdebug_log(101,0) << "Writing " << component << endl;
         Polygon* polygon  = dynamic_cast<Polygon*>(component);
         if (polygon) {
-          vector< vector<Point> > subpolygons;
-          polygon->getSubPolygons( subpolygons );
-
-          for ( const vector<Point>& subpolygon : subpolygons ) {
+          if (polygon->isPolygon45()) {
             for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
               if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
               (*this) << BOUNDARY;
               (*this) << LAYER(layer->getGds2Layer());
               (*this) << DATATYPE(layer->getGds2Datatype());
-              (*this) << subpolygon;
+              (*this) << polygon->getPoints();
               (*this) << ENDEL;
+            }
+          } else {
+            vector< vector<Point> > subpolygons;
+            polygon->getSubPolygons( subpolygons );
+            
+            for ( const vector<Point>& subpolygon : subpolygons ) {
+              for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+                if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
+                (*this) << BOUNDARY;
+                (*this) << LAYER(layer->getGds2Layer());
+                (*this) << DATATYPE(layer->getGds2Datatype());
+                (*this) << subpolygon;
+                (*this) << ENDEL;
+              }
             }
           }
         } else {
@@ -832,12 +857,12 @@ namespace {
                 Box bb = component->getBoundingBox(layer);
                 if ((bb.getWidth() == 0) or (bb.getHeight() == 0))
                   continue;
+                isOnGrid( component, bb );
                 (*this) << BOUNDARY;
                 (*this) << LAYER(layer->getGds2Layer());
                 (*this) << DATATYPE(layer->getGds2Datatype());
                 (*this) << bb;
                 (*this) << ENDEL;
-                isOnGrid( component, bb );
 
                 const BasicLayer* exportLayer = layer;
                 if (NetExternalComponents::isExternal(component)) {
@@ -863,11 +888,19 @@ namespace {
                     name.erase( 511 );
                   }
                 // PRESENTATION: 0b000101 means font:00, vpres:01 (center), hpres:01 (center)
+                  auto textLayer = exportLayer;
+                  for (BasicLayer* layer : tech->getBasicLayers()) {
+                    if(  (layer->getMaterial().getCode() == BasicLayer::Material::info)
+                      && (layer->getGds2Layer() == exportLayer->getGds2Layer()) ) {
+                      textLayer = layer;
+                      break;
+                    }
+                  }
                   cdebug_log(101,0) << "TEXT" << endl;
                   (*this) << TEXT;
-                  (*this) << LAYER(exportLayer->getGds2Layer());
+                  (*this) << LAYER(textLayer->getGds2Layer());
                   cdebug_log(101,0) << "TEXTTYPE" << endl;
-                  (*this) << TEXTTYPE( 0 );
+                  (*this) << TEXTTYPE(textLayer->getGds2Datatype());
                   cdebug_log(101,0) << "TEXTYPE end record" << endl;
                   (*this) << PRESENTATION( 5 );
                   (*this) << putOnGrid( bb.getCenter() );

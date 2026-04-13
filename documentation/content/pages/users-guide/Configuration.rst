@@ -18,7 +18,7 @@ Coriolis Configuration & Initialisation
 
 
 General Software Architecture
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 |Coriolis| has been built with respect of the classical paradigm that the
 computational intensive parts have been written in C++, and almost
@@ -40,7 +40,7 @@ two methods:
 
 
 Configuration & User's Settings
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 All configurations files are shipped under the form of |Python| modules.
 They are to be loaded through ``import`` statements. The user's configuration
@@ -84,7 +84,7 @@ For example, to use |MOSIS| 180nm, you can put in your :cb:`./coriolis2/setting.
 
 
 A Comprehensive Example of :cb:`./coriolis2/setting.py`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
@@ -137,8 +137,8 @@ A Comprehensive Example of :cb:`./coriolis2/setting.py`
    # P&R related parameters.
    Cfg.getParamString    ( 'anabatic.routingGauge'       ).setString    ( 'msxlib4' )
    Cfg.getParamString    ( 'anabatic.topRoutingLayer'    ).setString    ( 'METAL4'  )
-   Cfg.getParamInt       ( 'katana.hTracksReservedLocal' ).setInt       ( 6         )
-   Cfg.getParamInt       ( 'katana.vTracksReservedLocal' ).setInt       ( 3         )
+   Cfg.getParamInt       ( 'katana.hTracksReservedMin'   ).setInt       ( 3         )
+   Cfg.getParamInt       ( 'katana.vTracksReservedMin'   ).setInt       ( 2         )
 
    Cfg.Configuration.popDefaultPriority()
 

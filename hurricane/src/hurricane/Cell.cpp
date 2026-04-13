@@ -33,6 +33,7 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Pad.h"
+#include "hurricane/Rectilinear.h"
 #include "hurricane/Layer.h"
 #include "hurricane/Slice.h"
 #include "hurricane/Rubber.h"
@@ -526,6 +527,8 @@ namespace Hurricane {
 // Cell implementation
 // ****************************************************************************************************
 
+FastRTTI  Cell::_fastRTTI ( demangle(typeid(Cell).name()), &Cell::Inherit::fastRTTI() );
+
 
 Cell::Cell(Library* library, const Name& name)
 // *******************************************
@@ -568,6 +571,11 @@ Cell* Cell::create(Library* library, const Name& name)
 
     return cell;
 }
+
+
+const FastRTTI& Cell::vfastRTTI () const
+// *************************************
+{ return _fastRTTI; }
 
 Cell* Cell::fromJson(const string& filename)
 // *****************************************
@@ -887,10 +895,14 @@ void Cell::flattenNets ( const Instance* instance, const std::set<string>& exclu
     DebugSession::open( net, 18, 19 ); 
     cdebug_log(18,1) << "Flattening top net: " << net << endl;
 
+    cdebug_log(18,0) << "Looking for terminal Plug occurrences" << endl;
     vector<Occurrence>  plugOccurrences;
-    for ( Occurrence plugOccurrence : topHyperNets[i].getTerminalNetlistPlugOccurrences() )
+    for ( Occurrence plugOccurrence : topHyperNets[i].getTerminalNetlistPlugOccurrences() ) {
+      cdebug_log(18,0) << "| " << plugOccurrence << endl;
       plugOccurrences.push_back( plugOccurrence );
+    }
 
+    cdebug_log(18,0) << "Creating RoutingPads" << endl;
     for ( Occurrence plugOccurrence : plugOccurrences ) {
       RoutingPad* rp = RoutingPad::create( net, plugOccurrence, rpFlags );
       rp->materialize();
@@ -1067,7 +1079,6 @@ Cell* Cell::getClone()
   return clone;
 }
 
-
 void Cell::uniquify(unsigned int depth)
 // ************************************
 {
@@ -1113,6 +1124,120 @@ void Cell::uniquify(unsigned int depth)
   cdebug_tabw(18,-1);
   cdebug_log(18,0) << "Cell::uniquify() END " << this << endl;
 }
+
+
+void Cell::flatten ( Instance* instance )
+// **************************************
+{
+  if (not instance) {
+    cerr << Error( "Cell::flatten(): \"%s\", NULL instance argument."
+                 , getString(getName()).c_str()
+                 ) << endl;
+    return; 
+  }
+  if (instance->getCell() != this) {
+    cerr << Error( "Cell::flatten(): \"%s\" has no instance \"%s\"."
+                 , getString(getName()).c_str()
+                 , getString(instance->getName()).c_str()
+                 ) << endl;
+    return; 
+  }
+
+  map<Net*,Net*> upNets;
+  for ( Net* instanceNet : instance->getMasterCell()->getNets() ) {
+    for ( Component* component : instanceNet->getComponents() ) {
+      if (not dynamic_cast<Plug*>(component)) {
+        cerr << Error( "Cell::flatten(): Physical component in Net %s."
+                     , getString(component).c_str()
+                     ) << endl;
+        break;
+      }
+    }
+    
+    if (instanceNet->isGlobal()) {
+      Net* upNet = getNet( instanceNet->getName() );
+      if (not upNet) {
+        upNet = Net::create( this, instanceNet->getName() );
+        upNet->setGlobal( true );
+        upNet->setDirection( instanceNet->getDirection() );
+        upNet->setType     ( instanceNet->getType     () );
+      }
+      upNets.insert( make_pair( instanceNet, upNet ));
+      continue;
+    }
+
+    if (instanceNet->isFused()) {
+      Net* upNet = getNet( instanceNet->getName() );
+      if (not upNet) {
+        for ( Net* cellNet : getNets() ) {
+          if (cellNet->isFused()) {
+            upNet = cellNet;
+            break;
+          }
+        }
+        if (not upNet) {
+          upNet = Net::create( this, instanceNet->getName() );
+          upNet->setType( instanceNet->getType() );
+        }
+      }
+      upNets.insert( make_pair( instanceNet, upNet ));
+      continue;
+    }
+
+    if (instanceNet->isExternal()) {
+      Plug* plug  = instance->getPlug( instanceNet );
+      Net*  upNet = plug->getNet();
+      if (upNet)
+        upNets.insert( make_pair( instanceNet, upNet ));
+    }
+
+    string upName = getString(getName()) + "_f_" + getString(instanceNet->getName());
+    Net*   upNet  = getNet( upName );
+    if (upNet) {
+      throw Error( "Cell::flatten(): Net name clash while flattening, \"%s\" already exists"
+                 , upName.c_str() );
+    }
+    upNet = Net::create( this, upName );
+    upNet->setDirection( instanceNet->getDirection() );
+    upNet->setType     ( instanceNet->getType     () );
+    upNets.insert( make_pair( instanceNet, upNet ));
+  }
+
+  Transformation instanceTransf = instance->getTransformation();
+  for ( Instance* subInstance : instance->getMasterCell()->getInstances() ) {
+    string    upName     = getString(getName()) + "_f_" + getString(subInstance->getName());
+    Instance* upInstance = getInstance( upName );
+    if (upInstance) {
+      throw Error( "Cell::flatten(): Instance name clash while flattening, \"%s\" already exists"
+                 , upName.c_str() );
+    }
+
+    upInstance = Instance::create( this, upName, subInstance->getMasterCell() );
+    for ( Plug* plug : subInstance->getPlugs() ) {
+      Net* connectedNet = plug->getNet();
+      if (not connectedNet) continue; 
+      auto iupNet = upNets.find( connectedNet );
+      if (iupNet == upNets.end()) {
+        cerr << Error( "Cell::flatten(): Missing up net for \"%s\"."
+                     , getString(connectedNet).c_str()
+                     ) << endl;
+        continue;
+      }
+      Plug* upPlug = upInstance->getPlug( plug->getMasterNet() );
+      upPlug->setNet( iupNet->second );
+      
+      if (subInstance->getPlacementStatus() != Instance::PlacementStatus::UNPLACED) {
+        Transformation upTransf = subInstance->getTransformation();
+        instanceTransf.applyOn( upTransf );
+        upInstance->setTransformation( upTransf );
+        upInstance->setPlacementStatus( subInstance->getPlacementStatus() );
+      }
+    }
+  }
+
+  instance->destroy();
+}
+
 
 void Cell::materialize()
 // *********************
@@ -1261,6 +1386,7 @@ Record* Cell::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add( getSlot("_fastRTTI"       , &_fastRTTI        ), Record::Overload );
         record->add( getSlot("_library"        , _library          ) );
         record->add( getSlot("_name"           , &_name            ) );
         record->add( getSlot("_instances"      , &_instanceMap     ) );
@@ -1546,16 +1672,16 @@ Cell::InstanceMap::InstanceMap()
 {
 }
 
-Name Cell::InstanceMap::_getKey(Instance* instance) const
-// ******************************************************
+const SharedName* Cell::InstanceMap::_getKey(Instance* instance) const
+// *************************************************************
 {
-    return instance->getName();
+  return instance->getName()._getSharedName();
 }
 
-unsigned int  Cell::InstanceMap::_getHashValue(Name name) const
-// *******************************************************
+unsigned int  Cell::InstanceMap::_getHashValue(const SharedName* sharedName) const
+// *************************************************************************
 {
-  return name._getSharedName()->getHash() / 8;
+  return sharedName->getHash();
 }
 
 Instance* Cell::InstanceMap::_getNextElement(Instance* instance) const
@@ -1585,7 +1711,7 @@ Cell::SlaveInstanceSet::SlaveInstanceSet()
 unsigned Cell::SlaveInstanceSet::_getHashValue(Instance* slaveInstance) const
 // **************************************************************************
 {
-  return slaveInstance->getId() / 8;
+  return hashFNV( slaveInstance->getId() );
 }
 
 Instance* Cell::SlaveInstanceSet::_getNextElement(Instance* slaveInstance) const
@@ -1621,21 +1747,7 @@ const Name& Cell::NetMap::_getKey(Net* net) const
 unsigned Cell::NetMap::_getHashValue(const Name& name) const
 // *********************************************************
 {
-  unsigned long hash = 0;
-  unsigned long sum4 = 0;
-  const string& s = name._getSharedName()->_getSString();
-  for ( size_t i=0 ; i<s.size() ; ++i ) {
-    sum4 |= ((unsigned long)s[i]) << ((i%4) * 8);
-    if (i%4 == 3) {
-      hash += sum4;
-      sum4  = 0;
-    }
-  }
-  hash += sum4;
-
-  return hash;
-  
-//return (unsigned int)name._getSharedName()->getId() / 8;
+  return hashFNV( name._getSharedName()->_getSString() );
 }
 
 Net* Cell::NetMap::_getNextElement(Net* net) const
@@ -1670,7 +1782,7 @@ Name Cell::PinMap::_getKey(Pin* pin) const
 unsigned Cell::PinMap::_getHashValue(Name name) const
 // **************************************************
 {
-  return (unsigned int)name._getSharedName()->getHash() / 8;
+  return (unsigned int)name._getSharedName()->getHash();
 }
 
 Pin* Cell::PinMap::_getNextElement(Pin* pin) const
@@ -1735,7 +1847,7 @@ Cell::MarkerSet::MarkerSet()
 unsigned Cell::MarkerSet::_getHashValue(Marker* marker) const
 // **********************************************************
 {
-  return (unsigned int)marker->getId() / 8;
+  return hashFNV( marker->getId() );
 }
 
 Marker* Cell::MarkerSet::_getNextElement(Marker* marker) const

@@ -74,7 +74,6 @@ namespace Katana {
               const Configuration*     getConfiguration           () const;
               Configuration*           getConfiguration           ();
       inline  uint32_t                 getSuccessState            () const;
-      inline  uint32_t                 getStage                   () const;
       inline  uint64_t                 getEventsLimit             () const;
       inline  uint32_t                 getRipupLimit              ( uint32_t type ) const;
               uint32_t                 getRipupLimit              ( const TrackElement* ) const;
@@ -107,7 +106,6 @@ namespace Katana {
       inline  void                     setGlobalRoutingSuccess    ( bool ) const;
       inline  void                     setDetailedRoutingSuccess  ( bool ) const;
       virtual void                     openSession                ();
-      inline  void                     setStage                   ( uint32_t );
       inline  void                     setViewer                  ( CellViewer* );
       inline  void                     setPostEventCb             ( Configuration::PostEventCb_t );
       inline  void                     setEventLimit              ( uint64_t );
@@ -126,10 +124,10 @@ namespace Katana {
               void                     setInterrupt               ( bool );
               void                     createChannels             ();
               void                     setupRoutingPlanes         ();
-              void                     setupGlobalGraph           ( uint32_t mode );
+              void                     setupGlobalGraph           ( Flags flags=Flags::NoFlags );
               void                     annotateGlobalGraph        ();
               void                     setFixedPreRouted          ();
-              void                     digitalInit                ();
+              void                     digitalInit                ( Flags flags=Flags::NoFlags );
               void                     analogInit                 ();
               void                     pairSymmetrics             ();
               void                     updateEstimateDensity      ( NetData*, double weight );
@@ -142,7 +140,6 @@ namespace Katana {
               void                     _runKatanaInit             ();
               void                     _gutKatana                 ();
               void                     _buildBloatProfile         ();
-              void                     _computeCagedConstraints   ();
               TrackElement*            _lookup                    ( Segment* ) const;
       inline  TrackElement*            _lookup                    ( AutoSegment* ) const;
       inline  void                     _addShortDogleg            ( TrackElement*, TrackElement* );
@@ -164,7 +161,6 @@ namespace Katana {
               double                   _minimumWL;
               TrackElementPairing      _shortDoglegs;
               DataSymmetricMap         _symmetrics;
-              uint32_t                 _stage;
       mutable uint32_t                 _successState;
     protected:
     // Constructors & Destructors.
@@ -186,7 +182,6 @@ namespace Katana {
   inline  bool                          KatanaEngine::useStaticBloatProfile   () const { return getConfiguration()->useStaticBloatProfile(); }
   inline  CellViewer*                   KatanaEngine::getViewer               () const { return _viewer; }
   inline  AnabaticEngine*               KatanaEngine::base                    () { return static_cast<AnabaticEngine*>(this); }
-  inline  uint32_t                      KatanaEngine::getStage                () const { return _stage; }
   inline  Configuration::PostEventCb_t& KatanaEngine::getPostEventCb          () { return getConfiguration()->getPostEventCb(); }
   inline  uint32_t                      KatanaEngine::getSuccessState         () const { return _successState; }
   inline  uint64_t                      KatanaEngine::getEventsLimit          () const { return getConfiguration()->getEventsLimit(); }
@@ -207,7 +202,6 @@ namespace Katana {
   inline  const std::vector<RoutingPlane*>&
                                         KatanaEngine::getRoutingPlanes        () const { return _routingPlanes; }
   inline  void                          KatanaEngine::setViewer               ( CellViewer* viewer ) { _viewer=viewer; }
-  inline  void                          KatanaEngine::setStage                ( uint32_t stage ) { _stage=stage; }
   inline  void                          KatanaEngine::setEventLimit           ( uint64_t limit ) { getConfiguration()->setEventsLimit(limit); }
   inline  void                          KatanaEngine::setRipupLimit           ( uint32_t type, uint32_t limit ) { getConfiguration()->setRipupLimit(limit,type); }
   inline  void                          KatanaEngine::setRipupCost            ( uint32_t cost ) { getConfiguration()->setRipupCost(cost); }

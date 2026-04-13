@@ -45,6 +45,13 @@ stdColors = \
     , 'Tan'           : '210,180,140'  # Shade of Browns
     , 'Yellow'        : '255,255,0'    # Shade of Yellows.
     , 'LightYellow'   : '255,255,224'
+    , 'Purple'        : '160,32,240'
+    , 'SteelBlue'     : '#4682B4'
+    , 'LightSteelBlue': '#87cefa'
+    , 'Olive'         : '#808000'
+    , 'OliveDrab3'    : '#9acd32'
+    , 'Sienna3'       : '#cd6839'
+    , 'BurlyWood3'    : '#cdaa7d'
     }
 
 

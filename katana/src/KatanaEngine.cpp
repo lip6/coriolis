@@ -54,10 +54,12 @@ namespace {
 
   using namespace std;
   using Hurricane::Error;
+  using Hurricane::DBo;
   using Hurricane::NetRoutingState;
   using Hurricane::NetRoutingExtension;
   using Hurricane::Net;
   using Hurricane::Cell;
+  using Hurricane::Instance;
   using Hurricane::Segment;
   using Hurricane::Plug;
   using Katana::Session;
@@ -113,6 +115,26 @@ namespace {
 #endif
 
 
+  void  rsetNoExtractFlag ( Cell* cell, size_t depth=0 )
+  {
+    static set<Cell*,DBo::CompareById> processeds;
+
+    if (not depth) processeds.clear();
+    else {
+      if (processeds.find(cell) != processeds.end()) return;
+      processeds.insert( cell );
+    }
+
+    if (cell->isRouted() or cell->isTerminalNetlist()) return;
+    if (depth) cell->setNoExtractConsistent( true );
+
+    for ( Instance* instance : cell->getInstances() )
+      rsetNoExtractFlag( instance->getMasterCell(), depth+1 );
+
+    if (not depth) processeds.clear();
+  }
+
+
 }  // Anonymous namespace.
 
 
@@ -129,6 +151,8 @@ namespace Katana {
   using std::ofstream;
   using std::ostringstream;
   using std::setprecision;
+  using std::fixed;
+  using std::defaultfloat;
   using std::vector;
   using std::make_pair;
   using Hurricane::dbo_ptr;
@@ -159,7 +183,7 @@ namespace Katana {
   using CRL::Measures;
   using CRL::MeasuresSet;
   using Anabatic::Edge;
-  using Anabatic::EngineState;
+  using Anabatic::EdgeCapacity;
   using Anabatic::GCellsUnder;
   using Anabatic::AutoContact;
   using Anabatic::AutoSegmentLut;
@@ -194,7 +218,6 @@ namespace Katana {
     , _minimumWL      (0.0)
     , _shortDoglegs   ()
     , _symmetrics     ()
-    , _stage          (StageNegociate)
     , _successState   (0)
   { }
 
@@ -212,6 +235,7 @@ namespace Katana {
 
   // Flute: load POWV9.dat & POST9.dat
     Flute::readLUT( System::getPath( "coriolis_top" ).toString() );
+    rsetNoExtractFlag( getCell() );
   }
 
 
@@ -221,26 +245,13 @@ namespace Katana {
 
   void  KatanaEngine::_runKatanaInit ()
   {
-    Utilities::Path pythonSitePackages = System::getPath( "pythonSitePackages" );
-    Utilities::Path confFile           = "coriolis/katana/initHook.py";
-    Utilities::Path systemConfFile     = pythonSitePackages / confFile;
-
-    if (systemConfFile.exists()) {
-    //Isobar::Script::addPath( systemConfDir.toString() );
-
-      dbo_ptr<Isobar::Script> script = Isobar::Script::create( confFile.toPyModPath() );
-      script->addKwArgument( "katana"    , (PyObject*)PyKatanaEngine_Link(this) );
-      script->runFunction  ( "katanaHook", getCell() );
-
-    //Isobar::Script::removePath( systemConfDir.toString() );
-    } else {
-      cerr << Warning( "Katana system configuration file:\n  <%s> not found."
-                     , systemConfFile.toString().c_str() ) << endl;
-    }
+    dbo_ptr<Isobar::Script> script = Isobar::Script::create( "coriolis.katana.initHook" );
+    script->addKwArgument( "katana"    , (PyObject*)PyKatanaEngine_Link(this) );
+    script->runFunction  ( "katanaHook", getCell() );
   }
 
 
-  void  KatanaEngine::digitalInit ()
+  void  KatanaEngine::digitalInit ( Flags flags )
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
     _runKatanaInit();
@@ -250,23 +261,15 @@ namespace Katana {
     Super::chipPrep();
 
     setupChannelMode();
-    setupGlobalGraph( 0 );
+    setupGlobalGraph( flags );
     if (not isChannelStyle()) {
       setupRoutingPlanes();
     }
     setupSpecialNets();
     if (not setupPreRouteds()) {
-      setState( Anabatic::EngineDriving );
+      setStage( Anabatic::StageChainReduce );
       throw Error( "KatanaEngine::digitalInit(): All nets are already routed, doing nothing." );
-    } else {
-      if (not isChannelStyle()) {
-        setupPowerRails();
-        Flags flags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
-                      ? Flags::ProtectSelf : Flags::NoFlags;
-        protectRoutingPads( flags );
-      }
     }
-
     cdebug_tabw(155,-1);
   }
 
@@ -340,7 +343,6 @@ namespace Katana {
     }
     
     KatanaEngine* katana = new KatanaEngine ( cell );
-
     katana->_postCreate();
 
     return katana;
@@ -354,8 +356,8 @@ namespace Katana {
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << _cell->getName() << ">" << endl;
 
-    if (getState() < EngineState::EngineGutted)
-      setState( EngineState::EnginePreDestroying );
+    if (getStage() < Anabatic::StageGutted)
+      setStage( Anabatic::StagePreDestroying );
 
     _gutKatana();
     Super::_preDestroy();
@@ -386,6 +388,7 @@ namespace Katana {
   {
     if (segment->isBlockage()) return 0;
 
+    if (segment->isNonPref    ()) return getConfiguration()->getRipupLimit( Configuration::NonPrefRipupLimit );
     if (segment->isStrap      ()) return getConfiguration()->getRipupLimit( Configuration::StrapRipupLimit );
     if (segment->isUnbreakable()) return getConfiguration()->getRipupLimit( Configuration::StrapRipupLimit );
     if (segment->isShortNet   ()) return getConfiguration()->getRipupLimit( Configuration::ShortNetRipupLimit );
@@ -470,6 +473,7 @@ namespace Katana {
   void  KatanaEngine::annotateGlobalGraph ()
   {
     cmess1 << "  o  Back annotate global routing graph." << endl;
+  //DebugSession::open( 159, 160 );
 
     for ( size_t depth=0 ; depth<_routingPlanes.size() ; ++depth ) {
       RoutingPlane* rp = _routingPlanes[depth];
@@ -503,16 +507,7 @@ namespace Katana {
           }
 
           cdebug_log(159,0) << "Capacity from: " << element << ":" << elementCapacity << endl;
-          Segment*  segment = element->getSegment();
-          Interval  segmentUSpan;
-
-          source = segment->getSourcePosition();
-          target = segment->getTargetPosition();
-          if (track->getDirection() == Flags::Vertical)
-            segmentUSpan = Interval( source.getY(), target.getY() );
-          else
-            segmentUSpan = Interval( source.getX(), target.getX() );
-
+          Interval  segmentUSpan = Interval( element->getSourceU(), element->getTargetU() );
           if (uspan.isEmpty()) {
             uspan = segmentUSpan;
             continue;
@@ -524,6 +519,7 @@ namespace Katana {
             }
           }
 
+          cdebug_log(159,0) << "  Processing whole segment set, span " << uspan << endl;
           if (track->getDirection() == Flags::Vertical) {
             source = Point( axis, uspan.getVMin() );
             target = Point( axis, uspan.getVMax() );
@@ -534,9 +530,12 @@ namespace Katana {
 
           GCellsUnder gcells = getGCellsUnder( source, target );
           if (not gcells->empty()) {
+            cdebug_log(159,0) << "  -> Under " << gcells->size() << " 0:" << gcells->gcellAt(0) << endl;
+            cdebug_log(159,0) << "  -> source=" << source << " target=" << target << endl;
             for ( size_t i=0 ; i<gcells->size()-1 ; ++i ) {
               Edge* edge = gcells->gcellAt(i)->getEdgeAt( side, axis );
-              edge->reserveCapacity( elementCapacity );
+              edge->decreaseCapacity( elementCapacity, depth );
+            //edge->reserveCapacity( elementCapacity );
             }
           }
 
@@ -556,7 +555,8 @@ namespace Katana {
           if (not gcells->empty()) {
             for ( size_t i=0 ; i<gcells->size()-1 ; ++i ) {
               Edge* edge = gcells->gcellAt(i)->getEdgeAt( side, axis );
-              edge->reserveCapacity( elementCapacity );
+              edge->decreaseCapacity( elementCapacity, depth );
+            //edge->reserveCapacity( elementCapacity );
             }
           }
         }
@@ -596,16 +596,29 @@ namespace Katana {
 
         for ( Edge* edge : gcell->getEdges( Flags::NorthSide) ) {
           if (edge->getReservedCapacity() < vReservedMin) {
-            edge->reserveCapacity( vReservedMin - edge->getReservedCapacity() );
+            uint32_t reservedCapacity = edge->getReservedCapacity();
+            if (edge->getRawCapacity() <= vReservedMin)
+              reservedCapacity += vReservedMin - edge->getRawCapacity() + 2;
+            edge->reserveCapacity( vReservedMin - reservedCapacity );
           }
         }
         for ( Edge* edge : gcell->getEdges( Flags::EastSide) ) {
-          if (edge->getReservedCapacity() < hReservedMin)
-            edge->reserveCapacity( hReservedMin - edge->getReservedCapacity()  );
+          if (edge->getReservedCapacity() < hReservedMin) {
+            uint32_t reservedCapacity = edge->getReservedCapacity();
+            if (edge->getRawCapacity() <= vReservedMin)
+              reservedCapacity += hReservedMin - edge->getRawCapacity() + 2;
+            edge->reserveCapacity( hReservedMin - reservedCapacity );
+          }
         }
         gcell->postGlobalAnnotate();
       }
     }
+
+    ostringstream result;
+    result << EdgeCapacity::getAllocateds() << " (" << getEdgeCapacities().size() << "u)";
+    cmess1 << ::Dots::asString("     - Edge capacities",result.str()) << endl;
+
+  //DebugSession::close();
   }
 
 
@@ -702,7 +715,7 @@ namespace Katana {
         continue;
       }
 
-      if (segment->isFixed() or segment->isBlockage()) continue;
+      if (segment->isBlockage()) continue;
       if (segment->isReduced()) reduceds.push_back( segment );
 
       totalWireLength += wl;
@@ -717,8 +730,8 @@ namespace Katana {
       if (segment->isVertical  ()) ++vunrouteds;
     }
 
-    float segmentRatio    = (float)(routeds)          / (float)(routeds+unrouteds.size()) * 100.0;
-    float wireLengthRatio = (float)(routedWireLength) / (float)(totalWireLength)   * 100.0;
+    float segmentRatio     = (float)(routeds)          / (float)(routeds+unrouteds.size()) * 100.0;
+    float wireLengthRatio  = (float)(routedWireLength) / (float)(totalWireLength)   * 100.0;
 
     setDetailedRoutingSuccess( unrouteds.empty() );
 
@@ -736,12 +749,21 @@ namespace Katana {
     //   }
     // }
 
-    string units = "L";
-    if (not isSymbolic) {
+  //DbU::Unit wlMetricUnit = const_cast<KatanaEngine*>(this)->getConfiguration()->getPitch( 1 );
+    DbU::Unit wlMetricUnit = const_cast<KatanaEngine*>(this)
+      ->getConfiguration()->getCellGauge()->getSliceHeight();
+    float     wlMetric     = 1.0;
+    string    units        = "L";
+    if (isSymbolic) {
+      wlMetric = DbU::toLambda( wlMetricUnit );
+    } else {
       units = "um";
       totalWireLength  /= 1000;
       routedWireLength /= 1000;
+      wlMetric = DbU::toPhysical( wlMetricUnit, DbU::UnitPower::Nano ) / 1000;
     }
+    float normedWireLength = (float)(totalWireLength) / wlMetric;
+
     result << setprecision(4) << segmentRatio
            << "% [" << routeds << "+" << unrouteds.size() << "]";
     cmess1 << Dots::asString( "     - Track Segment Completion Ratio", result.str() ) << endl;
@@ -762,17 +784,43 @@ namespace Katana {
       cmess1 << Dots::asString( "     - Wire Length Expand Ratio", result.str() ) << endl;
     }
 
+    for ( RoutingPlane* rp : _routingPlanes ) {
+      DbU::Unit  rpTotalWL = rp->getTotalWL();
+      DbU::Unit  rpUsedWL  = rp->getUsedWL ();
+      
+      result.str("");
+      result << fixed << setprecision(2) << (((float)rpUsedWL / rpTotalWL) * 100.0) << "%";
+
+      ostringstream title;
+      title << "     - " << rp->getLayer()->getName() << " WL usage";
+      cmess1 << Dots::asString( title.str(), result.str() ) << endl;
+    }
+    
+
+    result.str("");
+    result << fixed << setprecision(0) << normedWireLength;
+    cmess1 << Dots::asString( "     - Normed Wire Length", result.str() ) << endl;
+    result.str("");
+    result << (normedWireLength / getNetDatas().size());
+    cmess1 << Dots::asString( "     - Normed Wire Length / Net", result.str() ) << endl;
+    result << defaultfloat;
+    result.str("");
+    result << defaultfloat << AutoSegment::getMovedUp()
+           << " (" << setprecision(2) << fixed << setfill(' ') << right << setw(5)
+           << ((float)AutoSegment::getMovedUp() / AutoSegment::getAllocateds()) * 100.0 << "%)";
+    cmess1 << Dots::asString( "     - Moved up segments", result.str() ) << endl;
+
     float ratio = 0.0;
     if (not unrouteds.empty())
       ratio = ((float)hunrouteds / (float)unrouteds.size()) * 100.0;
     result.str("");
-    result << setprecision(4) << ratio << "% [" << hunrouteds << "]";
+    result << ratio << "% [" << hunrouteds << "]";
     cmess1 << Dots::asString( "     - Unrouted horizontals", result.str() ) << endl;
 
     if (not unrouteds.empty())
       ratio = ((float)vunrouteds / (float)unrouteds.size()) * 100.0;
     result.str("");
-    result << setprecision(4) << ratio << "% [" << vunrouteds << "]";
+    result << ratio << "% [" << vunrouteds << "]";
     cmess1 << Dots::asString( "     - Unrouted verticals", result.str() ) << endl;
 
     addMeasure<size_t>  ( "Segs"   , routeds+unrouteds.size() );
@@ -883,14 +931,14 @@ namespace Katana {
   void  KatanaEngine::finalizeLayout ()
   {
     cdebug_log(155,0) << "KatanaEngine::finalizeLayout()" << endl;
-    if (getState() > Anabatic::EngineDriving) return;
+    if (getStage() > Anabatic::StageChainReduce) return;
 
     cdebug_tabw(155,1);
-    setState( Anabatic::EngineDriving );
+    setStage( Anabatic::StageChainReduce );
     _gutKatana();
 
     Super::finalizeLayout();
-    cdebug_log(155,0) << "State: " << getState() << endl;
+    cdebug_log(155,0) << "Stage: " << getStage() << endl;
 
     getCell()->setFlags( Cell::Flags::Routed );
 
@@ -901,9 +949,9 @@ namespace Katana {
   void  KatanaEngine::_gutKatana ()
   {
     cdebug_log(155,1) << "KatanaEngine::_gutKatana()" << endl;
-    cdebug_log(155,0)   << "State: " << getState() << endl;
+    cdebug_log(155,0)   << "Stage: " << getStage() << endl;
 
-    if (getState() < EngineState::EngineGutted) {
+    if (getStage() < Anabatic::StageGutted) {
       openSession();
 
       for ( Block* block : _blocks ) delete block;
@@ -914,6 +962,12 @@ namespace Katana {
         _routingPlanes[depth]->destroy();
       }
       _routingPlanes.clear();
+
+      for ( auto lutElement : _getAutoSegmentLut() ) {
+        TrackElement* element = Session::lookup( lutElement.second );
+        if (element)
+          element->destroy();
+      }
       
       while ( not _symmetrics.empty() ) {
         auto element = _symmetrics.begin();
@@ -954,7 +1008,7 @@ namespace Katana {
       for ( Component* component : removeds ) component->destroy();
     }
 
-    setState( Anabatic::EngineCreation );
+    setStage( Anabatic::StageCreation );
     setGlobalRoutingSuccess  ( false );
     setDetailedRoutingSuccess( false );
     UpdateSession::close();
@@ -966,7 +1020,12 @@ namespace Katana {
   TrackElement* KatanaEngine::_lookup ( Segment* segment ) const
   {
     AutoSegment* autoSegment = Super::_lookup( segment );
-    if (not autoSegment or not autoSegment->isCanonical()) return NULL;
+    if (not autoSegment) return nullptr;
+    if (not autoSegment->isCanonical()) {
+      DbU::Unit dummyMin = 0;
+      DbU::Unit dummyMax = 0;
+      autoSegment = autoSegment->getCanonical( dummyMin, dummyMax );
+    }
 
     return _lookup( autoSegment );
   }

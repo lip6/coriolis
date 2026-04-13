@@ -14,10 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_CONTROLLER_WIDGET_H
-#define  HURRICANE_CONTROLLER_WIDGET_H
-
-
+#pragma  once
 #include <QTabWidget>
 class QCheckBox;
 class QComboBox;
@@ -57,6 +54,9 @@ namespace Hurricane {
     public:
                          ControllerTab      ( QWidget* parent=NULL );
       inline CellWidget* getCellWidget      ();
+      virtual void       saveQtSettings     ( size_t viewerId ) const;
+      virtual void       readQtSettings     ( size_t viewerId );
+              bool       isInDeletion       () const;
     public slots:           
       virtual void       setCellWidget      ( CellWidget* );
       virtual void       setCell            ( Cell* );
@@ -86,6 +86,8 @@ namespace Hurricane {
     public slots:
               void            setCellWidget   ( CellWidget* );
       virtual void            graphicsUpdated ();
+      virtual void            saveQtSettings  ( size_t viewerId ) const;
+      virtual void            readQtSettings  ( size_t viewerId );
 
     protected:
       GraphicsWidget* _graphics;
@@ -105,6 +107,8 @@ namespace Hurricane {
     public:
                                    TabDisplayFilter ( QWidget* parent=NULL );
       inline  DisplayFilterWidget* getDisplayFilter ();
+      virtual void                 saveQtSettings   ( size_t viewerId ) const;
+      virtual void                 readQtSettings   ( size_t viewerId );
     public slots:
       virtual void                 setCellWidget    ( CellWidget* );
 
@@ -126,6 +130,8 @@ namespace Hurricane {
     public:
                              TabPalette      ( QWidget* parent=NULL );
       inline  PaletteWidget* getPalette      ();
+      virtual void           saveQtSettings  ( size_t viewerId ) const;
+      virtual void           readQtSettings  ( size_t viewerId );
     public slots:
       virtual void           setCellWidget   ( CellWidget* );
       virtual void           graphicsUpdated ();
@@ -146,29 +152,34 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                             TabNetlist         ( QWidget* parent=NULL );
-      inline  NetlistWidget* getNetlistBrowser  ();
-      inline  QCheckBox*     getSyncNetlist     ();
-      inline  QCheckBox*     getSyncSelection   ();
-      virtual void           cellPreModificate  ();
-      virtual void           cellPostModificate ();
-    public slots:           
-      virtual void           setCell            ( Cell* );
-      virtual void           setCellWidget      ( CellWidget* );
-      virtual void           setSyncNetlist     ( bool );
-      virtual void           setSyncSelection   ( bool );
+                             TabNetlist           ( QWidget* parent=NULL );
+      inline  NetlistWidget* getNetlistBrowser    ();
+      inline  QCheckBox*     getSyncNetlist       ();
+      inline  QCheckBox*     getShowSelection     ();
+      virtual void           cellPreModificate    ();
+      virtual void           cellPostModificate   ();
+      virtual void           saveQtSettings       ( size_t viewerId ) const;
+      virtual void           readQtSettings       ( size_t viewerId );
+    public slots:                                 
+      virtual void           setCell              ( Cell* );
+      virtual void           setCellWidget        ( CellWidget* );
+      virtual void           setSyncNetlist       ( bool );
+      virtual void           selfSetShowSelection ( bool );
+      virtual void           setShowSelection     ( bool );
+      virtual void           selectionModeChanged ();
 
     protected:
       NetlistWidget* _netlistBrowser;
       QCheckBox*     _syncNetlist;
-      QCheckBox*     _syncSelection;
+      QCheckBox*     _showSelection;
       bool           _cwCumulativeSelection;
+      bool           _selfSelectionChange;
   };
 
 
   inline NetlistWidget* TabNetlist::getNetlistBrowser () { return _netlistBrowser; }
   inline QCheckBox*     TabNetlist::getSyncNetlist    () { return _syncNetlist; }
-  inline QCheckBox*     TabNetlist::getSyncSelection  () { return _syncSelection; }
+  inline QCheckBox*     TabNetlist::getShowSelection  () { return _showSelection; }
 
 
 // -------------------------------------------------------------------
@@ -301,6 +312,7 @@ namespace Hurricane {
       static void                 notify              ( ControllerWidget*, unsigned int flags );
     public:
                                   ControllerWidget    ( QWidget* parent=NULL );
+      inline bool                 isInDeletion        () const;
       inline CellWidget*          getCellWidget       ();
       inline GraphicsWidget*      getGraphics         ();
       inline PaletteWidget*       getPalette          ();
@@ -310,9 +322,12 @@ namespace Hurricane {
       inline SelectionWidget*     getSelection        ();
       inline InspectorWidget*     getInspectorWidget  ();
       inline TabSettings*         getSettings         ();
+      inline void                 setInDeletion       ();
              void                 setCellWidget       ( CellWidget* );
     //inline int                  addSetting          ( QWidget* page, const QString& label );
              void                 insertTabAfter      ( const QString& ref, QWidget*, const QString& label );
+             void                 saveQtSettings      ( size_t viewerId ) const;
+             void                 readQtSettings      ( size_t viewerId );
     public slots:                                     
              void                 graphicsUpdated     ();
              void                 cellPreModificate   ();
@@ -332,6 +347,7 @@ namespace Hurricane {
       TabSelection*               _tabSelection;
       TabInspector*               _tabInspector;
       TabSettings*                _tabSettings;
+      bool                        _inDeletion;
   };
 
 
@@ -345,9 +361,8 @@ namespace Hurricane {
   inline InspectorWidget*     ControllerWidget::getInspectorWidget  () { return _tabInspector->getInspectorWidget(); }
   inline TabSettings*         ControllerWidget::getSettings         () { return _tabSettings; }
 //inline int                  ControllerWidget::addSetting          ( QWidget* page, const QString& label ) { return _tabSettings->addSetting(page,label); }
+  inline void                 ControllerWidget::setInDeletion       () { _inDeletion = true; }
+  inline bool                 ControllerWidget::isInDeletion        () const { return _inDeletion; }
 
 
-}  // End of Hurricane namespace.
-
-
-#endif  // __HURRICANE_CONTROLLER_WIDGET__
+}  // Hurricane namespace.

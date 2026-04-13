@@ -188,7 +188,7 @@ extern "C" {
       
       if (PyArg_ParseTuple( args, "O:RoutingGauge.getPitch", &pyLayer)) {
         if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
-          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getLayerPitch()." );
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getPitch()." );
           return NULL;
         }
         pitch = rg->getPitch( PYLAYER_O(pyLayer) );

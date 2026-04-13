@@ -1,12 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import re
 import os
 import os.path
 import sys
 import time
 import shutil
-import socket
 import subprocess
 import logging
 import optparse
@@ -18,91 +16,11 @@ def log ( message ):
     return
 
 
-class ErrorMessage ( Exception ):
-
-    def __init__ ( self, code, *arguments ):
-        self._code   = code
-        self._errors = [ 'Malformed call to ErrorMessage()'
-                       , '{}'.format(arguments) ]
-        text = None
-        if len(arguments) == 1:
-            if isinstance(arguments[0],Exception): text = str(arguments[0]).split('\n')
-            else:
-                self._errors = arguments[0]
-        elif len(arguments) > 1:
-            text = list(arguments)
-        if text:
-            self._errors = []
-            while len(text[0]) == 0: del text[0]
-            lstrip = 0
-            if text[0].startswith('[ERROR]'): lstrip = 8 
-            for line in text:
-                if line[0:lstrip  ] == ' '*lstrip or \
-                   line[0:lstrip-1] == '[ERROR]':
-                    self._errors += [ line[lstrip:] ]
-                else:
-                    self._errors += [ line.lstrip() ]
-
-    def __str__ ( self ):
-        if not isinstance(self._errors,list):
-            return "[ERROR] %s" % self._errors
-        formatted = "\n"
-        for i in range(len(self._errors)):
-            if i == 0: formatted += "[ERROR] {}".format( self._errors[i] )
-            else:      formatted += "        {}".format( self._errors[i] )
-            if i+1 < len(self._errors): formatted += "\n"
-        return formatted
-
-    def addMessage ( self, message ):
-        if not isinstance(self._errors,list):
-            self._errors = [ self._errors ]
-        if isinstance(message,list):
-            for line in message:
-                self._errors += [ line ]
-        else:
-            self._errors += [ message ]
-
-    def terminate ( self ):
-        print( self )
-        sys.exit(self._code)
-
-    def _getCode ( self ): return self._code
-
-    code = property(_getCode)
-
-
 class Configuration ( object ):
 
     def __init__ ( self ):
-        self.onSource = False
-        self.onLepka  = False
-        self.onDocker = False
-        hostname = socket.gethostname()
-        if hostname.startswith('lepka'): self.onLepka  = False
-        else:                            self.onDocker = True
-        scriptDir = os.path.abspath(os.getcwd())
-        if scriptDir.endswith( 'coriolis/documentation' ) and not self.onLepka:
-            self.onLepka  = False
-            self.onSource = True
-        if self.onDocker:
-            log( 'Using *Docker* configuration.' )
-            self.pelicanDir = '/data/git/coriolis.lip6.fr/pelican'
-            self.apacheDir  = '/var/www/html'
-        if self.onLepka:
-            log( 'Using *Lepka* configuration.' )
-           #self.pelicanDir = os.path.join( os.environ['HOME'], 'cms/coriolis.lip6.fr/pelican' )
-            self.pelicanDir = scriptDir
-            self.apacheDir  = '/dsk/l1/httpd/coriolis'
-        if self.onSource:
-            log( 'Using *Source* configuration.' )
-            self.pelicanDir = scriptDir
-            self.apacheDir  = None
-        self.localDocDir      = '/dsk/l1/jpc/coriolis-2.x/Linux.el9/Release.Shared/install/share/doc/coriolis2/en/html/doc'
-        self.remoteDocDir     = '/data'
-        self.remoteGitDir     = '/data/git'
-        self.remotePelicanDir = os.path.join( self.remoteGitDir, 'coriolis.lip6.fr/pelican' )
-        self.pluginsDir       = os.path.join( self.remoteGitDir, 'pelican-plugins' )
-        self.logDir = os.path.join( self.pelicanDir, 'logs' )
+        self.pluginsDir = 'pelican-plugins'
+        self.logDir = 'logs'
         self.target = 'coriolis-d'
 
 
@@ -133,45 +51,8 @@ class Command ( object ):
         if len(self.errlog): logging.error( self.errlog.decode('utf-8'))
         status   = child.returncode
         status >>= 8
-        if status != 0:
-            ErrorMessage( status, "{} (status:{}).".format(error,status) ).terminate()
         return status
 
-    @staticmethod
-    def rmtree ( path ):
-        command = 'rm -rf {}'.format( path )
-        try:
-            log( command )
-            shutil.rmtree( path )
-        except shutil.Error as e:
-            logging.error( str(e) )
-            return 1
-        return 0
-
-    @staticmethod
-    def copytree ( src, dst ):
-        command = 'cp -r {} {}'.format( src, dst )
-        try:
-            log( command )
-            shutil.copytree( src, dst )
-        except OSError as e:
-            logging.error( e )
-            return 1
-        except shutil.Error as errors:
-            for error in errors:
-                logging.error( 'cp {} {}: {}'.format(src,dst,error) )
-            return 1
-        return 0
-
-
-class SshCommand ( object ):
-
-    def __init__ ( self, scriptlet ):
-        self.scriptlet = scriptlet
-
-    def execute ( self, target ):
-        command = [ 'ssh', '-x', target, self.scriptlet ]
-        Command( command ).execute()
 
 
 class Document ( object ):
@@ -182,38 +63,29 @@ class Document ( object ):
         self.rdir     = os.path.dirname ( document )
 
     def toPdf ( self ):
-        pdfDir         = '{}/content/pdfs'    .format( self.conf.pelicanDir )
-        stylesheet     = '{}/etc/SoC-ReST.tex'.format( self.conf.pelicanDir )
+        pdfDir         = 'content/pdfs'
+        stylesheet     = 'etc/SoC-ReST.tex'
         documentPdf    = '{}.pdf'.format( self.document )
         documentRst    = '{}.rst'.format( self.document )
         documentTex    = '{}.tex'.format( self.document )
-        documentRawTex = '{}-raw.tex'.format( self.document )
         documentTmps   = [ documentTex
-                         , documentRawTex
                          , '{}.log'.format( self.document )
                          , '{}.out'.format( self.document )
                          , '{}.aux'.format( self.document )
                          , '{}.toc'.format( self.document )
                          ]
         targetPdf      = os.path.join( pdfDir, documentPdf )
-       
+
         cwd = os.getcwd()
-        os.chdir( os.path.join(self.conf.pelicanDir,self.rdir) )
-        os.environ[ 'TEXINPUTS' ] = '{}/etc/images//:./images//:'.format( self.conf.pelicanDir )
+        os.chdir(self.rdir)
+        os.environ[ 'TEXINPUTS' ] = './etc/images//:./images//:'
         Command( [ 'rst2latex', '--use-latex-toc'
                               , '--stylesheet={}'.format( stylesheet )
                               , documentRst
-                              , documentRawTex
                  ] ).execute()
-        pMulticol = re.compile( r' \\& \\\\multicolumn\{2\}\{l\|\}\{' )
-        fdi = open( documentRawTex, 'r' )
-        fdo = open( documentTex   , 'w' )
-        for line in fdi.readlines():
-          fdo.write( pMulticol.sub('  \\& \\\\multicolumn{2}{p{0.6\\\\DUtablewidth}|}{',line) )
-        fdi.close()
-        fdo.close()
         Command( [ 'pdflatex', '-halt-on-error', documentTex ] ).execute()
         Command( [ 'pdflatex', '-halt-on-error', documentTex ] ).execute()
+        os.chdir(cwd)
         for file in documentTmps:
             if os.path.isfile( file ):
                 os.unlink( file )
@@ -224,77 +96,6 @@ class Document ( object ):
         log( 'mv {} {}'.format( documentPdf, pdfDir ))
         shutil.move( documentPdf, pdfDir )
         os.chdir( cwd )
-
-
-class Site ( object ):
-
-    def __init__ ( self, conf ):
-        self.conf = conf
-
-    def build ( self ):
-        print( 'cd {}'.format( self.conf.pelicanDir ))
-        os.chdir( self.conf.pelicanDir )
-        status = Command( [ 'pelican', '-vD', '--ignore-cache', 'content' ] ).execute()
-        if status: return status
-        if self.conf.onLepka:
-            Command.rmtree  ( self.conf.apacheDir )
-            Command.copytree( './output', self.conf.apacheDir )
-            Command.copytree( self.conf.localDocDir, os.path.join(self.conf.apacheDir,'doc') )
-
-    def gitPush ( self ):
-        print( 'cd {}'.format( self.conf.pelicanDir ))
-        os.chdir( self.conf.pelicanDir )
-        lines = ''
-        cmd   = Command( ['git', 'status', 'content', 'common', 'theme'] )
-        cmd.execute()
-        if cmd.outlog: lines = cmd.outlog.split('\n')
-        if lines[-2] != 'nothing to commit, working directory clean':
-            message = [ 'There are some uncommited changes in the site contents.' ] + lines
-            print( ErrorMessage( 1, message ))
-        Command( ['git', 'push'] ).execute()
-        return True
-
-    def gitCommitPdfs ( self ):
-        print( 'cd {}'.format( self.conf.pelicanDir ))
-        os.chdir( self.conf.pelicanDir )
-        lines = ''
-        cmd   = Command( ['git', 'status', 'content/pdfs'] )
-        cmd.execute()
-        if cmd.outlog: lines = cmd.outlog.decode('utf-8').split('\n')
-        if lines[-2] != 'nothing to commit, working directory clean':
-            message = 'Updated PDFs, %s.' % time.strftime( '%B %d, %Y (%H:%M)' )
-            Command( ['git', 'add'   , 'content/pdfs'] ).execute()
-            Command( ['git', 'commit', '-m', message ] ).execute()
-        return True
-
-    def remoteBuild ( self ):
-        Command( [ 'ssh', '-x', '-o', 'StrictHostKeyChecking no'
-                 , self.conf.target, "echo 'Force SSH key loading.'" ] ).execute()
-        Command( [ 'rsync', '--rsh=/usr/bin/ssh', '-avH'
-                 , self.conf.localDocDir
-                 , '{}:{}'.format(self.conf.target,self.conf.remoteDocDir) ] ).execute()
-        remoteScript = \
-          ' if [ ! -d {remotePelicanDir} ]; then'                                       \
-          '   cd {remoteGitDir};'                                                       \
-          '   git clone gitsoc@bop-t:coriolis.lip6.fr;'                                 \
-          '   sudo pelican-themes -s {remotePelicanDir}/themes/nest-coriolis;'          \
-          '   sudo chown -R pelican:pelican /var/www/html;'                             \
-          ' fi;'                                                                        \
-          ' cd {remotePelicanDir};'                                                     \
-          ' git pull;'                                                                  \
-          ' if [ ! -d {pluginsDir} ]; then'                                             \
-          '   cd {remoteGitDir};'                                                       \
-          '   git clone https://github.com/getpelican/pelican-plugins;'                 \
-          '   cd pelican-plugins;'                                                      \
-          '   patch -p1 -i {remotePelicanDir}/patchs/0001-bootstrap-rst.no-math.patch;' \
-          ' fi;'                                                                        \
-          ' cd {remotePelicanDir};'                                                     \
-          ' ./build.py -p;'                                                             \
-          .format( pluginsDir       = self.conf.pluginsDir
-                 , remoteGitDir     = self.conf.remoteGitDir
-                 , remotePelicanDir = self.conf.remotePelicanDir
-                 )
-        SshCommand( remoteScript ).execute( self.conf.target )
 
 
 if __name__ == '__main__':
@@ -334,7 +135,6 @@ if __name__ == '__main__':
     parser.add_option( '-p', '--pelican' , action='store_true', dest='doPelican' , help='Run pelican.' )
     parser.add_option( '-P', '--pdfs'    , action='store_true', dest='doPdfs'    , help='Generate the PDFs.' )
     parser.add_option( '-C', '--coriolis', action='store_true', dest='doCoriolis', help='Build/update the web site on the server (docker).' )
-    parser.add_option( '-g', '--git'     , action='store_true', dest='doCommit'  , help='Commit the PDFs.' )
     (options, args) = parser.parse_args()
     conf = Configuration()
     if not os.path.isdir( conf.logDir ):
@@ -353,14 +153,8 @@ if __name__ == '__main__':
                 , Document( conf, 'content/pages/check-toolkit/CheckToolkit' )
                 , Document( conf, 'content/pages/rds/RDS' )
                 ]
-    coriolis = Site( conf )
     if options.doPdfs:
         for document in documents: document.toPdf()
-        if options.doCommit:
-            coriolis.gitCommitPdfs()
     if options.doPelican:
-        coriolis.build()
-    if options.doCoriolis:
-        coriolis.gitPush()
-        coriolis.remoteBuild()
+        Command( [ 'pelican', '-vD', '--ignore-cache', 'content' ] ).execute()
     sys.exit( 0 )

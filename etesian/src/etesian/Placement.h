@@ -222,7 +222,7 @@ namespace Etesian {
                    size_t                     getUsedVTracks  ( const Tile& , std::set<DbU::Unit>& vtracks );
                    DbU::Unit                  getAverageChunk ( size_t& ) const;
                    void                       trackAvoid      ( DbU::Unit xTrack );
-                   void                       insertTies      ( DbU::Unit latchUpMax );
+                   uint32_t                   insertTies      ( DbU::Unit latchUpMax, size_t yspin );
     private:
       Slice*                    _slice;
       std::list<Tile>::iterator _beginTile;
@@ -248,6 +248,7 @@ namespace Etesian {
       inline size_t           getSpinSlice0    () const;
       inline DbU::Unit        getLeftDistance  ( Cell* cell ) const;
       inline DbU::Unit        getRightDistance ( Cell* cell ) const;
+             uint64_t         check            ( string& message ) const;
              bool             validate         ( DbU::Unit latchUpMax ) const;
       inline std::list<Tile>& getTiles         ();
              void             merge            ( const Occurrence&, const Box& );
@@ -260,8 +261,8 @@ namespace Etesian {
              void             buildSubSlices   ();
              void             showSubSlices    ();
              void             trackAvoid       ( DbU::Unit xTrack );
-             void             insertTies       ( DbU::Unit latchUpMax );
-             Instance*        createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint );
+             uint32_t         insertTies       ( DbU::Unit latchUpMax, size_t yspin );
+             Instance*        createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint, size_t yspin );
       inline std::string      _getString       () const;
              Record*          _getRecord       () const;
     private:
@@ -294,13 +295,14 @@ namespace Etesian {
       inline const Box&     getPlaceArea     () const;
       inline DbU::Unit      getLeftDistance  ( Cell* cell ) const;
       inline DbU::Unit      getRightDistance ( Cell* cell ) const;
+             uint64_t       check            ( string& message ) const;
              bool           validate         ( DbU::Unit latchUpMax ) const;
              void           merge            ( const Occurrence&, const Box& );
              void           addFeeds         ();
              void           buildSubSlices   ();
              void           showSubSlices    ();
              void           trackAvoid       ( const Box& trackAvoid );
-             void           insertTies       ( DbU::Unit latchUpMax );
+             uint32_t       insertTies       ();
              Instance*      createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint );
       inline std::string    _getString       () const;
              Record*        _getRecord       () const;

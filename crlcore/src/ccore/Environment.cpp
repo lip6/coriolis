@@ -83,8 +83,6 @@ namespace CRL {
     setBLOCKAGE( _BLOCKAGE.c_str() );
     setPad     ( _pad     .c_str() );
     setRegister( _register.c_str() );
-
-    _LIBRARIES.append( ".", "working" );
   }
 
 
@@ -286,7 +284,7 @@ namespace CRL {
   void  Environment::setWORKING_LIBRARY ( const char* value )
   {
     _LIBRARIES.replace( value, "working", 0 );
-    AllianceFramework::get()->createLibrary( _LIBRARIES[0].getPath(), AllianceFramework::CreateLibrary );
+    AllianceFramework::get()->createLibrary( _LIBRARIES[0].getPath(), AllianceFramework::CreateLibrary, "working" );
   }
 
 
@@ -316,7 +314,7 @@ namespace CRL {
         _LIBRARIES.append (value,libName);
     }
 
-    af->createLibrary( _LIBRARIES[ilib].getPath(), afMode );
+    af->createLibrary( _LIBRARIES[ilib].getPath(), afMode, libName );
   }
 
 

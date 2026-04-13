@@ -34,6 +34,8 @@ namespace Hurricane {
 // Rubber implementation
 // ****************************************************************************************************
 
+  FastRTTI  Rubber::_fastRTTI ( demangle(typeid(Rubber).name()), &Rubber::Inherit::fastRTTI() );
+
 Rubber::Rubber(Net* net, Hook* hook)
 // *********************************
 :  Inherit(),
@@ -58,6 +60,10 @@ void Rubber::destroy()
 {
         throw Error("Abnormal deletion of " + _TName("Rubber"));
 }
+
+const FastRTTI& Rubber::vfastRTTI () const
+// ***************************************
+{ return _fastRTTI; }
 
 Cell* Rubber::getCell() const
 // **************************
@@ -210,6 +216,7 @@ Record* Rubber::_getRecord() const
 {
         Record* record = Inherit::_getRecord();
         if (record) {
+                record->add(getSlot("_fastRTTI", &_fastRTTI ), Record::Overload );
                 record->add(getSlot("Net", _net));
                 record->add(getSlot("Hook", _hook));
                 record->add(getSlot("Count", _count));
