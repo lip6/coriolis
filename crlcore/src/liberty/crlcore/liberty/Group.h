@@ -41,10 +41,11 @@ namespace Liberty {
       Group(Group *parent);
       ~Group();
 
-      inline        bool      isGroup           ()                      const override;
-                    void      addStatement      (Statement *statement)                ;
-                    Library  *getLibrary        ()                                    ;
-      inline        void      clear_statements  ()                                    ;
+              inline bool         isGroup         ()                      const override  ;
+                     void         addStatement    (Statement *statement)                  ;
+                     Library     *getLibrary      ()                                      ;
+              inline void         clear_statements()                                      ;
+      virtual inline std::string  getGroupName    ()                      const        = 0;
 
       void setName (const std::string      &name) override;
       void setName (      std::string_view &name) override;
@@ -52,6 +53,7 @@ namespace Liberty {
       inline const  std::vector<Statement*> &getStatements() const;
 
       Group      *getGroup    ( const std::string &group_name     ) const;
+      std::vector<Group*> getGroups    ( const std::string &group_name_regex) const;
       Attribute  *getAttribute( const std::string &attribute_name ) const;
     protected:
       // group_name of group is in the parent class Statement.
