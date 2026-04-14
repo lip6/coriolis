@@ -205,14 +205,14 @@ Warning: This package is only a stub for now.
  fi
  ./patchvenv.sh ${patchVEnvArgs}
   
- make PREFIX=%{_prefix} -f Makefile.LIP6 help install
+ make PREFIX=%{_prefix} -f Makefile.devs help install
  if [ \( 0%{?sle_version} -eq 150600 \) -o \( 0%{?rhel} -eq 8 \) -o \( 0%{?mageia} -ne 0 \) ]; then
    %{__mkdir_p} %{buildroot}%{_datadir}/doc
    pushd %{buildroot}%{_datadir}/doc
    tar zxf %{SOURCE10}
    popd
  else
-   make PREFIX=%{_prefix} -f Makefile.LIP6 help install_docs
+   make PREFIX=%{_prefix} -f Makefile.devs help install_docs
  fi
  ./find_files.sh --buildroot=%{buildroot} --main
  ./find_files.sh --buildroot=%{buildroot} --devel
