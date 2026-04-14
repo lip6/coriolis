@@ -30,10 +30,13 @@ class Where ( object ):
                 checkToolkit = Path( checkToolkit )
             if not Where.cellsTop:
                 Where.cellsTop = checkToolkit / 'cells'
-        if Where.coriolisTop and not Where.allianceTop: Where.allianceTop = Where.coriolisTop
+        #if Where.coriolisTop and not Where.allianceTop: Where.allianceTop = Where.coriolisTop
+        if Where.coriolisTop: Where.allianceTop = Where.coriolisTop
         Where.checkToolkit = checkToolkit
         if not Where.cellsTop and Where.allianceTop:
             Where.cellsTop = Where.allianceTop / 'cells'
+            if not Where.cellsTop.is_dir():
+                Where.cellsTop = Where.allianceTop.parents[1] / 'share' / 'alliance' / 'cells'
         ShellEnv.ALLIANCE_TOP = Where.allianceTop.as_posix()
 
     def __repr__ ( self ):
@@ -73,7 +76,7 @@ def setupCMOS ( checkToolkit=None ):
         env.addSYSTEM_LIBRARY( library=(Where.checkToolkit / 'cells' / 'niolib').as_posix()
                              , mode   =CRL.Environment.Append )
 
-    Yosys.setLiberty( Where.allianceTop / 'cells' / 'sxlib' / 'sxlib.lib' )
+    Yosys.setLiberty( Where.cellsTop / 'sxlib' / 'sxlib.lib' )
     ShellEnv.RDS_TECHNO_NAME = (Where.allianceTop / 'etc' / 'cmos.rds').as_posix()
 
     path = None
