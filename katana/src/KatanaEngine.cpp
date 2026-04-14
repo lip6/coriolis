@@ -554,6 +554,8 @@ namespace Katana {
           GCellsUnder gcells = getGCellsUnder( source, target );
           if (not gcells->empty()) {
             for ( size_t i=0 ; i<gcells->size()-1 ; ++i ) {
+              cdebug_log(159,0) << "  -> Under " << gcells->size() << " 0:" << gcells->gcellAt(0) << endl;
+              cdebug_log(159,0) << "  -> source=" << source << " target=" << target << endl;
               Edge* edge = gcells->gcellAt(i)->getEdgeAt( side, axis );
               edge->decreaseCapacity( elementCapacity, depth );
             //edge->reserveCapacity( elementCapacity );
@@ -605,7 +607,7 @@ namespace Katana {
         for ( Edge* edge : gcell->getEdges( Flags::EastSide) ) {
           if (edge->getReservedCapacity() < hReservedMin) {
             uint32_t reservedCapacity = edge->getReservedCapacity();
-            if (edge->getRawCapacity() <= vReservedMin)
+            if (edge->getRawCapacity() <= hReservedMin)
               reservedCapacity += hReservedMin - edge->getRawCapacity() + 2;
             edge->reserveCapacity( hReservedMin - reservedCapacity );
           }
