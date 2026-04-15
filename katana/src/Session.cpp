@@ -150,15 +150,15 @@ namespace Katana {
 
 
   AutoContact* Session::lookup ( Contact* contact )
-  { return Super::lookup(contact); }
+  { return (contact) ? Super::lookup(contact) : nullptr; }
 
 
   TrackElement* Session::lookup ( Segment* segment )
-  { return Session::get("Session::lookup(Segment*)")->_getKatanaEngine()->_lookup( segment ); }
+  { return (segment) ? Session::get("Session::lookup(Segment*)")->_getKatanaEngine()->_lookup( segment ) : nullptr; }
 
 
   TrackElement* Session::lookup ( AutoSegment* segment )
-  { return Session::get("lookup(AutoSegment*)")->_getKatanaEngine()->_lookup ( segment ); }
+  { return (segment) ? Session::get("lookup(AutoSegment*)")->_getKatanaEngine()->_lookup ( segment ) : nullptr; }
 
 
   void  Session::addShortDogleg ( TrackElement* segmentA, TrackElement* segmentB )
