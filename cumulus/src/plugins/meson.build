@@ -10,6 +10,7 @@ plugins = files([
   'aboutwindow.py',
   'checks.py',
   'conductor.py',
+  'libertyParser.py',
   'matrixplacer.py',
   'rsave.py',
   'rsaveall.py',
