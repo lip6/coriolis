@@ -33,13 +33,19 @@ namespace Liberty {
   Library::Library(const std::string &filepath):  SimpleGroup(nullptr)
                                                 , _path(filepath)
                                                 , _cells()
+                                                , _parsed(false)
   {}
 
   Library::~Library() {}
 
   bool Library::load() {
+    if (_parsed) {
+      std::cerr << "[INFO] " << _path << " was already loaded." << std::endl;
+      return _parsed;
+    }
     Parser parser(_path.string());
-    return parser.parse(this);
+    _parsed = parser.parse(this);
+    return _parsed;
   }
 
   Group *Library::getCellGroup(const std::string &cell_name) const

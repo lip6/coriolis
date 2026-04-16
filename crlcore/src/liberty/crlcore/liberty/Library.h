@@ -44,6 +44,7 @@ namespace Liberty {
     private:
       std::filesystem::path         _path   ;  /// Library search path (file directory for includes)
       std::map<std::string, Group*> _cells  ;  /// Contains cells (for search only)
+      bool                          _parsed ;  /// Wether liberty has already been successfully parsed
   };
 
   inline std::string Library::getFilePath() const
