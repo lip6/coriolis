@@ -7,6 +7,8 @@ liberty = shared_library (
   'Define.cpp',
   'Group.cpp',
   'Library.cpp',
+  'LibertyLibProperty.cpp',
+  'LibertyProperty.cpp',
   'Parser.cpp',
   'Reader.cpp',
   'SimpleGroup.cpp',
@@ -14,6 +16,8 @@ liberty = shared_library (
   'Tokenizer.cpp',
   'Value.cpp',
   'ValueString.cpp',
-  link_with: hurricane,
+  include_directories: crlcore_includes,
+  link_with: [crlcore,hurricane],
+  dependencies: Hurricane,
   install: true,
 )

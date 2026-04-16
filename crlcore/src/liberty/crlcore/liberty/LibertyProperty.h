@@ -10,35 +10,45 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./AnonymousGroup.h"                            |
+// |  C++ Module  :  "./LibertyProperty.h"                           |
 // +-----------------------------------------------------------------+
 
 #pragma once
 #include "Group.h"
+#include "hurricane/Name.h"
+#include "hurricane/Property.h"
 #include <string>
 
 namespace Liberty {
 
-  /**
-    * An anonymous group is a group without a specific group name.
-    * Such as :
-    * ```
-    *   name () {
-    *     ... statements ...
-    *   }
-    * ```
-    * */
-  class AnonymousGroup: public Group {
-    public:
-      AnonymousGroup(Group *parent);
-      ~AnonymousGroup();
+  using Hurricane::PrivateProperty;
 
-      inline std::string getGroupName() const override;
+  class LibertyProperty: public PrivateProperty {
+    public:
+      LibertyProperty(Group *cell);
+      ~LibertyProperty();
+
+      inline Group *getLibCell() const;
+
+      inline Hurricane::Name  getName()       const override;
+      inline std::string      _getTypeName()  const override;
+
+    protected:
+      Group *_cell;
   };
 
-  inline std::string AnonymousGroup::getGroupName() const
+  inline Group *LibertyProperty::getLibCell() const
   {
-    return _name + "()";
+    return _cell;
   }
 
+  inline Hurricane::Name LibertyProperty::getName() const
+  {
+    return Hurricane::Name("Liberty Cell Informations");
+  }
+
+  inline std::string LibertyProperty::_getTypeName() const
+  {
+    return "LibertyProperty";
+  }
 }

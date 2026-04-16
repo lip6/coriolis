@@ -169,78 +169,78 @@ namespace {
 
   class LefParser {
     public:
-      static       void               setMergeLibrary          ( Library* );
-      static       void               setGdsForeignDirectory   ( string );
-      static       void               setGdsForeignLibrary     ( Library* );
-      static       Library*           getGdsForeignLibrary     ();
-      static       void               setPinFilter             ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
-      static       DbU::Unit          fromLefUnits             ( int );
-      static       Layer*             getLayer                 ( string );
-      static       void               addLayer                 ( string, Layer* );
-      static       void               clearLayer               ( string );
-      static       void               reset                    ();
-      static       Library*           parse                    ( string file );
-                                      LefParser                ( string file, string libraryName );
-                                     ~LefParser                ();
-      inline       bool               isVH                     () const;
-                   bool               isUnmatchedLayer         ( string );
-                   Library*           createLibrary            ();
-                   Cell*              earlyGetCell             ( bool& created, string name="" );
-                   Net*               earlyGetNet              ( string name );
-      inline       string             getLibraryName           () const;
-      inline       Library*           getLibrary               ( bool create=false );
-      inline const Point&             getOrigin                () const;
-      inline       DbU::Unit          getOriginX               () const;
-      inline       DbU::Unit          getOriginY               () const;
-      inline       string             getForeignPath           () const;
-      inline       void               setForeignPath           ( string );
-      inline const Point&             getForeignPosition       () const;
-      inline       void               setForeignPosition       ( const Point&  );
-      inline       Net*               getGdsPower              () const;
-      inline       void               setGdsPower              ( Net* );
-      inline       Net*               getGdsGround             () const;
-      inline       void               setGdsGround             ( Net* );
-      inline       Cell*              getCell                  () const;
-      inline       void               setCell                  ( Cell* );
-      inline       CellGauge*         getCellGauge             () const;
-      inline       void               setCellGauge             ( CellGauge* );
-      inline       Net*               getNet                   () const;
-      inline       void               setNet                   ( Net* );
-      inline       void               setOrigin                ( DbU::Unit x, DbU::Unit y );
-      static       void               setCoreSite              ( DbU::Unit x, DbU::Unit y );
-      static       DbU::Unit          getCoreSiteX             ();
-      static       DbU::Unit          getCoreSiteY             ();
-      inline       DbU::Unit          getXMinTerminalSize      () const;
-      inline       DbU::Unit          getYMinTerminalSize      () const;
-      inline       double             getUnitsMicrons          () const;
-      inline       DbU::Unit          fromUnitsMicrons         ( double ) const;
-      inline       void               setUnitsMicrons          ( double );
-      inline       bool               hasErrors                () const;
-      inline const vector<string>&    getErrors                () const;
-      inline       void               pushError                ( const string& );
-                   int                flushErrors              ();
-      inline       void               clearErrors              ();
-      inline       int                getNthMetal              () const;
-      inline       void               incNthMetal              ();
-      inline       int                getNthCut                () const;
-      inline       void               incNthCut                ();
-      inline       int                getNthRouting            () const;
-      inline       void               incNthRouting            ();
-      inline       RoutingGauge*      getRoutingGauge          () const;
-      inline       void               addPinComponent          ( string name, Component* );
-      inline       void               clearPinComponents       ();
-    private:                                               
-      static       int                _unitsCbk                ( lefrCallbackType_e,       lefiUnits*       , lefiUserData );
-      static       int                _layerCbk                ( lefrCallbackType_e,       lefiLayer*       , lefiUserData );
-      static       int                _siteCbk                 ( lefrCallbackType_e,       lefiSite*        , lefiUserData );
-      static       int                _obstructionCbk          ( lefrCallbackType_e,       lefiObstruction* , lefiUserData );
-      static       int                _macroCbk                ( lefrCallbackType_e,       lefiMacro*       , lefiUserData );
-      static       int                _macroSiteCbk            ( lefrCallbackType_e, const lefiMacroSite*   , lefiUserData );
-      static       int                _macroForeignCbk         ( lefrCallbackType_e, const lefiMacroForeign*, lefiUserData );
-      static       int                _pinCbk                  ( lefrCallbackType_e,       lefiPin*         , lefiUserData );
-                   void               _pinStdPostProcess       ();
-                   void               _pinPadPostProcess       ();
-                   Segment*           _createBestSegment       ( Rectilinear*, DbU::Unit minWidth, DbU::Unit minHeight, const RoutingLayerGauge*, uint32_t flags );
+      static        void               setMergeLibrary          ( Library* );
+      static        void               setGdsForeignDirectory   ( string );
+      static        void               setGdsForeignLibrary     ( Library* );
+      static        Library*           getGdsForeignLibrary     ();
+      static        void               setPinFilter             ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
+      static        DbU::Unit          fromLefUnits             ( int );
+      static        Layer*             getLayer                 ( string );
+      static        void               addLayer                 ( string, Layer*, string lefType );
+      static        void               clearLayer               ( string );
+      static        void               reset                    ();
+      static        Library*           parse                    ( string file );
+                                       LefParser                ( string file, string libraryName );
+                                      ~LefParser                ();
+      inline        bool               isVH                     () const;
+                    bool               isUnmatchedLayer         ( string );
+                    Library*           createLibrary            ();
+                    Cell*              earlyGetCell             ( bool& created, string name="" );
+                    Net*               earlyGetNet              ( string name );
+      inline        string             getLibraryName           () const;
+      inline        Library*           getLibrary               ( bool create=false );
+      inline const  Point&             getOrigin                () const;
+      inline        DbU::Unit          getOriginX               () const;
+      inline        DbU::Unit          getOriginY               () const;
+      inline        string             getForeignPath           () const;
+      inline        void               setForeignPath           ( string );
+      inline const  Point&             getForeignPosition       () const;
+      inline        void               setForeignPosition       ( const Point&  );
+      inline        Net*               getGdsPower              () const;
+      inline        void               setGdsPower              ( Net* );
+      inline        Net*               getGdsGround             () const;
+      inline        void               setGdsGround             ( Net* );
+      inline        Cell*              getCell                  () const;
+      inline        void               setCell                  ( Cell* );
+      inline        CellGauge*         getCellGauge             () const;
+      inline        void               setCellGauge             ( CellGauge* );
+      inline        Net*               getNet                   () const;
+      inline        void               setNet                   ( Net* );
+      inline        void               setOrigin                ( DbU::Unit x, DbU::Unit y );
+      static        void               setCoreSite              ( DbU::Unit x, DbU::Unit y );
+      static        DbU::Unit          getCoreSiteX             ();
+      static        DbU::Unit          getCoreSiteY             ();
+      inline        DbU::Unit          getXMinTerminalSize      () const;
+      inline        DbU::Unit          getYMinTerminalSize      () const;
+      inline        double             getUnitsMicrons          () const;
+      inline        DbU::Unit          fromUnitsMicrons         ( double ) const;
+      inline        void               setUnitsMicrons          ( double );
+      inline        bool               hasErrors                () const;
+      inline const  vector<string>&    getErrors                () const;
+      inline        void               pushError                ( const string& );
+                    int                flushErrors              ();
+      inline        void               clearErrors              ();
+      inline static int                getNthMetal              ();
+      inline static void               incNthMetal              ();
+      inline static int                getNthCut                ();
+      inline static void               incNthCut                ();
+      inline static int                getNthRouting            ();
+      inline static void               incNthRouting            ();
+      inline        RoutingGauge*      getRoutingGauge          () const;
+      inline        void               addPinComponent          ( string name, Component* );
+      inline        void               clearPinComponents       ();
+    private:                                                
+      static        int                _unitsCbk                ( lefrCallbackType_e,       lefiUnits*       , lefiUserData );
+      static        int                _layerCbk                ( lefrCallbackType_e,       lefiLayer*       , lefiUserData );
+      static        int                _siteCbk                 ( lefrCallbackType_e,       lefiSite*        , lefiUserData );
+      static        int                _obstructionCbk          ( lefrCallbackType_e,       lefiObstruction* , lefiUserData );
+      static        int                _macroCbk                ( lefrCallbackType_e,       lefiMacro*       , lefiUserData );
+      static        int                _macroSiteCbk            ( lefrCallbackType_e, const lefiMacroSite*   , lefiUserData );
+      static        int                _macroForeignCbk         ( lefrCallbackType_e, const lefiMacroForeign*, lefiUserData );
+      static        int                _pinCbk                  ( lefrCallbackType_e,       lefiPin*         , lefiUserData );
+                    void               _pinStdPostProcess       ();
+                    void               _pinPadPostProcess       ();
+                    Segment*           _createBestSegment       ( Rectilinear*, DbU::Unit minWidth, DbU::Unit minHeight, const RoutingLayerGauge*, uint32_t flags );
     private:                                               
       static       string                _gdsForeignDirectory;
       static       Library*              _mergeLibrary;
@@ -262,9 +262,9 @@ namespace {
       static       map<string,Layer*>    _layerLut;
                    vector<string>        _unmatchedLayers;
                    vector<string>        _errors;
-                   int                   _nthMetal;
-                   int                   _nthCut;
-                   int                   _nthRouting;
+      static       int                   _nthMetal;
+      static       int                   _nthCut;
+      static       int                   _nthRouting;
                    RoutingGauge*         _routingGauge;
                    CellGauge*            _cellGauge;
                    DbU::Unit             _xminTerminalSize;
@@ -274,47 +274,47 @@ namespace {
   };
 
 
-  inline       bool              LefParser::isVH                     () const { return _routingGauge->isVH(); }
-  inline       DbU::Unit         LefParser::getXMinTerminalSize      () const { return _xminTerminalSize; }
-  inline       DbU::Unit         LefParser::getYMinTerminalSize      () const { return _yminTerminalSize; }
-  inline       string            LefParser::getLibraryName           () const { return _libraryName; }
-  inline       Library*          LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
-  inline       Cell*             LefParser::getCell                  () const { return _cell; }
-  inline       void              LefParser::setCell                  ( Cell* cell ) { _cell=cell; }
-  inline const Point&            LefParser::getOrigin                () const { return _origin; }
-  inline       DbU::Unit         LefParser::getOriginX               () const { return _origin.getX(); }
-  inline       DbU::Unit         LefParser::getOriginY               () const { return _origin.getY(); }
-  inline       void              LefParser::setOrigin                ( DbU::Unit x, DbU::Unit y ) { _origin=Point(x,y); }
-  inline       string            LefParser::getForeignPath           () const { return _foreignPath; }
-  inline       void              LefParser::setForeignPath           ( string path ) { _foreignPath=path; }
-  inline const Point&            LefParser::getForeignPosition       () const { return _foreignPosition; }
-  inline       void              LefParser::setForeignPosition       ( const Point& position ) { _foreignPosition=position; }
-  inline       Net*              LefParser::getGdsPower              () const { return _gdsPower; }
-  inline       void              LefParser::setGdsPower              ( Net* net ) { _gdsPower=net; }
-  inline       Net*              LefParser::getGdsGround             () const { return _gdsGround; }
-  inline       void              LefParser::setGdsGround             ( Net* net ) { _gdsGround=net; }
-  inline       void              LefParser::setCellGauge             ( CellGauge* gauge ) { _cellGauge=gauge; }
-  inline       Net*              LefParser::getNet                   () const { return _net; }
-  inline       void              LefParser::setNet                   ( Net* net ) { _net=net; }
-  inline       double            LefParser::getUnitsMicrons          () const { return _unitsMicrons; }
-  inline       void              LefParser::setUnitsMicrons          ( double precision ) { _unitsMicrons=precision; }
-  inline       int               LefParser::getNthMetal              () const { return _nthMetal; }
-  inline       void              LefParser::incNthMetal              () { ++_nthMetal; }
-  inline       int               LefParser::getNthCut                () const { return _nthCut; }
-  inline       void              LefParser::incNthCut                () { ++_nthCut; }
-  inline       int               LefParser::getNthRouting            () const { return _nthRouting; }
-  inline       void              LefParser::incNthRouting            () { ++_nthRouting; }
-  inline       RoutingGauge*     LefParser::getRoutingGauge          () const { return _routingGauge; }
-  inline       CellGauge*        LefParser::getCellGauge             () const { return _cellGauge; }
-  inline       void              LefParser::setCoreSite              ( DbU::Unit x, DbU::Unit y ) { _coreSiteX=x; _coreSiteY=y; }
-  inline       DbU::Unit         LefParser::getCoreSiteX             () { return _coreSiteX; }
-  inline       DbU::Unit         LefParser::getCoreSiteY             () { return _coreSiteY; }
-  inline       bool              LefParser::hasErrors                () const { return not _errors.empty(); }
-  inline const vector<string>&   LefParser::getErrors                () const { return _errors; }
-  inline       void              LefParser::pushError                ( const string& error ) { _errors.push_back(error); }
-  inline       void              LefParser::clearErrors              () { return _errors.clear(); }
-  inline       void              LefParser::addPinComponent          ( string name, Component* comp ) { _pinComponents[name].push_back(comp); }
-  inline       void              LefParser::clearPinComponents       () { _pinComponents.clear(); }
+  inline        bool              LefParser::isVH                     () const { return _routingGauge->isVH(); }
+  inline        DbU::Unit         LefParser::getXMinTerminalSize      () const { return _xminTerminalSize; }
+  inline        DbU::Unit         LefParser::getYMinTerminalSize      () const { return _yminTerminalSize; }
+  inline        string            LefParser::getLibraryName           () const { return _libraryName; }
+  inline        Library*          LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
+  inline        Cell*             LefParser::getCell                  () const { return _cell; }
+  inline        void              LefParser::setCell                  ( Cell* cell ) { _cell=cell; }
+  inline const  Point&            LefParser::getOrigin                () const { return _origin; }
+  inline        DbU::Unit         LefParser::getOriginX               () const { return _origin.getX(); }
+  inline        DbU::Unit         LefParser::getOriginY               () const { return _origin.getY(); }
+  inline        void              LefParser::setOrigin                ( DbU::Unit x, DbU::Unit y ) { _origin=Point(x,y); }
+  inline        string            LefParser::getForeignPath           () const { return _foreignPath; }
+  inline        void              LefParser::setForeignPath           ( string path ) { _foreignPath=path; }
+  inline const  Point&            LefParser::getForeignPosition       () const { return _foreignPosition; }
+  inline        void              LefParser::setForeignPosition       ( const Point& position ) { _foreignPosition=position; }
+  inline        Net*              LefParser::getGdsPower              () const { return _gdsPower; }
+  inline        void              LefParser::setGdsPower              ( Net* net ) { _gdsPower=net; }
+  inline        Net*              LefParser::getGdsGround             () const { return _gdsGround; }
+  inline        void              LefParser::setGdsGround             ( Net* net ) { _gdsGround=net; }
+  inline        void              LefParser::setCellGauge             ( CellGauge* gauge ) { _cellGauge=gauge; }
+  inline        Net*              LefParser::getNet                   () const { return _net; }
+  inline        void              LefParser::setNet                   ( Net* net ) { _net=net; }
+  inline        double            LefParser::getUnitsMicrons          () const { return _unitsMicrons; }
+  inline        void              LefParser::setUnitsMicrons          ( double precision ) { _unitsMicrons=precision; }
+  inline        int               LefParser::getNthMetal              () { return _nthMetal; }
+  inline        void              LefParser::incNthMetal              () { ++_nthMetal; }
+  inline        int               LefParser::getNthCut                () { return _nthCut; }
+  inline        void              LefParser::incNthCut                () { ++_nthCut; }
+  inline        int               LefParser::getNthRouting            () { return _nthRouting; }
+  inline        void              LefParser::incNthRouting            () { ++_nthRouting; }
+  inline        RoutingGauge*     LefParser::getRoutingGauge          () const { return _routingGauge; }
+  inline        CellGauge*        LefParser::getCellGauge             () const { return _cellGauge; }
+  inline        void              LefParser::setCoreSite              ( DbU::Unit x, DbU::Unit y ) { _coreSiteX=x; _coreSiteY=y; }
+  inline        DbU::Unit         LefParser::getCoreSiteX             () { return _coreSiteX; }
+  inline        DbU::Unit         LefParser::getCoreSiteY             () { return _coreSiteY; }
+  inline        bool              LefParser::hasErrors                () const { return not _errors.empty(); }
+  inline const  vector<string>&   LefParser::getErrors                () const { return _errors; }
+  inline        void              LefParser::pushError                ( const string& error ) { _errors.push_back(error); }
+  inline        void              LefParser::clearErrors              () { return _errors.clear(); }
+  inline        void              LefParser::addPinComponent          ( string name, Component* comp ) { _pinComponents[name].push_back(comp); }
+  inline        void              LefParser::clearPinComponents       () { _pinComponents.clear(); }
 
   inline DbU::Unit  LefParser::fromUnitsMicrons ( double d ) const
   {
@@ -343,6 +343,7 @@ namespace {
                                        , pinFilter.getXThreshold()
                                        , pinFilter.getYThreshold() );
     Box best;
+    Box offgrid;
     for ( Box& candidate : boxes ) {
       DbU::Unit widthAdjust  = candidate.getWidth () % DbU::twoGrid;
       DbU::Unit heightAdjust = candidate.getHeight() % DbU::twoGrid;
@@ -367,7 +368,11 @@ namespace {
           cdebug_log(100,0) << "  deltaMin=" << DbU::getValueString(deltaMin)
                             <<  " deltaMax=" << DbU::getValueString(deltaMax)
                             << endl;
-          if (trackMin > trackMax) continue;
+          if (trackMin > trackMax) {
+            if (offgrid.isEmpty() or pinFilter.match(candidate,offgrid))
+              offgrid = candidate;
+            continue;
+          }
           if (deltaMin < deltaMax) candidate.inflate( 0, 0, 0, -heightAdjust );
           else                     candidate.inflate( 0, -heightAdjust, 0, 0 );
         } else {
@@ -375,11 +380,18 @@ namespace {
         }
       }
       
-      if (widthAdjust ) candidate.inflate( 0, 0, -widthAdjust, 0 );
+      if (widthAdjust) candidate.inflate( 0, 0, -widthAdjust, 0 );
 
       cdebug_log(100,0) << "| " << candidate << endl;
       if (pinFilter.match(candidate,best))
         best = candidate;
+    }
+    if (best.isEmpty()) {
+      best = offgrid;
+      if (not rectilinear->getNet()->isSupply())
+        cerr << Warning( "LefParser::_createBestSegment(): Pin \"%s\" of \"%s\" has no terminal ongrid."
+                       , getString(rectilinear->getNet()->getName()).c_str()
+                       , getString(_cell->getName()).c_str() ) << endl;
     }
     if (not best.isEmpty()) {
       if (best.getWidth() < best.getHeight()) {
@@ -410,6 +422,9 @@ namespace {
   Library*              LefParser::_mergeLibrary        = nullptr;
   PinRectilinearFilter  LefParser::_pinFilter;
   map<string,Layer*>    LefParser::_layerLut;
+  int                   LefParser::_nthMetal            = 0;
+  int                   LefParser::_nthCut              = 0;
+  int                   LefParser::_nthRouting          = 0;
   DbU::Unit             LefParser::_coreSiteX = 0;
   DbU::Unit             LefParser::_coreSiteY = 0;
 
@@ -444,8 +459,11 @@ namespace {
   void  LefParser::reset ()
   {
     _layerLut.clear();
-    _coreSiteX = 0;
-    _coreSiteY = 0;
+    _nthMetal   = 0;
+    _nthCut     = 0;
+    _nthRouting = 0;
+    _coreSiteX  = 0;
+    _coreSiteY  = 0;
   }
   
 
@@ -453,15 +471,19 @@ namespace {
   {
     auto item = _layerLut.find( layerName );
     if (item != _layerLut.end()) return (*item).second;
+
+    cdebug_log(100,0) <<  "LefParser::getLayer() Unknown layer name \"" << layerName << "\"." << endl;
     return NULL;
   }
 
-  void  LefParser::addLayer ( string layerName, Layer* layer )
+  void  LefParser::addLayer ( string layerName, Layer* layer, string lefType )
   {
-    if (getLayer(layerName)) {
+    if (_layerLut.find(layerName) != _layerLut.end()) {
       cerr << Warning( "LefParser::addLayer(): Duplicated layer name \"%s\" (ignored).", layerName.c_str() );
       return;
     }
+    if (lefType == "CUT")     incNthCut();
+    if (lefType == "ROUTING") incNthRouting();
 
     _layerLut[ layerName ] = layer;
   }
@@ -496,9 +518,6 @@ namespace {
     , _unitsMicrons    (0.01)
     , _unmatchedLayers ()
     , _errors          ()
-    , _nthMetal        (0)
-    , _nthCut          (0)
-    , _nthRouting      (0)
     , _routingGauge    (nullptr)
     , _cellGauge       (nullptr)
     , _xminTerminalSize(DbU::fromMicrons( Cfg::getParamDouble("lefImport.xminTerminalSize",0)->asDouble() ))
@@ -629,10 +648,10 @@ namespace {
         layer = techno->getNthCut( parser->getNthCut() );
       }
       if (layer) {
-        parser->addLayer( lefLayer->name(), layer );
-        parser->incNthCut();
+        parser->addLayer( lefLayer->name(), layer, lefType );
 
-        cerr << "     - \"" << lefLayer->name() << "\" map to \"" << layer->getName() << "\"" << endl;
+        cerr << "     - LEF \"" << lefLayer->name()
+             << "\" map to Hurricane \"" << layer->getName() << "\"" << endl;
       }
     }
 
@@ -646,11 +665,13 @@ namespace {
       
       if (layer) {
         BasicLayer* basicLayer = layer->getBasicLayers().getFirst();
-        parser->addLayer( lefLayer->name(), basicLayer );
+        parser->addLayer( lefLayer->name(), basicLayer, lefType );
+        parser->incNthMetal();
 
-        cerr << "     - \"" << lefLayer->name() << "\" map to \"" << basicLayer->getName() << "\"" << endl;
+        cerr << "     - LEF \"" << lefLayer->name()
+             << "\" map to Hurricane \"" << basicLayer->getName() << "\"" << endl;
 
-        RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( parser->getNthRouting() );
+        RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( parser->getNthRouting()-1 );
 
         if (gauge and (layer == gauge->getLayer())) {
           if (lefLayer->hasPitch()) {
@@ -681,14 +702,11 @@ namespace {
               cerr << Warning( "LefParser::_layerCbk(): CRL Routing direction discrepency for \"%s\", LEF is VERTICAL."
                              , getString( basicLayer->getName() ).c_str() ) << endl;
           }
-          parser->incNthRouting();
         } else {
           cerr << Warning( "LefParser::_layerCbk(): No CRL routing gauge defined for \"%s\"."
                          , getString( basicLayer->getName() ).c_str()
                          ) << endl;
         }
-
-        parser->incNthMetal();
       }
     }
 
@@ -1374,9 +1392,6 @@ namespace {
       }
 
       if (ongrids.empty()) {
-        if (not isSupply) 
-          cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" has no terminal ongrid."
-                         , pinName.c_str() ) << endl;
         for ( Component* component : components ) {
           NetExternalComponents::setExternal( component );
           cdebug_log(100,0) << "| -> " << component << endl;
@@ -1665,10 +1680,10 @@ namespace CRL {
   }
 
 
-  void  LefImport::addLayer ( string name, Layer* layer )
+  void  LefImport::addLayer ( string name, Layer* layer, string lefType )
   {
 #if defined(HAVE_LEFDEF)
-    LefParser::addLayer( name, layer );
+    LefParser::addLayer( name, layer, lefType );
 #endif
   }
 

@@ -55,6 +55,7 @@ BuildRequires:	texlive
 BuildRequires:  lib64qwt-qt5-devel
 BuildRequires:	texlive-dist
 BuildRequires:	ghostscript-dvipdf
+BuildRequires:	kernel-userspace-headers
 %endif
 
 # openSUSE Tumbleweed
@@ -120,15 +121,27 @@ BuildRequires:  bzip2-devel
 BuildRequires:  expat-devel
 BuildRequires:  python3-pdm-pep517
 BuildRequires:  python-unversioned-command
-BuildRequires:  xpdf
 BuildRequires:  texlive-l3kernel
 BuildRequires:  texlive-cmap
 BuildRequires:  texlive-texlive-scripts
 BuildRequires:  texlive-metafont
 %endif
 
+# ALmaLinux 9
+%if 0%{?rhel} == 9
+BuildRequires:  xpdf
+%endif
+
+# ALmaLinux 10
+%if 0%{?rhel} >= 10
+BuildRequires:  xpdf-libs
+BuildRequires:  texlive-ragged2e
+BuildRequires:  python3-watchfiles
+%endif
+
 # Fedora >= 39
 %if 0%{?fedora} >= 39
+BuildRequires:  xpdf-libs
 BuildRequires:  python3-watchfiles
 %endif
 
@@ -199,20 +212,21 @@ Warning: This package is only a stub for now.
  patchVEnvArgs="--use-system-packages"
  if [    \( 0%{?fedora} -ge 39 \) \
       -o \( 0%{?rhel}   -eq  8 \) \
+      -o \( 0%{?rhel}   -eq 10 \) \
       -o \( 0%{?suse_version}%{?sle_version} -ne 0 \) \
       -o \( 0%{?mageia} -ne 0 \) ]; then
    patchVEnvArgs="${patchVEnvArgs} --remove-venv-watchfiles"
  fi
  ./patchvenv.sh ${patchVEnvArgs}
   
- make PREFIX=%{_prefix} -f Makefile.LIP6 help install
+ make PREFIX=%{_prefix} -f Makefile.devs help install
  if [ \( 0%{?sle_version} -eq 150600 \) -o \( 0%{?rhel} -eq 8 \) -o \( 0%{?mageia} -ne 0 \) ]; then
    %{__mkdir_p} %{buildroot}%{_datadir}/doc
    pushd %{buildroot}%{_datadir}/doc
    tar zxf %{SOURCE10}
    popd
  else
-   make PREFIX=%{_prefix} -f Makefile.LIP6 help install_docs
+   make PREFIX=%{_prefix} -f Makefile.devs help install_docs
  fi
  ./find_files.sh --buildroot=%{buildroot} --main
  ./find_files.sh --buildroot=%{buildroot} --devel

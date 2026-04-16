@@ -220,6 +220,7 @@ class GaugeConf ( object ):
         self._northSouthPinsIndex = None
         for depth in range(0,self.topLayerDepth+1):
             layerGauge = self._routingGauge.getLayerGauge( depth )
+            trace( 550, f'\tdepth={depth} layerGauge={layerGauge}\n' )
             if layerGauge.getType() in [ RoutingLayerGauge.PinOnly
                                        , RoutingLayerGauge.Unusable
                                        , RoutingLayerGauge.BottomPowerSupply ]:
@@ -229,6 +230,7 @@ class GaugeConf ( object ):
                 eastWestCount -= 1
                 if not eastWestCount:
                     self._eastWestPinsIndex = depth
+                trace( 550, '\t_eastWestPinsIndex={}\n'.format( self._eastWestPinsIndex ))
             if     (self._northSouthPinsIndex is None) \
                and layerGauge.getDirection() == RoutingLayerGauge.Vertical:
                 self._northSouthPinsIndex = depth
@@ -237,6 +239,7 @@ class GaugeConf ( object ):
         if (flags & (IoPin.NORTH|IoPin.SOUTH)):
             layerGauge = self._routingGauge.getLayerGauge( self._northSouthPinsIndex )
         else:
+            trace( 550, '\t_eastWestPinsIndex={}\n'.format( self._eastWestPinsIndex ))
             layerGauge = self._routingGauge.getLayerGauge( self._eastWestPinsIndex )
         return layerGauge.getOffset() + index * layerGauge.getPitch()
 
@@ -302,18 +305,21 @@ class GaugeConf ( object ):
         Returns the y/x axis position of the H/V track nearest to ``u`` (y/x)
         with an offset of ``offset`` tracks applied.
         """
-        trace( 550, '\tGaugeConf.getTrack(): u={}, depth={}, offset={}' \
+        trace( 550, '\tGaugeConf.getTrack(): u={}, depth={}, offset={}\n' \
                     .format( DbU.getValueString(u), depth, offset ))
         rg = self._routingGauge.getLayerGauge( depth )
+        trace( 550, f'\t  gauge={rg}\n' )
         if rg.getDirection() == RoutingLayerGauge.Horizontal:
             bbMin = self.routingBb.getYMin()
             bbMax = self.routingBb.getYMax()
         else:
             bbMin = self.routingBb.getXMin()
             bbMax = self.routingBb.getXMax()
+        trace( 550, '\t  bbMin={} bbMax={}\n'.format( DbU.getValueString(bbMin), DbU.getValueString(bbMax) ))
         index  = rg.getTrackIndex( bbMin, bbMax, u, RoutingLayerGauge.Nearest )
+        trace( 550, f'\t  index={index}\n' )
         utrack = rg.getTrackPosition( bbMin, index )
-        trace( 550, ' -> utrack={}\n'.format( DbU.getValueString(utrack) ))
+        trace( 550, '\t  -> utrack={}\n'.format( DbU.getValueString(utrack) ))
         return utrack + offset*rg.getPitch()
 
     def getHorizontalPitch ( self, flags ):

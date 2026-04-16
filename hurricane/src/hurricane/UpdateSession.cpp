@@ -190,7 +190,8 @@ void Go::invalidate(bool propagateFlag)
 void UpdateSession::open()
 // ***********************
 {
-  cdebug_log(18,1) << "UpdateSession::open() [stack=" << (UPDATOR_STACK->size()+1) << "]" << endl;
+  cdebug_log(18,1) << "UpdateSession::open() [stack="
+                   << (UPDATOR_STACK ? UPDATOR_STACK->size()+1 : 0) << "]" << endl;
   UpdateSession::_create();
 }
 

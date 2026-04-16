@@ -10,34 +10,40 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./SimpleGroup.cpp"                             |
+// |  C++ Module  :  "./LibertyLibProperty.h"                        |
 // +-----------------------------------------------------------------+
 
-#include "crlcore/liberty/Group.h"
+#pragma once
+#include "Group.h"
 #include "crlcore/liberty/Library.h"
-#include "crlcore/liberty/SimpleGroup.h"
+#include "hurricane/Name.h"
+#include "hurricane/Property.h"
 #include <string>
-#include <string_view>
 
 namespace Liberty {
 
-  SimpleGroup::SimpleGroup(Group *parent): Group(parent) {}
+  using Hurricane::PrivateProperty;
 
-  SimpleGroup::~SimpleGroup() {}
+  class LibertyLibProperty: public PrivateProperty {
+    public:
+      LibertyLibProperty(       Library *library);
+      LibertyLibProperty(const  Library *library);
+      ~LibertyLibProperty();
 
-  void SimpleGroup::setGroupIdentifier(const std::string &group_id)
+      inline Hurricane::Name  getName()       const override;
+      inline std::string      _getTypeName()  const override;
+
+    protected:
+      const Library *_library;
+  };
+
+  inline Hurricane::Name LibertyLibProperty::getName() const
   {
-    _group_identifier = group_id;
-    if (getName() == "cell")
-      getLibrary()->addCellGroup(_group_identifier, this);
+    return Hurricane::Name("Liberty Cell Library");
   }
 
-  void SimpleGroup::setGroupIdentifier(const std::string_view &group_id)
+  inline std::string LibertyLibProperty::_getTypeName() const
   {
-    _group_identifier = group_id;
-    if (getName() == "cell")
-      getLibrary()->addCellGroup(_group_identifier, this);
+    return "LibertyLibProperty";
   }
-
-
 }
