@@ -17,7 +17,6 @@
 #include "crlcore/liberty/Value.h"
 #include "crlcore/liberty/ValueString.h"
 #include <string>
-#include <string_view>
 
 namespace Liberty {
 
@@ -27,13 +26,7 @@ namespace Liberty {
     clear();
   }
 
-  void ComplexValue::set(const std::string &value)
-  {
-    _values.push_back(new ValueString());
-    _values.back()->set(value);
-  }
-
-  void ComplexValue::set(const std::string_view &value)
+  void ComplexValue::set(std::string value)
   {
     _values.push_back(new ValueString());
     _values.back()->set(value);

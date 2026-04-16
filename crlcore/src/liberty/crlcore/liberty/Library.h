@@ -29,18 +29,18 @@ namespace Liberty {
    * */
   class Library: public SimpleGroup {
     public:
-      Library (const std::string &filepath);
+      Library (std::string filepath);
       ~Library ();
 
-              Group      *getCellGroup(const std::string &cell_name               ) const ;
-              void        addCellGroup(const std::string &cell_name, Group *group )       ;
-              void        mapLibertyToDb (Hurricane::DataBase *db)                  const ;
-      inline  std::string getFilePath ()                                            const ;
+              Group      *getCellGroup  (std::string cell_name              ) const ;
+              void        addCellGroup  (std::string cell_name, Group *group)       ;
+              void        mapLibertyToDb(Hurricane::DataBase *db            ) const ;
+      inline  std::string getFilePath   ()                                    const ;
 
       bool load(); /// Process the actual loading of library.
 
     private:
-      void _include(const std::string &filename);
+      void _include(std::string filename);
     private:
       std::filesystem::path         _path   ;  /// Library search path (file directory for includes)
       std::map<std::string, Group*> _cells  ;  /// Contains cells (for search only)

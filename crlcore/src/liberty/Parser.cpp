@@ -30,7 +30,7 @@
 
 namespace Liberty {
 
-  Parser::Parser(const std::string &filepath): _tokenizer(filepath), _filepath(filepath) {}
+  Parser::Parser(std::string filepath): _tokenizer(filepath), _filepath(filepath) {}
 
   Parser::~Parser() {}
 
@@ -93,8 +93,8 @@ namespace Liberty {
             case QuotedExpression:
               to_add = new Attribute(current);
               value_str = new ValueString;
-              value_str->set(t.str);
-              to_add->setName(waiting.front().str);
+              value_str->set(std::string(t.str));
+              to_add->setName(std::string(waiting.front().str));
               waiting.pop();
               to_add->setValue(value_str);
               current->addStatement(to_add);
@@ -162,11 +162,11 @@ namespace Liberty {
                 if (waiting.size() != 3)
                   return _print_error(t);
                 define = new Define(current);
-                define->setAttributeName(waiting.front().str);
+                define->setAttributeName(std::string(waiting.front().str));
                 waiting.pop();
-                define->setGroupName(waiting.front().str);
+                define->setGroupName(std::string(waiting.front().str));
                 waiting.pop();
-                define->setAttributeType(waiting.front().str);
+                define->setAttributeType(std::string(waiting.front().str));
                 waiting.pop();
                 break;
               default:
@@ -188,25 +188,25 @@ namespace Liberty {
                     CurrentIsLibrary = false;
                   } else
                     sgroup = new SimpleGroup(current);
-                  sgroup->setName(waiting.front().str);
+                  sgroup->setName(std::string(waiting.front().str));
                   waiting.pop();
-                  sgroup->setGroupIdentifier(waiting.front().str);
+                  sgroup->setGroupIdentifier(std::string(waiting.front().str));
                   current->addStatement(sgroup);
                   current = sgroup;
                   waiting.pop();
                 } else if (waiting.size() > 2) {
                   ComplexGroup *cgroup = new ComplexGroup(current);
-                  cgroup->setName(waiting.front().str);
+                  cgroup->setName(std::string(waiting.front().str));
                   waiting.pop();
                   while (not waiting.empty()) {
-                    cgroup->addVariables(waiting.front().str);
+                    cgroup->addVariables(std::string(waiting.front().str));
                     waiting.pop();
                   }
                   current->addStatement(cgroup);
                   current = cgroup;
                 } else if (waiting.size() == 1) {
                   AnonymousGroup *agroup = new AnonymousGroup(current);
-                  agroup->setName(waiting.front().str);
+                  agroup->setName(std::string(waiting.front().str));
                   current->addStatement(agroup);
                   current = agroup;
                   waiting.pop();
@@ -219,10 +219,10 @@ namespace Liberty {
                 attribute = new Attribute(current);
                 complex_value = new ComplexValue;
                 attribute->setValue(complex_value);
-                attribute->setName(waiting.front().str);
+                attribute->setName(std::string(waiting.front().str));
                 waiting.pop();
                 while (not waiting.empty()) {
-                  complex_value->set(waiting.front().str);
+                  complex_value->set(std::string(waiting.front().str));
                   waiting.pop();
                 }
                 current->addStatement(attribute);

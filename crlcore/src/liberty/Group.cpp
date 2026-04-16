@@ -22,7 +22,6 @@
 #include <iostream>
 #include <regex>
 #include <string>
-#include <string_view>
 #include <vector>
 
 namespace Liberty {
@@ -60,7 +59,7 @@ namespace Liberty {
     _statements.push_back(statement);
   }
 
-  Group *Group::getGroup(const std::string &group_name) const
+  Group *Group::getGroup(std::string group_name) const
   {
     auto ret = std::find_if(_statements.begin(), _statements.end(), [&](Statement *item){
       if (not item->isGroup())
@@ -73,7 +72,7 @@ namespace Liberty {
     return (*ret)->getAsGroup();
   }
 
-  std::vector<Group *> Group::getGroups(const std::string &group_name_regex) const
+  std::vector<Group *> Group::getGroups(std::string group_name_regex) const
   {
     std::regex rgx(group_name_regex);
     std::vector<Group *> ret;
@@ -87,7 +86,7 @@ namespace Liberty {
     return ret;
   }
 
-  Attribute *Group::getAttribute(const std::string &attribute_name) const
+  Attribute *Group::getAttribute(std::string attribute_name) const
   {
     auto it = _attributes.find(attribute_name);
     if (it != _attributes.end()) {
@@ -101,11 +100,7 @@ namespace Liberty {
     return _library;
   }
 
-  void Group::setName(const std::string &name) {
-    _name = name;
-  }
-
-  void Group::setName(std::string_view &name) {
+  void Group::setName(std::string name) {
     _name = name;
   }
 

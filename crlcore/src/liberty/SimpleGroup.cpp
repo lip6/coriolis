@@ -17,7 +17,6 @@
 #include "crlcore/liberty/Library.h"
 #include "crlcore/liberty/SimpleGroup.h"
 #include <string>
-#include <string_view>
 
 namespace Liberty {
 
@@ -25,14 +24,7 @@ namespace Liberty {
 
   SimpleGroup::~SimpleGroup() {}
 
-  void SimpleGroup::setGroupIdentifier(const std::string &group_id)
-  {
-    _group_identifier = group_id;
-    if (getName() == "cell")
-      getLibrary()->addCellGroup(_group_identifier, this);
-  }
-
-  void SimpleGroup::setGroupIdentifier(const std::string_view &group_id)
+  void SimpleGroup::setGroupIdentifier(std::string group_id)
   {
     _group_identifier = group_id;
     if (getName() == "cell")
