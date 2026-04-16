@@ -379,8 +379,37 @@ namespace {
           candidate.inflate( 0, 0, 0, -heightAdjust );
         }
       }
-      
-      if (widthAdjust) candidate.inflate( 0, 0, -widthAdjust, 0 );
+
+      if (widthAdjust) {
+        if (rlg->isVertical()) {
+          DbU::Unit trackMin = rlg->getTrackPosition( getCell()->getAbutmentBox()
+                                                    , candidate.getXMin() + minWidth/2
+                                                    , Constant::Superior );
+          DbU::Unit deltaMin = trackMin - candidate.getXMin() - minWidth/2; 
+          DbU::Unit trackMax = rlg->getTrackPosition( getCell()->getAbutmentBox()
+                                                    , candidate.getXMax() - minWidth/2
+                                                    , Constant::Inferior );
+          DbU::Unit deltaMax = candidate.getXMax() - minWidth/2 - trackMax;
+          cdebug_log(100,0) << "  raw candidate " << candidate << endl;
+          cdebug_log(100,0) << "  min width (pin)=" << DbU::getValueString(minWidth) << endl;
+          cdebug_log(100,0) << "  min LZ=" << DbU::getValueString(candidate.getXMin() + minWidth/2)
+                            <<  " track min=" << DbU::getValueString(trackMin) << endl;
+          cdebug_log(100,0) << "  max LZ=" << DbU::getValueString(candidate.getXMax() - minWidth/2)
+                            <<  " track max=" << DbU::getValueString(trackMax) << endl;
+          cdebug_log(100,0) << "  deltaMin=" << DbU::getValueString(deltaMin)
+                            <<  " deltaMax=" << DbU::getValueString(deltaMax)
+                            << endl;
+          if (trackMin > trackMax) {
+            if (offgrid.isEmpty() or pinFilter.match(candidate,offgrid))
+              offgrid = candidate;
+            continue;
+          }
+          if (deltaMin < deltaMax) candidate.inflate( 0, 0, -widthAdjust, 0 );
+          else                     candidate.inflate( -widthAdjust, 0, 0, 0 );
+        } else {
+          candidate.inflate( 0, 0, -widthAdjust, 0 );
+        }
+      }
 
       cdebug_log(100,0) << "| " << candidate << endl;
       if (pinFilter.match(candidate,best))
@@ -1236,7 +1265,8 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
-  //  DebugSession::open( 100, 110 );
+    if (_cell->getName() == "AOI221X1_V5")
+      DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
@@ -1418,7 +1448,8 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
-  //  DebugSession::close();
+    if (_cell->getName() == "AOI221X1_V5")
+      DebugSession::close();
   }
 
 
