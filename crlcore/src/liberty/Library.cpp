@@ -30,10 +30,10 @@
 
 namespace Liberty {
 
-  Library::Library(const std::string &filepath):  SimpleGroup(nullptr)
-                                                , _path(filepath)
-                                                , _cells()
-                                                , _parsed(false)
+  Library::Library(std::string filepath):  SimpleGroup(nullptr)
+                                          , _path(filepath)
+                                          , _cells()
+                                          , _parsed(false)
   {}
 
   Library::~Library() {}
@@ -48,7 +48,7 @@ namespace Liberty {
     return _parsed;
   }
 
-  Group *Library::getCellGroup(const std::string &cell_name) const
+  Group *Library::getCellGroup(std::string cell_name) const
   {
     auto it = _cells.find(cell_name);
     if (it != _cells.end()) {
@@ -57,13 +57,13 @@ namespace Liberty {
     return nullptr;
   }
 
-  void Library::_include(const std::string &filename) {
+  void Library::_include(std::string filename) {
     std::cerr << "[CRITICAL WARNING] Trying to parse include directive for " << filename << " "
       << "but that feature is not yet available. "
       << "Parts of your library are probably not parsed and will be missing." << std::endl;
   }
 
-  void Library::addCellGroup(const std::string &cell_name, Group *group) {
+  void Library::addCellGroup(std::string cell_name, Group *group) {
     auto it = _cells.find(cell_name);
     if (it != _cells.end()) {
       if (it->second)

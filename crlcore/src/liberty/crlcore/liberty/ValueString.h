@@ -16,7 +16,6 @@
 #pragma once
 #include "Value.h"
 #include <string>
-#include <string_view>
 
 namespace Liberty {
 
@@ -29,15 +28,13 @@ namespace Liberty {
       ValueString();
       ~ValueString();
 
-      inline  std::string getAsString ()                              const override;
-      inline  void        set         (const std::string &value)            override;
-      inline  void        set         (const std::string_view &value)               ;
+      inline  std::string getAsString ()                  const override;
+      inline  void        set         (std::string value)       override;
     private:
       std::string _value;
   };
 
-  inline  std::string ValueString::getAsString  ()                              const { return _value;  }
-  inline  void        ValueString::set          (const std::string &value)            { _value = value; }
-  inline  void        ValueString::set          (const std::string_view &value)       { _value = value; }
+  inline  std::string ValueString::getAsString()                  const { return _value;  }
+  inline  void        ValueString::set        (std::string value)       { _value = value; }
 
 }
