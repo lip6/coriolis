@@ -25,7 +25,7 @@ namespace Liberty {
    * */
   class Parser {
     public:
-      Parser(const std::string &filepath);
+      Parser(std::string filepath);
       ~Parser();
 
       bool parse(Library *lib);

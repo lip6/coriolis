@@ -18,7 +18,6 @@
 #include "Attribute.h"
 #include <map>
 #include <string>
-#include <string_view>
 #include <vector>
 
 namespace Liberty {
@@ -47,14 +46,13 @@ namespace Liberty {
               inline void         clear_statements()                                      ;
       virtual inline std::string  getGroupName    ()                      const        = 0;
 
-      void setName (const std::string      &name) override;
-      void setName (      std::string_view &name) override;
+      void setName (std::string name) override;
 
       inline const  std::vector<Statement*> &getStatements() const;
 
-      Group      *getGroup    ( const std::string &group_name     ) const;
-      std::vector<Group*> getGroups    ( const std::string &group_name_regex) const;
-      Attribute  *getAttribute( const std::string &attribute_name ) const;
+      Group              *getGroup    ( std::string group_name     ) const;
+      std::vector<Group*> getGroups   ( std::string group_name_regex)const;
+      Attribute          *getAttribute( std::string attribute_name ) const;
     protected:
       // group_name of group is in the parent class Statement.
       std::vector< Statement* >           _statements;

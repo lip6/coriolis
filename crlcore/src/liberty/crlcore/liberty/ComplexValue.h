@@ -33,10 +33,9 @@ namespace Liberty {
       ComplexValue();
       ~ComplexValue();
 
-      std::string getAsString ()                          const override;
-      void        set         (const std::string &value)        override;
-      void        set         (const std::string_view &value)           ;
-      void        clear       ()                                        ;
+      std::string getAsString ()                  const override;
+      void        set         (std::string value)       override;
+      void        clear       ()                                ;
     private:
       std::vector<ValueString*> _values;
   };

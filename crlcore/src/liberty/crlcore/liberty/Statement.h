@@ -41,8 +41,7 @@ namespace Liberty {
                       Attribute    *getAsAttribute()       ;
                       Define       *getAsDefine   ()       ;
 
-      inline virtual void setName(const std::string      &name);
-      inline virtual void setName(      std::string_view &name);
+      inline virtual void setName(std::string name);
 
     protected:
       Group      *_parent;
@@ -55,11 +54,8 @@ namespace Liberty {
   inline        bool          Statement::isAttribute  ()  const { return false;   }
   inline        bool          Statement::isDefine     ()  const { return false;   }
 
-  inline void Statement::setName( const std::string &name ) {
-    _name = name;
-  }
-
-  inline void Statement::setName( std::string_view &name ) {
+  inline void Statement::setName( std::string name )
+  {
     _name = name;
   }
 

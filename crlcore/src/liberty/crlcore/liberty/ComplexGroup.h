@@ -16,7 +16,6 @@
 #pragma once
 #include "Group.h"
 #include <string>
-#include <string_view>
 #include <vector>
 
 namespace Liberty {
@@ -35,24 +34,18 @@ namespace Liberty {
       ComplexGroup(Group *parent);
       ~ComplexGroup();
 
-      inline        void                      addVariables(const std::string &variable)                     ;
-      inline        void                      addVariables(const std::string_view &variable)                ;
-      inline const  std::vector<std::string> &getVariables()                                  const         ;
-      inline        std::string               getGroupName()                                  const override;
+      inline        void                      addVariables(std::string variable)                ;
+      inline const  std::vector<std::string> &getVariables()                      const         ;
+      inline        std::string               getGroupName()                      const override;
 
 
     private:
       std::vector<std::string> _variables;
   };
 
-  inline void ComplexGroup::addVariables(const std::string &variable)
+  inline void ComplexGroup::addVariables(std::string variable)
   {
     _variables.push_back(variable);
-  }
-
-  inline void ComplexGroup::addVariables(const std::string_view &variable)
-  {
-    _variables.push_back(std::string(variable));
   }
 
   inline const std::vector<std::string> &ComplexGroup::getVariables() const

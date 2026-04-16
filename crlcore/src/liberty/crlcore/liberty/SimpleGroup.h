@@ -16,7 +16,6 @@
 #pragma once
 #include "Group.h"
 #include <string>
-#include <string_view>
 
 namespace Liberty {
 
@@ -34,10 +33,9 @@ namespace Liberty {
       SimpleGroup(Group *parent);
       ~SimpleGroup();
 
-                    void          setGroupIdentifier(const std::string &group_id)                     ;
-                    void          setGroupIdentifier(const std::string_view &group_id)                ;
-      inline const  std::string  &getGroupIdentifier()                                  const         ;
-      inline        std::string   getGroupName()                                        const override;
+                    void          setGroupIdentifier(std::string group_id)                ;
+      inline const  std::string  &getGroupIdentifier()                      const         ;
+      inline        std::string   getGroupName      ()                      const override;
 
     private:
       std::string _group_identifier;
