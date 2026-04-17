@@ -15,9 +15,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef CRL_PY_MEASURES_H
-#define CRL_PY_MEASURES_H
-
+#pragma  once
 #include "hurricane/isobar/PyHurricane.h"
 #include "crlcore/Measures.h"
 
@@ -50,5 +48,3 @@ extern "C" {
 }  // extern "C".
 
 }  // Hurricane namespace.
-
-#endif  // CRL_PY_MEASURES_H
