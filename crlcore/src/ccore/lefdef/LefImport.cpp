@@ -671,7 +671,7 @@ namespace {
 
     if (lefType == "CUT") {
       Layer* layer = techno->getNthCut( parser->getNthCut() );
-      while (parser->isUnmatchedLayer(getString(layer->getName()))) {
+      while (layer and parser->isUnmatchedLayer(getString(layer->getName()))) {
         parser->incNthCut();
         cerr << "     - Unmapped techno layer \"" << layer->getName() << "\"" << endl;
         layer = techno->getNthCut( parser->getNthCut() );
@@ -681,12 +681,15 @@ namespace {
 
         cerr << "     - LEF \"" << lefLayer->name()
              << "\" map to Hurricane \"" << layer->getName() << "\"" << endl;
+      } else {
+        cerr << "[ERROR] LefParser::_layerCbk(): Unmapped \"" << lefLayer->name()
+             << " \", techno has less than " << parser->getNthCut() <<  " cuts." << endl;
       }
     }
 
     if (lefType == "ROUTING") {
       Layer* layer = techno->getNthMetal( parser->getNthMetal() );
-      while (parser->isUnmatchedLayer(getString(layer->getName()))) {
+      while (layer and parser->isUnmatchedLayer(getString(layer->getName()))) {
         parser->incNthMetal();
         cerr << "     - Unmapped techno layer \"" << layer->getName() << "\"" << endl;
         layer = techno->getNthMetal( parser->getNthMetal() );
@@ -736,6 +739,9 @@ namespace {
                          , getString( basicLayer->getName() ).c_str()
                          ) << endl;
         }
+      } else {
+        cerr << "[ERROR] LefParser::_layerCbk(): Unmapped \"" << lefLayer->name()
+             << "\", techno has less than " << parser->getNthMetal() <<  " metals." << endl;
       }
     }
 
