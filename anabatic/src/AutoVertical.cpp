@@ -850,8 +850,8 @@ namespace Anabatic {
     dlContact2->updateCache();
   //autoTarget->updateCache();
 
-    segment2->canonize( flags );
-    if (not isCanonical()) canonize( flags );
+    segment2->canonize( flags|Flags::Source|Flags::Target );
+    if (not isCanonical()) canonize( flags|Flags::Source|Flags::Target );
 
     updateNativeConstraints();
     segment2->updateNativeConstraints();

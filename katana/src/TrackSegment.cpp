@@ -1193,7 +1193,8 @@ namespace Katana {
 
     if (isNonPref()) {
       Interval   perpandicularSpan ( getAxis() );
-      DbU::Unit  cap               = base()->getExtensionCap( Anabatic::Flags::Source );
+      DbU::Unit  cap         = std::max( base()->getExtensionCap( Anabatic::Flags::Source )
+                                       , base()->getExtensionCap( Anabatic::Flags::Target ));
       perpandicularSpan.inflate( cap );
       if (getId() == 825)
         cerr << "  axis=" << DbU::getValueString(getAxis())

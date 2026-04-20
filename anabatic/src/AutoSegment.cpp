@@ -488,7 +488,7 @@ namespace Anabatic {
 #if SHOW_WIRE_CAP_TABLE
       cerr << "  " << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
            << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
-      cerr << "    minimalSpacing: "
+      cerr << "    minimalSpacing:   "
            << DbU::getValueString( Session::getLayerGauge(depth)->getLayer()->getMinimalSpacing() ) << endl;
 #endif
 
