@@ -16,7 +16,7 @@ def mkRuleSet ( callerGlobals, designName ):
                                     , designName+'_r.spi'
                                     ]
                                   , [ designName+'.vst'
-                                    , designName+'.ap'
+                                  # , designName+'.ap'
                                     ]
                                   , scriptMain )
     ruleCougar = Cougar.mkRule( 'cougar', designName+'_r_ext.vst', [rulePnR], flags=Cougar.Verbose )

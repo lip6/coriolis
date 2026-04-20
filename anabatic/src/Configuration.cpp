@@ -580,32 +580,32 @@ namespace Anabatic {
         if (gauge->isVertical()) {
           trackPos = gauge->getTrackPosition( ab.getXMin()
                                             , ab.getXMax()
-                                            , bb.getCenter().getX()
+                                            , bbs[i].getCenter().getX()
                                             , Constant::Nearest );
-          minPos = bb.getXMin();
-          maxPos = bb.getXMax();
+          minPos = bbs[i].getXMin();
+          maxPos = bbs[i].getXMax();
 
           cdebug_log(112,0) << "Vertical gauge: " << gauge << endl;
           cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(ab.getXMin()) << endl;
           cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(ab.getXMax()) << endl;
-          cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getX()) << endl;
+          cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bbs[i].getCenter().getX()) << endl;
         } else {
           trackPos = gauge->getTrackPosition( ab.getYMin()
                                             , ab.getYMax()
-                                            , bb.getCenter().getY()
+                                            , bbs[i].getCenter().getY()
                                             , Constant::Nearest );
-          minPos = bb.getYMin();
-          maxPos = bb.getYMax();
+          minPos = bbs[i].getYMin();
+          maxPos = bbs[i].getYMax();
 
           cdebug_log(112,0) << "Horizontal gauge: " << gauge << endl;
           cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(ab.getYMin()) << endl;
           cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(ab.getYMax()) << endl;
-          cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getY()) << endl;
+          cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bbs[i].getCenter().getY()) << endl;
         }
 
         cdebug_log(112,0) << "| " << occurrence.getPath() << endl;
         cdebug_log(112,0) << "| " << transformation << endl;
-        cdebug_log(112,0) << "| " << bb << " of:" << candidate << endl;
+        cdebug_log(112,0) << "| " << bbs[i] << " of:" << candidate << endl;
         cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
         cdebug_log(112,0) << "| " << DbU::getValueString(minPos) << " < trackPos < "
                           <<         DbU::getValueString(maxPos) << endl;
@@ -617,9 +617,9 @@ namespace Anabatic {
             ongridComponent = component;
             bestSpan        = span;
             if (gauge->isVertical())
-              ongridCenter = Point( trackPos, bb.getCenter().getY() );
+              ongridCenter = Point( trackPos, bbs[i].getCenter().getY() );
             else
-              ongridCenter = Point( bb.getCenter().getX(), trackPos );
+              ongridCenter = Point( bbs[i].getCenter().getX(), trackPos );
             if (i == 1) rp->setFlags  ( RoutingPad::RotateBottomMetal );
             else        rp->unsetFlags( RoutingPad::RotateBottomMetal );
           }

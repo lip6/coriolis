@@ -1307,6 +1307,7 @@ namespace Katana {
   bool  Manipulator::moveUp ( uint32_t flags )
   {
     cdebug_log(159,0) << "Manipulator::moveUp() " << _segment << endl; 
+    if (_segment->isNonPref()) return false;
 
     Flags kflags = Flags::WithPerpands|Flags::WithNeighbors|Flags::AllAbove;
     kflags |= (flags & AllowLocalMoveUp   ) ? Flags::AllowLocal     : Flags::NoFlags;

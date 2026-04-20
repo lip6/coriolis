@@ -193,14 +193,17 @@ extern "C" {
     HTRY
       char*     name    = NULL;
       PyObject* pyLayer = NULL;
-      if (PyArg_ParseTuple( args, "sO:LefImport.addLayer", &name, &pyLayer )) {
+      char*     lefType = NULL;
+      string    slefType;
+      if (PyArg_ParseTuple( args, "sO|s:LefImport.addLayer", &name, &pyLayer, &lefType )) {
         if (not IsPyDerivedLayer(pyLayer)) {
           PyErr_SetString( ConstructorError
                         , "PyLefImport.addLayer(): Second parameter is not of Layer type" );
           return NULL;
         }
+        if (lefType) slefType = lefType;
         Layer* layer = PYLAYER_O(pyLayer);
-        LefImport::addLayer( name, layer );
+        LefImport::addLayer( name, layer, slefType );
       } else {
         PyErr_SetString ( ConstructorError, "LefImport.addLayer(): Bad type or bad number of parameters." );
         return NULL;

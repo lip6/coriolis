@@ -196,10 +196,11 @@ namespace Anabatic {
     const Layer* viaLayer1 = Session::getBuildContactLayer( 1 );
 
     if (rp->isM1Offgrid() /*or (flags & HSmall)*/) {
-      AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildRoutingLayer(rpDepth+1) );
       Flags  segFlags = Flags::NoFlags;
       size_t segDepth = 1;
       offgridFlag |= AutoSegment::SegForOffgrid;
+#if THIS_IS_DISABLED
+      AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildRoutingLayer(rpDepth+1) );
       if (rlg->getType() == LayerGaugeType::LocalOnly) {
         segDepth = 0;
         if (flags & VSmall) {
@@ -214,14 +215,20 @@ namespace Anabatic {
       }
       AutoSegment::create( rpContactSource, subContact1, segFlags|Flags::Horizontal, segDepth );
       rpContactSource = subContact1;
+#endif
     }
 
     cdebug_log(145,0) << "rpDepth=" << rpDepth << endl;
     if (rpDepth % 2 == 0) { // RP should be horizontal (M1, M3).
       if (not (flags & (HAccess|HAccessEW))) {
         cdebug_log(145,0) << "case not(HAccess|HAccessEW)" << endl;
-        if (false /*flags & HSmall*/) {
+        if (flags & HSmall) {
           cdebug_log(145,0) << "sub-case HSmall" << endl;
+          AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+          AutoSegment::create( rpContactSource, subContact1, Flags::Horizontal|Flags::UseNonPref );
+          rpContactSource = subContact1;
+
+#if THIS_IS_DISABLED
           AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
           AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
           AutoSegment::create( rpContactSource, subContact1, Flags::Horizontal|Flags::UseNonPref );
@@ -229,15 +236,36 @@ namespace Anabatic {
           subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
           AutoSegment::create( subContact2, subContact1, Flags::Horizontal );
           rpContactSource = subContact1;
+#endif
         } else {
           cdebug_log(145,0) << "large horizontal" << endl;
+#if THIS_IS_DISABLED
           AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
           AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
           AutoSegment::create( rpContactSource, subContact1, Flags::Vertical  )->setFlags( offgridFlag );
           AutoSegment::create( subContact1,     subContact2, Flags::Horizontal|Flags::UseNonPref);
           rpContactSource = subContact2;
+#endif
         }
       } else {
+        AutoContact* subContact1 = nullptr;
+        if (flags & HSmall) {
+          cdebug_log(145,0) << "case HSmall" << endl;
+          subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+          AutoSegment::create( rpContactSource
+                             , subContact1
+                             , Flags::Horizontal|Flags::UseNonPref )->setFlags( offgridFlag );
+          rpContactSource = subContact1;
+        }
+
+        if (flags & HAccessEW)
+          subContact1 = AutoContactHTee::create( gcell, rp->getNet(), viaLayer1 );
+        else
+          subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+        AutoSegment::create( rpContactSource, subContact1, Flags::Vertical );
+        rpContactSource = subContact1;
+
+#if THIS_IS_DISABLED
         if (flags & VSmall) {
           cdebug_log(145,0) << "case VSmall" << endl;
           AutoContact* subContact1 = NULL;
@@ -250,6 +278,7 @@ namespace Anabatic {
           rpContactSource = subContact1;
           
           if (flags & AddHNonPref) {
+            cdebug_log(145,0) << "Add H in non-pref" << endl;
             subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
             AutoSegment::create( rpContactSource, subContact1, Flags::Horizontal|Flags::UseNonPref );
             rpContactSource = subContact1;
@@ -258,6 +287,7 @@ namespace Anabatic {
             rpContactSource = subContact1;
           }
         }
+#endif
       }
     } else { // RP should be vertical (M2).
       if (flags & (HAccess|HAccessEW)) {

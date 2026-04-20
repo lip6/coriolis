@@ -488,7 +488,7 @@ namespace Anabatic {
 #if SHOW_WIRE_CAP_TABLE
       cerr << "  " << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
            << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
-      cerr << "    minimalSpacing: "
+      cerr << "    minimalSpacing:   "
            << DbU::getValueString( Session::getLayerGauge(depth)->getLayer()->getMinimalSpacing() ) << endl;
 #endif
 
@@ -2337,6 +2337,7 @@ namespace Anabatic {
     if      (isSpinBottom()) --perpandicularDepth;
     else if (isSpinTop   ()) ++perpandicularDepth;
     else return true;
+    if (perpandicularDepth > Session::getAllowedDepth()) return false;
 
     return (getAnchoredLength() >= (Session::getPitch(perpandicularDepth) * 2));
   }

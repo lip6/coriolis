@@ -222,7 +222,7 @@ namespace Anabatic {
   {
     if (not _capacities) return 0;
     if (_capacities->getCapacity(depth) == 0) return delta;
-    // if (getId() == 236678) {
+    // if (getId() == 45807) {
     //   std::cerr << "decreaseCapacity() id:" << getId()
     //             << " capacity=" << _capacities->getCapacity()
     //             << " " << (void*)_capacities << std::endl;

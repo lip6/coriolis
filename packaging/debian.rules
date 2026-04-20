@@ -28,9 +28,9 @@ binary:
 	chmod u+x patchvenv.sh .
 	patchVEnvArgs="--use-system-packages"
 	./patchvenv.sh ${patchVEnvArgs}
-	make PREFIX=/usr -f Makefile.LIP6 help install DESTDIR=$(DESTDIR)
+	make PREFIX=/usr -f Makefile.devs help install DESTDIR=$(DESTDIR)
 	# Not working due to python3-watchfiles (used by venv/pelican).
-	#make PREFIX=/usr -f Makefile.LIP6 help install_docs DESTDIR=$(DESTDIR)
+	#make PREFIX=/usr -f Makefile.devs help install_docs DESTDIR=$(DESTDIR)
 	(mkdir -p $(DOCDIR); cd $(DOCDIR); tar zxf /usr/src/packages/SOURCES/coriolis-docs-17783c54f.tar.gz)
 	dh_installdeb
 	dh_install

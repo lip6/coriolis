@@ -25,6 +25,7 @@
 #include "crlcore/PyAllianceFramework.h"
 #include "crlcore/PyEnvironment.h"
 #include "crlcore/PyAllianceLibrary.h"
+#include "crlcore/PyLiberty.h"
 #include "crlcore/PyCellGauge.h"
 #include "crlcore/PyRoutingGauge.h"
 #include "crlcore/PyRoutingLayerGauge.h"
@@ -36,6 +37,7 @@
 #include "crlcore/PySpice.h"
 #include "crlcore/PyVerilog.h"
 #include "crlcore/PyBlif.h"
+#include "crlcore/PyMeasures.h"
 #include "crlcore/PyGds.h"
 #include "crlcore/PyLefImport.h"
 #include "crlcore/PyLefExport.h"
@@ -97,12 +99,14 @@ extern "C" {
   // x-------------------------------------------------------------x
 
   static PyMethodDef PyCRL_Methods[] =
-    { { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing      , METH_VARARGS
-                              , "Partial build of a ring" }
-    , { "restoreNetsDirection", (PyCFunction)PyToolBox_restoreNetsDirection, METH_VARARGS
-                              , "Compute and set nets direction of a complete cell hierarchy." }
-    , { "destroyAllVHDL"      , (PyCFunction)PyVhdl_destroyAllVHDL         , METH_NOARGS
-                              , "Clear all VHDL informations on all cells." }
+    { { "createPartRing"             , (PyCFunction)PyToolBox_createPartRing       , METH_VARARGS
+                                     , "Partial build of a ring" }
+    , { "restoreNetsDirection"       , (PyCFunction)PyToolBox_restoreNetsDirection , METH_VARARGS
+                                     , "Compute and set nets direction of a complete cell hierarchy." }
+    , { "destroyAllVHDL"             , (PyCFunction)PyVhdl_destroyAllVHDL          , METH_NOARGS
+                                     , "Clear all VHDL informations on all cells." }
+    , { "getLibertyGroupFromCell"    , (PyCFunction)PyCRL_getLibertyGroupFromCell   , METH_VARARGS
+                                     , "Get the Liberty Group attached to a Hurricane Cell." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
     };
 
@@ -120,6 +124,10 @@ extern "C" {
     PyCatalog_LinkPyType ();
     PyEnvironment_LinkPyType ();
     PyAllianceLibrary_LinkPyType ();
+    PyLibertyLibrary_LinkPyType ();
+    PyLibertyGroup_LinkPyType ();
+    PyLibertyAttribute_LinkPyType ();
+    PyLibertyValue_LinkPyType ();
     PyCellGauge_LinkPyType ();
     PyRoutingGauge_LinkPyType ();
     PyRoutingLayerGauge_LinkPyType ();
@@ -132,6 +140,7 @@ extern "C" {
     PySpice_LinkPyType ();
     PyVerilog_LinkPyType ();
     PyBlif_LinkPyType ();
+    PyMeasures_LinkPyType ();
     PyGds_LinkPyType ();
     PyLefImport_LinkPyType ();
     PyDefImport_LinkPyType ();
@@ -144,6 +153,10 @@ extern "C" {
     PYTYPE_READY_NEW ( Catalog );
     PYTYPE_READY_NEW ( Environment );
     PYTYPE_READY_NEW ( AllianceLibrary );
+    PYTYPE_READY_NEW ( LibertyLibrary );
+    PYTYPE_READY ( LibertyGroup );
+    PYTYPE_READY ( LibertyAttribute );
+    PYTYPE_READY ( LibertyValue );
     PYTYPE_READY_NEW ( CellGauge );
     PYTYPE_READY_NEW ( RoutingGauge );
     PYTYPE_READY_NEW ( RoutingLayerGaugeVector );
@@ -158,6 +171,7 @@ extern "C" {
     PYTYPE_READY_NEW ( Spice );
     PYTYPE_READY_NEW ( Verilog );
     PYTYPE_READY_NEW ( Blif );
+    PYTYPE_READY_NEW ( Measures );
     PYTYPE_READY_NEW ( Gds );
     PYTYPE_READY_NEW ( LefImport );
     PYTYPE_READY_NEW ( DefImport );
@@ -182,6 +196,14 @@ extern "C" {
     PyModule_AddObject ( module, "Catalog", (PyObject*)&PyTypeCatalog );
     Py_INCREF ( &PyTypeAllianceLibrary );
     PyModule_AddObject ( module, "AllianceLibrary", (PyObject*)&PyTypeAllianceLibrary );
+    Py_INCREF ( &PyTypeLibertyLibrary );
+    PyModule_AddObject ( module, "LibertyLibrary", (PyObject*)&PyTypeLibertyLibrary );
+    Py_INCREF ( &PyTypeLibertyGroup );
+    PyModule_AddObject ( module, "LibertyGroup", (PyObject*)&PyTypeLibertyGroup );
+    Py_INCREF ( &PyTypeLibertyAttribute );
+    PyModule_AddObject ( module, "LibertyAttribute", (PyObject*)&PyTypeLibertyAttribute );
+    Py_INCREF ( &PyTypeLibertyValue );
+    PyModule_AddObject ( module, "LibertyValue", (PyObject*)&PyTypeLibertyValue );
     Py_INCREF ( &PyTypeEnvironment );
     PyModule_AddObject ( module, "Environment", (PyObject*)&PyTypeEnvironment );
     Py_INCREF ( &PyTypeCellGauge );
@@ -212,6 +234,8 @@ extern "C" {
     PyModule_AddObject ( module, "Verilog", (PyObject*)&PyTypeVerilog );
     Py_INCREF ( &PyTypeBlif );
     PyModule_AddObject ( module, "Blif", (PyObject*)&PyTypeBlif );
+    Py_INCREF ( &PyTypeMeasures );
+    PyModule_AddObject ( module, "Measures", (PyObject*)&PyTypeMeasures );
     Py_INCREF ( &PyTypeGds );
     PyModule_AddObject ( module, "Gds", (PyObject*)&PyTypeGds );
     Py_INCREF ( &PyTypeLefImport );
