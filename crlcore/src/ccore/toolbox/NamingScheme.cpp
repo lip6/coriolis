@@ -99,7 +99,7 @@ namespace CRL {
       if (translated == '['  ) translated = leftPar;
       if (translated == ']'  ) translated = rightPar;
 
-      if (translated == '_') {
+      if (translated == '_' && refName[i] != '_') {
         if (vhdlName.empty()      ) continue;
         if (i == refName.size()-1) break;
         if (vhdlName.back() == '_') continue;
