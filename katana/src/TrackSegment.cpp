@@ -787,6 +787,7 @@ namespace Katana {
                           << DbU::getValueString( getLength() )
                           << "/" << getBreakLevel()
                           << endl;
+        return false;
       }
     }
 
