@@ -724,12 +724,16 @@ namespace Katana {
     cdebug_log(159,0) << "[1] WDensity[1]=" << gcells[1]->getWDensity(1)
                       << " " << gcells[1] << endl;
     for ( size_t i = 2; i+1 < gcells.size() ; ++i ) {
-      cdebug_log(159,0) << "[" << i << "] WDensity[1]=" << gcells[i]->getWDensity(1)
+      cdebug_log(159,0) << "[" << i
+                        << "] WDensity[1]=" << gcells[i]->getWDensity(1)
+                        <<  " WDensity[2]=" << gcells[i]->getWDensity(2)
                         << " " << gcells[i] << endl;
-      if (gcells[i]->getWDensity(1) < candidate->getWDensity(1))
-        candidate = gcells[i];
+      if (gcells[i]->getWDensity(1) < 0.7) {
+        if (gcells[i]->getWDensity(2) < candidate->getWDensity(2))
+          candidate = gcells[i];
+      }
     }
-    if (candidate->getWDensity(1) < 0.5) {
+    if (candidate->getWDensity(1) < 0.7) {
       TrackElement* dogleg   = nullptr;
       TrackElement* parallel = nullptr;
       cdebug_log(159,0) << "Making dogleg in " << candidate << endl;

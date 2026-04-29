@@ -84,6 +84,7 @@ namespace {
   inline size_t     Cs1Candidate::getEnd             () const { return _end; }
   inline size_t     Cs1Candidate::getSize            () const { return _conflicts.size(); }
   inline Interval   Cs1Candidate::getLongestConflict () const { return _longestConflict; }
+  inline DbU::Unit  Cs1Candidate::getConflictLength  () const { return _conflictLength; }
   inline DbU::Unit  Cs1Candidate::getBreakPos        () const { return _breakPos; }
   inline void       Cs1Candidate::setBegin           ( size_t i ) { _begin=i; }
   inline void       Cs1Candidate::setEnd             ( size_t i ) { _end=i; }
@@ -980,7 +981,7 @@ namespace Katana {
                                      | ((_data1 and (_data1->getStateCount() < 2)) ? Manipulator::AllowExpand
                                                                                    : Manipulator::NoExpand);
 
-    cdebug_log(159,0) << "SegmentFsm::conflictSolveByPlaceds()" << endl;
+    cdebug_log(159,1) << "SegmentFsm::conflictSolveByPlaceds()" << endl;
     cdebug_log(159,0) << "| Candidates Tracks: " << endl;
 
     segment->base()->getConstraints( constraints );
@@ -996,6 +997,7 @@ namespace Katana {
                  , getString(plane).c_str()
                  , DbU::getValueString(constraints.getVMin()).c_str()
                  ) << endl;
+      cdebug_tabw(159,-1);
       return false;
     }
 
@@ -1065,9 +1067,19 @@ namespace Katana {
 
     sort( candidates.begin(), candidates.end() );
 
+    cdebug_log(159,0) << "Conflict track candidates:" << endl;
     for ( size_t icandidate=0 ; icandidate<candidates.size() ; ++icandidate ) {
-      cdebug_log(159,0) << "Trying l:" << candidates[icandidate].getSize()
-                  << " " << candidates[icandidate].getTrack() << endl;
+      cdebug_log(159,0) << "[" << icandidate
+                        <<   "] size:" << candidates[icandidate].getSize()
+                        << " longest:" << DbU::getValueString(candidates[icandidate].getLongestConflict().getSize())
+                        <<   " total:" << DbU::getValueString(candidates[icandidate].getConflictLength())
+                        <<         " " << candidates[icandidate].getTrack() << endl;
+    }
+
+    for ( size_t icandidate=0 ; icandidate<candidates.size() ; ++icandidate ) {
+      cdebug_log(159,0) << "Trying [" << icandidate
+                        << "] l:"     << candidates[icandidate].getSize()
+                        <<    " "     << candidates[icandidate].getTrack() << endl;
 
       Interval overlap0 = candidates[icandidate].getLongestConflict();
       cdebug_log(159,0) << "| overlap0: " << overlap0 << endl;
@@ -1092,11 +1104,19 @@ namespace Katana {
       cdebug_log(159,0) << "| overlap0: " << overlap0 << endl;
 
       if (Session::getConfiguration()->isVH() and (segment->getDepth() == 1)) {
+        cdebug_log(159,0) << "VH gauge case." << endl;
         if (Manipulator(segment,*this).makeDogleg(overlap0,Flags::ShortDogleg)) {
-        //cerr << "Break using ShortDogleg." << endl;
           success = true;
           break;
         }
+        // else {
+        //   cdebug_log(159,0) << "Second try with expaned overlap " << overlap0 << endl;
+        //   overlap0.inflate( Session::getSliceHeight() );
+        //   if (Manipulator(segment,*this).makeDogleg(overlap0,Flags::ShortDogleg)) {
+        //     success = true;
+        //     break;
+        //   }
+        // }
       } else {
         cdebug_log(159,0) << "conflictSolveByPlaceds() other->isGlobal():" << other->isGlobal() << endl;
         if (other->isGlobal()) {
@@ -1134,6 +1154,7 @@ namespace Katana {
       success = true;
     }
 
+    cdebug_tabw(159,-1);
     return success;
   }
 
@@ -1484,7 +1505,8 @@ namespace Katana {
           if (Session::getConfiguration()->isVH()
              and segment->getLength() < 6*Session::getSliceHeight()) {
             cdebug_log(159,0) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
-            break;
+            success = manipulator.ripupPerpandiculars();
+            if (success) break;
           }
         }
       case DataNegociate::Slacken:
