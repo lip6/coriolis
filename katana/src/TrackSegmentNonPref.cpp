@@ -98,6 +98,7 @@ namespace Katana {
     cdebug_log(159,0) << "canPromoteToPref() " << this << endl;
     cdebug_log(159,0) << "_segment->getDirection() " << getDirection() << endl;
     cdebug_log(159,0) << "_segment->isForOffgrid() " << isForOffgrid() << endl;
+    cdebug_log(159,0) << "_segment->isUnbreakable() " << isUnbreakable() << endl;
     cdebug_log(159,0) << "Session::getDirection() " << Session::getDirection(getLayer()) << endl;
     if (Session::getStage() != Anabatic::StageNegociate) return false;
     if (isForOffgrid()) return false;

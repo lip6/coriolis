@@ -2732,8 +2732,14 @@ namespace Anabatic {
       }
     }
 
-    if (    nLowDensity   and (flags & Flags::CheckLowDensity  )) return false;
-    if (not nLowUpDensity and (flags & Flags::CheckLowUpDensity)) return false;
+    if (nLowDensity and (flags & Flags::CheckLowDensity)) {
+      cdebug_log(159,0) << "  Low density, refuse to move up" << endl;
+      return false;
+    }
+    if (not nLowUpDensity and (flags & Flags::CheckLowUpDensity)) {
+      cdebug_log(159,0) << "  Not low up density, refuse to move up" << endl;
+      return false;
+    }
 
     if ( (depth >= 4) and (flags & Flags::WithPerpands) ) {
       if (getAutoSource()->getMinDepth() + 1 < depth) {

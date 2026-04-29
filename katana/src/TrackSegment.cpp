@@ -954,8 +954,18 @@ namespace Katana {
       return false;
     }
 
-    if (hasSourceDogleg() or hasTargetDogleg() or isSlackened()) {
-      cdebug_log(159,0) << "Failed: already has source and/or target dogleg or slackened." << endl;
+    if (isSlackened()) {
+      cdebug_log(159,0) << "Failed: already slackened." << endl;
+      return false;
+    }
+
+    if (hasSourceDogleg()) {
+      cdebug_log(159,0) << "Failed: already has source dogleg." << endl;
+      return false;
+    }
+
+    if (hasTargetDogleg()) {
+      cdebug_log(159,0) << "Failed: already has target dogleg." << endl;
       return false;
     }
 

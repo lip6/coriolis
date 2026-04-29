@@ -699,9 +699,9 @@ namespace Katana {
       //   _negociatePack( count, false );
       // } 
          
-      // if (RoutingEvent::getProcesseds() == 2570) {
+      // if (RoutingEvent::getProcesseds() == 884) {
       //   UpdateSession::close();
-      //   Breakpoint::stop( 0, "After event 2570" );
+      //   Breakpoint::stop( 0, "After event 884" );
       //   UpdateSession::open();
       // }
       if (RoutingEvent::getProcesseds() >= limit) {
