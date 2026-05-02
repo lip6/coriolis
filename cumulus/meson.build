@@ -13,9 +13,6 @@ py.install_sources(chip, subdir: 'coriolis/plugins/chip')
 py.install_sources(core2chip, subdir: 'coriolis/plugins/core2chip')
 py.install_sources(harness, subdir: 'coriolis/plugins/harness')
 py.install_sources(macro, subdir: 'coriolis/plugins/macro')
+py.install_sources(odc, subdir: 'coriolis/plugins/odc')
 py.install_sources(sram, subdir: 'coriolis/plugins/sram')
 py.install_sources(tools, subdir: 'coriolis/tools')
-
-
-
-
