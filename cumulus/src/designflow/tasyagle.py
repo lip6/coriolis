@@ -1,7 +1,9 @@
 import os
+import re
 import subprocess
 from   pathlib         import Path
 from   doit.exceptions import TaskFailed
+from   ..helpers.io    import ErrorMessage
 from   .task           import FlowTask, ShellEnv
 
 
@@ -34,6 +36,23 @@ def toArgStr ( fileList ):
     return str(fileList)
 
 
+def cleanupVhdl ( vhdlFile ):
+    patCkDelayed = re.compile( r'ck\.delayed' )
+    with open( vhdlFile, 'r' ) as fd:
+        lines = fd.readlines()
+
+    newLines = []
+    for line in lines:
+        if patCkDelayed.match(line): continue
+
+        newLine = re.sub( 'linkage', 'in', line )
+        newLines.append( newLine )
+
+    fd = open( vhdlFile, 'w' )
+    fd.writelines( newLines )
+    fd.close()
+
+
 
 class MissingTarget      ( Exception ): pass
 class UndefinedParameter ( Exception ): pass
@@ -42,6 +61,7 @@ class ScriptNotFound     ( Exception ): pass
 class TasYagle ( FlowTask ):
     flags               = 0
     Transistor          = 0x0001
+    KeepLiberty         = 0x0002
     AVERTEC_TOP         = guessAVERTEC_TOP()
     SpiceType           = None
     SpiceTrModel        = None
@@ -96,15 +116,17 @@ class TasYagle ( FlowTask ):
     def doTask ( self ):
         from coriolis.helpers.io import ErrorMessage
 
+        tclPath  = (TasYagle.AVERTEC_TOP / 'tcl').as_posix()
         binPath  = os.environ[ 'PATH' ]
-        binPath  = (TasYagle.AVERTEC_TOP / 'tcl').as_posix() + ':' + binPath
+        if binPath.find( tclPath ) < 0:
+            binPath  = tclPath + ':' + binPath
         shellEnv = ShellEnv( 'TasYagle (Tas/Yagle)' )
         shellEnv[ 'AVERTEC_TOP'   ] = TasYagle.AVERTEC_TOP
         shellEnv[ 'MBK_SPI_MODEL' ] = self.MBK_SPI_MODEL
         shellEnv[ 'MBK_CATA_LIB'  ] = self.MBK_CATA_LIB
         shellEnv[ 'MBK_IN_LO'     ] = 'spi'
         shellEnv[ 'PATH'          ] = binPath
-        shellEnv.export( ShellEnv.Show )
+        shellEnv.export()
         state = subprocess.run( self.command )
         if state.returncode:
             e = ErrorMessage( 1, 'TasYagle.doTask(): UNIX command failed ({}).' \
@@ -136,14 +158,13 @@ class AvtShell ( TasYagle ):
         if script:
             depends.append( self.script )
         if not self.script.is_file():
-            e = ErrorMessage( 1, [ 'TasYagle.__init__(): Script not found.\n'
+            e = ErrorMessage( 1, [ 'TasYagle.__init__(): Script not found.'
                                  , '<{}>'.format( self.script ) ] )
-            return ScriptNotFound( e )
+            raise ScriptNotFound( e )
 
         models = toArgStr( self.SpiceTrModel )
         self.command = [ 'avt_shell'
                        , self.script.as_posix()
-                       , '-Target'     , self.inputFile.stem
                        , '-SpiceModel' , models
                        , '-SpiceType'  ,     TasYagle.SpiceType
                        , '-VddVoltage' , str(TasYagle.VddSupply)
@@ -159,7 +180,6 @@ class AvtShell ( TasYagle ):
 
 class STA ( AvtShell ):
     scriptSTA = Path(__file__).parent / 'scripts' / 'calcCPath.tcl'
-    print('scriptSTA',scriptSTA)
 
     @staticmethod
     def mkRule ( rule, depends, flags=0 ):
@@ -200,3 +220,49 @@ class XTas ( TasYagle ):
 
     def __repr__ ( self ):
         return '<{}>'.format( ' '.join(self.command) )
+        
+
+class ExtractCell ( AvtShell ):
+    script = Path(__file__).parent / 'scripts' / 'extractCell.tcl'
+
+    @staticmethod
+    def mkRule ( rule, depends, flags=0 ):
+        return ExtractCell( rule, depends, flags )
+
+    def __init__ ( self, rule, depends, flags ):
+        depends   = FlowTask._normFileList( depends )
+        super().__init__( rule, depends, ExtractCell.script, flags )
+        self.command += [ '-Cell'  , self.file_depend(0).stem 
+                        , '-Target', self.inputFile.stem ]
+        self.targets = [ Path(self.file_depend(0).stem + '.vhd')
+                       , Path(self.file_depend(0).stem + '.cns')
+                       , Path(self.file_depend(0).stem + '.rep')
+                       , Path(self.file_depend(0).stem + '.rcx')
+                       , Path(self.file_depend(0).stem + '.stm')
+                       , Path(self.file_depend(0).stem + '.dtx')
+                       , Path(self.file_depend(0).stem + '.stat') ]
+        self.addClean( self.targets )
+        self.addClean( [ Path(self.file_depend(0).stem + '.loop') ] )
+
+    def doTask ( self ):
+        status = super().doTask()
+        if not status: return status
+        cleanupVhdl( self.file_target(0) )
+        
+
+class Liberty ( AvtShell ):
+    script = Path(__file__).parent / 'scripts' / 'buildLib.tcl'
+
+    @staticmethod
+    def mkRule ( rule, targets, depends, flags=0 ):
+        return Liberty( rule, targets, depends, flags )
+
+    def __init__ ( self, rule, targets, depends, flags ):
+        depends = FlowTask._normFileList( depends )
+        targets = FlowTask._normFileList( targets )
+        super().__init__( rule, depends, Liberty.script, flags )
+        self.targets = targets
+        self.command += [ '-LibName', self.file_target(0).stem ]
+        if not (self.flags & TasYagle.KeepLiberty):
+            self.addClean( self.targets )
+        self.addClean( [ Path(self.file_depend(0).stem + '.loop') ] )

@@ -7,6 +7,23 @@ from   doit.exceptions import TaskFailed
 from   .task import FlowTask, ShellEnv
 
 
+def cleanupVhdl ( vhdlFile ):
+    patCkDelayed = re.compile( r'ck\.delayed' )
+    with open( vhdlFile, 'r' ) as fd:
+        lines = fd.readlines()
+
+    newLines = []
+    for line in lines:
+        if patCkDelayed.match(line): continue
+
+        newLine = re.sub( 'linkage', 'in', line )
+        newLines.append( newLine )
+
+    fd = open( vhdlFile, 'w' )
+    fd.writelines( newLines )
+    fd.close()
+
+
 def removePowerSupplies ( verilogFile ):
     patModuleDecl = re.compile( r'^\s*module\s+(?P<name>\S+)\s*\((?P<signals>[^)]*)\)' )
     patInputVdd   = re.compile( r'^\s*input\s+vdd\s*;\s*$' )
@@ -66,6 +83,7 @@ class Vasy ( FlowTask ):
     RemovePowerSupplies = 0x00000008
     Overwrite           = 0x00000010
     ToVerilog           = 0x00000020
+    VbeCompliant        = 0x00000040
 
     @staticmethod
     def mkRule ( rule, targets, depends=[], flags=0 ):
@@ -107,6 +125,12 @@ class Vasy ( FlowTask ):
 
         shellEnv = ShellEnv()
         shellEnv.export()
+        if self.flags & Vasy.VbeCompliant:
+            if self.flags & Vasy.ToVerilog:
+                print( WarningMessage( 'Vasy.doTask(): VBE compliance is not for Verilog.' ))
+            else:
+                print( '   -> Writing VBE compilant VHDL.' )
+                cleanupVhdl( self.vhdlFile )
         print( '   -> Running "{}" ...'.format( ' '.join(self.command) ))
         state = subprocess.run( self.command )
         if state.returncode:

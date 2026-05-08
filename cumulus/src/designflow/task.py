@@ -86,49 +86,44 @@ class ShellEnv ( object ):
         self.shellEnv[ 'RDS_IN'         ] = 'gds'
         self.shellEnv[ 'RDS_OUT'        ] = 'gds'
         if ShellEnv.ALLIANCE_TOP:
-            self.shellEnv[ 'ALLIANCE_TOP'   ] = ShellEnv.ALLIANCE_TOP
-            libPath         = ShellEnv.ALLIANCE_TOP + '/lib'
+            self.shellEnv[ 'ALLIANCE_TOP' ] = ShellEnv.ALLIANCE_TOP
+            libPath = ShellEnv.ALLIANCE_TOP + '/lib'
             LD_LIBRARY_PATH = ''
             if 'LD_LIBRARY_PATH' in os.environ:
                 LD_LIBRARY_PATH = os.environ[ 'LD_LIBRARY_PATH' ]
-            if LD_LIBRARY_PATH != '':
+            if LD_LIBRARY_PATH != '' and LD_LIBRARY_PATH.find( libPath ) < 0:
                 libPath += ':' + LD_LIBRARY_PATH
             self.shellEnv[ 'LD_LIBRARY_PATH' ] = libPath
+
 
     def export ( self, flags=0 ):
         """
         Write back the variables into the environement for usage by the
         sub-processes.
         """
+        def _setEnviron ( variable, value, flags ):
+            if value is None: return
+            if isinstance( value, Path ):
+                value = value.as_posix()
+            os.environ[ variable ] = value
+            if flags & ShellEnv.Show:
+                print( '    {}: {}'.format( variable, value ))
+
         if flags & ShellEnv.Show:
             print( 'ShellEnv:' )
             print( '  Name:', self.name )
             print( '  Variable:' )
         for variable, value in self.shellEnv.items():
-            if value is None: continue
-            os.environ[ variable ] = value
-            if flags & ShellEnv.Show:
-                print( '    {}: {}'.format( variable, value ))
-        if ShellEnv.MBK_SPI_MODEL is not None:
-            if isinstance(ShellEnv.MBK_SPI_MODEL,Path): value = ShellEnv.MBK_SPI_MODEL.as_posix()
-            else:                                       value = ShellEnv.MBK_SPI_MODEL
-            os.environ[ 'MBK_SPI_MODEL' ] = value
-        if ShellEnv.RDS_TECHNO_NAME is not None:
-            os.environ[ 'RDS_TECHNO_NAME' ] = ShellEnv.RDS_TECHNO_NAME
-        if ShellEnv.GRAAL_TECHNO_NAME is not None:
-            os.environ[ 'GRAAL_TECHNO_NAME' ] = ShellEnv.GRAAL_TECHNO_NAME
-        if ShellEnv.DREAL_TECHNO_NAME is not None:
-            os.environ[ 'DREAL_TECHNO_NAME' ] = ShellEnv.DREAL_TECHNO_NAME
-        if ShellEnv.CHECK_TOOLKIT is not None:
-            os.environ[ 'CHECK_TOOLKIT' ] = ShellEnv.CHECK_TOOLKIT
-        if ShellEnv.PDK_ROOT is not None:
-            os.environ[ 'PDK_ROOT' ] = ShellEnv.PDK_ROOT
-        if ShellEnv.PDK is not None:
-            os.environ[ 'PDK' ] = ShellEnv.PDK
-        if ShellEnv.KLAYOUT_PATH is not None:
-            os.environ[ 'KLAYOUT_PATH' ] = ShellEnv.KLAYOUT_PATH
-        if ShellEnv.KLAYOUT_HOME is not None:
-            os.environ[ 'KLAYOUT_HOME' ] = ShellEnv.KLAYOUT_HOME
+            _setEnviron( variable, value, flags )
+        _setEnviron( 'MBK_SPI_MODEL'    , ShellEnv.MBK_SPI_MODEL    , flags )
+        _setEnviron( 'RDS_TECHNO_NAME'  , ShellEnv.RDS_TECHNO_NAME  , flags )
+        _setEnviron( 'GRAAL_TECHNO_NAME', ShellEnv.GRAAL_TECHNO_NAME, flags )
+        _setEnviron( 'DREAL_TECHNO_NAME', ShellEnv.DREAL_TECHNO_NAME, flags )
+        _setEnviron( 'CHECK_TOOLKIT'    , ShellEnv.CHECK_TOOLKIT    , flags )
+        _setEnviron( 'PDK_ROOT'         , ShellEnv.PDK_ROOT         , flags )
+        _setEnviron( 'PDK'              , ShellEnv.PDK              , flags )
+        _setEnviron( 'KLAYOUT_PATH'     , ShellEnv.KLAYOUT_PATH     , flags )
+        _setEnviron( 'KLAYOUT_HOME'     , ShellEnv.KLAYOUT_HOME     , flags )
             
 
 class Tasks ( object ):

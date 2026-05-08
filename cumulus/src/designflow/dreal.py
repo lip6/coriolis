@@ -15,6 +15,7 @@ class Dreal ( FlowTask ):
     Xor     = 0x0002
     Install = 0x0004
     Force   = 0x0008
+    Config  = 0x0010
 
     @staticmethod
     def mkRule ( rule, depends=[], flags=0 ):
@@ -42,6 +43,9 @@ class Dreal ( FlowTask ):
         if self.layoutFile:
             shellEnv[ 'RDS_IN' ] = self.layoutFile.suffix[1:]
         shellEnv.export()
+        if self.flags & Dreal.Config:
+            print( '  RDS_TECHNO_NAME={}'.format( os.environ[   'RDS_TECHNO_NAME' ] ))
+            print( 'DREAL_TECHNO_NAME={}'.format( os.environ[ 'DREAL_TECHNO_NAME' ] ))
         state = subprocess.run( self.command )
         if state.returncode:
             e = ErrorMessage( 1, 'Dreal.doTask(): UNIX command failed ({}).' \

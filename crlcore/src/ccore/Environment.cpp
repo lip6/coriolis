@@ -57,7 +57,7 @@ namespace CRL {
 
   Environment::Environment ()
     : _displayStyle       ()
-    , _SCALE_X            (10)
+    , _SCALE_X            (100)
     , _IN_LO              ("vst")
     , _IN_PH              ("ap")
     , _OUT_LO             ("vst")

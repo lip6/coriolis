@@ -15,6 +15,7 @@ class Graal ( FlowTask ):
     Xor     = 0x0002
     Install = 0x0004
     Force   = 0x0008
+    Config  = 0x0010
 
     @staticmethod
     def mkRule ( rule, depends=[], flags=0 ):
@@ -42,6 +43,9 @@ class Graal ( FlowTask ):
         if self.layoutFile:
             shellEnv[ 'MBK_IN_PH' ] = self.layoutFile.suffix[1:]
         shellEnv.export()
+        if self.flags & Graal.Config:
+            print( '  RDS_TECHNO_NAME={}'.format( os.environ[   'RDS_TECHNO_NAME' ] ))
+            print( 'GRAAL_TECHNO_NAME={}'.format( os.environ[ 'GRAAL_TECHNO_NAME' ] ))
         state = subprocess.run( self.command )
         if state.returncode:
             e = ErrorMessage( 1, 'Graal.doTask(): UNIX command failed ({}).' \

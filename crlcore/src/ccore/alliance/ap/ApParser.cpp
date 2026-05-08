@@ -579,7 +579,10 @@ namespace {
         if ( not dynamic_cast<const RegularLayer*>(layerInfo->getLayer()) )
           shrink = DbU::lambda(1.0);
 
-        Contact::create ( net, layerInfo->getLayer(), XVIA, YVIA, WIDTH-shrink, HEIGHT-shrink );
+        if (layerInfo->getLayer()) 
+          Contact::create ( net, layerInfo->getLayer(), XVIA, YVIA, WIDTH-shrink, HEIGHT-shrink );
+        else
+          _printError ( false, "Untranslatable symbolic layer name <%s>.", fields[4] );
       } else
         _printError ( false, "Unknown layer name <%s>.", fields[4] );
     }

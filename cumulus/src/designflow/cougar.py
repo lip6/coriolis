@@ -18,6 +18,7 @@ class Cougar ( FlowTask ):
     GroundCap  = 0x0010
     WireRC     = 0x0020
     NoErrors   = 0x0040
+    KeepSpice  = 0x0080
 
     @staticmethod
     def mkRule ( rule, targets, depends=[], flags=0 ):
@@ -37,7 +38,8 @@ class Cougar ( FlowTask ):
         if flags & Cougar.WireRC:     self.command.append( '-ar' )
         if flags & Cougar.NoErrors:   self.command.append( '-w' )
         self.command   += [ self.inputFile.stem, self.outputFile.stem ]
-        self.addClean( self.targets )
+        if not (self.flags & Cougar.KeepSpice):
+            self.addClean( self.targets )
 
     def __repr__ ( self ):
         return '<{}>'.format( ' '.join(self.command) )
