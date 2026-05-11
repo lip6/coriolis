@@ -16,12 +16,12 @@
 import sys
 import os.path
 from   copy               import deepcopy
-from   ...                import Cfg
+from   ...                import Cfg, CRL
 from   ...Hurricane       import Breakpoint, DbU, Box, Transformation, Point, \
                                  Box, Path, Layer, Occurrence, Net,           \
                                  NetExternalComponents, RoutingPad, Pad,      \
                                  Horizontal, Vertical, Contact, Pin, Plug,    \
-                                 Cell, Instance
+                                 Cell, Instance, UpdateSession
 from   ...CRL             import AllianceFramework, RoutingLayerGauge
 from   ...helpers         import trace, dots, l, u, n
 from   ...helpers.io      import ErrorMessage, WarningMessage, catch
@@ -679,6 +679,75 @@ class Block ( object ):
         with UpdateSession():
             for side in self.sides.values():
                 side.expand()
+    def pin_defined_in_iospec(self, pin_name):
+        
+      """Check if a pin with pin_name is already defined
+       """
+      for iopin in self.conf.ioPins:
+          if iopin.stem == pin_name:
+              return True
+      return False 
+    
+    def createPinPostPlacement(self,workCell,net,direction,pinSide,x,y):
+          """create a new pin post placement, user must specify the top level cell,
+          pin Name, the access direction (in or out), the pinside 
+          (NORTH, SOUTH, WEST ,EAST and the positions x,y in DbU
+           """
+          net.setExternal(True)
+          if direction == 'IN':
+            net.setDirection(Net.Direction.IN)
+          elif direction == 'OUT':
+            net.setDirection(Net.Direction.OUT)
+
+          if   pinSide == 'NORTH':
+             side  =  self.sides[IoPin.NORTH]
+             gauge =  side.conf.vDeepRG
+             width =  gauge.getWireWidth()
+             height=  gauge.getWireWidth() * 2
+
+          elif pinSide == 'SOUTH':   
+             side  =  self.sides[IoPin.SOUTH]
+             gauge =  side.conf.vDeepRG
+             width =  gauge.getWireWidth()         
+             height=  gauge.getWireWidth() * 2 
+
+          elif pinSide == 'EAST':   
+             side     = self.sides[IoPin.EAST]
+             pinDepth = self.conf.horizontalDeepDepth
+             if side.conf.cfg.block.upperEastWestPins:
+                 pinDepth += 2
+             gauge  =  side.conf.routingGauge.getLayerGauge(pinDepth)
+             ppitch =  side.conf.routingGauge.getLayerPitch(pinDepth)
+             width  =  ppitch * 2         
+             height =  gauge.getWireWidth()
+          elif pinSide == 'WEST':   
+             side     = self.sides[IoPin.WEST]
+             pinDepth = self.conf.horizontalDeepDepth
+             if side.conf.cfg.block.upperEastWestPins:
+                 pinDepth += 2
+             gauge  = side.conf.routingGauge.getLayerGauge(pinDepth)
+             ppitch = side.conf.routingGauge.getLayerPitch(pinDepth)
+             width  =  ppitch * 2         
+             height =  gauge.getWireWidth()
+          pin = Pin.create(  net
+                          , net.getName()
+                          , side.pinDirection
+                          , Pin.PlacementStatus.FIXED
+                          , gauge.getLayer()
+                          , x
+                          , y
+                          , width
+                          , height
+                          )
+          NetExternalComponents.setExternal(pin)
+          side.append( pin )
+          RoutingPad.create(
+              net,
+              Occurrence(pin),
+              RoutingPad.BiggestArea
+              )
+          print(f'[WARNING] Pin {net.getName()} is created')
+          return pin
 
     def initEtesian ( self ):
         editor = self.conf.editor
@@ -698,7 +767,7 @@ class Block ( object ):
         self.initEtesian()
         if self.conf.placeArea:
             self.etesian.setPlaceArea( self.conf.placeArea )
-        if self.conf.useHFNS:
+        if self.conf.useHFNS:   
             self.etesian.doHFNS()
             Breakpoint.stop( 100, 'HFNS (Etesian) done.' )
         self.etesian.place()
@@ -830,9 +899,8 @@ class Block ( object ):
                                    , ab.getCenter().getX()
                                    , ab.getWidth()
                                    , ab.getYMin() + dyBorder
-                                   , ab.getYMax() - dyBorder
-                                   )
-
+                                   , ab.getYMax() - dyBorder)
+      
     def doPnR ( self ):
         """
         Perform all the steps required to build the layout of the block.
@@ -878,6 +946,9 @@ class Block ( object ):
         self.etesian.flattenPower()
         if self.conf.isCoreBlock: self.doConnectCore()
         pnrStatus = self.route()
+       # af = AllianceFramework.get()
+       # workCell = self.conf.cell
+       # self.congestion(workCell,af)
         if not self.conf.isCoreBlock:
             self.addBlockages()
             self.expandIoPins()
@@ -891,7 +962,1098 @@ class Block ( object ):
                                    , 'This strongly hints at a bug in the PnR...'
                                    ] )
         return pnrStatus and lvxStatus
+    def legalize_pos_on_pitch(self, workCell, side, px, py):
+        """
+        Pins must align to defined pitches;
+        This function ensures this feature
+        """
+    
+        ab = workCell.getAbutmentBox()
+    
+        xmin = ab.getXMin()
+        xmax = ab.getXMax()
+        ymin = ab.getYMin()
+        ymax = ab.getYMax()
+    
+        # -------- Get gauge according to side -------
+        if side in ('WEST', 'EAST'):
+            pinDepth = self.conf.horizontalDeepDepth
+            if self.conf.cfg.block.upperEastWestPins:
+                pinDepth += 2
+            gauge = self.conf.routingGauge.getLayerGauge(pinDepth)
+        else:
+            gauge = self.conf.vDeepRG
+    
+        pitch  = gauge.getPitch()
+        offset = gauge.getOffset()
+    
+        # --------  Constraints according to side --------
+        if side in ('WEST', 'EAST'):
+            py = ((py - offset) // pitch) * pitch + offset
+            start_pos = py
+            min_pos = ymin
+            max_pos = ymax
+        else:
+            px = ((px - offset) // pitch) * pitch + offset
+            start_pos = px
+            min_pos = xmin
+            max_pos = xmax
+    
+        # -------- get  pins already placed --------
+        if side == 'WEST':
+            side_obj = self.sides[IoPin.WEST]
+        elif side == 'EAST':
+            side_obj = self.sides[IoPin.EAST]
+        elif side == 'SOUTH':
+            side_obj = self.sides[IoPin.SOUTH]
+        else:
+            side_obj = self.sides[IoPin.NORTH]
+    
+        occupied = set(side_obj.pins)
+    
+        # -------- spacing between pins --------
+        min_spacing = pitch   # 2*pitch for more safety
+    
+        # -------- fonction that detect collision between pins--------
+        def is_free(pos):
+            if pos < min_pos or pos > max_pos:
+                return False
+            for p in occupied:
+                if abs(pos - p) < min_spacing:
+                    return False
+            return True
+    
+        # -------- search for ideal pos --------
+        max_iter = 1000
+    
+        for k in range(max_iter):
+    
+            if k == 0:
+                pos = start_pos
+                if is_free(pos):
+                    break
+    
+            else:
+                pos1 = start_pos + k * pitch
+                if is_free(pos1):
+                    pos = pos1
+                    break
+    
+                pos2 = start_pos - k * pitch
+                if is_free(pos2):
+                    pos = pos2
+                    break
+    
+        else:
+            raise RuntimeError("No legal position found for pin")
+    
+        # -------- new pos --------
+        if side in ('WEST', 'EAST'):
+            py = pos
+        else:
+            px = pos
+    
+        return px, py   
+    def legalize_with_fallback(self, workCell, side, px, py):
+        """
+        Pins must align to defined pitches;
+        the method legalize_pos_on_pitch enforces this on a specified side.
+        If no legal position exists on that side,
+        the function may reassign the pin to a different side.
+        """
 
+
+        ab = workCell.getAbutmentBox()
+
+        xmin = ab.getXMin()
+        xmax = ab.getXMax()
+        ymin = ab.getYMin()
+        ymax = ab.getYMax()
+
+        # inital pos
+        x = px
+        y = py
+
+        # closest side to position
+        dist_west  = x - xmin
+        dist_east  = xmax - x
+        dist_south = y - ymin
+        dist_north = ymax - y
+
+        # sides list
+        sides = ["WEST", "EAST", "SOUTH", "NORTH"]
+        distances = [dist_west, dist_east, dist_south, dist_north]
+
+        # sort the sides according to position
+        for i in range(4):
+            for j in range(i+1, 4):
+                if distances[j] < distances[i]:
+                    tmp_d = distances[i]
+                    distances[i] = distances[j]
+                    distances[j] = tmp_d
+
+                    tmp_s = sides[i]
+                    sides[i] = sides[j]
+                    sides[j] = tmp_s
+
+        # legalize
+        for s in sides:
+            try:
+                px_new, py_new = self.legalize_pos_on_pitch(workCell, s, px, py)
+                return s, px_new, py_new
+            except RuntimeError:
+                continue
+
+        raise RuntimeError("No legal position found on any side")
+
+    def project_to_edge(self, workCell, inst, pin_name=None):
+     """
+     This function does an orthogonal projection of the instance postion
+     (or even the pin of the position inside the instance) on the block
+     closest side. It is used to find the closest side to an instance. It is
+     usefull to place a pin close to an instance.
+     """
+     # -------- abutment box --------
+     ab = workCell.getAbutmentBox()
+
+     xmin = ab.getXMin()
+     xmax = ab.getXMax()
+     ymin = ab.getYMin()
+     ymax = ab.getYMax()
+
+     t = inst.getTransformation()
+
+     # -------- position (pin if given or instance) --------
+     if pin_name is not None:
+         master = inst.getMasterCell()
+         net = master.getNet(pin_name)
+
+         comp = None
+         if net is not None:
+             for c in net.getExternalComponents():
+                 comp = c
+                 break
+
+         if comp is not None:
+             box = comp.getBoundingBox()
+
+             x = box.getXCenter()
+             y = box.getYCenter()
+             p = Point(x, y)
+             t.applyOn(p)
+             x = p.getX()
+             y = p.getY()
+         else:
+             x = t.getTx()
+             y = t.getTy()
+     else:
+         x = t.getTx()
+         y = t.getTy()
+
+     # -------- projection --------
+     d_west  = x - xmin
+     d_east  = xmax - x
+     d_south = y - ymin
+     d_north = ymax - y
+
+     dmin = min(d_west, d_east, d_south, d_north)
+
+     if dmin == d_west:
+         side = 'WEST'
+         px = xmin
+         py = y
+
+     elif dmin == d_east:
+         side = 'EAST'
+         px = xmax
+         py = y
+
+     elif dmin == d_south:
+         side = 'SOUTH'
+         px = x
+         py = ymin
+
+     else:
+         side = 'NORTH'
+         px = x
+         py = ymax
+
+     return side, px, py
+
+    def create_unique_net(self,cell, base_name):
+        """
+        Create a unique net name.
+        If an instance with the same name already exists,
+        a suffix _1, _2, ... is appended.
+        """
+        name = base_name
+        i = 1
+        while cell.getNet(name) is not None:
+            name = f"{base_name}_{i}"
+            i += 1
+        return Net.create(cell, name)
+
+
+    def create_unique_instance(self, cell, base_name, master_cell):
+        """
+        Create an instance with a unique cell name.
+        If an instance with the same name already exists,
+        a suffix _1, _2, ... is appended.
+        """
+        name = base_name
+        i = 1
+        while cell.getInstance(name) is not None:
+            name = f"{base_name}_{i}"
+            i += 1
+        return Instance.create(cell, name, master_cell)
+
+
+    def find_best_scan_chain_and_io(self, workCell, cells, sout_buffer):
+        """
+        This function finds the best stitching configuration of the scan ffs:
+        the ffs are already placed. The order of stitching is defined 
+        minimizing the total length between a ff candidate (start ff) + the 
+        distances between ffs + distance from last ff to sout_buffer
+        (this buffer is linked to the output SOUT). There are 4 ffs candidates 
+        for the start ff (that will be linked to SIN).
+        """
+        best_cost = None
+        best_order = None
+    
+        # -------- 4 candidates for start ff (closest FF to the edge) --------
+        ab = workCell.getAbutmentBox()
+    
+        xmin = ab.getXMin()
+        xmax = ab.getXMax()
+        ymin = ab.getYMin()
+        ymax = ab.getYMax()
+    
+        candidates = [
+            min(cells, key=lambda c: c.getTransformation().getTx() - xmin),   # WEST
+            min(cells, key=lambda c: xmax - c.getTransformation().getTx()),   # EAST
+            min(cells, key=lambda c: c.getTransformation().getTy() - ymin),   # SOUTH
+            min(cells, key=lambda c: ymax - c.getTransformation().getTy()),   # NORTH
+        ]
+    
+        # -------- buffer position = end --------
+        t_buf = sout_buffer.getTransformation()
+        end_x = t_buf.getTx()
+        end_y = t_buf.getTy()
+    
+        xs = []
+        ys = []
+        for c in cells:
+            t = c.getTransformation()
+            xs.append(t.getTx())
+            ys.append(t.getTy())
+    
+        # -------- optimization --------
+        for inst in candidates:
+    
+            t = inst.getTransformation()
+            start_x = t.getTx()
+            start_y = t.getTy()
+    
+            # --- order  ---
+            order = self.etesian.orderScanChain(
+                xs,
+                ys,
+                start_x,
+                start_y,
+                end_x,
+                end_y
+            )
+    
+            # --- cost  ---
+            cost = self.etesian.chainLengthFromOrder(
+                order,
+                xs,
+                ys,
+                start_x,
+                start_y,
+                end_x,
+                end_y
+            )
+    
+            # --- keep best ---
+            if best_cost is None or cost < best_cost:
+                best_cost = cost
+                best_order = [cells[i] for i in order]
+    
+        return best_order
+
+    def create_scan_ff(
+     self,
+     af,
+     scan_ff_name,
+     dff_name,
+     mux_name,
+     ff_pins,
+     scan_pins,
+     mux_pins,
+     mux_orientation="ID",
+     ff_orientation="ID"
+):
+     """
+     This function creates a scan ff cell from a native mux cell and a native ff 
+     cell. It is used for technologies that does not have a native scan ff.
+     Names, pins and prefered orientations are specified for building the 
+     scan ff cell. This information is given in the technology files
+     """
+
+     if mux_orientation not in ["ID", "MX"]:
+         raise ErrorMessage(1, 'mux_orientation must be "ID" or "MX"')
+
+     if ff_orientation not in ["ID", "MX"]:
+         raise ErrorMessage(1, 'ff_orientation must be "ID" or "MX"')
+
+     dff = af.getCell(dff_name, CRL.Catalog.State.Views)
+     mux = af.getCell(mux_name, CRL.Catalog.State.Views)
+     if dff is None or mux is None:
+         raise Exception("Cannot load dff/mux stdcells")
+
+     scan_ff = af.createCell(scan_ff_name)
+     scan_ff.setTerminalNetlist(True)
+
+     # =========================
+     # Instances
+     # =========================
+     mux_0 = Instance.create(scan_ff, "mux_0", mux)
+     dff_1 = Instance.create(scan_ff, "dff_1", dff)
+ 
+     # =========================
+     # Scan nets
+     # =========================
+
+     SI = Net.create(scan_ff, scan_pins["si"])
+     SI.setExternal(True)
+     SI.setDirection(Net.Direction.IN)
+
+     SE = Net.create(scan_ff, scan_pins["se"])
+     SE.setExternal(True)
+     SE.setDirection(Net.Direction.IN)
+
+     tmp_D = Net.create(scan_ff, "tmp_D")
+
+     # =============================
+     # Recreate ALL FF external nets
+     # =============================
+     ext_nets = {}
+
+     for net in dff.getExternalNets():
+         name = net.getName()
+         # skip if this name is used by scan pins
+         if name in [scan_pins["si"], scan_pins["se"]]:
+          print(f"[WARNING] FF {dff_name} already has scan pin {name}, skipping")
+          continue
+
+         new_net = Net.create(scan_ff, name)
+         new_net.setExternal(True)
+
+         if net.isGlobal():
+             new_net.setGlobal(True)
+         else:
+             new_net.setDirection(net.getDirection())
+
+         ext_nets[name] = new_net
+
+     # =========================
+     # Mux connections
+     # =========================
+     mux_0.getPlug(mux.getNet(mux_pins["i0"])).setNet(
+         ext_nets[ff_pins["d"]]
+     )
+     mux_0.getPlug(mux.getNet(mux_pins["i1"])).setNet(SI)
+     mux_0.getPlug(mux.getNet(mux_pins["sel"])).setNet(SE)
+     mux_0.getPlug(mux.getNet(mux_pins["out"])).setNet(tmp_D)
+
+     # connect other mux pins automatically
+     for net in mux.getExternalNets():
+         name = net.getName()
+
+         if name in [
+             mux_pins["i0"],
+             mux_pins["i1"],
+             mux_pins["sel"],
+             mux_pins["out"]
+         ]:
+             continue
+
+         if name in ext_nets:
+             mux_0.getPlug(mux.getNet(name)).setNet(ext_nets[name])
+
+     # =========================
+     # FF connections
+     # =========================
+     for net in dff.getExternalNets():
+         name = net.getName()
+
+         if name == ff_pins["d"]:
+             dff_1.getPlug(dff.getNet(name)).setNet(tmp_D)
+         elif name in ext_nets:
+             dff_1.getPlug(dff.getNet(name)).setNet(ext_nets[name])
+
+     # =========================
+     # Placement
+     # =========================
+     mux_ab = mux.getAbutmentBox()
+     mux_w  = mux_ab.getWidth()
+     mux_h  = mux_ab.getHeight()
+
+     dff_ab = dff.getAbutmentBox()
+     dff_w  = dff_ab.getWidth()
+     dff_h  = dff_ab.getHeight()
+
+     if mux_h != dff_h:
+         raise ErrorMessage(1, "Cells have not the same height")
+
+     # orientation mapping
+     ori_map = {
+         "ID": Transformation.Orientation.ID,
+         "MX": Transformation.Orientation.MX
+     }
+
+
+     # placement X offsets:
+     # MX mirrors around origin => needs width compensation
+     mux_x = mux_w if mux_orientation == "MX" else 0
+
+     dff_x = mux_w
+     if ff_orientation == "MX":
+         dff_x += dff_w
+
+     mux_0.setTransformation(
+         Transformation(mux_x, 0, ori_map[mux_orientation])
+     )
+     mux_0.setPlacementStatus(Instance.PlacementStatus.PLACED)
+
+     dff_1.setTransformation(
+         Transformation(dff_x, 0, ori_map[ff_orientation])
+     )
+     dff_1.setPlacementStatus(Instance.PlacementStatus.PLACED)
+
+     scan_ff.setAbutmentBox(Box(0, 0, mux_w + dff_w, dff_h))
+
+     # =========================
+     # Pin geometry creation
+     # =========================
+     gaugeName = Cfg.getParamString('anabatic.routingGauge').asString()
+     routingGauge = af.getRoutingGauge(gaugeName)
+
+     metal1 = None
+     for layerGauge in routingGauge.getLayerGauges():
+         if layerGauge.getType() == CRL.RoutingLayerGauge.PinOnly:
+             metal1 = routingGauge.getRoutingLayer(layerGauge.getDepth())
+             break
+
+     if metal1 is None:
+         raise ErrorMessage(1, "Cannot find PinOnly routing layer")
+
+     for net in scan_ff.getExternalNets():
+         if net.isGlobal():
+             continue
+
+         plug_found = None
+         for plug in net.getPlugs():
+             if plug.getInstance() is not None:
+                 plug_found = plug
+                 break
+
+         if plug_found is None:
+             continue
+
+         master_net = plug_found.getMasterNet()
+         inst = plug_found.getInstance()
+
+         comp_master = None
+         for comp in master_net.getExternalComponents():
+             comp_master = comp
+             break
+
+         if comp_master is None:
+             continue
+
+         bb = Box(comp_master.getBoundingBox())
+         inst.getTransformation().applyOn(bb)
+
+         pin = Vertical.create(
+             net,
+             metal1,
+             bb.getCenter().getX(),
+             bb.getWidth(),
+             bb.getYMin(),
+             bb.getYMax()
+         )
+
+         NetExternalComponents.setExternal(pin)
+
+     af.saveCell(scan_ff, CRL.Catalog.State.Views)
+
+     return scan_ff
+     
+
+    def doPnRDFT ( self ):
+        """
+        Perform all the steps required to build the layout of the block + inseerting the DFT.
+        The FFs are replaced by scan FFs before the placement but not stitched to not impact
+        the placement optimization. Then the placement is operated and the SFFs are then stitched
+        just before the routing.
+        3 cases covered
+        """
+    
+        # PRE-PLACEMENT DFT
+        af = CRL.AllianceFramework.get()
+        workCell = self.conf.cell
+        dft = self.conf.dft_std_cells
+    
+        mux_name         = dft.mux_name
+        buf_name         = dft.buf_name
+        ff_pins          = dft.ff_pins
+        if "d" not in ff_pins or "q" not in ff_pins:
+            raise ErrorMessage(1, "ff_pins must define at least 'd' and 'q'")
+        scan_pins        = dft.scan_pins
+        ##Check that scan pin was well defined##
+        if "q" not in scan_pins:
+            scan_pins["q"] = ff_pins["q"]
+        mux_pins         = dft.mux_pins
+        buf_pins         = dft.buf_pins
+        mux_orientation  = dft.mux_orientation
+        ff_orientation   = dft.ff_orientation
+    
+        buf = af.getCell(buf_name, CRL.Catalog.State.Views)
+        if buf is None:
+            raise Exception("Cannot load buffer stdcell")
+    
+        with UpdateSession():
+    
+            # cache to avoid creating the same scan_ff master cell multiple times
+            scanff_cache = {}
+    
+            # all scan FF instances after replacement
+            sdffs = []
+    
+            # all scan FF master cells actually used
+            used_scanff_masters = set()
+    
+            for inst in workCell.getInstances():
+    
+                mastercell_name = inst.getMasterCell().getName()
+    
+                # only process FFs declared in the DFT config
+                if mastercell_name not in dft.dff_names:
+                    continue
+    
+                # -------- save connections --------
+                saved_nets = {}
+                for plug in inst.getPlugs():
+                    master_net = plug.getMasterNet()
+                    if master_net is None:
+                        continue
+                    saved_nets[master_net.getName()] = plug.getNet()
+    
+                # -------- case where a scan FF already exists in the library --------
+                if mastercell_name in dft.ff_to_scanff:
+                    scan_name = dft.ff_to_scanff[mastercell_name]
+                    scan_ff_candidate = af.getCell(scan_name, CRL.Catalog.State.Views)
+                
+                    if scan_ff_candidate is None:
+                        raise ErrorMessage(1, f"Scan FF {scan_name} not found")
+                
+                    scan_pins_names = [net.getName() for net in scan_ff_candidate.getExternalNets()]
+                
+                    # ---- strict check: must match FF interface ----
+                    if ff_pins["d"] not in scan_pins_names:
+                        raise ErrorMessage(1, f"{scan_name} missing D pin ({ff_pins['d']})")
+                
+                    if ff_pins["q"] not in scan_pins_names:
+                        raise ErrorMessage(1, f"{scan_name} missing Q pin ({ff_pins['q']})")
+                
+                    if scan_pins["si"] not in scan_pins_names:
+                        raise ErrorMessage(1, f"{scan_name} missing SI pin ({scan_pins['si']})")
+                
+                    if scan_pins["se"] not in scan_pins_names:
+                        raise ErrorMessage(1, f"{scan_name} missing SE pin ({scan_pins['se']})")
+                
+                    scan_ff_local = scan_ff_candidate
+           
+
+
+
+                # -------- case where there is no scan FF in library: create mux+FF --------
+                else:
+                    if mastercell_name not in scanff_cache:
+                        #copy of the dict to avoid conflits if other files use the dico
+                        local_scan_pins = dict(scan_pins)
+                        if "d" not in local_scan_pins or local_scan_pins["d"] != ff_pins["d"]:
+                            local_scan_pins["d"] = ff_pins["d"]
+                        if "q" not in local_scan_pins or local_scan_pins["q"] != ff_pins["q"]:
+                            local_scan_pins["q"] = ff_pins["q"]
+                        scanff_cache[mastercell_name] = self.create_scan_ff(
+                            af,
+                            f"scanff_{mastercell_name}",
+                            mastercell_name,
+                            mux_name,
+                            ff_pins,
+                            local_scan_pins,
+                            mux_pins,
+                            mux_orientation,
+                            ff_orientation
+                        )
+    
+                    scan_ff_local = scanff_cache[mastercell_name]
+    
+                # save used scan FF master cells
+                used_scanff_masters.add(scan_ff_local)
+    
+                # -------- replace --------
+                inst.setMasterCell(scan_ff_local)
+                sdffs.append(inst)
+    
+                # -------- reconnect --------
+                for plug in inst.getPlugs():
+                    master_net = plug.getMasterNet()
+                    if master_net is None:
+                        continue
+    
+                    name = master_net.getName()
+    
+                    # do not connect SE / SI here
+                    if name in [scan_pins["si"], scan_pins["se"]]:
+                        continue
+                    # functional D pin must be reconnected explicitly
+                    if name == ff_pins["d"]:
+                        if ff_pins["d"] in saved_nets and saved_nets[ff_pins["d"]] is not None:
+                            plug.setNet(saved_nets[ff_pins["d"]])
+                        continue
+                    # all other pins are reconnected by name
+                    if name in saved_nets and saved_nets[name] is not None:
+                        plug.setNet(saved_nets[name])
+    
+            if not sdffs:
+                raise Exception("No SDFF instances found after replacement")
+            # get DFT pins
+            #Check that the net/Pin is already defined (via IoPinsSpec in doDesign file)
+            sin_defined  = self.pin_defined_in_iospec("SIN")
+            sout_defined = self.pin_defined_in_iospec("SOUT")
+            se_defined   = self.pin_defined_in_iospec("SE")
+            # SIN
+            if sin_defined:
+            #PIN defined/placed in doDesign
+                sin_net = workCell.getNet("SIN")
+                if sin_net is None:
+                #PIN does not exist in the netlist
+                #It has to be created with the same Name
+                    sin_net = Net.create(workCell, "SIN")
+                    sin_net.setExternal(True)
+                    sin_net.setDirection(Net.Direction.IN)
+            else:
+            #PIN not defined in doDesign
+                sin_net = workCell.getNet("SIN")
+                if sin_net is None or not sin_net.isExternal():
+                #PIN not defined in verilog or defined in verilog but not as an input
+                #it can be a different signal than Scan Enable
+                    sin_net = self.create_unique_net(workCell, "SIN")
+            # SOUT
+            if sout_defined:
+            #PIN defined/placed in doDesign
+                sout_net = workCell.getNet("SOUT")
+                if sout_net is None:
+                #PIN does not exist in the netlist
+                #It has to be created with the same Name
+                    sout_net = Net.create(workCell, "SOUT")
+                    sout_net.setExternal(True)
+                    sout_net.setDirection(Net.Direction.OUT)
+            else:
+            #PIN not defined in doDesign
+                sout_net = workCell.getNet("SOUT")
+                if sout_net is None or not sout_net.isExternal():
+                #PIN not defined in verilog or defined in verilog but not as an input
+                #it can be a different signal than Scan Enable
+                    sout_net = self.create_unique_net(workCell, "SOUT")
+                           
+            # SE
+            if se_defined:
+            #PIN defined/placed in doDesign
+                se_net = workCell.getNet("SE")
+                if se_net is None:
+                #PIN does not exist in the netlist
+                #It has to be created with the same Name
+                    se_net = Net.create(workCell, "SE")
+                    se_net.setExternal(True)
+                    se_net.setDirection(Net.Direction.IN)
+            else:
+            #PIN not defined in doDesign
+                se_net = workCell.getNet("SE")
+                if se_net is None or not se_net.isExternal():
+                #PIN not defined in verilog or defined in verilog but not as an input
+                #it can be a different signal than Scan Enable
+                    se_net = self.create_unique_net(workCell, "SE")
+                    
+            # create a buffer that is driving SE
+            se_fanout = self.create_unique_net(workCell, "SE_FANOUT")
+            se_buf = self.create_unique_instance(workCell, "scanen_buf", buf)
+    
+            for plug in se_buf.getPlugs():
+                name = plug.getMasterNet().getName()
+                if name == buf_pins["z"]:
+                    plug.setNet(se_fanout)
+                elif name == buf_pins["i"]:
+                    plug.setNet(se_net)
+    
+            # connect SE to all scan FFs
+            for inst in sdffs:
+                for plug in inst.getPlugs():
+                    pin = plug.getMasterNet().getName()
+                    if pin == scan_pins["se"]:
+                        plug.setNet(se_fanout)
+            # create a buffer that is driving SOUT
+            sout_buf = self.create_unique_instance(workCell, "scanout_buf", buf)
+            for plug in sout_buf.getPlugs():
+                name = plug.getMasterNet().getName()
+                if name == buf_pins["z"]:
+                    plug.setNet(sout_net)
+                # input is connected later, after scan chain ordering
+                elif name == buf_pins["i"]:
+                    pass             
+    
+        # END OF PRE-PLACEMENT DFT
+        editor = self.conf.editor
+        print( '  o  Building block "{}".'.format(self.conf.cell.getName()) )
+        for blockInstance in self.blockInstances:
+            blockInstance.block.conf.editor = editor
+            if not blockInstance.block.conf.isBuilt:
+                print( '     - Build sub-block "{}".'
+                       .format(blockInstance.block.conf.cell.getName()) )
+                blockInstance.block.build()
+        if editor: editor.setCell(self.conf.cellPnR)
+        self.conf.cfg.apply()
+        iteration = -1
+        while True:
+            iteration += 1
+            if iteration > 0: break
+            self.setupAb()
+            if editor: editor.fit()
+            if not self.conf.isCoreBlock:
+                self.placeIoPins()
+                self.checkIoPins()
+            self.spares.build()
+           #if self.conf.useHFNS: self.findHfnTrees4()
+            self.initEtesian()
+            self.addHTrees()
+            sys.stdout.flush()
+            sys.stderr.flush()
+           #if self.conf.useHFNS: self.addHfnBuffers()
+           #Breakpoint.stop( 0, 'Clock tree(s) done.' )
+            self.place()
+           #if self.conf.useHFNS: self.findHfnTrees()
+            break
+        self.splitHTrees()
+        self.spares.removeUnusedBuffers()
+        for trackAvoid in self.conf.trackAvoids:
+            self.etesian.addTrackAvoid(trackAvoid)
+        self.etesian.toHurricane()
+        self.etesian.flattenPower()
+        if self.conf.isCoreBlock:
+            self.doConnectCore()
+    
+        # POST-PLACEMENT DFT
+        # Reorder flip-flops according to placement to minimize stitching length
+        sdffs = self.find_best_scan_chain_and_io(workCell, sdffs,sout_buf)
+        side_sin , px_sin , py_sin  = self.project_to_edge(workCell, sdffs[0],  scan_pins["si"])
+        side_sout, px_sout, py_sout = self.project_to_edge(workCell, sout_buf, buf_pins["z"])
+    
+        with UpdateSession():
+    
+            for scanff_master in used_scanff_masters:
+                scanff_master.setTerminalNetlist(False)
+    
+            # -------- placement SE --------
+            side_se, px_se, py_se = self.project_to_edge(workCell, se_buf, buf_pins["i"])
+            new_side_se, new_px_se, new_py_se = self.legalize_with_fallback(workCell, side_se, px_se, py_se)
+
+            if not se_defined:
+             se_pin = self.createPinPostPlacement(
+                workCell, se_net, "IN", new_side_se, new_px_se, new_py_se
+            )
+    
+            # -------- placement SIN / connect SIN --------
+            for plug in sdffs[0].getPlugs():
+                if plug.getMasterNet().getName() == scan_pins["si"]:
+                    plug.setNet(sin_net)
+    
+            new_side_sin, new_px_sin, new_py_sin = self.legalize_with_fallback(workCell, side_sin, px_sin, py_sin)
+
+            if not sin_defined:
+             sin_pin = self.createPinPostPlacement(
+                workCell, sin_net, "IN", new_side_sin, new_px_sin, new_py_sin
+            )
+    
+            # -------- placement SOUT / connect SOUT --------
+            last_q_net = None
+            for plug in sdffs[-1].getPlugs():
+                if plug.getMasterNet().getName() == scan_pins["q"]:
+                    last_q_net = plug.getNet()
+                    break
+    
+            if last_q_net is None:
+                raise ErrorMessage(1, "Cannot find last FF Q net")
+            for plug in sout_buf.getPlugs():
+                if plug.getMasterNet().getName() == buf_pins["i"]:
+                    plug.setNet(last_q_net)
+            new_side_sout, new_px_sout, new_py_sout = self.legalize_with_fallback(workCell,side_sout,px_sout,py_sout)
+           
+            if not sout_defined:
+                sout_pin = self.createPinPostPlacement(
+                    workCell,sout_net,"OUT",new_side_sout,new_px_sout,new_py_sout
+                )         
+    
+            # scan chain stitching
+            for k in range(len(sdffs)-1):
+                qnet = None
+                for plug in sdffs[k].getPlugs():
+                    if plug.getMasterNet().getName() == scan_pins["q"]:
+                        qnet = plug.getNet()
+                for plug in sdffs[k+1].getPlugs():
+                    if plug.getMasterNet().getName() == scan_pins["si"]:
+                        plug.setNet(qnet)
+    
+            # add routing pad for the SI plugs
+            for inst in sdffs:
+                for plug in inst.getPlugs():
+                    master = plug.getMasterNet()
+                    if master is not None and master.getName() == scan_pins["si"]:
+                        net = plug.getNet()
+                        RoutingPad.create(net, Occurrence(plug), RoutingPad.BiggestArea)
+            # routing pad for SOUT buffer input
+            for plug in sout_buf.getPlugs():
+                if plug.getMasterNet().getName() == buf_pins["i"]:
+                    net = plug.getNet()
+                    RoutingPad.create(net, Occurrence(plug), RoutingPad.BiggestArea)             
+        self.dump_json_scan_chain(workCell,sdffs,sin_net,sout_net,se_net, scan_pins)
+        # END OF POST-PLACEMENT DFT
+        pnrStatus = self.route()
+        if not self.conf.isCoreBlock:
+            self.addBlockages()
+            self.expandIoPins()
+        self.conf.isBuilt = True
+        lvxStatus = True
+        if self.conf.doLvx is not False:
+            lvxStatus = self.doLvx()
+        if pnrStatus != lvxStatus:
+            raise ErrorMessage( 1, [ 'PnR and LVX status incoherency (PnR={}, LVX={})'
+                                     .format( pnrStatus, lvxStatus )
+                                   , 'This strongly hints at a bug in the PnR...'
+                                   ] )
+        ####DEBUG####
+        self.debug_check_routed_nets(workCell)
+        self.congestion(workCell, af)
+        return pnrStatus and lvxStatus
+    
+
+    def congestion(self,workCell,af):
+     """
+     This function computes an approximation of the top cell congestion.
+     It is computed by dividing the area in squares of 2 x 2 gcells.
+     Then the function computes the number of wires that crosses each square.
+     """
+     import numpy as np
+     
+     # =========================
+     # 1. GCell info
+     # =========================
+     cellGauge = af.getCellGauge()
+     
+     gcellHeight = cellGauge.getSliceHeight()
+     gcellStep   = cellGauge.getSliceStep()
+     
+     gcellWidth = cellGauge.getSliceHeight()
+     if gcellWidth % gcellStep:
+         gcellWidth = ((gcellWidth // gcellStep) + 1) * gcellStep
+     
+     print("=== GCell Info ===")
+     print("Height :", DbU.getValueString(gcellHeight), "| raw:", gcellHeight)
+     print("Width  :", DbU.getValueString(gcellWidth),  "| raw:", gcellWidth)
+     print("Step   :", DbU.getValueString(gcellStep),   "| raw:", gcellStep)
+     
+     
+     # =========================
+     # 2. Chip area
+     # =========================
+     box = workCell.getAbutmentBox()
+     
+     xmin = box.getXMin()
+     ymin = box.getYMin()
+     xmax = box.getXMax()
+     ymax = box.getYMax()
+     
+     width  = xmax - xmin
+     height = ymax - ymin
+     
+     print("\n=== Chip Area ===")
+     print("xmin:", DbU.getValueString(xmin), "| raw:", xmin)
+     print("ymin:", DbU.getValueString(ymin), "| raw:", ymin)
+     print("xmax:", DbU.getValueString(xmax), "| raw:", xmax)
+     print("ymax:", DbU.getValueString(ymax), "| raw:", ymax)
+     print("Width :", DbU.getValueString(width),  "| raw:", width)
+     print("Height:", DbU.getValueString(height), "| raw:", height)
+     
+     
+     # =========================
+     # 3.  GCells number
+     # =========================
+     nx_gcell = width  // gcellWidth
+     ny_gcell = height // gcellHeight
+     
+     print("\n=== GCell Grid ===")
+     print("Nb GCells X:", nx_gcell)
+     print("Nb GCells Y:", ny_gcell)
+     
+     
+     # =========================
+     # 4. Bin = 2x2 GCells
+     # =========================
+     bin_size_x = 2 * gcellWidth
+     bin_size_y = 2 * gcellHeight
+     
+     nx_bin = width  // bin_size_x
+     ny_bin = height // bin_size_y
+     
+     print("\n=== Bins (2x2 GCells) ===")
+     print("Bin size X:", DbU.getValueString(bin_size_x), "| raw:", bin_size_x)
+     print("Bin size Y:", DbU.getValueString(bin_size_y), "| raw:", bin_size_y)
+     print("Nb bins X :", nx_bin)
+     print("Nb bins Y :", ny_bin)
+     
+     
+     # =========================
+     # 5. grid
+     # =========================
+     grid = [[0 for _ in range(int(nx_bin))] for _ in range(int(ny_bin))]
+     
+     print("\n=== Grid created ===")
+     print("Grid size:", len(grid), "x", len(grid[0]) if grid else 0)
+     
+     
+     # =========================
+     # 6.  Segments number per grid
+     # =========================
+     for nett in workCell.getNets():
+         for segg in nett.getSegments():
+     
+             sx = segg.getSourceX()
+             sy = segg.getSourceY()
+             tx = segg.getTargetX()
+             ty = segg.getTargetY()
+     
+             dx = tx - sx
+             dy = ty - sy
+     
+             steps = max(abs(dx), abs(dy)) // gcellStep + 1
+     
+             if steps == 0:
+                 steps = 1
+     
+             for i in range(int(steps) + 1):
+                 x = sx + dx * i // steps
+                 y = sy + dy * i // steps
+     
+                 bx = (x - xmin) // bin_size_x
+                 by = (y - ymin) // bin_size_y
+     
+                 if 0 <= bx < nx_bin and 0 <= by < ny_bin:
+                     grid[int(by)][int(bx)] += 1
+     
+     
+     # =========================
+     # 7. Grid print
+     # =========================
+     print("\n=== Congestion Grid ===")
+     
+     for y in range(int(ny_bin)):
+         for x in range(int(nx_bin)):
+             print(f"{grid[y][x]:4}", end=" ")
+         print()
+     
+     
+     # =========================
+     # 9. Stats 
+     # =========================
+     arr = np.array(grid)
+     
+     print("\n=== Stats ===")
+     print("Max :", arr.max())
+     print("Mean:", arr.mean())
+     print("Std :", arr.std())
+     
+
+    def debug_check_routed_nets(self, workCell):
+         """
+         Paranoid debug that helps to find unrouted segments when developping complexe features
+         using routing pads and segments
+         """
+
+         for net in workCell.getNets():
+           plugs = len(list(net.getPlugs()))
+           segs  = len(list(net.getSegments()))
+           rps   = len(list(net.getRoutingPads()))
+                                                                              
+           if segs == 0:
+               print(f"❌ NET {net.getName()} NOT ROUTED")
+                                                                              
+           if net.isExternal():
+             if rps != plugs+1 :
+                      print(f"⚠️ NET {net.getName()} PROBABLY MISSING ROUTING PADS, {rps,plugs}") 
+           else :        
+             if rps != plugs :
+                print(f"⚠️ NET {net.getName()} PROBABLY MISSING ROUTING PADS  {rps,plugs}") 
+    
+    def dump_json_scan_chain(self, workCell, sdffs, sin_net, sout_net, se_net, scan_pins):
+        """
+        Dump the scan chain structure into a JSON file for external usage (testbenches, debug).
+        The chain is described in logical order with SI/Q connectivity reconstructed from stitching.
+        """
+        import json
+        chain_dump = []
+        # -------- SI --------
+        prev_q = sin_net.getName()
+
+        for i, inst in enumerate(sdffs):
+
+            inst_name = inst.getName()
+            q_net_name = None
+
+            # -------- get the sff pin Q --------
+            for plug in inst.getPlugs():
+                if plug.getMasterNet().getName() == scan_pins["q"]:
+                    net = plug.getNet()
+                    if net:
+                        q_net_name = net.getName()
+                    break
+
+            if q_net_name is None:
+                raise ErrorMessage(1, f"Missing Q net on instance {inst_name}")
+
+            # -------- start ff --------
+            chain_dump.append({
+                "index": i,
+                "instance": inst_name,
+                "si_net": prev_q,
+                "q_net": q_net_name
+            })
+
+            # -------- propagation SI -> Q --------
+            prev_q = q_net_name
+
+        data = {
+            "sin": sin_net.getName(),
+            "sout": sout_net.getName(),
+            "se": se_net.getName(),
+            "chain": chain_dump
+        }
+
+        with open("scan_chain.json", "w") as f:
+            json.dump(data, f, indent=2) 
+        
     def doLvx ( self ):
         """
         Performs and optional gate-level extraction and LVX to independently

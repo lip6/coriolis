@@ -21,6 +21,7 @@ py.install_sources(
   'technos/common/patterns.py',
   'technos/common/stratus1.py',
   'technos/common/technology.py',
+  'technos/common/dft.py',
   subdir: 'coriolis/technos/common',
 )
 

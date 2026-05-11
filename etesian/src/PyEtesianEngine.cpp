@@ -21,6 +21,7 @@
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/viewer/PyCellViewer.h"
 #include "etesian/PyEtesianEngine.h"
+#include "etesian/ScanChain.h"
 
 # undef   ACCESS_OBJECT
 # undef   ACCESS_CLASS
@@ -245,8 +246,188 @@ extern "C" {
 
   // Standart Destroy (Attribute).
   DBoDestroyAttribute(PyEtesianEngine_destroy,PyEtesianEngine)
-
-
+ static PyObject* PyEtesianEngine_orderScanChain ( PyEtesianEngine* self, PyObject* args )
+ {
+   cdebug_log(34,0) << "PyEtesianEngine_orderScanChain()" << endl;
+ 
+   HTRY
+     METHOD_HEAD( "EtesianEngine.orderScanChain()" )
+ 
+     PyObject* xs_obj = NULL;
+     PyObject* ys_obj = NULL;
+ 
+     long long start_x = 0;
+     long long start_y = 0;
+     long long end_x   = 0;
+     long long end_y   = 0;
+ 
+     if (not PyArg_ParseTuple(args,"OOLLLL:EtesianEngine.orderScanChain()"
+                                  ,&xs_obj
+                                  ,&ys_obj
+                                  ,&start_x
+                                  ,&start_y
+                                  ,&end_x
+                                  ,&end_y)) {
+       PyErr_SetString( ConstructorError
+                      , "Bad parameters given to EtesianEngine.orderScanChain()." );
+       return NULL;
+     }
+ 
+     if (not PyList_Check(xs_obj) or not PyList_Check(ys_obj)) {
+       PyErr_SetString( ConstructorError
+                      , "EtesianEngine.orderScanChain(): xs and ys must be Python lists." );
+       return NULL;
+     }
+ 
+     Py_ssize_t n = PyList_Size(xs_obj);
+ 
+     if (PyList_Size(ys_obj) != n) {
+       PyErr_SetString( ConstructorError
+                      , "EtesianEngine.orderScanChain(): xs and ys must have the same size." );
+       return NULL;
+     }
+ 
+     std::vector<int64_t> xs;
+     std::vector<int64_t> ys;
+ 
+     xs.reserve((size_t)n);
+     ys.reserve((size_t)n);
+ 
+     for (Py_ssize_t i = 0; i < n; ++i) {
+       PyObject* pyx = PyList_GetItem(xs_obj, i);
+       PyObject* pyy = PyList_GetItem(ys_obj, i);
+ 
+       long long x = PyLong_AsLongLong(pyx);
+       if (PyErr_Occurred()) return NULL;
+ 
+       long long y = PyLong_AsLongLong(pyy);
+       if (PyErr_Occurred()) return NULL;
+ 
+       xs.push_back((int64_t)x);
+       ys.push_back((int64_t)y);
+     }
+ 
+     std::vector<int> order = Etesian::orderScanChain(
+         xs,
+         ys,
+         (int64_t)start_x,
+         (int64_t)start_y,
+         (int64_t)end_x,
+         (int64_t)end_y
+     );
+ 
+     PyObject* pyOrder = PyList_New((Py_ssize_t)order.size());
+ 
+     if (pyOrder == NULL) return NULL;
+ 
+     for (Py_ssize_t i = 0; i < (Py_ssize_t)order.size(); ++i) {
+       PyObject* pyIndex = PyLong_FromLong(order[(size_t)i]);
+ 
+       if (pyIndex == NULL) {
+         Py_DECREF(pyOrder);
+         return NULL;
+       }
+ 
+       PyList_SetItem(pyOrder, i, pyIndex);
+     }
+ 
+     return pyOrder;
+   HCATCH
+ 
+   return NULL;
+ }
+ static PyObject* PyEtesianEngine_chainLengthFromOrder ( PyEtesianEngine* self, PyObject* args )
+ {
+   cdebug_log(34,0) << "PyEtesianEngine_chainLengthFromOrder()" << endl;
+ 
+   HTRY
+     METHOD_HEAD( "EtesianEngine.chainLengthFromOrder()" )
+ 
+     PyObject* order_obj = NULL;
+     PyObject* xs_obj    = NULL;
+     PyObject* ys_obj    = NULL;
+ 
+     long long start_x = 0;
+     long long start_y = 0;
+     long long end_x   = 0;
+     long long end_y   = 0;
+ 
+     if (not PyArg_ParseTuple(args,"OOOLLLL:EtesianEngine.chainLengthFromOrder()"
+                                  ,&order_obj
+                                  ,&xs_obj
+                                  ,&ys_obj
+                                  ,&start_x
+                                  ,&start_y
+                                  ,&end_x
+                                  ,&end_y)) {
+       PyErr_SetString( ConstructorError
+                      , "Bad parameters given to EtesianEngine.chainLengthFromOrder()." );
+       return NULL;
+     }
+ 
+     if (not PyList_Check(order_obj) or not PyList_Check(xs_obj) or not PyList_Check(ys_obj)) {
+       PyErr_SetString( ConstructorError
+                      , "EtesianEngine.chainLengthFromOrder(): parameters must be Python lists." );
+       return NULL;
+     }
+ 
+     Py_ssize_t nOrder = PyList_Size(order_obj);
+     Py_ssize_t nXs    = PyList_Size(xs_obj);
+     Py_ssize_t nYs    = PyList_Size(ys_obj);
+ 
+     if (nXs != nYs) {
+       PyErr_SetString( ConstructorError
+                      , "EtesianEngine.chainLengthFromOrder(): xs and ys must have the same size." );
+       return NULL;
+     }
+ 
+     std::vector<int>     order;
+     std::vector<int64_t> xs;
+     std::vector<int64_t> ys;
+ 
+     order.reserve((size_t)nOrder);
+     xs.reserve((size_t)nXs);
+     ys.reserve((size_t)nYs);
+ 
+     for (Py_ssize_t i = 0; i < nOrder; ++i) {
+       PyObject* pyIndex = PyList_GetItem(order_obj, i);
+ 
+       long value = PyLong_AsLong(pyIndex);
+       if (PyErr_Occurred()) return NULL;
+ 
+       order.push_back((int)value);
+     }
+ 
+     for (Py_ssize_t i = 0; i < nXs; ++i) {
+       PyObject* pyx = PyList_GetItem(xs_obj, i);
+       PyObject* pyy = PyList_GetItem(ys_obj, i);
+ 
+       long long x = PyLong_AsLongLong(pyx);
+       if (PyErr_Occurred()) return NULL;
+ 
+       long long y = PyLong_AsLongLong(pyy);
+       if (PyErr_Occurred()) return NULL;
+ 
+       xs.push_back((int64_t)x);
+       ys.push_back((int64_t)y);
+     }
+ 
+     int64_t length = Etesian::chainLengthFromOrder(
+         order,
+         xs,
+         ys,
+         (int64_t)start_x,
+         (int64_t)start_y,
+         (int64_t)end_x,
+         (int64_t)end_y
+     );
+ 
+     return PyLong_FromLongLong((long long)length);
+   HCATCH
+ 
+   return NULL;
+ }
+ 
   PyMethodDef PyEtesianEngine_Methods[] =
     { { "get"               , (PyCFunction)PyEtesianEngine_get               , METH_VARARGS|METH_STATIC
                             , "Returns the Etesian engine attached to the Cell, None if there isn't." }
@@ -294,6 +475,10 @@ extern "C" {
                             , "Build the Hurricane post-placement manipulation structure." }
     , { "destroy"           , (PyCFunction)PyEtesianEngine_destroy           , METH_NOARGS
                             , "Destroy the associated hurricane object. The python object remains." }
+    , { "orderScanChain"   , (PyCFunction)PyEtesianEngine_orderScanChain   , METH_VARARGS
+                    , "Order scan chain from xs/ys coordinates, a start point and an end point." }
+    , { "chainLengthFromOrder", (PyCFunction)PyEtesianEngine_chainLengthFromOrder, METH_VARARGS
+                    , "Compute scan chain length from an order, xs/ys coordinates, start point and end point." }
     , {NULL, NULL, 0, NULL} /* sentinel */
     };
 

@@ -102,7 +102,7 @@ namespace CRL {
       if (translated == '_') {
         if (vhdlName.empty()      ) continue;
         if (i == refName.size()-1) break;
-        if (vhdlName.back() == '_') continue;
+        //if (vhdlName.back() == '_') continue;
       }
 
       vhdlName += translated;
