@@ -30,9 +30,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_REGULAR_LAYER_H
-#define  HURRICANE_REGULAR_LAYER_H
-
+#pragma  once
 #include "hurricane/Layer.h"
 #include "hurricane/RegularLayers.h"
 
@@ -113,5 +111,3 @@ namespace Hurricane {
 } // Hurricane namespace.
 
 INSPECTOR_P_SUPPORT(Hurricane::RegularLayer);
-
-#endif  // HURRICANE_REGULAR_LAYER_H
