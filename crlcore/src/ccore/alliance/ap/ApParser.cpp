@@ -877,6 +877,9 @@ void  apParser ( const string cellPath, Cell *cell )
 {
   cmess2 << "     " << tab << "+ " << cellPath << endl;
 
+  if (not DataBase::getDB()->getTechnology())
+    throw Error( "apParser(): Technology has not been initialized yet, aborting." );
+
   ApParser  parser ( AllianceFramework::get() );
 
   parser.loadFromFile ( cellPath, cell );
