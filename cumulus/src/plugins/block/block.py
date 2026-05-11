@@ -900,7 +900,343 @@ class Block ( object ):
                                    , ab.getWidth()
                                    , ab.getYMin() + dyBorder
                                    , ab.getYMax() - dyBorder)
+
+
+    def getExternalSignalsSorted(self):
+       """
+       Collect external non-supply nets and group bus bits together.
+       Returns:
+           dict:{ index: [signal_name, width, first_bit]}
+       """
+
+       signals = {}
+
+       for net in self.conf.cell.getNets():
+           if not net.isExternal():
+               continue
+           if net.isSupply():
+               continue
+
+           netName = net.getName()
+
+           if '(' in netName and ')' in netName:
+               signalName = netName.split('(')[0]
+               bitIndex   = int(netName.split('(')[1].split(')')[0])
+           else:
+               signalName = netName
+               bitIndex   = 0
+
+           if signalName not in signals:
+               signals[signalName] = [signalName, 1, bitIndex]
+           else:
+               signals[signalName][1] += 1
+               signals[signalName][2] = min(signals[signalName][2], bitIndex)
+
+       signalsSorted = {}
+
+       for index, signalName in enumerate(signals):
+           signalsSorted[index] = signals[signalName]
+
+       return signalsSorted
       
+    def getIoTrackWindows(self):
+        """
+        Get block dimensions and routing gauge information.
+        Returns:
+            dict with:
+                - width, height (um)
+                - pitches and offsets per direction
+                - usable track capacities per side
+                (number of tracks possible per side for pins placement)
+        """
+    
+        ab = self.conf.cell.getAbutmentBox()
+    
+        xmin = ab.getXMin()
+        xmax = ab.getXMax()
+        ymin = ab.getYMin()
+        ymax = ab.getYMax()
+    
+        width  = xmax - xmin
+        height = ymax - ymin
+    
+        # ---- Get routing gauges ----
+    
+        # Horizontal pins (WEST/EAST) → use vertical routing
+        hDepth = self.conf.horizontalDeepDepth
+        if self.conf.cfg.block.upperEastWestPins:
+            hDepth += 2
+    
+        hGauge = self.conf.routingGauge.getLayerGauge(hDepth)
+    
+        # Vertical pins (NORTH/SOUTH)
+        vGauge = self.conf.vDeepRG
+    
+        hPitch  = hGauge.getPitch()
+        hOffset = hGauge.getOffset()
+    
+        vPitch  = vGauge.getPitch()
+        vOffset = vGauge.getOffset()
+
+        # ---- Margin in tracks (we dont use all the side to place pins) ----
+        margin_tracks = 2
+        # ---- Convert usable space into track counts ----
+    
+        # WEST/EAST → vertical axis → height
+        total_tracks_vertical = int((height - hOffset) // hPitch)
+        tracks_vertical = total_tracks_vertical - 2 * margin_tracks
+    
+        # NORTH/SOUTH → horizontal axis → width
+        total_tracks_horizontal = int((width - vOffset) // vPitch)
+        tracks_horizontal = total_tracks_horizontal - 2 * margin_tracks
+    
+        return {
+            'width': width,
+            'height': height,
+    
+            'hPitch': hPitch,
+            'hOffset': hOffset,
+            'vPitch': vPitch,
+            'vOffset': vOffset,
+            'tracks_vertical': tracks_vertical,
+            'tracks_horizontal': tracks_horizontal
+        }
+    def numberOfBits(self, signals):
+        """
+        Return the total number of bits to place.
+        """
+
+        total = 0
+
+        for index in signals:
+            total += signals[index][1]
+
+        return total    
+    def orderOfPlacement(self, signals):
+        """
+        Sort signals indexes from largest bus to smallest.
+        """
+
+        N = len(signals)
+
+        sizes = []
+        sorted_indexes = []
+
+        for i in range(N):
+            sizes.append(signals[i][1])
+            sorted_indexes.append(i)
+
+        for n in range(1, N):
+            key_size = sizes[n]
+            key_index = sorted_indexes[n]
+
+            j = n - 1
+            while j >= 0 and sizes[j] < key_size:
+                sizes[j + 1] = sizes[j]
+                sorted_indexes[j + 1] = sorted_indexes[j]
+                j -= 1
+            sizes[j + 1] = key_size
+            sorted_indexes[j + 1] = key_index
+
+        return sorted_indexes
+
+    def connectorsNumberPerSide(self, total_bits, tracks_horizontal, tracks_vertical):
+        """
+        Compute how many pins (bits) should be placed on each side.
+        Args:
+            total_bits          : total number of bits to place
+            tracks_horizontal   : available tracks on NORTH/SOUTH
+            tracks_vertical     : available tracks on EAST/WEST
+        Returns:
+            [west, north, east, south] number of bits per side
+        """
+        # Total capacity
+        total_capacity = 2 * tracks_vertical + 2 * tracks_horizontal
+
+        # Ratio of horizontal vs vertical capacity
+        vertical_ratio = (2 * tracks_horizontal) / total_capacity
+
+        # Number of bits on NORTH + SOUTH
+        bits_vertical_sides = int(total_bits * vertical_ratio)
+
+        # Split evenly
+        north_bits = bits_vertical_sides // 2
+        south_bits = bits_vertical_sides // 2
+
+        # Remaining bits → EAST/WEST
+        remaining = total_bits - (north_bits + south_bits)
+
+        east_bits = remaining // 2
+        west_bits = remaining - east_bits
+
+        return [west_bits, north_bits, east_bits, south_bits]
+
+
+
+    def signalsPerSide(self, signals, tracks_horizontal, tracks_vertical):
+        """
+        Distribute signals bits across the 4 sides.
+        Returns:
+            [west, north, east, south]
+    
+        Each side contains:
+            [name, start_bit, end_bit, 'bit' or 'vector']
+        """
+    
+        total_bits = self.numberOfBits(signals)
+        sorted_indexes = self.orderOfPlacement(signals)
+    
+        sides_capacity = self.connectorsNumberPerSide(
+            total_bits,
+            tracks_horizontal,
+            tracks_vertical
+        )
+    
+        sides = [[], [], [], []]  # WEST, NORTH, EAST, SOUTH
+    
+        signal_id = 0
+        current_bit = None
+        bits_left = 0
+    
+        def vector_or_bit(size):
+            return 'bit' if size == 1 else 'vector'
+    
+        for side_id in range(4):
+            side_capacity = sides_capacity[side_id]
+            placed_on_side = 0
+    
+            while placed_on_side < side_capacity:
+                if signal_id >= len(sorted_indexes):
+                    break
+    
+                name, size, first_bit = signals[sorted_indexes[signal_id]]
+    
+                # Start a new signal.
+                if bits_left == 0:
+                    current_bit = first_bit
+                    bits_left = size
+    
+                free_slots = side_capacity - placed_on_side
+                bits_to_place = min(free_slots, bits_left)
+    
+                start_bit = current_bit
+                end_bit = current_bit + bits_to_place - 1
+    
+                sides[side_id].append([
+                    name,
+                    start_bit,
+                    end_bit,
+                    vector_or_bit(size)
+                ])
+    
+                placed_on_side += bits_to_place
+                current_bit += bits_to_place
+                bits_left -= bits_to_place
+    
+                # Signal fully placed, move to next one.
+                if bits_left == 0:
+                    signal_id += 1
+                    current_bit = None
+    
+        # WEST bottom->top, NORTH left->right, EAST top->bottom, SOUTH right->left.
+    
+        return sides
+    def generate_ioPinsSpec_list(self, sides_connectors, tracks_per_side, margin=2):
+        """
+        Generate ioPinsSpec with uniform distribution on each side.
+        Each bit is generated explicitly (no implicit expansion).
+        Pins are centered on each side.
+        """
+    
+        ioPinsSpec = []
+        sides = ['WEST', 'NORTH', 'EAST', 'SOUTH']
+    
+        for s in range(4):
+            connectors = sides_connectors[s]
+    
+            # ---- count total bits ----
+            total_pins = sum([c[2] - c[1] + 1 for c in connectors])
+            if total_pins == 0:
+                continue
+    
+            usable_tracks = tracks_per_side[s] - 2 * margin
+    
+            # ---- uniform spacing ----
+            ustep = max(1, usable_tracks // total_pins)
+    
+            # ---- center the pins on the side ----
+            occupied = (total_pins - 1) * ustep
+            free = usable_tracks - occupied
+            start_offset = margin + free // 2
+    
+            global_k = 0
+    
+            for name, start_bit, end_bit, kind in connectors:
+    
+                for bit in range(start_bit, end_bit + 1):
+    
+                    # ---- stem ----
+                    if kind == 'bit':
+                        stem = name
+                    else:
+                        stem = f"{name}({bit})"
+    
+                    # ---- position ----
+                    if sides[s] in ['WEST', 'NORTH']:
+                        # normal direction
+                        uindex = start_offset + global_k * ustep
+                    else:
+                        # reversed direction
+                        uindex = start_offset + (usable_tracks - (global_k + 1) * ustep)
+                    flags = getattr(IoPin, sides[s]) | IoPin.A_BEGIN
+    
+                    ioPinsSpec.append((flags, stem, uindex, ustep, 1))
+    
+                    global_k += 1
+    
+        return ioPinsSpec
+    def autoPlaceIoPins(self):
+        """
+        Automatically generate IO pins uniformly on all sides.
+        """
+    
+        # ---- Get external signals (supply nets are ignored) ----
+        signals = self.getExternalSignalsSorted()
+    
+        # ---- Get track windows and capacities ----
+        track_data = self.getIoTrackWindows()
+    
+        tracks_vertical   = track_data['tracks_vertical']    # WEST/EAST
+        tracks_horizontal = track_data['tracks_horizontal']  # NORTH/SOUTH
+    
+        tracks_per_side = [
+            tracks_vertical,    # WEST
+            tracks_horizontal,  # NORTH
+            tracks_vertical,    # EAST
+            tracks_horizontal   # SOUTH
+        ]
+    
+        # ---- Distribute signals per side ----
+        sides_connectors = self.signalsPerSide(
+            signals,
+            tracks_horizontal,
+            tracks_vertical
+        )
+    
+        # ---- Generate ioPinsSpec in track indices ----
+        ioPinsSpecs = self.generate_ioPinsSpec_list(
+            sides_connectors,
+            tracks_per_side,
+            margin=2
+        )
+        # ---- Convert specs to IoPin objects ----
+        self.conf.ioPins = []
+        self.conf.ioPinsInTracks = True
+    
+        for spec in ioPinsSpecs:
+            spec = self.conf._toIoPinSpec(*spec)
+            self.conf.ioPins.append(IoPin(*spec))
+    
     def doPnR ( self ):
         """
         Perform all the steps required to build the layout of the block.
@@ -925,6 +1261,10 @@ class Block ( object ):
             self.setupAb()
             if editor: editor.fit()
             if not self.conf.isCoreBlock:
+                if not self.conf.ioPins:
+                #Automatically place pins with uniform spacing, ensuring all sides are utilized.
+                    self.conf.ioPinsInTracks = True
+                    self.autoPlaceIoPins()
                 self.placeIoPins()
                 self.checkIoPins()
             self.spares.build()
@@ -946,9 +1286,6 @@ class Block ( object ):
         self.etesian.flattenPower()
         if self.conf.isCoreBlock: self.doConnectCore()
         pnrStatus = self.route()
-       # af = AllianceFramework.get()
-       # workCell = self.conf.cell
-       # self.congestion(workCell,af)
         if not self.conf.isCoreBlock:
             self.addBlockages()
             self.expandIoPins()
@@ -1734,6 +2071,12 @@ class Block ( object ):
             self.setupAb()
             if editor: editor.fit()
             if not self.conf.isCoreBlock:
+                if not self.conf.ioPins:
+                #Automatically place pins with uniform spacing, ensuring all sides are utilized.
+                #DFT pins are not placed in this step. There placement is optimized.
+                    self.conf.ioPinsInTracks = True
+                    self.autoPlaceIoPins()
+
                 self.placeIoPins()
                 self.checkIoPins()
             self.spares.build()
@@ -1844,9 +2187,9 @@ class Block ( object ):
                                      .format( pnrStatus, lvxStatus )
                                    , 'This strongly hints at a bug in the PnR...'
                                    ] )
-        ####DEBUG####
-        self.debug_check_routed_nets(workCell)
-        self.congestion(workCell, af)
+        ####DEBUG that print all suspicious nets####
+        #self.debug_check_routed_nets(workCell)
+        #self.congestion(workCell, af)
         return pnrStatus and lvxStatus
     
 
