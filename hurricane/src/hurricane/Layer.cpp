@@ -177,6 +177,9 @@ namespace Hurricane {
 // Class :  "Hurricane::Layer".
 
 
+  bool  Layer::_s2rMode = false;
+
+
   Layer::Layer ( Technology* technology
                , const Name& name
                , const DbU::Unit& minimalSize
@@ -259,28 +262,6 @@ namespace Hurricane {
   }
 
 
-#ifdef DISABLED
-  DbU::Unit  Layer::getMinimalSpacing ( const Box& bigWire, bool horizontal ) const
-  {
-    if (_spacingRules.empty()) {
-      cerr << Warning( "Layer::getMinimalSpacing(): No minimal spacing defined for layer \"%s\"."
-                     , getString(getName()).c_str()) << endl;
-      return 0;
-    }
-    if (_spacingRules.size() == 1)
-      return _spacingRules[0].spacing();
-
-    DbU::Unit wireLength = bigWire.getLength();
-    DbU::Unit wireWidth  = bigWire.getHeigth();
-    if (not horizontal) std::swap( wireLength, wireWidth );
-
-    for ( size_t irule = _spacingRules.size() - 1 ; irule > 0 ; irule-- ) {
-      if (_spacingRules[irule-1].width() 
-    }
-  }
-#endif
-
-
   DbU::Unit  Layer::getEnclosure ( uint32_t ) const
   { return 0; }
 
@@ -301,6 +282,14 @@ namespace Hurricane {
   { return 0; }
 
 
+  DbU::Unit  Layer::getRealDeltaCap () const
+  { return 0; }
+
+
+  DbU::Unit  Layer::getRealDeltaWidth () const
+  { return 0; }
+
+
   DbU::Unit  Layer::getEnclosure ( const BasicLayer*, uint32_t ) const
   { return 0; }
 
@@ -310,6 +299,14 @@ namespace Hurricane {
 
 
   DbU::Unit  Layer::getExtentionWidth ( const BasicLayer* ) const
+  { return 0; }
+
+
+  DbU::Unit  Layer::getRealDeltaCap ( const BasicLayer* ) const
+  { return 0; }
+
+
+  DbU::Unit  Layer::getRealDeltaWidth ( const BasicLayer* ) const
   { return 0; }
 
 
@@ -388,6 +385,20 @@ namespace Hurricane {
          << _getTypeName() << ": dummy implementation." << endl;
   }
   
+
+  void  Layer::setRealDeltaCap ( const BasicLayer* layer, DbU::Unit )
+  {
+    cerr << "[WARNING] Layer::setRealDeltaCap() musn't be called on "
+         << _getTypeName() << ": dummy implementation." << endl;
+  }
+
+
+  void  Layer::setRealDeltaWidth ( const BasicLayer* layer, DbU::Unit )
+  {
+    cerr << "[WARNING] Layer::setRealDeltaWidth() musn't be called on "
+         << _getTypeName() << ": dummy implementation." << endl;
+  }
+
 
   void Layer::_postCreate ()
   {

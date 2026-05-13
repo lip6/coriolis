@@ -58,16 +58,22 @@ namespace Hurricane {
       virtual const Layer*    getBottom         () const;
       virtual const Layer*    getOpposite       ( const Layer* ) const;
       virtual DbU::Unit       getEnclosure      ( uint32_t flags=0 ) const;
+      virtual DbU::Unit       getRealDeltaCap   () const;
+      virtual DbU::Unit       getRealDeltaWidth () const;
       virtual DbU::Unit       getExtentionCap   () const;
       virtual DbU::Unit       getExtentionWidth () const;
-      virtual DbU::Unit       getEnclosure      ( const BasicLayer* layer, uint32_t flags=0  ) const;
+      virtual DbU::Unit       getRealDeltaCap   ( const BasicLayer* ) const;
+      virtual DbU::Unit       getRealDeltaWidth ( const BasicLayer* ) const;
       virtual DbU::Unit       getExtentionCap   ( const BasicLayer* layer ) const;
       virtual DbU::Unit       getExtentionWidth ( const BasicLayer* layer ) const;
+      virtual DbU::Unit       getEnclosure      ( const BasicLayer* layer, uint32_t flags=0  ) const;
     // Updators
               void            setBasicLayer     ( BasicLayer* layer );
       virtual void            setEnclosure      ( const BasicLayer* layer, DbU::Unit enclosure, uint32_t flags=0 );
       virtual void            setExtentionCap   ( const BasicLayer* layer, DbU::Unit cap );
       virtual void            setExtentionWidth ( const BasicLayer* layer, DbU::Unit width );
+      virtual void            setRealDeltaCap   ( const BasicLayer* layer, DbU::Unit cap );
+      virtual void            setRealDeltaWidth ( const BasicLayer* layer, DbU::Unit width );
     // Hurricane Managment.
       virtual void            _toJson           ( JsonWriter* ) const;
       virtual void            _onDbuChange      ( float scale );
@@ -81,6 +87,8 @@ namespace Hurricane {
               DbU::Unit       _enclosure;
               DbU::Unit       _extentionCap;
               DbU::Unit       _extentionWidth;
+              DbU::Unit       _realDeltaCap;
+              DbU::Unit       _realDeltaWidth;
 
     protected:
     // Internal: Constructors & Destructors.

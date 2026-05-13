@@ -82,25 +82,35 @@ const FastRTTI& Vertical::vfastRTTI () const
 Box Vertical::getBoundingBox() const
 // *********************************
 {
-  DbU::Unit size      = getLayer()->getExtentionWidth() + getHalfWidth();
-  DbU::Unit extention = getLayer()->getExtentionCap  ();
+  DbU::Unit size      = getHalfWidth();
+  DbU::Unit extention = 0;
+  if (Layer::isS2RMode()) {
+    size     += getLayer()->getRealDeltaWidth();
+    extention = getLayer()->getRealDeltaCap  ();
+  } else {
+    size     += getLayer()->getExtentionWidth();
+    extention = getLayer()->getExtentionCap  ();
+  }
 
-    return Box(_x, getSourceY(), _x, getTargetY()).inflate(size, extention);
+  return Box(_x, getSourceY(), _x, getTargetY()).inflate(size, extention);
 }
 
 Box Vertical::getBoundingBox(const BasicLayer* basicLayer) const
 // *******************************************************
 {
-  if (!getLayer()->contains(basicLayer)) return Box();
+  if (not getLayer()->contains(basicLayer)) return Box();
 
+  DbU::Unit size      = getHalfWidth();
+  DbU::Unit extention = 0;
+  if (Layer::isS2RMode()) {
+    size     += getLayer()->getRealDeltaWidth(basicLayer);
+    extention = getLayer()->getRealDeltaCap  (basicLayer);
+  } else {
+    size     += getLayer()->getExtentionWidth(basicLayer);
+    extention = getLayer()->getExtentionCap  (basicLayer);
+  }
 
-    DbU::Unit size      = getLayer()->getExtentionWidth(basicLayer) + getHalfWidth();
-    DbU::Unit extention = getLayer()->getExtentionCap  (basicLayer);
-
-  //cerr << this << " on: " << basicLayer << " " << size << " " << extention << endl;
-  //cerr << Box(_x, getSourceY(), _x, getTargetY()).inflate(size, extention) << endl;
-
-    return Box(_x, getSourceY(), _x, getTargetY()).inflate(size, extention);
+  return Box(_x, getSourceY(), _x, getTargetY()).inflate(size, extention);
 }
 
 DbU::Unit Vertical::getSourceY() const

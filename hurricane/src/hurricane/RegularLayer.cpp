@@ -197,6 +197,8 @@ namespace Hurricane {
                                ,_enclosure(0)
                                ,_extentionCap(0)
                                ,_extentionWidth(0)
+                               ,_realDeltaCap(0)
+                               ,_realDeltaWidth(0)
   {
   }
 
@@ -239,6 +241,14 @@ namespace Hurricane {
   { return _enclosure; }
 
 
+  DbU::Unit  RegularLayer::getRealDeltaCap () const
+  { return _realDeltaCap; }
+
+
+  DbU::Unit  RegularLayer::getRealDeltaWidth () const
+  { return _realDeltaWidth; }
+
+
   DbU::Unit  RegularLayer::getExtentionCap () const
   { return _extentionCap; }
 
@@ -253,16 +263,20 @@ namespace Hurricane {
   }
 
 
+  DbU::Unit  RegularLayer::getRealDeltaCap ( const BasicLayer* layer ) const
+  { return (layer == _basicLayer) ? _realDeltaCap : 0; }
+
+
+  DbU::Unit  RegularLayer::getRealDeltaWidth ( const BasicLayer* layer ) const
+  { return (layer == _basicLayer) ? _realDeltaWidth : 0; }
+
+
   DbU::Unit  RegularLayer::getExtentionCap ( const BasicLayer* layer ) const
-  {
-    return (layer == _basicLayer) ? _extentionCap : 0;
-  }
+  { return (layer == _basicLayer) ? _extentionCap : 0; }
 
 
   DbU::Unit  RegularLayer::getExtentionWidth ( const BasicLayer* layer ) const
-  {
-    return (layer == _basicLayer) ? _extentionWidth : 0;
-  }
+  { return (layer == _basicLayer) ? _extentionWidth : 0; }
 
 
   void  RegularLayer::setBasicLayer ( BasicLayer* basicLayer )
@@ -291,15 +305,19 @@ namespace Hurricane {
 
 
   void  RegularLayer::setExtentionCap ( const BasicLayer* layer, DbU::Unit cap )
-  {
-    if ( _basicLayer == layer ) _extentionCap = cap;
-  }
+  { if ( _basicLayer == layer ) _extentionCap = cap; }
 
 
   void  RegularLayer::setExtentionWidth ( const BasicLayer* layer, DbU::Unit width )
-  {
-    if ( _basicLayer == layer ) _extentionWidth = width;
-  }
+  { if ( _basicLayer == layer ) _extentionWidth = width; }
+
+
+  void  RegularLayer::setRealDeltaCap ( const BasicLayer* layer, DbU::Unit cap )
+  { if ( _basicLayer == layer ) _realDeltaCap = cap; }
+
+
+  void  RegularLayer::setRealDeltaWidth ( const BasicLayer* layer, DbU::Unit width )
+  { if ( _basicLayer == layer ) _realDeltaWidth = width; }
 
 
   string  RegularLayer::_getTypeName () const
@@ -322,6 +340,8 @@ namespace Hurricane {
       record->add(getSlot("_enclosure"     , &_enclosure     ));
       record->add(DbU::getValueSlot("_extentionCap"  , &_extentionCap  ));
       record->add(DbU::getValueSlot("_extentionWidth", &_extentionWidth));
+      record->add(DbU::getValueSlot("_realDeltaCap"  , &_realDeltaCap  ));
+      record->add(DbU::getValueSlot("_realDeltaWidth", &_realDeltaWidth));
     }
     return record;
   }

@@ -411,16 +411,22 @@ extern "C" {
   updatorFromDbu          (setMinimalSize   ,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionCap  ,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionWidth,PyLayer,Layer)
+  updatorFromBasicLayerDbu(setRealDeltaCap  ,PyLayer,Layer)
+  updatorFromBasicLayerDbu(setRealDeltaWidth,PyLayer,Layer)
   DirectSetBoolAttribute  (PyLayer_setSymbolic   ,setSymbolic   ,PyLayer,Layer)
   DirectSetBoolAttribute  (PyLayer_setBlockage   ,setBlockage   ,PyLayer,Layer)
+  StaticSetBoolAttribute  (PyLayer_setS2RMode    ,setS2RMode    ,PyLayer,Layer)
   DirectSetDoubleAttribute(PyLayer_setMinimalArea,setMinimalArea,PyLayer,Layer)
+  StaticGetBoolAttribute  (PyLayer_isS2RMode     ,isS2RMode     ,PyLayer,Layer)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyLayer_destroy, PyLayer)
 
 
   PyMethodDef PyLayer_Methods[] =
-    { { "printSpacingTable"   , (PyCFunction)PyLayer_printSpacingTable   , METH_NOARGS
+    { { "isS2RMode"           , (PyCFunction)PyLayer_isS2RMode           , METH_NOARGS|METH_STATIC
+                              , "Returns the drawing mode we are in, symbolic or real." }
+    , { "printSpacingTable"   , (PyCFunction)PyLayer_printSpacingTable   , METH_NOARGS
                               , "Display the spacing table for this layer (LEF like)." }
     , { "getTechnology"       , (PyCFunction)PyLayer_getTechnology       , METH_NOARGS
                               , "Returns the technology owning the layer." }
@@ -478,6 +484,8 @@ extern "C" {
                               , "Tells if the layer is the symbolic one for this BasicLayer." }
     , { "isBlockage"          , (PyCFunction)PyLayer_isBlockage          , METH_NOARGS
                               , "Tells if the layer represent blockage." }
+    , { "setS2RMode"          , (PyCFunction)PyLayer_setS2RMode          , METH_VARARGS|METH_STATIC
+                              , "Sets the drawing mode (True:Real, False:Symbolic)." }
     , { "setName"             , (PyCFunction)PyLayer_setName             , METH_VARARGS
                               , "Allows to change the layer name." }
     , { "setSymbolic"         , (PyCFunction)PyLayer_setSymbolic         , METH_VARARGS
@@ -494,6 +502,10 @@ extern "C" {
                               , "Sets the extention cap for the given BasiLayer sub-component." }
     , { "setExtentionWidth"   , (PyCFunction)PyLayer_setExtentionWidth   , METH_VARARGS
                               , "Sets the extention width for the given BasiLayer sub-component." }
+    , { "setRealDeltaCap"     , (PyCFunction)PyLayer_setRealDeltaCap     , METH_VARARGS
+                              , "Sets the RDS delta cap for the given BasiLayer sub-component." }
+    , { "setRealDeltaWidth"   , (PyCFunction)PyLayer_setRealDeltaWidth   , METH_VARARGS
+                              , "Sets the RDS delta width for the given BasiLayer sub-component." }
     , { "setMinimalArea"      , (PyCFunction)PyLayer_setMinimalArea      , METH_VARARGS
                               , "Sets the minimum area allowed for the layer." }
     , { "destroy"             , (PyCFunction)PyLayer_destroy             , METH_NOARGS

@@ -345,6 +345,20 @@ extern "C" {
   }
 
 
+// -------------------------------------------------------------------
+// Attribute Method Macro For Static Booleans.
+
+# define  StaticGetBoolAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
+  {                                                                             \
+    HTRY                                                                        \
+    if (SELF_TYPE::FUNC_NAME())                                                 \
+      Py_RETURN_TRUE;                                                           \
+    HCATCH                                                                      \
+    Py_RETURN_FALSE;                                                            \
+  }
+
+
 
 
 // -------------------------------------------------------------------
@@ -688,6 +702,26 @@ extern "C" {
     }                                                                           \
                                                                                 \
     (PyObject_IsTrue(arg0)) ? cobject->FUNC_NAME (true) : cobject->FUNC_NAME (false); \
+    HCATCH                                                                      \
+                                                                                \
+    Py_RETURN_NONE;                                                             \
+  }
+
+
+// -------------------------------------------------------------------
+// Attribute Method Macro For Static Booleans.
+
+#define  StaticSetBoolAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)  \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
+  {                                                                             \
+    HTRY                                                                        \
+    PyObject* arg0;                                                             \
+    if (not PyArg_ParseTuple( args, "O:" #FUNC_NAME, &arg0 ) or not PyBool_Check(arg0) ) {  \
+      PyErr_SetString(ConstructorError, #SELF_TYPE"."#FUNC_NAME"(): Argument is not a boolean."); \
+      return NULL;                                                              \
+    }                                                                           \
+                                                                                \
+    (PyObject_IsTrue(arg0)) ? SELF_TYPE::FUNC_NAME (true) : SELF_TYPE::FUNC_NAME (false); \
     HCATCH                                                                      \
                                                                                 \
     Py_RETURN_NONE;                                                             \
