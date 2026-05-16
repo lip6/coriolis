@@ -67,7 +67,6 @@ class ODCWalker:
             self._net = net
             self._plug = plug
             self._results = results
-            self._symbols: dict[str, S] = {}
             self._todo = todo
         else:  # we need to do a deep copy because this is a child of another walker.
             self._cache = other._cache  # not a copy
@@ -76,7 +75,6 @@ class ODCWalker:
             self._net = net
             self._plug = plug
             self._results = other._results  # not a copy
-            self._symbols: dict[str, S] = other._symbols
             self._todo = other._todo  # not a copy
 
     def fork(self, net: Net = None, plug: Plug = None, function=S.true):
@@ -157,7 +155,6 @@ class ODCWalker:
                 if stop_there:
                     break  # A younger mike did already leave from there
                 self._function = S.true
-                self._symbols = dict()
 
             self.iterate_over_plug(instance, master_output, odc_info)
         if iter >= len(ODCWalker.iter_rep):
