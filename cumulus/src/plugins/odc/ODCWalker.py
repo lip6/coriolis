@@ -40,6 +40,7 @@ def replaceSymbols(expr, correspondance):
 class ODCWalker:
     walker_number: int = 0
     iter_count = 0
+    iter_rep = []
 
     def __init__(
         self,
@@ -95,8 +96,6 @@ class ODCWalker:
             master_net = plug.getMasterNet()
             if master_net.getDirection() != Net.Direction.OUT:
                 continue
-            if plug is None:  # end of path, no instance means external net
-                continue
             if first_plug:
                 self._plug = plug
                 first_plug = False
@@ -115,7 +114,7 @@ class ODCWalker:
             if master_net.getDirection() != Net.Direction.IN or master_net.isSupply() or master_net.isClock():
                 continue
             if master_net.getName() not in odc_info._observability[master_output.getName()]:  # if pin is not observable
-                continue  # steering pins are not observable
+                continue
             if first:
                 if odc_info.isSteering:
                     ext_expr = replaceSymbols(
@@ -136,12 +135,14 @@ class ODCWalker:
             self._function = new_function
 
     def run(self):
+        iter = 0
         while self._plug is not None or self._net is not None:
+            iter += 1
             ODCWalker.iter_count += 1
             if not self._from_plug:
                 self.iterate_over_net()
                 if self._plug is None:  # no plugs were found
-                    return
+                    break
             else:
                 self._from_plug = False
             # All plugs explored
@@ -154,8 +155,11 @@ class ODCWalker:
             if odc_info.isFlipflop:
                 stop_there = self._results.addNewFF(instance, odc_info, self._function)
                 if stop_there:
-                    return  # A younger mike did already leave from there
+                    break  # A younger mike did already leave from there
                 self._function = S.true
                 self._symbols = dict()
 
             self.iterate_over_plug(instance, master_output, odc_info)
+        if iter >= len(ODCWalker.iter_rep):
+            ODCWalker.iter_rep += [0] * (1 + iter - (len(ODCWalker.iter_rep)))
+        ODCWalker.iter_rep[iter] += 1

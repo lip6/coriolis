@@ -34,7 +34,6 @@ class FFDatabase:
         self._ff: dict[str, FFEntry] = {}
         self._ffs: set[str] = set()
         self._len = 0
-        self.edits = 0
 
     def __contains__(self, cell):
         if type(cell) is Cell:
@@ -47,8 +46,10 @@ class FFDatabase:
     def addNewFF(self, ff: Cell, ff_info: CellODC, function):
         if ff.getName() in self._ffs:
             old_entry = self._ff[ff.getName()]
-            self._ff[ff.getName()].function = simplify_logic(Or(function, old_entry.function))
-            self.edits += 1
+            if old_entry.function == S.true or function == S.true:
+                old_entry.function = S.true
+                return True
+            old_entry.function = simplify_logic(Or(function, old_entry.function))
             return True  # return true if walker should stop
         else:
             self._ffs.add(ff.getName())

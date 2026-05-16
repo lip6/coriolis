@@ -47,45 +47,49 @@ class odc:
             raise e
         self._done.set()
 
-    def computeODC(self, force_simplify=False):
+    def computeODC(self, force_simplify=False, refresh_rate=2):
         started = datetime.now()
         print(f"Starting at {str(started).split('.')[0]}")
         runner = Thread(target=self.run_odc)
         runner.start()
-        rf = 5  # refresh rate
         prev_walker_number = 0
         avg_walker_growth = []
         prev_walker_alive = 0
         avg_walker_alive = []
         prev_iter_count = 0
         avg_iter_speed = []
-        print(f"Stats (live, refresh every {rf}s) :")
+        print(f"Stats (live, refresh every {refresh_rate}s) :")
         while not self._done.is_set():
             print(f"Elapsed time : {str(datetime.now() - started).split('.')[0]}")
             walker_number = ODCWalker.walker_number
-            walker_growth = (walker_number - prev_walker_number) / rf
+            walker_growth = (walker_number - prev_walker_number) / refresh_rate
             avg_walker_growth.append(walker_growth)
             print(f"Walker created : {walker_number} ({walker_growth:+} walker/s)")
             prev_walker_number = walker_number
             walker_alive = self._todo.qsize()
             avg_walker_alive.append(walker_alive)
-            print(f"Walker alive : {walker_alive} ({(walker_alive - prev_walker_alive) / rf:+} walker/s)")
+            print(f"Walker alive : {walker_alive} ({(walker_alive - prev_walker_alive) / refresh_rate:+} walker/s)")
             prev_walker_alive = walker_alive
             iter_count = ODCWalker.iter_count
-            iter_speed = (iter_count - prev_iter_count) / rf
+            iter_speed = (iter_count - prev_iter_count) / refresh_rate
             avg_iter_speed.append(iter_speed)
             print(f"Iterations : {iter_count} ({iter_speed:} iterations/s)")
             prev_iter_count = iter_count
-            self._done.wait(timeout=rf)
+            self._done.wait(timeout=refresh_rate)
             print("\033[F\033[K" * 4, end="")
         print("\033[F\033[K", end="")
         runner.join()
         print("Stats :")
+        print(f"  Elapsed time : {str(datetime.now() - started).split('.')[0]}")
         print(f"  Walkers : {ODCWalker.walker_number}")
         print(f"    avg. growth : {sum(avg_walker_growth) / len(avg_walker_growth):+.2f} walker/s")
         print(f"    avg. alive  : {sum(avg_walker_alive) / len(avg_walker_alive):.2f} walker")
         print(f"  Iterations : {ODCWalker.iter_count}")
         print(f"    avg. speed  : {sum(avg_iter_speed) / len(avg_iter_speed):.2f} iteration/s")
+        print(f"    it. per w.  : {ODCWalker.iter_count/ODCWalker.walker_number:.2f} iteration/walker")
+        print("Iteration repartition")
+        for index, count in enumerate(ODCWalker.iter_rep):
+            print(f"{index}: {count}")
         if force_simplify:
             self._db.processFuncs()
         print("ODC done.")

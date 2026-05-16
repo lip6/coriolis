@@ -15,7 +15,7 @@ import re
 
 from coriolis.CRL import getLibertyGroupFromCell
 from coriolis.Hurricane import Cell
-from sympy import Not, S, Xor, simplify, simplify_logic, symbols
+from sympy import Not, S, Xor, simplify_logic, symbols
 from sympy.parsing.sympy_parser import implicit_multiplication_application, parse_expr, standard_transformations
 
 
@@ -24,7 +24,7 @@ def lib_expr_parsing(expression: str, pins: dict[str, S]):
     clean_expr = clean_expr.replace('"', '')
     transformations = standard_transformations + (implicit_multiplication_application,)
     parsed_func = parse_expr(clean_expr, transformations=transformations, local_dict=pins)
-    return simplify(parsed_func)
+    return simplify_logic(parsed_func)
 
 
 class CellODC:
@@ -71,6 +71,10 @@ class CellODC:
                     expr = Not(lib_expr_parsing(three_state.getValue().replace('"', ''), local_dict))
                     self._observability[pin_name] = {
                         p: expr for p in set([str(s) for s in func_symbols])
+                    }
+                    expr_symbols = expr.free_symbols
+                    self._observability[pin_name] |= {
+                        p: S.true for p in set([str(s) for s in expr_symbols])
                     }
                 else:
                     self._observability[pin_name] = {
@@ -122,7 +126,7 @@ class CellODC:
                     if p not in pin_not_steering:
                         self._is_steering = True
                         for output in self._observability.keys():
-                            self._observability[output].pop(p)
+                            self._observability[output][p] = S.true # non steering pins have observability
 
     @property
     def isFlipflop(self):
