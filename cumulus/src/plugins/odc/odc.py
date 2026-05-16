@@ -24,12 +24,12 @@ from .ODCWalker import ODCWalker
 
 
 class odc:
-    def __init__(self, circuit: Cell):
+    def __init__(self, circuit: Cell, nproc=4):
         self._cell: Cell = circuit
         self._todo: LifoQueue = LifoQueue()
-        self._db: FFDatabase = FFDatabase()
-        self._cache: CellODCCache = CellODCCache()
         self._done: Event = Event()
+        self._db: FFDatabase = FFDatabase(self._done, nb_simplifiers=nproc)
+        self._cache: CellODCCache = CellODCCache()
 
         for net in self._cell.getExternalNets():
             if net.getDirection() == Net.Direction.OUT:
@@ -47,11 +47,12 @@ class odc:
             raise e
         self._done.set()
 
-    def computeODC(self, force_simplify=False, refresh_rate=2):
+    def computeODC(self, refresh_rate=2):
         started = datetime.now()
         print(f"Starting at {str(started).split('.')[0]}")
         runner = Thread(target=self.run_odc)
         runner.start()
+        self._db.start()
         prev_walker_number = 0
         avg_walker_growth = []
         prev_walker_alive = 0
@@ -59,7 +60,7 @@ class odc:
         prev_iter_count = 0
         avg_iter_speed = []
         print(f"Stats (live, refresh every {refresh_rate}s) :")
-        while not self._done.is_set():
+        while not self._done.is_set() or not self._db.done.is_set():
             print(f"Elapsed time : {str(datetime.now() - started).split('.')[0]}")
             walker_number = ODCWalker.walker_number
             walker_growth = (walker_number - prev_walker_number) / refresh_rate
@@ -75,23 +76,34 @@ class odc:
             avg_iter_speed.append(iter_speed)
             print(f"Iterations : {iter_count} ({iter_speed:} iterations/s)")
             prev_iter_count = iter_count
-            self._done.wait(timeout=refresh_rate)
-            print("\033[F\033[K" * 4, end="")
+            print(f"Tasks : {self._db.task_done} tasks done")
+            print(f"To do : {self._db._simplify_task.qsize()} tasks")
+            print(f"Skipped : {self._db._task_skipped} tasks")
+            print(f"Results to process: {self._db._results.qsize()} functions")
+            if self._done.is_set():
+                self._db.done.wait(timeout=refresh_rate)
+            else:
+                self._done.wait(timeout=refresh_rate)
+            print("\033[F\033[K" * 8, end="")
         print("\033[F\033[K", end="")
         runner.join()
+        self._db.join()
         print("Stats :")
         print(f"  Elapsed time : {str(datetime.now() - started).split('.')[0]}")
         print(f"  Walkers : {ODCWalker.walker_number}")
-        print(f"    avg. growth : {sum(avg_walker_growth) / len(avg_walker_growth):+.2f} walker/s")
-        print(f"    avg. alive  : {sum(avg_walker_alive) / len(avg_walker_alive):.2f} walker")
+        avg = sum(avg_walker_growth) / (len(avg_walker_growth) if len(avg_walker_growth) else 1)
+        print(f"    avg. growth : {avg:+.2f} walker/s")
+        avg = sum(avg_walker_alive) / (len(avg_walker_alive) if len(avg_walker_alive) else 1)
+        print(f"    avg. alive  : {avg:.2f} walker")
         print(f"  Iterations : {ODCWalker.iter_count}")
-        print(f"    avg. speed  : {sum(avg_iter_speed) / len(avg_iter_speed):.2f} iteration/s")
-        print(f"    it. per w.  : {ODCWalker.iter_count/ODCWalker.walker_number:.2f} iteration/walker")
-        print("Iteration repartition")
-        for index, count in enumerate(ODCWalker.iter_rep):
-            print(f"{index}: {count}")
-        if force_simplify:
-            self._db.processFuncs()
+        avg = sum(avg_iter_speed) / (len(avg_iter_speed) if len(avg_iter_speed) else 1)
+        print(f"    avg. speed  : {avg:.2f} iteration/s")
+        print(f"    it. per w.  : {ODCWalker.iter_count / ODCWalker.walker_number:.2f} iteration/walker")
+        print(f"  Tasks : {self._db.task_done} tasks done")
+        print(f"    Skipped : {self._db._task_skipped} tasks")
+        # print("Iteration repartition")
+        # for index, count in enumerate(ODCWalker.iter_rep):
+        #     print(f"{index}: {count}")
         print("ODC done.")
 
     def save_to_file(self, filename="odc_results.odc"):
@@ -99,5 +111,5 @@ class odc:
             print("[ERROR] ODC was not calculated yet, can not save to file.")
         results = OrderedDict(sorted(self._db.items(), key=lambda item: item[0]))
         with open(filename, "w") as f:
-            for key, value in results.items():
-                f.write(f"{key}: {value}\n")
+            for name, function in results.items():
+                f.write(f"{name}: {function}\n")

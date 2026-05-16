@@ -12,6 +12,7 @@
 # +-----------------------------------------------------------------+
 
 from queue import LifoQueue
+from time import time
 
 from coriolis.Hurricane import Net, Plug
 from sympy import And, S, Symbol
@@ -19,8 +20,16 @@ from sympy import And, S, Symbol
 from .CellODCCache import CellODCCache
 from .FFDatabase import FFDatabase
 
+symbol_cache = {}
+
 
 def getSymbolsMap(instance):
+    global symbol_cache
+
+    try:
+        return symbol_cache[instance.getName()]
+    except KeyError:
+        pass
     ret = {}
     for plug in instance.getPlugs():
         net = plug.getNet()
@@ -28,6 +37,7 @@ def getSymbolsMap(instance):
         if net is None:
             continue
         ret[master_net.getName()] = Symbol(net.getName(), boolean=True)
+    symbol_cache[instance.getName()] = ret
     return ret
 
 
@@ -113,6 +123,14 @@ class ODCWalker:
                 continue
             if master_net.getName() not in odc_info._observability[master_output.getName()]:  # if pin is not observable
                 continue
+            if (
+                self._function == S.true
+                and odc_info._observability[master_output.getName()][master_net.getName()] == S.true
+            ):
+                if net.getName() in self._results.nets_true:
+                    continue  # skip if net already visited with True function
+                else:
+                    self._results.nets_true.add(net.getName())
             if first:
                 if odc_info.isSteering:
                     ext_expr = replaceSymbols(
