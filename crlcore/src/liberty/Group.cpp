@@ -18,7 +18,6 @@
 #include "crlcore/liberty/Library.h"
 #include "crlcore/liberty/Statement.h"
 #include <algorithm>
-#include <boost/process/group.hpp>
 #include <iostream>
 #include <regex>
 #include <string>
