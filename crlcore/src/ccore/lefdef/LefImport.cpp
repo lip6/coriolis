@@ -517,10 +517,11 @@ namespace {
     return NULL;
   }
 
+
   void  LefParser::addLayer ( string layerName, Layer* layer, string lefType )
   {
     if (_layerLut.find(layerName) != _layerLut.end()) {
-      cerr << Warning( "LefParser::addLayer(): Duplicated layer name \"%s\" (ignored).", layerName.c_str() );
+      cerr << Warning( "LefParser::addLayer(): Duplicated layer name \"%s\" (ignored).\n", layerName.c_str() );
       return;
     }
     if (lefType == "CUT")     incNthCut();
@@ -529,11 +530,13 @@ namespace {
     _layerLut[ layerName ] = layer;
   }
 
+
   void LefParser::clearLayer ( string layerName )
   {
     auto item = _layerLut.find( layerName );
     if (item != _layerLut.end()) _layerLut.erase(item);
   }
+
 
   bool  LefParser::isUnmatchedLayer ( string layerName )
   {
@@ -795,8 +798,8 @@ namespace {
         if (cg) {
           if ( (cg->getSliceStep() != lefSiteWidth) or (cg->getSliceHeight() != lefSiteHeight)) {
             cerr << "     - Site \"" << site->name() << "\" of class PAD has mismatched redefinition OVERWRITING." << endl;
-            cerr << "       width: "  << DbU::getValueString(cg->getSliceStep  ()) << " vs. " <<  DbU::getValueString(lefSiteWidth)
-                 <<       " height: " << DbU::getValueString(cg->getSliceHeight()) << " vs. " <<  DbU::getValueString(lefSiteHeight)
+            cerr << "       width: "  << DbU::getValueString(cg->getSliceStep  ()) << " vs. (LEF) " <<  DbU::getValueString(lefSiteWidth)
+                 <<       " height: " << DbU::getValueString(cg->getSliceHeight()) << " vs. (LEF) " <<  DbU::getValueString(lefSiteHeight)
                  << endl;
           //cg->setPitch      ( lefSiteWidth  );
             cg->setSliceStep  ( lefSiteWidth  );
@@ -895,9 +898,17 @@ namespace {
         layer = parser->getLayer( geoms->getLayer(igeom) );
         if (layer)
           blockageLayer = layer->getBlockageLayer();
+        else {
+          cerr << Error( "LefImport::_obstructionCbk(): Reference to undefined layer \"%s\" (skipped).\n"
+                         "        (while parsing \"%s\")"
+                       , geoms->getLayer(igeom)
+                       , getString( cell ).c_str()
+                       ) << endl;
+        }
       }
+      if (not layer) continue;
       if (not blockageLayer) {
-        cerr << Error( "DefImport::_obstructionCbk(): No blockage layer associated to \"%s\".\n"
+        cerr << Error( "LefImport::_obstructionCbk(): No blockage layer associated to \"%s\".\n"
                        "        (while parsing \"%s\")"
                      , getString( layer->getName() ).c_str()
                      , getString( cell ).c_str()
@@ -1089,7 +1100,7 @@ namespace {
     cdebug_log(100,1) << "@ LefParser::_pinCbk()" << endl;
 
     bool  created = false;
-    parser->earlyGetCell( created );
+    Cell* cell    = parser->earlyGetCell( created );
 
     Net*      net     = nullptr;
     Net::Type netType = Net::Type::UNDEFINED;
@@ -1143,8 +1154,16 @@ namespace {
       for ( int igeom=0 ; igeom < geoms->numItems() ; ++igeom ) {
         if (geoms->itemType(igeom) == lefiGeomLayerE) {
           layer = parser->getLayer( geoms->getLayer(igeom) );
+          if (not layer) {
+            cerr << Warning( "LefImport::_pinCbk(): Reference to undefined layer \"%s\" (skipped).\n"
+                           "        (while parsing \"%s\")"
+                           , geoms->getLayer(igeom)
+                           , getString( cell ).c_str()
+                           ) << endl;
+          }
           continue;
         }
+        if (not layer) continue;
         if (geoms->itemType(igeom) == lefiGeomRectE) {
           lefiGeomRect* r          = geoms->getRect(igeom);
           DbU::Unit     xl         = parser->fromUnitsMicrons( r->xl );

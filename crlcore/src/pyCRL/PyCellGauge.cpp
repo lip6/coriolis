@@ -62,6 +62,9 @@ extern "C" {
   DirectGetLongAttribute(PyCellGauge_getSliceStep  ,getSliceStep  ,PyCellGauge,CellGauge)
   DirectGetLongAttribute(PyCellGauge_getPitch      ,getPitch      ,PyCellGauge,CellGauge)
   DirectGetNameAttribute(PyCellGauge_getName       ,getName       ,PyCellGauge,CellGauge)
+  DirectSetLongAttribute(PyCellGauge_setSliceHeight,setSliceHeight,PyCellGauge,CellGauge)
+  DirectSetLongAttribute(PyCellGauge_setSliceStep  ,setSliceStep  ,PyCellGauge,CellGauge)
+  DirectSetLongAttribute(PyCellGauge_setPitch      ,setPitch      ,PyCellGauge,CellGauge)
 
 
   static PyObject* PyCellGauge_create ( PyObject*, PyObject* args )
@@ -117,10 +120,13 @@ extern "C" {
     { { "create"                , (PyCFunction)PyCellGauge_create        , METH_VARARGS|METH_STATIC
                                 , "Create a new CellGauge." }
     , { "isPad"                 , (PyCFunction)PyCellGauge_isPad         , METH_NOARGS , "Is the gauge for the IO pads." }
+    , { "getName"               , (PyCFunction)PyCellGauge_getName       , METH_NOARGS , "Return the gauge name." }
     , { "getSliceHeight"        , (PyCFunction)PyCellGauge_getSliceHeight, METH_NOARGS , "Return the slice height." }
     , { "getSliceStep"          , (PyCFunction)PyCellGauge_getSliceStep  , METH_NOARGS , "Return the slice step." }
     , { "getPitch"              , (PyCFunction)PyCellGauge_getPitch      , METH_NOARGS , "Return the smallest common pitch." }
-    , { "getName"               , (PyCFunction)PyCellGauge_getName       , METH_NOARGS , "Return the gauge name." }
+    , { "setSliceHeight"        , (PyCFunction)PyCellGauge_setSliceHeight, METH_VARARGS, "Sets the slice height." }
+    , { "setSliceStep"          , (PyCFunction)PyCellGauge_setSliceStep  , METH_VARARGS, "Sets the slice step." }
+    , { "setPitch"              , (PyCFunction)PyCellGauge_setPitch      , METH_VARARGS, "Sets the smallest common pitch." }
   //, { "destroy"               , (PyCFunction)PyCellGauge_destroy       , METH_VARARGS
   //                            , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */
