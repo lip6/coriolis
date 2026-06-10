@@ -85,8 +85,8 @@ namespace {
         cdebug_tabw(145,-1);
         return false;
       }
-      if (prefs[0].second->getAnchoredLength() > prefs[0].second->getPitch()) {
-        cdebug_log(145,0) << "Non-pref is longer than 1 pitch -> false" << endl;
+      if (prefs[0].second->getAnchoredLength() >= prefs[0].second->getPitch()) {
+        cdebug_log(145,0) << "Non-pref is longer or equal to 1 pitch -> false" << endl;
         cdebug_tabw(145,-1);
         return false;
       }
