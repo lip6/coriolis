@@ -16,6 +16,7 @@
 
 #include <sstream>
 #include <limits>
+#include <algorithm>
 #include "hurricane/Bug.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
@@ -109,25 +110,6 @@ namespace Katana {
                << " [" << (void*)_base << ", "
                << (void*)(_base?_base->base():NULL) << "]" << endl;
     cdebug_log(160,0) << "  " << this << endl;
-
-    DbU::Unit length = base()->getAnchoredLength();
-    if ( (length > 0) and (length < getPPitch()) ) {
-      cdebug_log(160,0) << "Length below P-Pitch -> adjusting width ("
-                        << DbU::getValueString(length) << ")" << endl;
-      BasicLayer* layer  = getLayer()->getBasicLayers().getFirst();
-      DbU::Unit   width  = base()->getWidth();
-      Contact*    source = base()->getAutoSource()->base();
-      Contact*    target = base()->getAutoTarget()->base();
-      if (isHorizontal()) {
-        width = std::max( width, source->getBoundingBox(layer).getHeight() );
-        width = std::max( width, target->getBoundingBox(layer).getHeight() );
-      } else {
-        width = std::max( width, source->getBoundingBox(layer).getWidth() );
-        width = std::max( width, target->getBoundingBox(layer).getWidth() );
-      }
-      cdebug_log(160,0) << "Set width to " << DbU::getValueString(width) << endl;
-      base()->base()->setWidth( width );
-    }
 
     base()->setObserver( AutoSegment::Observable::TrackSegment, NULL );
     TrackElement::_preDestroy();
@@ -544,6 +526,9 @@ namespace Katana {
   void  TrackSegment::reschedule ( uint32_t level )
   {
     cdebug_log(159,1) << "TrackSegment::reschedule() - " << this << endl;
+
+    if (Session::getStage() == Anabatic::StageRealign)
+      level = std::max( level, (uint32_t)1 );
 
     if (not _data or not _data->hasRoutingEvent())
       Session::getNegociateWindow()->addRoutingEvent( this, level );

@@ -471,7 +471,7 @@ namespace Anabatic {
 #endif
 
     _initialized = true;
-    DbU::Unit twoGrid = DbU::fromGrid( 2 );
+   DbU::Unit twoGrid = DbU::fromGrid( 2 );
     for ( size_t depth=0 ; depth<Session::getDepth() ; ++depth ) {
       const Layer* routingLayer     = Session::getRoutingLayer( depth );
       DbU::Unit*   viaToTopCap      = new DbU::Unit ( 0 );
@@ -525,8 +525,11 @@ namespace Anabatic {
       cerr << "    viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
       if (depth > 0)                                                                          
         cerr << "    viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
-      cerr << "    viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
-      cerr << "    viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
+      cerr << "    viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap  ) << endl;
+      cerr << "    viaToSameCap:     " << DbU::getValueString(*viaToSameCap    ) << endl;
+      cerr << "    viaToTopCapNp:    " << DbU::getValueString(*viaToTopCapNp   ) << endl;
+      cerr << "    viaToBottomCapNp: " << DbU::getValueString(*viaToBottomCapNp) << endl;
+      cerr << "    viaToSameCapNp:   " << DbU::getValueString(*viaToSameCapNp  ) << endl;
       cerr << "    minimal Area:     " << minimalArea << endl;
       cerr << "    wire width:       " << DbU::getValueString(Session::getWireWidth(depth)) << endl;
       cerr << "    minimal length:   " << DbU::getValueString(*minimalLength) << endl;
@@ -615,6 +618,25 @@ namespace Anabatic {
   {
     cdebug_log(149,0) << "AutoSegment::_preDestroy() - " << (void*)this << endl;
     cdebug_tabw(145,1);
+
+    DbU::Unit length = getAnchoredLength();
+    if ( (length > 0) and (length < getPPitch()) ) {
+      cdebug_log(160,0) << "Length below P-Pitch -> adjusting width ("
+                        << DbU::getValueString(length) << ")" << endl;
+      BasicLayer* layer  = getLayer()->getBasicLayers().getFirst();
+      DbU::Unit   width  = getWidth();
+      Contact*    source = getAutoSource()->base();
+      Contact*    target = getAutoTarget()->base();
+      if (isHorizontal()) {
+        width = std::max( width, source->getBoundingBox(layer).getHeight() );
+        width = std::max( width, target->getBoundingBox(layer).getHeight() );
+      } else {
+        width = std::max( width, source->getBoundingBox(layer).getWidth() );
+        width = std::max( width, target->getBoundingBox(layer).getWidth() );
+      }
+      cdebug_log(160,0) << "Set width to " << DbU::getValueString(width) << endl;
+      base()->setWidth( width );
+    }
 
     _observers.notify( Destroy );
 
@@ -847,53 +869,85 @@ namespace Anabatic {
     DbU::Unit  cap   = 0;
 
     if (flags & Flags::Source) {
-      if (flags & Flags::CapInNonPrefDir) {
-        if      (getFlags() & SegSourceTop   ) cap = getViaToTopCapNp   ( depth );
-        else if (getFlags() & SegSourceBottom) cap = getViaToBottomCapNp( depth );
-        else                                   cap = getViaToSameCapNp  ( depth );
+      AutoContact* source    = getAutoSource();
+      AutoSegment* nonPrefPp = source->getPerpandicular( this );
+      if (   nonPrefPp
+         and not isNonPref()
+         and (source->getLayer() == getLayer())
+         and (nonPrefPp->getAnchoredLength() < getPPitch())) {
+        source = nonPrefPp->getOppositeAnchor( source );
+        Flags nonPrefPpFlags = Flags::CapInNonPrefDir|Flags::NoSegExt|Flags::LayerCapOnly;
+        nonPrefPpFlags |= (source == nonPrefPp->getAutoSource()) ? Flags::Source
+                                                                 : Flags::Target;
+        cap = nonPrefPp->getExtensionCap( nonPrefPpFlags );
+        // if (getId() == 942314) {
+        //   cdebug_log(150,0) << "-> Source cap from non-pref PP:" << DbU::getValueString(cap)
+        //                     << " flags=" << nonPrefPpFlags << endl;
+        // }
       } else {
-        if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   ( depth );
-        else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap( depth );
-        else                                   cap = getViaToSameCap  ( depth );
+        if (  (flags & Flags::CapInNonPrefDir)
+           or (not isNonPref() and (getAutoSource()->getLayer() == getLayer()))) {
+          if      (getFlags() & SegSourceTop   ) cap = getViaToTopCapNp   ( depth );
+          else if (getFlags() & SegSourceBottom) cap = getViaToBottomCapNp( depth );
+          else                                   cap = getViaToSameCapNp  ( depth );
+        } else {
+          if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   ( depth );
+          else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap( depth );
+          else                                   cap = getViaToSameCap  ( depth );
+        }
+        // if (getId() == 2721666) {
+        //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
+        //                     << " (source) flags:" << getFlags()
+        //                     << " VIA cap:" << DbU::getValueString(cap)
+        //                     << " t:" << (getFlags() & SegSourceBottom)
+        //                     << " b:" << (getFlags() & SegSourceTop)
+        //                     << endl;
+        // }
       }
-      // if (getId() == 2721666) {
-      //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
-      //                     << " (source) flags:" << getFlags()
-      //                     << " VIA cap:" << DbU::getValueString(cap)
-      //                     << " t:" << (getFlags() & SegSourceBottom)
-      //                     << " b:" << (getFlags() & SegSourceTop)
-      //                     << endl;
-      // }
       if (not isNonPref() and not (flags & Flags::NoSegExt)) {
-        //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
+      //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
           cap = -getDuSource();
-          if (getId() == 2721666) {
+          if (getId() == 942269) {
             cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
           }
         }
       }
     } else {
       if (flags & Flags::Target) {
-        if (flags & Flags::CapInNonPrefDir) {
-          if      (getFlags() & SegTargetTop   ) cap = getViaToTopCapNp   ( depth );
-          else if (getFlags() & SegTargetBottom) cap = getViaToBottomCapNp( depth );
-          else                                   cap = getViaToSameCapNp  ( depth );
+        AutoContact* target    = getAutoTarget();
+        AutoSegment* nonPrefPp = target->getPerpandicular( this );
+        if (   nonPrefPp
+           and not isNonPref()
+           and (target->getLayer() == getLayer())
+           and (nonPrefPp->getAnchoredLength() < getPPitch())) {
+          target = nonPrefPp->getOppositeAnchor( target );
+          Flags nonPrefPpFlags = Flags::CapInNonPrefDir|Flags::NoSegExt|Flags::LayerCapOnly;
+          nonPrefPpFlags |= (target == nonPrefPp->getAutoSource()) ? Flags::Source
+                                                                   : Flags::Target;
+          cap = nonPrefPp->getExtensionCap( nonPrefPpFlags );
         } else {
-          if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   ( depth );
-          else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap( depth );
-          else                                   cap = getViaToSameCap  ( depth );
+          if (  (flags & Flags::CapInNonPrefDir
+             or (not isNonPref() and (getAutoTarget()->getLayer() == getLayer())))) {
+            if      (getFlags() & SegTargetTop   ) cap = getViaToTopCapNp   ( depth );
+            else if (getFlags() & SegTargetBottom) cap = getViaToBottomCapNp( depth );
+            else                                   cap = getViaToSameCapNp  ( depth );
+          } else {
+            if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   ( depth );
+            else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap( depth );
+            else                                   cap = getViaToSameCap  ( depth );
+          }
+          // if (getId() == 2721666) {
+          //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
+          //                     << " (target) flags:" << getFlags()
+          //                     << " VIA cap:" << DbU::getValueString(cap)
+          //                     << " t:" << (getFlags() & SegTargetBottom)
+          //                     << " b:" << (getFlags() & SegTargetTop)
+          //                     << endl;
+          // }
         }
-        // if (getId() == 2721666) {
-        //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
-        //                     << " (target) flags:" << getFlags()
-        //                     << " VIA cap:" << DbU::getValueString(cap)
-        //                     << " t:" << (getFlags() & SegTargetBottom)
-        //                     << " b:" << (getFlags() & SegTargetTop)
-        //                     << endl;
-        // }
         if (not isNonPref() and not (flags & Flags::NoSegExt)) {
-          // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
+        // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
           if (getDuTarget() > cap) {
             cap = getDuTarget();
             if (getId() == 2721666) {
@@ -2329,6 +2383,54 @@ namespace Anabatic {
   }
 
 
+  DbU::Unit  AutoSegment::getAxisHintFromGlobal () const
+  {
+    cdebug_log(159,0) << "AutoSegment::getAxisHintFromGlobal():" << this << endl;
+    if (isNonPref() or isGlobal() or (getRpDistance() > 1)) return getAxis();
+
+    const AutoSegment* from = this; 
+    AutoContact*       turn = getAutoSource();
+    AutoSegment*       to   = nullptr;
+    if (turn) {
+      to = turn->getPerpandicular( from );
+      while ( to and not (to->isGlobal() or to->isWeakGlobal())) {
+        from = to;
+        turn = to->getOppositeAnchor( turn );
+        if (not turn) {
+          to = nullptr;
+          break;
+        }
+        to = turn->getPerpandicular( from );
+      }
+      if (to and (to->getDirection() == getDirection())) {
+        cdebug_log(159,0) << "-> Align on " << to << endl;
+        return to->getAxis();
+      }
+    }
+
+    from = this; 
+    turn = getAutoTarget();
+    if (turn) {
+      to = turn->getPerpandicular( from );
+      while ( to and not (to->isGlobal() or to->isWeakGlobal())) {
+        from = to;
+        turn = to->getOppositeAnchor( turn );
+        if (not turn) {
+          to = nullptr;
+          break;
+        }
+        to = turn->getPerpandicular( from );
+      }
+      if (to and (to->getDirection() == getDirection())) {
+        cdebug_log(159,0) << "-> Align on " << to << endl;
+        return to->getAxis();
+      }
+    }
+
+    return getAxis();
+  }
+
+
   bool  AutoSegment::mustRaise () const
   {
     if (not (_flags & SegIsReduced)) return false;
@@ -2894,8 +2996,11 @@ namespace Anabatic {
           } else {
             if (onPSourceSource)
               axis = std::min( sourcePp->getAutoTarget()->getX(), targetPp->getAutoTarget()->getX() );
-            else
+            else {
+              cdebug_log(159,0) << "source Pp source " << sourcePp->getAutoSource() << endl;
+              cdebug_log(159,0) << "target Pp source " << targetPp->getAutoSource() << endl;
               axis = std::max( sourcePp->getAutoSource()->getX(), targetPp->getAutoSource()->getX() );
+            }
 
             setAxis( axis );
             source->setX( axis );

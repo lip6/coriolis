@@ -178,7 +178,7 @@ namespace Anabatic {
       inline         Hook*               getTargetHook              ();
       inline         Contact*            getSource                  () const;
       inline         Contact*            getTarget                  () const;
-      inline         Component*          getOppositeAnchor          ( Component* ) const;
+      inline         Component*          getOppositeAnchor          ( const Component* ) const;
       inline         Components          getAnchors                 () const;
              virtual DbU::Unit           getX                       () const;
              virtual DbU::Unit           getY                       () const;
@@ -318,6 +318,7 @@ namespace Anabatic {
                      float               getMaxUnderDensity         ( Flags flags );
       inline         uint32_t            getReduceds                () const;
                      uint32_t            getNonReduceds             ( Flags flags=Flags::WithPerpands ) const;
+                     DbU::Unit           getAxisHintFromGlobal      () const;
     // Modifiers.                                            
       inline         void                unsetFlags                 ( uint64_t );
       inline         void                setFlags                   ( uint64_t );
@@ -538,7 +539,7 @@ namespace Anabatic {
   inline  Hook*           AutoSegment::getTargetHook          () { return base()->getTargetHook(); }
   inline  Contact*        AutoSegment::getSource              () const { return static_cast<Contact*>(base()->getSource()); }
   inline  Contact*        AutoSegment::getTarget              () const { return static_cast<Contact*>(base()->getTarget()); }
-  inline  Component*      AutoSegment::getOppositeAnchor      ( Component* anchor ) const { return base()->getOppositeAnchor(anchor); };
+  inline  Component*      AutoSegment::getOppositeAnchor      ( const Component* anchor ) const { return base()->getOppositeAnchor(anchor); };
   inline  AutoSegment*    AutoSegment::getParent              () const { return _parent; }
   inline  DbU::Unit       AutoSegment::getSourcePosition      () const { return _sourcePosition; }
   inline  DbU::Unit       AutoSegment::getTargetPosition      () const { return _targetPosition; }
