@@ -110,7 +110,7 @@ class Segment : public Component {
     public: Component* getSource() const;
     public: Component* getTarget() const;
     public: Components getAnchors() const;
-    public: Component* getOppositeAnchor(Component* anchor) const;
+    public: Component* getOppositeAnchor(const Component* anchor) const;
     public: const DbU::Unit& getWidth() const {return _width;};
     public: DbU::Unit getHalfWidth() const {return (_width / 2);};
     public: virtual DbU::Unit getSourceX() const = 0;
