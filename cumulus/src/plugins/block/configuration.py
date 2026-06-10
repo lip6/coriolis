@@ -157,6 +157,10 @@ class GaugeConf ( object ):
             trace( 500, '-' )
             raise ErrorMessage( 1, [ 'RoutingGauge._loadRoutingGauge(): No routing gauge named "{}".'.format(gaugeName)
                                    , 'Please check the "anabatic.routingGauge" configuration parameter." ' ])
+        if not self._cellGauge:
+            trace( 500, '-' )
+            raise ErrorMessage( 1, [ 'RoutingGauge._loadRoutingGauge(): No cell gauge named "{}".'.format(cellGaugeName)
+                                   , 'Please check the "anabatic.cellGauge" configuration parameter." ' ])
 
         topLayer = Cfg.getParamString('anabatic.topRoutingLayer').asString()
 
