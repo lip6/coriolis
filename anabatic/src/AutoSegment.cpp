@@ -465,7 +465,7 @@ namespace Anabatic {
 
   void  AutoSegment::initialize ()
   {
-#define SHOW_WIRE_CAP_TABLE 0
+#define SHOW_WIRE_CAP_TABLE 1
 #if SHOW_WIRE_CAP_TABLE
     cerr << "AutoSegment::initialize()" << endl;
 #endif
@@ -2562,7 +2562,16 @@ namespace Anabatic {
 
   bool  AutoSegment::canSlacken ( Flags flags ) const
   {
-    cdebug_log(149,0) << "AutoSegment::canSlacken()" << endl;
+    cdebug_log(149,0) << "AutoSegment::canSlacken() " << this << endl;
+
+    if (   not Session::isHV()
+       and not isNonPref()
+       and (getRpDistance() == 0)
+       and (getBreakLevel() == 0)) {
+      cdebug_log(149,0) << "  Terminal vertical in VH mode -> allow." << endl;
+      return true;
+    }
+    cdebug_log(149,0) << Session::isHV() << " " << isNotAligned() << endl;
 
     if (not isGlobal() and not (flags & Flags::Propagate)) return false;
 
@@ -3187,7 +3196,8 @@ namespace Anabatic {
     if (not turn) return nullptr;
 
     AutoSegment* perpandicular = turn->getPerpandicular( this );
-    flags |= (perpandicular->getAutoSource() == turn) ? Flags::Source : Flags::Target;
+    if (perpandicular)
+      flags |= (perpandicular->getAutoSource() == turn) ? Flags::Source : Flags::Target;
     return perpandicular;
   }
 

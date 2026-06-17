@@ -723,6 +723,11 @@ namespace Katana {
   //_dataNegociate->update();
 
     setAxisHintFromParent();
+    // if (_segment->base()->getRpDistance() < 2) {
+    //   DbU::Unit axisHint = _segment->base()->getAxisHintFromGlobal();
+    //   if (axisHint != _segment->getAxis())
+    //     setAxisHint( axisHint );
+    // }
     cdebug_log(159,0) << "axisHint:" << DbU::getValueString(getAxisHint()) << endl;
 
     _overConstrained = false;

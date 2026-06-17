@@ -1303,7 +1303,8 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
   //if (_cell->getName() == "AOI221X1_V5")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__addh_1")
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
+    if (_cell->getName() == "AOI2110")
       DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
@@ -1394,17 +1395,18 @@ namespace {
 
               DbU::Unit widthAdjust  = h->getWidth () % DbU::twoGrid;
               DbU::Unit lengthAdjust = h->getLength() % DbU::twoGrid;
-              if (widthAdjust or lengthAdjust) {
-                Vertical::create( h->getNet()
-                                , h->getLayer()
-                                , h->getY()
-                                , h->getWidth()
-                                , h->getSourceX()
-                                , h->getTargetX()
-                                );
-                if (widthAdjust)  h->setWidth(    h->getWidth()    - widthAdjust );
-                if (lengthAdjust) h->setDxTarget( h->getDxTarget() - lengthAdjust);
-              }
+              // if (widthAdjust or lengthAdjust) {
+              //   Vertical* v = Vertical::create( h->getNet()
+              //                                 , h->getLayer()
+              //                                 , h->getCenter().getX()
+              //                                 , h->getWidth()
+              //                                 , h->getSourceY()
+              //                                 , h->getTargetY()
+              //                                 );
+              // //   cdebug_log(100,0) << "> Overwrite:" << v << endl;
+              // }
+              if (widthAdjust)  h->setWidth(    h->getWidth()    - widthAdjust );
+              if (lengthAdjust) h->setDxTarget( h->getDxTarget() - lengthAdjust);
 
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
                                                                 , ab.getXMax()
@@ -1500,7 +1502,8 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
   //if (_cell->getName() == "AOI221X1_V5")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__addh_1")
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
+    if (_cell->getName() == "AOI2110")
       DebugSession::close();
   }
 

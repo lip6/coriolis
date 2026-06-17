@@ -695,7 +695,8 @@ namespace Anabatic {
     DbU::Unit punctualLength = 0;
     if (rpDepth == 0) ++rpDepth;
     DbU::Unit pitch = getPitch( rpDepth );
-    if (not isSymbolic()) punctualLength += getLayerGauge( rpDepth )->getWireWidth();
+    if (not isSymbolic())
+      punctualLength += getLayerGauge( rpDepth )->getWireWidth() + pitch/4;
     punctualLength += pitch;
 
     getPositions( rp, source, target );
@@ -706,6 +707,7 @@ namespace Anabatic {
                       << " hsmallTHreshold=" << _hsmallThreshold
                       << " vsmallTHreshold=" << _vsmallThreshold
                       << " vlargeTHreshold=" << _vlargeThreshold
+                      << " punctualLength=" << DbU::getValueString(punctualLength)
                       << endl;
     cdebug_log(145,0) << "width =" << DbU::getValueString(width ) << endl;
     cdebug_log(145,0) << "height=" << DbU::getValueString(height) << endl;

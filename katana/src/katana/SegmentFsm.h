@@ -31,37 +31,36 @@ namespace Katana {
 
   class SegmentAction {
     public:
-      enum Type { Self                          = (1<< 0)
-                , Other                         = (1<< 1)
-                , Perpandicular                 = (1<< 2)
-                , Insert                        = (1<< 3)
-                , Ripup                         = (1<< 4)
-                , RipedByLocal                  = (1<< 5)
-                , DecreaseRipup                 = (1<< 6)
-                , ResetRipup                    = (1<< 7)
-                , ToRipupLimit                  = (1<< 8)
-                , MoveToAxis                    = (1<< 9)
-                , AxisHint                      = (1<<10)
-                , Lock                          = (1<<11)
-                , PackingMode                   = (1<<12)
-                , ToState                       = (1<<13)
-                , ToPref                        = (1<<14)
-                , EventLevel1                   = (1<<15)
-                , EventLevel2                   = (1<<16)
-                , EventLevel3                   = (1<<17)
-                , EventLevel4                   = (1<<18)
-                , EventLevel5                   = (1<<19)
-                , AllEventLevels                = EventLevel1|EventLevel2|EventLevel3|EventLevel4|EventLevel5
-                , SelfLock                      = Self |Lock  
-                , SelfInsert                    = Self |Insert
-                , SelfRipup                     = Self |Ripup
-                , SelfRipupPerpand              = Self |Ripup|Perpandicular
-                , SelfRipupPerpandToPref        = Self |Ripup|Perpandicular|ToPref
-                , SelfRipupPerpandWithAxisHint  = Self |Ripup|Perpandicular|EventLevel4|AxisHint
-                , OtherRipup                    = Other|Ripup
-                , OtherRipupPerpandAndPushAside = Other|Ripup|Perpandicular|EventLevel3|AxisHint
-                , OtherRipupPerpandAndPacking   = Other|Ripup|Perpandicular|EventLevel4|PackingMode
-                };
+      static const uint32_t Self                          = (1<< 0);
+      static const uint32_t Other                         = (1<< 1);
+      static const uint32_t Perpandicular                 = (1<< 2);
+      static const uint32_t Insert                        = (1<< 3);
+      static const uint32_t Ripup                         = (1<< 4);
+      static const uint32_t RipedByLocal                  = (1<< 5);
+      static const uint32_t DecreaseRipup                 = (1<< 6);
+      static const uint32_t ResetRipup                    = (1<< 7);
+      static const uint32_t ToRipupLimit                  = (1<< 8);
+      static const uint32_t MoveToAxis                    = (1<< 9);
+      static const uint32_t AxisHint                      = (1<<10);
+      static const uint32_t Lock                          = (1<<11);
+      static const uint32_t PackingMode                   = (1<<12);
+      static const uint32_t ToState                       = (1<<13);
+      static const uint32_t ToPref                        = (1<<14);
+      static const uint32_t EventLevel1                   = (1<<15);
+      static const uint32_t EventLevel2                   = (1<<16);
+      static const uint32_t EventLevel3                   = (1<<17);
+      static const uint32_t EventLevel4                   = (1<<18);
+      static const uint32_t EventLevel5                   = (1<<19);
+      static const uint32_t AllEventLevels                = EventLevel1|EventLevel2|EventLevel3|EventLevel4|EventLevel5;
+      static const uint32_t SelfLock                      = Self |Lock;
+      static const uint32_t SelfInsert                    = Self |Insert;
+      static const uint32_t SelfRipup                     = Self |Ripup;
+      static const uint32_t SelfRipupPerpand              = Self |Ripup|Perpandicular;
+      static const uint32_t SelfRipupPerpandToPref        = Self |Ripup|Perpandicular|ToPref;
+      static const uint32_t SelfRipupPerpandWithAxisHint  = Self |Ripup|Perpandicular|EventLevel4|AxisHint;
+      static const uint32_t OtherRipup                    = Other|Ripup;
+      static const uint32_t OtherRipupPerpandAndPushAside = Other|Ripup|Perpandicular|EventLevel3|AxisHint;
+      static const uint32_t OtherRipupPerpandAndPacking   = Other|Ripup|Perpandicular|EventLevel4|PackingMode;
     public:
                            SegmentAction ( TrackElement*
                                          , uint32_t      type

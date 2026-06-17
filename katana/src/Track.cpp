@@ -1466,7 +1466,7 @@ namespace Katana {
   {
     if (_segments.empty()) return 0;
 
-  //if ((getIndex() == 432) and isHorizontal()) DebugSession::open( 150, 160 );
+  //if ((getIndex() == 15) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::checkMinArea() " << this << endl;
 
     DbU::Unit halfMinSpacing = getLayer()->getMinimalSpacing() / 2;
@@ -1542,7 +1542,7 @@ namespace Katana {
     }
 
     cdebug_log(159,0) << "  Track done." << endl;
-  //if ((getIndex() == 432) and isHorizontal()) DebugSession::close();
+  //if ((getIndex() == 15) and isHorizontal()) DebugSession::close();
     return nonMinArea;
   }
 

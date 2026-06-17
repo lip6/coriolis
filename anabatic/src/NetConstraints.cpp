@@ -297,7 +297,7 @@ namespace Anabatic {
           vector<GCell*> gcells;
           segment->getGCells( gcells );
 
-          if (gcells.size() < 3)
+          if ((gcells.size() < 3) and Session::isHV())
             segment->setFlags( AutoSegment::SegUnbreakable );
         }
 

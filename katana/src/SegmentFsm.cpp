@@ -442,6 +442,7 @@ namespace Katana {
     if (_type & EventLevel3) eventLevel = 3;
     if (_type & EventLevel4) eventLevel = 4;
     if (_type & EventLevel5) eventLevel = 5;
+    cdebug_log(159,0) << "Requeued with event level " << eventLevel << endl;
     event->setRipedByLocal( _type&RipedByLocal );
 
     if (_type & ToPref)
@@ -622,9 +623,11 @@ namespace Katana {
 
         _costs.push_back( new TrackCost(segment1,segment2,track1,track2,track1->getAxis(),symAxis) );
         cdebug_log(155,0) << "Same Ripup:" << _data1->getSameRipup() << endl;
-        if ((_data1->getSameRipup() > 10) and (track1->getAxis() == segment1->getAxis())) {
-          cdebug_log(155,0) << "Track blacklisted" << endl;
-          _costs.back()->setBlacklisted();
+        if (Session::getStage() < Anabatic::StageRepair) {
+          if ((_data1->getSameRipup() > 10) and (track1->getAxis() == segment1->getAxis())) {
+            cdebug_log(155,0) << "Track blacklisted" << endl;
+            _costs.back()->setBlacklisted();
+          }
         }
       
         cdebug_log(155,0) << "AxisWeight:" << DbU::getValueString(_costs.back()->getRefCandidateAxis())
@@ -1649,6 +1652,10 @@ namespace Katana {
         }
         if (segment1->isNonPref()) {
           actionFlags &= ~SegmentAction::AllEventLevels;
+        }
+        if (_data1->getState() == DataNegociate::Minimize) {
+          actionFlags &= ~SegmentAction::EventLevel5;
+          actionFlags |=  SegmentAction::EventLevel3;
         }
         addAction( segment1, actionFlags );
       }

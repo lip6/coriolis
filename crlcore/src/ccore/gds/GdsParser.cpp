@@ -2174,7 +2174,7 @@ namespace CRL {
     GdsStream gstream ( gdsPath, flags );
 
     if (not gstream.read( library ))
-      cerr << Error( "Gds::load(): An error occurred while reading GDSII stream\n"
+      cerr << Error( "Gds::load(): An error occurred while reading the GDSII stream\n"
                      "        \"%s\"."
                    , gdsPath.c_str()
                    ) << endl;

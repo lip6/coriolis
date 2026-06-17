@@ -33,8 +33,10 @@ namespace Anabatic {
               AutoContact*  doRp_AccessNorthSouthPin ( GCell*, RoutingPad* );
               AutoContact*  doRp_AccessEastWestPin   ( GCell*, RoutingPad* );
     private:                                     
+              bool          _do_xG_1M1               ();
       virtual bool          _do_1G_1PinM2            ();
       virtual bool          _do_xG_1PinM2            ();
+      virtual bool          _do_1G_xM1_1PinM2        ();
       virtual bool          _do_1G_1PinM3            ();
       virtual bool          _do_xG_1PinM3            ();
       virtual bool          _do_1G_1M1               ();

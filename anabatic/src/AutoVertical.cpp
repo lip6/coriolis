@@ -324,10 +324,12 @@ namespace Anabatic {
   {
     cdebug_log(149,1) << "AutoVertical::_slacken() " << this << endl;
 
-    if (not isDrag()) {
-      if (   not isStrongTerminal()
-         or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getAnchoredLength() < getPitch()*5)) )
-        { cdebug_tabw(149,-1); return false; }
+    if (Session::isHV()) {
+        if (not isDrag()) {
+          if (   not isStrongTerminal()
+             or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getAnchoredLength() < getPitch()*5)) )
+            { cdebug_tabw(149,-1); return false; }
+        }
     }
 
     cdebug_log(149,0) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;

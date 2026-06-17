@@ -77,6 +77,7 @@ namespace Anabatic {
       static  inline bool                              doDestroyTool         ();
       static         bool                              isInDemoMode          ();
       static         bool                              isChannelStyle        ();
+      static         bool                              isHV                  ();
       static         bool                              doWarnGCellOverload   ();
       static         Session*                          get                   ( const char* message=NULL );
       static  inline Technology*                       getTechnology         ();
@@ -227,6 +228,7 @@ namespace Anabatic {
   inline bool                              Session::doDestroyBaseContact () { return get("doDestroyBaseContact()")->_doDestroyBaseContact(); }
   inline bool                              Session::doDestroyBaseSegment () { return get("doDestroyBaseSegment()")->_doDestroyBaseSegment(); }
   inline bool                              Session::doDestroyTool        () { return get("doDestroyTool()")->_doDestroyTool(); }
+  inline bool                              Session::isHV                 () { return get("isHV()")->_routingGauge->isHV(); }
   inline const Configuration*              Session::getConfiguration     () { return get("getConfiguration()")->_getConfiguration(); }
   inline AnabaticEngine*                   Session::getAnabatic          () { return get("getAnabatic()")->_anabatic; }
   inline void                              Session::revalidateTopology   () { return get("revalidateTopology()")->_revalidateTopology(); }
