@@ -208,7 +208,13 @@ namespace Katana {
   TrackElement*  TrackSegment::getSymmetric         () { return _symmetric; }
   TrackElements  TrackSegment::getPerpandiculars    () { return new TrackElements_Perpandiculars(this); }
 // Mutators.
-  void           TrackSegment::invalidate           () { setFlags( TElemInvalidated ); _base->invalidate(); }
+
+  void  TrackSegment::invalidate ()
+  {
+    cdebug_log(155,1) << "TrackSegment::invalidate(): " << this << endl;
+    setFlags( TElemInvalidated ); _base->invalidate();
+    cdebug_tabw(155,-1);
+  }
 
 
   DbU::Unit  TrackSegment::getSourceAxis () const

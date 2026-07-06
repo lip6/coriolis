@@ -99,6 +99,14 @@ namespace Etesian {
   };
 
 
+  class BloatAMS_c35b4 : public BloatCell {
+    public:
+                         BloatAMS_c35b4 ();
+      virtual           ~BloatAMS_c35b4 ();
+      virtual DbU::Unit  getDx          ( const Cell*, const EtesianEngine* ) const;
+  };
+
+
   class BloatChannel : public BloatCell {
     public:
                          BloatChannel ();
@@ -144,6 +152,7 @@ namespace Etesian {
     _bloatCells.insert( new Bloat3Metals   () );
     _bloatCells.insert( new BloatChannel   () );
     _bloatCells.insert( new Bloat90Percents() );
+    _bloatCells.insert( new BloatAMS_c35b4 () );
     select( "disabled" );
   }
 

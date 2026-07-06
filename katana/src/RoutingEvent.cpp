@@ -722,16 +722,31 @@ namespace Katana {
 
   //_dataNegociate->update();
 
-    setAxisHintFromParent();
+    if (   (Session::getStage() == Anabatic::StageRealign)
+       and (_segment->base()->getRpDistance() < 2)) {
+      DbU::Unit axisHint = _segment->base()->getAxisHintFromGlobal();
+      if (axisHint != _segment->getAxis())
+        setAxisHint( axisHint );
+    } else
+      setAxisHintFromParent();
+
     // if (_segment->base()->getRpDistance() < 2) {
     //   DbU::Unit axisHint = _segment->base()->getAxisHintFromGlobal();
     //   if (axisHint != _segment->getAxis())
     //     setAxisHint( axisHint );
     // }
     cdebug_log(159,0) << "axisHint:" << DbU::getValueString(getAxisHint()) << endl;
+    cdebug_log(159,0) << "stage:" << Session::getStage()
+                      << " (StagePack=" << Anabatic::StagePack << ")" << endl;
 
+    Anabatic::Flags segFlags = Flags::Propagate
+                              | ((Session::getStage() < Anabatic::StagePack)
+                                 ? Anabatic::Flags::NoFlags
+                                 : Anabatic::Flags::UseNativeConstraints);
+    cdebug_log(159,0) << "segFlags=" << segFlags.asString(Anabatic::FlagsFunction) << endl;
+    
     _overConstrained = false;
-    _segment->base()->getConstraints( _constraints );
+    _segment->base()->getConstraints( _constraints, segFlags );
     _segment->base()->getOptimal    ( _optimal );
 
     cdebug_log(159,0) << "Stage:" << RoutingEvent::getStage() << endl;

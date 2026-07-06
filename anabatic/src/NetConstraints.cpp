@@ -114,7 +114,7 @@ namespace {
 
             contact = aligned->getAutoTarget();
             cdebug_log(146,0) << "contact: " << contact << endl;
-            if (contact) {
+            if (contact and not contact->isTerminal()) {
               cdebug_log(146,0) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
@@ -122,7 +122,7 @@ namespace {
             }
             contact = aligned->getAutoSource();
             cdebug_log(146,0) << "contact: " << contact << endl;
-            if (contact) {
+            if (contact and not contact->isTerminal()) {
               cdebug_log(146,0) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
@@ -180,6 +180,13 @@ namespace {
                     if (parallel->getBreakLevel() > 0) {
                       cdebug_log(146,0) << "Applies on parallel turn " << turn << endl;
                       oppositeTurn->setConstraintBox( parallelConstraint );
+                    } else {
+                      // DbU::Unit axis = (parallel->isVertical() ? parallelConstraint.getXCenter()
+                      //                                          : parallelConstraint.getYCenter());
+                      // cdebug_log(146,0) << "Set parallel on axis " << DbU::getValueString(axis) << endl;
+                      // parallel->setAxis( axis, Flags::Force );
+                      // parallel->setFlags( AutoSegment::SegAxisSet );
+                      // cdebug_log(146,0) << parallel << endl;
                     }
                   }
                 }
@@ -197,14 +204,14 @@ namespace {
             cdebug_log(146,0) << "aligned vertical: " << aligned << endl;
 
             contact = aligned->getAutoTarget();
-            if (contact) {
+            if (contact and not contact->isTerminal()) {
               cdebug_log(146,0) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , Flags::Vertical|Flags::WarnOnError );
             }
             contact = aligned->getAutoSource();
-            if (contact) {
+            if (contact and not contact->isTerminal()) {
               cdebug_log(146,0) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
@@ -370,21 +377,20 @@ namespace Anabatic {
       if (autoSegment->isUnbreakable()) continue;
       if (autoSegment->getRpDistance() >= 1) continue;
 
-      vector<GCell*> gcells;
-      autoSegment->getGCells( gcells );
+      if (not autoSegment->isNonPref()) {
+        AutoContact* turn = autoSegment->getAutoSource();
+        if (not turn->isTurn()) turn = autoSegment->getAutoTarget();
+        if (not turn->isTurn()) continue;
+        AutoSegment* perpandicular = turn->getPerpandicular( autoSegment );
+        if (perpandicular->isGlobal()) continue;
 
-      if     (gcells.size() >  2) continue;
-    //if (   (gcells.size() == 2)
-    //   and (  not autoSegment->getAutoSource()->isTerminal()
-    //       or not autoSegment->getAutoTarget()->isTerminal()) ) continue;
-
+        vector<GCell*> gcells;
+        autoSegment->getGCells( gcells );
+        if (gcells.size() >  2) continue;
+      }
+      
       autoSegment->setFlags( AutoSegment::SegUnbreakable );
     }
-
-    // forEach ( Segment*, isegment, net->getSegments() ) {
-    //   AutoSegment* autoSegment = Session::lookup( *isegment );
-    //   if (autoSegment) autoSegment->toConstraintAxis();
-    // }
 
     cdebug_tabw(146,-1);
     DebugSession::close();

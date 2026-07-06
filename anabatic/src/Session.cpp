@@ -194,7 +194,6 @@ namespace Anabatic {
         cdebug_log(149,0) << "Align on canonical:" << canonical << endl;
         cdebug_log(145,0) << "Combined user constraints: " << userConstraints << endl;
 
-      //canonical->setAxis( canonical->getAxis(), Flags::Realignate );
         if (canonical->isUnsetAxis() and not canonical->isFixed())
           canonical->toOptimalAxis( Flags::Realignate|Flags::Propagate );
         else

@@ -122,6 +122,7 @@ namespace Anabatic {
       static const BaseFlags  ToSameRipupLimit    ;
       static const BaseFlags  CapInNonPrefDir     ;
       static const BaseFlags  ToMinimize          ;
+      static const BaseFlags  UseNativeConstraints;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );

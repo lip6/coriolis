@@ -463,6 +463,51 @@ namespace Anabatic {
   void  AutoSegment::setShortNetMode ( bool state ) { _shortNetMode = state; }
 
 
+//! \function AutoSegment::initialize (); 
+//! \brief    Store the segment cap extentions in a static table.
+//!
+//!           The cap extension of a segment is the length of metal that will
+//!           be added from the source axis to the true beginning of the segment
+//!           and form the target axis to it's true end. Mainly this involve the
+//!           size of the VIAs that will be attached to source and target.
+//!
+//!           Three kind of VIAs are possible:
+//!
+//!           1. VIAs going to the metal *above* (named: **Up**). 
+//!           2. VIAs going to the metal *below* (named: **Bottom**). 
+//!           3. VIAs in the same metal *turn* (named: **Same**). 
+//!
+//!           We further distinguish two cases:
+//!
+//!           1. Cap in the preferred routing direction, this is the most
+//!              common. This apply, obviously to segments that are in the
+//!              right direction. If the preferred routing direction is
+//!              horizontal, then the cap is a *dX*.
+//!
+//!           2. Cap in the non-preferred routing direction. Again, if the
+//!              routing direction is horizontal, that means the segment is
+//!              *vertical*. In this case the cap is a *dY*. The caps are
+//!              stored in an alternate table with **Np** suffix.
+//!
+//!              This second case is needed in case of non-square VIAs,
+//!              and it usually amounts to exchanging X an Y extensions.
+//!
+//!              This kind of cap is used to compute the footprint of the
+//!              non-preferred (vertical) across the preferred (horizontal)
+//!              tracks.
+//!
+//!           We finally get a table that *for each layer*, defines:
+//!
+//!           Name                   | Definition
+//!           ---------------------- | ---------------------------------------------------
+//!           ``viaToTopCap``        | Extention of bottom metal for VIA going up (top)
+//!           ``viaToBottomCap``     | Extention of top metal for VIA going down (bottom)
+//!           ``viaToSameCap``       | Extention for a turn in the *same* metal.
+//!           ``viaToTopCapNp``      | Non-pref extention of the bottom metal for up VIA.
+//!           ``viaToBottomCapNp``   | Non-pref extention of the top metal for down VIA.
+//!           ``viaToSameCapNp``     | Non-pref extension for a turn in the *same metal*
+//!           ``minimalLength``      | Minimal length to ensure minimal area of a segment
+
   void  AutoSegment::initialize ()
   {
 #define SHOW_WIRE_CAP_TABLE 1
@@ -690,9 +735,8 @@ namespace Anabatic {
   {
     if (Session::doDestroyTool()) return;
 
-    cdebug_log(149,0) << "AutoSegment::invalidate() " << flags.asString(FlagsFunction)
+    cdebug_log(149,1) << "AutoSegment::invalidate(Flags) " << flags.asString(FlagsFunction)
                       << " " << this << endl;
-    cdebug_tabw(149,1);
 
     if (flags & Flags::Source) setFlags( SegInvalidatedSource );
     if (flags & Flags::Target) setFlags( SegInvalidatedTarget );
@@ -709,11 +753,16 @@ namespace Anabatic {
        and not getAutoTarget()->isInvalidated() )
       getAutoTarget()->invalidate( flags );
 
-    if (isInvalidated()) { cdebug_tabw(149,-1); return; }
+    if (isInvalidated()) {
+      cdebug_log(149,0) << "Already invalidated, done." << endl;
+      cdebug_tabw(149,-1);
+      return;
+    }
 
     _invalidate();
 
     if ((flags & Flags::Propagate) and not isNotAligned()) {
+      cdebug_log(149,0) << "Propagate on aligneds." << endl;
       for ( AutoSegment* segment : getAligneds(flags & Flags::NoCheckLayer) ) {
         if (not segment->isInvalidated()) segment->_invalidate();
       }
@@ -725,23 +774,27 @@ namespace Anabatic {
   void  AutoSegment::_invalidate ()
   {
     if (isInvalidated()) return;
-    cdebug_log(145,0) << "AutoSegment::_invalidate() " << this << endl;
+    cdebug_log(145,1) << "AutoSegment::_invalidate() " << this << endl;
 
     setFlags( SegInvalidated );
     Session::invalidate( this );
 
     _observers.notify( Invalidate );
+    cdebug_tabw(145,-1);
   }
 
 
   void  AutoSegment::invalidate ( AutoContact* contact )
   {
-    cdebug_log(149,0) << "AutoSegment::invalidate() " << this << endl;
-    cdebug_log(149,0) << "  -> " << contact << endl;
-    if (Session::doDestroyTool()) return;
+    cdebug_log(149,1) << "  AutoSegment::invalidate(AutoContact*) " << this << endl;
+    cdebug_log(149,0) << "    -> " << contact << endl;
+    if (Session::doDestroyTool()) {
+      cdebug_tabw(149,-1);
+      return;
+    }
     if (contact == getAutoSource()) setFlags( SegInvalidatedSource );
     if (contact == getAutoTarget()) setFlags( SegInvalidatedTarget );
-    cdebug_log(149,0) << "  Done" << endl;
+    cdebug_tabw(149,-1);
   }
 
 
@@ -758,7 +811,7 @@ namespace Anabatic {
 
     updateOrient();
 
-    bool     checkForMinArea = true;
+    bool     checkForMinArea = not (_flags & SegMinAreaDisabled);
     uint64_t oldSpinFlags    = _flags & SegDepthSpin;
 
     if (_flags & (SegInvalidatedSource|SegCreated)) {
@@ -868,117 +921,96 @@ namespace Anabatic {
     size_t     depth = Session::getLayerDepth( getLayer() );
     DbU::Unit  cap   = 0;
 
+  // if ((getId() == 1226403) or (getId() == 1248843)) {
+  //   cdebug_log(150,1) << "getExtensionCap(): depth=" << depth
+  //                     << " (source) flags:" << getFlags()
+  //                     << " S.t:" << (getFlags() & SegSourceTop)
+  //                     << " S.b:" << (getFlags() & SegSourceBottom)
+  //                     << " T.t:" << (getFlags() & SegTargetTop)
+  //                     << " T.b:" << (getFlags() & SegTargetBottom)
+  //                     << endl;
+  // }
+    
     if (flags & Flags::Source) {
       AutoContact* source    = getAutoSource();
       AutoSegment* nonPrefPp = source->getPerpandicular( this );
-      if (   nonPrefPp
-         and not isNonPref()
-         and (source->getLayer() == getLayer())
-         and (nonPrefPp->getAnchoredLength() < getPPitch())) {
-        source = nonPrefPp->getOppositeAnchor( source );
-        Flags nonPrefPpFlags = Flags::CapInNonPrefDir|Flags::NoSegExt|Flags::LayerCapOnly;
-        nonPrefPpFlags |= (source == nonPrefPp->getAutoSource()) ? Flags::Source
-                                                                 : Flags::Target;
-        cap = nonPrefPp->getExtensionCap( nonPrefPpFlags );
-        // if (getId() == 942314) {
-        //   cdebug_log(150,0) << "-> Source cap from non-pref PP:" << DbU::getValueString(cap)
-        //                     << " flags=" << nonPrefPpFlags << endl;
-        // }
+      if (flags & Flags::CapInNonPrefDir) {
+        if      (getFlags() & SegSourceTop   ) cap = getViaToTopCapNp   ( depth );
+        else if (getFlags() & SegSourceBottom) cap = getViaToBottomCapNp( depth );
+        else                                   cap = getViaToSameCapNp  ( depth );
+        
+      //if ((getId() == 1226403) or (getId() == 1248843)) {
+      //  cdebug_log(150,0) << "-> Normal source VIA cap NP:" << DbU::getValueString(cap) << endl;
+      //}
       } else {
-        if (  (flags & Flags::CapInNonPrefDir)
-           or (not isNonPref() and (getAutoSource()->getLayer() == getLayer()))) {
-          if      (getFlags() & SegSourceTop   ) cap = getViaToTopCapNp   ( depth );
-          else if (getFlags() & SegSourceBottom) cap = getViaToBottomCapNp( depth );
-          else                                   cap = getViaToSameCapNp  ( depth );
-        } else {
-          if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   ( depth );
-          else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap( depth );
-          else                                   cap = getViaToSameCap  ( depth );
-        }
-        // if (getId() == 2721666) {
-        //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
-        //                     << " (source) flags:" << getFlags()
-        //                     << " VIA cap:" << DbU::getValueString(cap)
-        //                     << " t:" << (getFlags() & SegSourceBottom)
-        //                     << " b:" << (getFlags() & SegSourceTop)
-        //                     << endl;
-        // }
+        if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   ( depth );
+        else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap( depth );
+        else                                   cap = getViaToSameCap  ( depth );
+        
+      //if ((getId() == 1226403) or (getId() == 1248843)) {
+      //  cdebug_log(150,0) << "-> Normal source VIA cap:" << DbU::getValueString(cap) << endl;
+      //}
       }
       if (not isNonPref() and not (flags & Flags::NoSegExt)) {
       //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
           cap = -getDuSource();
-          if (getId() == 942269) {
+          if ((getId() == 1226403) or (getId() == 1248843)) {
             cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
           }
         }
       }
     } else {
       if (flags & Flags::Target) {
-        AutoContact* target    = getAutoTarget();
-        AutoSegment* nonPrefPp = target->getPerpandicular( this );
-        if (   nonPrefPp
-           and not isNonPref()
-           and (target->getLayer() == getLayer())
-           and (nonPrefPp->getAnchoredLength() < getPPitch())) {
-          target = nonPrefPp->getOppositeAnchor( target );
-          Flags nonPrefPpFlags = Flags::CapInNonPrefDir|Flags::NoSegExt|Flags::LayerCapOnly;
-          nonPrefPpFlags |= (target == nonPrefPp->getAutoSource()) ? Flags::Source
-                                                                   : Flags::Target;
-          cap = nonPrefPp->getExtensionCap( nonPrefPpFlags );
+        if (flags & Flags::CapInNonPrefDir) {
+          if      (getFlags() & SegTargetTop   ) cap = getViaToTopCapNp   ( depth );
+          else if (getFlags() & SegTargetBottom) cap = getViaToBottomCapNp( depth );
+          else                                   cap = getViaToSameCapNp  ( depth );
+
+        //if ((getId() == 1226403) or (getId() == 1248843)) {
+        //  cdebug_log(150,0) << "-> Normal target VIA cap NP:" << DbU::getValueString(cap) << endl;
+        //}
         } else {
-          if (  (flags & Flags::CapInNonPrefDir
-             or (not isNonPref() and (getAutoTarget()->getLayer() == getLayer())))) {
-            if      (getFlags() & SegTargetTop   ) cap = getViaToTopCapNp   ( depth );
-            else if (getFlags() & SegTargetBottom) cap = getViaToBottomCapNp( depth );
-            else                                   cap = getViaToSameCapNp  ( depth );
-          } else {
-            if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   ( depth );
-            else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap( depth );
-            else                                   cap = getViaToSameCap  ( depth );
-          }
-          // if (getId() == 2721666) {
-          //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
-          //                     << " (target) flags:" << getFlags()
-          //                     << " VIA cap:" << DbU::getValueString(cap)
-          //                     << " t:" << (getFlags() & SegTargetBottom)
-          //                     << " b:" << (getFlags() & SegTargetTop)
-          //                     << endl;
-          // }
+          if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   ( depth );
+          else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap( depth );
+          else                                   cap = getViaToSameCap  ( depth );
+          
+        //if ((getId() == 1226403) or (getId() == 1248843)) {
+        //  cdebug_log(150,0) << "-> Normal target VIA cap:" << DbU::getValueString(cap) << endl;
+        //}
         }
         if (not isNonPref() and not (flags & Flags::NoSegExt)) {
         // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
           if (getDuTarget() > cap) {
             cap = getDuTarget();
-            if (getId() == 2721666) {
+            if (getId() == 1226403) {
               cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
             }
           }
         }
       } else {
-      //cap = getViaToBottomCap( depth );
-        cap = getViaToSameCap( depth );
-        // cdebug_log(150,0) << "getExtensionCap(): (force bottom) flags:" << getFlags()
-        //                   << " VIA cap:" << DbU::getValueString(cap)
-        //                   << endl;
+        if (isNonPref())
+          cap = getViaToSameCapNp( depth );
+        else
+          cap = getViaToSameCap( depth );
+        cerr << Warning( "AutoSegment::getExtensionCap(): Called whithout Source or Target flag.\n"
+                       , "          On %s"
+                       , getString(this).c_str()
+                       ) << endl;
+          
+        if ((getId() == 1226403) or (getId() == 1248843)) {
+          cdebug_log(150,0) << "Neither source nor target cap " << DbU::getValueString(cap) << endl;
+        }
       }
     }
 
-    // if (   not isCreated()
-    //    and not (flags & Flags::NoMinLength)
-    //    and     (flags & Flags::Target)
-    //    and (getMinimalLength(depth) != 0.0)
-    //    and isNearMinArea() ) {
-    //   DbU::Unit realLength = getExtensionCap( Flags::Source|Flags::LayerCapOnly|Flags::NoMinLength )
-    //                        + getAnchoredLength();
-    //   if (realLength + cap < getMinimalLength(depth)) {
-    //     cap = getMinimalLength(depth) - realLength;
-    //   }
-    // }
-
     if (getLayer()->isSymbolic() and (cap < getWidth()/2)) cap  = getWidth()/2;
     if (not (flags & Flags::LayerCapOnly))                 cap += getLayer()->getMinimalSpacing()/2;
-    // cdebug_log(150,0) << "getExtensionCap(): cap=" << DbU::getValueString(cap) << endl;
+  //cdebug_log(150,0) << "getExtensionCap(): cap=" << DbU::getValueString(cap) << endl;
+  //if ((getId() == 1226403) or (getId() == 1248843)) {
+  //  cdebug_log(150,0) << "Composite cap " << DbU::getValueString(cap) << endl;
+  //  cdebug_tabw(150,-1);
+  //}
     return cap;
   }
 
@@ -1068,6 +1100,23 @@ namespace Anabatic {
       targetAxis = std::max( targetAxis, aligned->getTargetU() );
     }
   //}
+  }
+
+
+  void  AutoSegment::getEndAxesAndSpin ( DbU::Unit& sourceAxis, DbU::Unit& targetAxis, uint64_t& spin ) const
+  {
+    cdebug_log(145,0) << "AutoSegment::getEndAxesAndSpin() - " << this << endl;
+
+    spin       = getFlags() & SegDepthSpin;
+    sourceAxis = getSourceU();
+    targetAxis = getTargetU();
+    if (sourceAxis > targetAxis) std::swap( sourceAxis, targetAxis );
+
+    for( AutoSegment* aligned : const_cast<AutoSegment*>(this)->getAligneds() ) {
+      sourceAxis = std::min( sourceAxis, aligned->getSourceU() );
+      targetAxis = std::max( targetAxis, aligned->getTargetU() );
+      spin      |= (aligned->getFlags() & SegDepthSpin);
+    }
   }
 
 
@@ -1312,13 +1361,15 @@ namespace Anabatic {
       return toConstraintAxis( flags );
     }
 
-    DbU::Unit constraintMin;
-    DbU::Unit constraintMax;
+    DbU::Unit constraintMin = 0;
+    DbU::Unit constraintMax = 0;
+    DbU::Unit alignedMin    = 0;
+    DbU::Unit alignedMax    = 0;
 
-    getConstraints( constraintMin, constraintMax );
+    getConstraints( alignedMin, alignedMax );
 
-    DbU::Unit optimalMin = max( min(getOptimalMin(),constraintMax), constraintMin );
-    DbU::Unit optimalMax = min( max(getOptimalMax(),constraintMin), constraintMax );
+    DbU::Unit optimalMin = max( min(getOptimalMin(),alignedMax), alignedMin );
+    DbU::Unit optimalMax = min( max(getOptimalMax(),alignedMin), alignedMax );
 
     cdebug_log(149,0) << "optimal:[" << DbU::getValueString(optimalMin)
                       << " "         << DbU::getValueString(optimalMax) << "]" << endl;
@@ -1358,7 +1409,8 @@ namespace Anabatic {
           if (turn) {
             AutoSegment* parallel = turn->getPerpandicular( perpandicular );
             if (parallel->isUnsetAxis()) {
-              parallel->setAxis( getAxis() );
+              parallel->setAxis( getAxis(), Flags::Force );
+              cdebug_log(149,0) << "Align on: " << DbU::getValueString(getAxis()) << endl;
               cdebug_log(149,0) << "parallel aligned: " << parallel << endl;
             }
           }
@@ -1381,6 +1433,8 @@ namespace Anabatic {
                 << ((isHorizontal())?"Y ":"X ") << DbU::getValueString(getAxis())
                 << " to " << DbU::getValueString(axis) << " on " << this << endl;
     cdebug_tabw(145,1);
+
+    if (isCanonical()) _observers.notify( AxisChange );
 
     _setAxis( axis );
 
@@ -1743,11 +1797,13 @@ namespace Anabatic {
 
   void  AutoSegment::updatePositions ()
   {
+    DebugSession::open( getNet(), 145, 146 );
+    cdebug_log(145,1) << "updatePositions() " << this << endl;
+
+    Flags     flags      = isNonPref() ? Flags::CapInNonPrefDir : Flags::NoFlags;
     DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
     DbU::Unit targetCap  = getExtensionCap( Flags::Target );
 
-    DebugSession::open( getNet(), 145, 146 );
-    cdebug_log(145,1) << "updatePositions() " << this << endl;
     cdebug_log(145,0) << "sourceCap " << DbU::getValueString(sourceCap) << " duSource " << DbU::getValueString(getDuSource()) << endl;
     cdebug_log(145,0) << "targetCap " << DbU::getValueString(targetCap) << " duTarget " << DbU::getValueString(getDuTarget()) << endl;
 
@@ -2072,19 +2128,36 @@ namespace Anabatic {
     if (not isNearMinArea()) return false;
     DebugSession::open( getNet(), 149, 160 );
     cdebug_log(149,1) << "AutoSegment::expandToMinLength() " << this << endl;
+
+    DbU::Unit sourceCap = getExtensionCap( Flags::Source|Flags::LayerCapOnly );
+    DbU::Unit targetCap = getExtensionCap( Flags::Target|Flags::LayerCapOnly );
+
     cdebug_log(149,0) << "In span=" << span << endl;
-    cdebug_log(149,0) << "Before: [" << DbU::getValueString(getSourceU() - getExtensionCap( Flags::Source|Flags::LayerCapOnly ))
-                      << " "         << DbU::getValueString(getTargetU() + getExtensionCap( Flags::Target|Flags::LayerCapOnly ))
+    cdebug_log(149,0) << "Before: [" << DbU::getValueString(getSourceU() - sourceCap)
+                      << " "         << DbU::getValueString(getTargetU() + targetCap)
                       << "]" << endl;
     cdebug_log(149,0) << "Source " << getAutoSource() << endl;
     cdebug_log(149,0) << "Target " << getAutoTarget() << endl;
 
+    if (   (getAutoSource()->getLayer() == getLayer())
+       and (getAutoTarget()->getLayer() == getLayer()) ) {
+      cdebug_log(149,0) << "Source & Target and segment in same layer, should not apply." << endl;
+      if (getDuSource() or getDuTarget()) {
+        setDuSource( 0 );
+        setDuTarget( 0 );
+        updatePositions();
+      }
+      cdebug_tabw(149,-1);
+      return false;
+    }
+
     DbU::Unit halfMinSpacing = getLayer()->getMinimalSpacing() / 2;
-    DbU::Unit sourceCap      = getExtensionCap( Flags::Source|Flags::LayerCapOnly );
-    DbU::Unit targetCap      = getExtensionCap( Flags::Target|Flags::LayerCapOnly );
     DbU::Unit anchoredLength = getAnchoredLength();
     DbU::Unit segMinLength   = anchoredLength + sourceCap + targetCap;
     DbU::Unit techMinLength  = getMinimalLength( Session::getLayerDepth( getLayer() ));
+
+    cdebug_log(149,0) << "Source cap: " << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(149,0) << "Target cap: " << DbU::getValueString(targetCap) << endl;
 
     if (not isNotAligned()) {
       Interval alignedLength;
@@ -2116,7 +2189,9 @@ namespace Anabatic {
     cdebug_log(149,0) << "* Source cap "      << DbU::getValueString(sourceCap) << endl;
     cdebug_log(149,0) << "* Target cap "      << DbU::getValueString(targetCap) << endl;
     cdebug_log(149,0) << "* duSource "        << DbU::getValueString(getDuSource()) << endl;
+    cdebug_log(149,0) << "* SourceU "         << DbU::getValueString(getSourceU()) << endl;
     cdebug_log(149,0) << "* duTarget "        << DbU::getValueString(getDuTarget()) << endl;
+    cdebug_log(149,0) << "* TargetU "         << DbU::getValueString(getTargetU()) << endl;
     
     DbU::Unit oneGrid      = DbU::fromGrid( 1 );
     DbU::Unit targetExpand =   (techMinLength - segMinLength) / 2 + targetCap;
@@ -2127,6 +2202,10 @@ namespace Anabatic {
     cdebug_log(149,0) <<  "before shift sourceExpand=" << DbU::getValueString(sourceExpand)
                       <<              " targetExpand=" << DbU::getValueString(targetExpand) << endl;
     if (not span.isEmpty()) {
+      cdebug_log(149,0) << "| span.getVMax() "  << DbU::getValueString(span.getVMax()) << endl;
+      cdebug_log(149,0) << "| TargetU "         << DbU::getValueString(getTargetU()) << endl;
+      cdebug_log(149,0) << "| targetExpand "    << DbU::getValueString(targetExpand) << endl;
+      cdebug_log(149,0) << "| halfMinSpacing "  << DbU::getValueString(halfMinSpacing) << endl;
       DbU::Unit shiftLeft = span.getVMax() - (getTargetU() + targetExpand + halfMinSpacing);
       cdebug_log(149,0) <<  "shift left=" << DbU::getValueString(shiftLeft) << endl;
       if (shiftLeft < 0) {
@@ -2135,10 +2214,14 @@ namespace Anabatic {
         targetExpand += shiftLeft;
         sourceExpand += shiftLeft;
       }
+      cdebug_log(149,0) << "| span.getVMin() "  << DbU::getValueString(span.getVMin()) << endl;
+      cdebug_log(149,0) << "| SourceU "         << DbU::getValueString(getSourceU()) << endl;
+      cdebug_log(149,0) << "| sourceExpand "    << DbU::getValueString(sourceExpand) << endl;
+      cdebug_log(149,0) << "| halfMinSpacing "  << DbU::getValueString(halfMinSpacing) << endl;
       DbU::Unit shiftRight = span.getVMin() - (getSourceU() + sourceExpand - halfMinSpacing);
       cdebug_log(149,0) <<  "shift right=" << DbU::getValueString(shiftRight) << endl;
       if (shiftRight > 0) {
-        if (sourceExpand + shiftRight < sourceCap)
+        if (sourceExpand + shiftRight > -sourceCap)
           shiftRight = - sourceExpand - sourceCap;
         targetExpand += shiftRight;
         sourceExpand += shiftRight;
@@ -2291,10 +2374,6 @@ namespace Anabatic {
           return isSpinTopOrBottom();
         }
       }
-      // if (isSpinTopOrBottom()
-      //    and source->isTurn()
-      //    and target->isTurn())
-      //   return true;
       return false;
     }
 
@@ -2309,10 +2388,18 @@ namespace Anabatic {
     cdebug_log(159,0) << "  target:" << target->isHTee() << "+" << target->isVTee() << endl;
 
     if (  ((source->isHTee() or target->isHTee()) and isHorizontal())
-       or ((source->isVTee() or target->isVTee()) and isVertical  ()) ) return false;
-    
-    // if (  source->isHTee() or source->isVTee()
-    //    or target->isHTee() or target->isVTee() ) return false;
+       or ((source->isVTee() or target->isVTee()) and isVertical  ()) ) {
+      DbU::Unit sourceAxis   = 0;
+      DbU::Unit targetAxis   = 0;
+      uint64_t  alignedFlags = 0;
+      getEndAxes( sourceAxis, targetAxis );
+
+      if (   (sourceAxis != targetAxis)
+         or ((alignedFlags != SegSpinTop) and (alignedFlags != SegSpinBottom)) )
+        return false;
+
+      cdebug_log(159,0) << "  case of NULL anchored *aligned* length, and spin top or bottom." << endl;
+    }
 
     cdebug_log(159,0) << "  length:" << DbU::getValueString(length)
                       << " (" << length << ")" << endl;

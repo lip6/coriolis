@@ -197,9 +197,11 @@ namespace Katana {
   {
     if (isInvalidated()) return;
 
+    cdebug_log(155,1) << "TrackSegmentNonPref::invalidate(): " << this << endl;
     Super::invalidate();
 
     if (getTrack()) reschedule( 0 );
+    cdebug_tabw(155,-1);
   }
 
 

@@ -92,7 +92,6 @@ namespace Anabatic {
       static  inline float                             getLowDensity         ();
       static  inline float                             getLowUpDensity       ();
       static  inline float                             getMoveUpReserve      ();
-      static         DbU::Unit                         getExtensionCap       ();
       static  inline CellGauge*                        getCellGauge          ();
       static  inline DbU::Unit                         getSliceHeight        ();
       static  inline DbU::Unit                         getSliceStep          ();
@@ -142,7 +141,6 @@ namespace Anabatic {
       static  inline DbU::Unit                         getOffset             ( const Layer* );
       static  inline DbU::Unit                         getWireWidth          ( const Layer* );
       static  inline DbU::Unit                         getViaWidth           ( const Layer* );
-      static  inline DbU::Unit                         getExtensionCap       ( const Layer* );
       static  inline DbU::Unit                         getNearestTrackAxis   ( const Layer*,  DbU::Unit, uint32_t mode );
       static  inline Point                             getNearestGridPoint   ( Point, Box constraints );
       static  inline void                              getPositions          ( RoutingPad*, Point&, Point& );
@@ -243,10 +241,10 @@ namespace Anabatic {
   inline const set<Net*,DBo::CompareById>& Session::getNetsModificateds  () { return get("getNetsModificateds()")->_netRevalidateds; }
   inline void                              Session::doglegReset          () { return get("doglegReset()")->_doglegReset (); }
   inline void                              Session::invalidate           ( Net* net ) { return get("invalidate(Net*)")->_invalidate(net); }
-  inline void                              Session::invalidate           ( AutoContact* autoContact ) { return get("invalidate(AutoContact*)")->_invalidate(autoContact); }
-  inline void                              Session::invalidate           ( AutoSegment* autoSegment ) { return get("invalidate(AutoSegment*)")->_invalidate(autoSegment); }
-  inline void                              Session::dogleg               ( AutoSegment* autoSegment ) { return get("dogleg(AutoSegment*)")->_dogleg(autoSegment); }
-  inline void                              Session::destroyRequest       ( AutoSegment* autoSegment ) { return get("destroyRequest(AutoSegment*)")->_destroyRequest(autoSegment); }
+  inline void                              Session::invalidate           ( AutoContact* autoContact ) { get("invalidate(AutoContact*)")->_invalidate(autoContact); }
+  inline void                              Session::invalidate           ( AutoSegment* autoSegment ) { get("invalidate(AutoSegment*)")->_invalidate(autoSegment); }
+  inline void                              Session::dogleg               ( AutoSegment* autoSegment ) { get("dogleg(AutoSegment*)")->_dogleg(autoSegment); }
+  inline void                              Session::destroyRequest       ( AutoSegment* autoSegment ) { get("destroyRequest(AutoSegment*)")->_destroyRequest(autoSegment); }
                                            
   inline DbU::Unit                         Session::getSmallNetWidth     ()                     { return getConfiguration()->getSmallNetWidth(); }
   inline DbU::Unit                         Session::getSmallNetHeight    ()                     { return getConfiguration()->getSmallNetHeight(); }
@@ -298,7 +296,6 @@ namespace Anabatic {
   inline DbU::Unit                         Session::getOffset            ( const Layer* layer ) { return getOffset   ( getLayerDepth(layer) ); }
   inline DbU::Unit                         Session::getWireWidth         ( const Layer* layer ) { return getWireWidth( getLayerDepth(layer) ); }
   inline DbU::Unit                         Session::getViaWidth          ( const Layer* layer ) { return getViaWidth ( getViaDepth(layer) ); }
-  inline DbU::Unit                         Session::getExtensionCap      ( const Layer* layer ) { return getConfiguration()->getExtensionCap(layer); }
   inline Flags                             Session::getDirection         ( const Layer* layer ) { return getDirection( getLayerDepth(layer) ); }
   inline Point                             Session::getNearestGridPoint  ( Point p, Box b )     { return get("getNearestGridPoint()")->_getNearestGridPoint(p,b); }
   inline DbU::Unit                         Session::getNearestTrackAxis  ( const Layer* layer, DbU::Unit axis, uint32_t mode ) { return get("getNearestTrackAxis()")->_getNearestTrackAxis(layer,axis,mode); }

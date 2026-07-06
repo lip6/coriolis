@@ -188,6 +188,7 @@ class STA ( AvtShell ):
     def __init__ ( self, rule, depends, flags ):
         depends   = FlowTask._normFileList( depends )
         super().__init__( rule, depends, STA.scriptSTA, flags )
+        self.command += [ '-Target', self.inputFile.stem ]
         self.targets = [ Path(self.file_depend(0).stem + '.dtx')
                        , Path(self.file_depend(0).stem + '.cpath.rep')
                        , Path(self.file_depend(0).stem + '.slack.rep')

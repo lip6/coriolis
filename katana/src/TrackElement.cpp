@@ -111,11 +111,16 @@ namespace Katana {
 
   void  TrackElement::notify ( TrackElement* segment, unsigned int flags )
   {
+    cdebug_log(159,1) << "TrackElement::notify() <Invalidate> on " << segment << endl;
+
     if (flags & AutoSegment::Invalidate) {
       if (not segment->isInvalidated()) {
-        cdebug_log(159,0) << "::notify() <Invalidate> on " << segment << endl;
         segment->invalidate();
       }
+    }
+
+    if (flags & AutoSegment::AxisChange) {
+      if (segment->getTrack()) segment->reschedule( 0 );
     }
 
     if (flags & AutoSegment::Revalidate) {
@@ -129,6 +134,8 @@ namespace Katana {
     if (flags & AutoSegment::RevalidatePPitch) {
       segment->updatePPitch();
     }
+
+    cdebug_tabw(159,-1);
   }
 
 

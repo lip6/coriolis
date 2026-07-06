@@ -58,6 +58,21 @@ namespace Anabatic {
   class AutoVertical;
 
 
+//! \class    AutoSegment
+//! \brief    Base class for articulated segments.
+//!
+//! \section  secAutoSegment  Extension Cap Management
+//!
+//!           Extension cap are the amount the segment extends before the
+//!           source perpandiculars axis and after the target perpandicular
+//!           axis. That extension cap depends on the kind of VIA that is
+//!           connected on source and target.
+//!
+//!           Extension cap are always calculated in the direction of the
+//!           segment, regardless of whether it is preferred routing
+//!           direction of not.
+
+
 // -------------------------------------------------------------------
 // Class  :  "AutoSegment".
 
@@ -117,6 +132,7 @@ namespace Anabatic {
       static const uint64_t  SegGapFiller          = (1L<<46);
       static const uint64_t  SegToMinimize         = (1L<<47);
       static const uint64_t  SegIsMergeReducedDone = (1L<<48);
+      static const uint64_t  SegMinAreaDisabled    = (1L<<49);
     // Masks.
       static const uint64_t  SegWeakTerminal       = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned         = SegNotSourceAligned|SegNotTargetAligned;
@@ -129,6 +145,7 @@ namespace Anabatic {
       static const unsigned int  Invalidate        = (1 <<  2);
       static const unsigned int  Revalidate        = (1 <<  3);
       static const unsigned int  RevalidatePPitch  = (1 <<  4);
+      static const unsigned int  AxisChange        = (1 <<  5);
 
     public:
       class Observable : public StaticObservable<1> {
@@ -247,6 +264,7 @@ namespace Anabatic {
       inline         bool                isUserDefined              () const;
       inline         bool                isGapFiller                () const;
                      bool                isNearMinArea              () const;
+      inline         bool                isMinAreaDisabled          () const;
                      bool                isReduceCandidate          () const;
       inline         bool                isBelowPitch               () const;
       inline         bool                hasBecomeBelowPitch        () const;
@@ -290,6 +308,7 @@ namespace Anabatic {
                      DbU::Unit           getExtensionCap            ( Flags ) const;
       inline         DbU::Unit           getAxis                    () const;
                      void                getEndAxes                 ( DbU::Unit& sourceAxis, DbU::Unit& targetAxis ) const;
+                     void                getEndAxesAndSpin          ( DbU::Unit& sourceAxis, DbU::Unit& targetAxis, uint64_t& spin ) const;
              virtual DbU::Unit           getSourceU                 () const = 0;
              virtual DbU::Unit           getTargetU                 () const = 0;
              virtual DbU::Unit           getDuSource                () const = 0;
@@ -301,8 +320,8 @@ namespace Anabatic {
                      Interval            getNonPrefSpan             () const;
              virtual Interval            getSourceConstraints       ( Flags flags=Flags::NoFlags ) const = 0;
              virtual Interval            getTargetConstraints       ( Flags flags=Flags::NoFlags ) const = 0;
-             virtual bool                getConstraints             ( DbU::Unit& min, DbU::Unit& max ) const = 0;
-      inline         bool                getConstraints             ( Interval& i ) const;
+             virtual bool                getConstraints             ( DbU::Unit& min, DbU::Unit& max, Flags flags=Flags::Propagate ) const = 0;
+      inline         bool                getConstraints             ( Interval& i, Flags flags=Flags::NoFlags ) const;
       inline         const Interval&     getUserConstraints         () const;
       inline         const Interval&     getNativeConstraints       () const;
              virtual DbU::Unit           getSlack                   () const;
@@ -553,7 +572,7 @@ namespace Anabatic {
   inline  GCell*          AutoSegment::getGCell               () const { return _gcell; }
   inline  AutoContact*    AutoSegment::getAutoSource          () const { return Session::lookup(getSource()); }
   inline  AutoContact*    AutoSegment::getAutoTarget          () const { return Session::lookup(getTarget()); }
-  inline  bool            AutoSegment::getConstraints         ( Interval& i ) const { return getConstraints(i.getVMin(),i.getVMax()); }
+  inline  bool            AutoSegment::getConstraints         ( Interval& i, Flags flags ) const { return getConstraints(i.getVMin(),i.getVMax(),flags); }
   inline  AutoSegment*    AutoSegment::getCanonical           ( Interval& i ) const { return getCanonical(i.getVMin(),i.getVMax()); }
   inline  unsigned int    AutoSegment::getDepth               () const { return _depth; }
   inline  unsigned int    AutoSegment::getRpDistance          () const { return _rpDistance; }
@@ -593,6 +612,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isDragSameLayer        () const { return _flags & SegDragSameLayer; }
   inline  bool            AutoSegment::isGapFiller            () const { return _flags & SegGapFiller; }
   inline  bool            AutoSegment::isAtMinArea            () const { return _flags & SegAtMinArea; }
+  inline  bool            AutoSegment::isMinAreaDisabled      () const { return _flags & SegMinAreaDisabled; }
   inline  bool            AutoSegment::isNotSourceAligned     () const { return _flags & SegNotSourceAligned; }
   inline  bool            AutoSegment::isNotTargetAligned     () const { return _flags & SegNotTargetAligned; }
   inline  bool            AutoSegment::isNotAligned           () const { return (_flags & SegNotAligned) == SegNotAligned; }

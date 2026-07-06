@@ -193,9 +193,10 @@ namespace Anabatic {
   }
 
 
-  bool  AutoVertical::getConstraints ( DbU::Unit& constraintMin, DbU::Unit& constraintMax ) const
+  bool  AutoVertical::getConstraints ( DbU::Unit& constraintMin, DbU::Unit& constraintMax, Flags flags ) const
   {
     cdebug_log(149,1) << "getConstraints() " << this << endl;
+    cdebug_log(149,0) << "flags=" << flags.asString(FlagsFunction) << endl;
 
     constraintMin = getNativeMin();
     constraintMax = getNativeMax();
@@ -205,22 +206,33 @@ namespace Anabatic {
                       << DbU::getValueString(constraintMax) << "]"
                       << endl;
 
-    constraintMin = std::max ( constraintMin, getAutoSource()->getCBXMin() );
-    constraintMax = std::min ( constraintMax, getAutoSource()->getCBXMax() );
-    cdebug_log(149,0) << "Merge with source constraints: ["
-                      << DbU::getValueString(getAutoSource()->getCBXMin()) << ":"
-                      << DbU::getValueString(getAutoSource()->getCBXMax()) << "]"
-                      << endl;
+    set<AutoContact*> contacts;
+    contacts.insert( getAutoSource() );
+    contacts.insert( getAutoTarget() );
 
-    constraintMin = std::max ( constraintMin, getAutoTarget()->getCBXMin() );
-    constraintMax = std::min ( constraintMax, getAutoTarget()->getCBXMax() );
-    cdebug_log(149,0) << "Merge with target constraints: ["
-                      << DbU::getValueString(getAutoTarget()->getCBXMin()) << ":"
-                      << DbU::getValueString(getAutoTarget()->getCBXMax()) << "]"
-                      << endl;
+    if (not isNotAligned() and (flags & Flags::Propagate)) {
+      for ( AutoSegment* segment : getAligneds() ) {
+        contacts.insert( segment->getAutoSource() );
+        contacts.insert( segment->getAutoTarget() );
+      }
+    }
+
+    Box contactConstraint;
+    for ( AutoContact* contact : contacts ) {
+      contactConstraint = (flags & Flags::UseNativeConstraints)
+                            ? contact->getNativeConstraintBox()
+                            : contact->getConstraintBox();
+      constraintMin = std::max( constraintMin, contactConstraint.getXMin() );
+      constraintMax = std::min( constraintMax, contactConstraint.getXMax() );
+      cdebug_log(155,0) << "Merge with constraints from " << contact << endl;
+      cdebug_log(155,0) << "Use native constraints: " << ((flags & Flags::UseNativeConstraints) ? "true" : "false") << endl;
+      cdebug_log(155,0) << "-> [" << DbU::getValueString(contactConstraint.getXMin()) << ":"
+                                  << DbU::getValueString(contactConstraint.getXMax()) << "]"
+                                  << endl;
+    }
 
     Interval userConstraints = getUserConstraints();
-    if (not userConstraints.isEmpty()) {
+    if (not userConstraints.isEmpty() and (Session::getStage() < StagePack)) {
       constraintMin = max ( constraintMin, userConstraints.getVMin() );
       constraintMax = min ( constraintMax, userConstraints.getVMax() );
 
