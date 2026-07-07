@@ -847,6 +847,9 @@ namespace {
       }
     }
 
+    cell = DataBase::getDB()->getCell( cellName );
+    if (cell) return cell;
+
     if (not create) return nullptr;
 
     cparanoid << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
