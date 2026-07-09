@@ -88,12 +88,14 @@ class ChipConf ( BlockConf ):
         return v
 
     def __init__ ( self, cell, ioPins=[], ioPads=[] ):
-        trace( 550, ',+', 'ChipConf.__init__(): "{}"\n'.format(cell.getName()) )
+        trace( 550, ',+', '\tChipConf.__init__(): "{}"\n'.format(cell.getName()) )
         trace( 550, '\tChipConf.ioPads={}\n'.format( ioPads ))
         super(ChipConf,self).__init__( cell, ioPins, ioPads )
         #trace( 550, '\tONE LAMBDA = %s\n' % DbU.getValueString(DbU.fromLambda(1.0)) )
         self.validated    = True
         self.hasInnerRing = True
+        self.powerRingHorizontalDepth      = self.horizontalDepth
+        self.powerRingVerticalDepth        = self.verticalDepth
         # Block Corona parameters (triggers loading from disk).
         self.cfg.chip.padCoreSide          = None
         self.cfg.chip.supplyRailWidth      = None
@@ -109,7 +111,7 @@ class ChipConf ( BlockConf ):
             self._railsCount  = 0
         self.cfg.chip.mergeIoGrounds       = None
         self.cfg.chip.iopinRingLayer       = None
-        trace( 550, 'iopinRingLayer="{}"'.format( self.cfg.chip.iopinRingLayer ))
+        trace( 550, '\tiopinRingLayer="{}"\n'.format( self.cfg.chip.iopinRingLayer ))
         # Global Net names.    
         self.blockageName     = "blockagenet"
         # Global Nets.         
@@ -123,7 +125,7 @@ class ChipConf ( BlockConf ):
         self.minVCorona       = 0
         self.coreToChip       = None
         self.PadPosition      = PadPosition
-        trace( 550, '-' )
+        trace( 550, ',-' )
 
     @property
     def padCoreSide ( self ):
@@ -209,7 +211,8 @@ class ChipConf ( BlockConf ):
         """
         with UpdateSession():
             trace( 550, ',+', '\tChipConf.setupICore()\n' )
-            ab = self.getInstanceAb( self.icorona )
+            if self.icorona: ab = self.getInstanceAb( self.icorona )
+            else:            ab = self.corona.getAbutmentBox()
             if ab.isEmpty():
                 raise ErrorMessage( 1, 'ChipConf.setupICore(): Attempt to setup core *before* corona.' )
                 return
@@ -733,3 +736,18 @@ class ChipConf ( BlockConf ):
                           , Transformation.Orientation.ID ) )
         self.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
         trace( 550, '-' )
+
+
+# -------------------------------------------------------------------
+# Class  :  "Configuration.RingBlockConf".
+
+class RingConf ( ChipConf ):
+
+    def __init__ ( self, cell, ioPins=[], ioPads=[] ):
+        trace( 550, ',+', 'RingConf.__init__(): "{}"\n'.format(cell.getName()) )
+        trace( 550, '\tRingConf.ioPads={}\n'.format( ioPads ))
+        super(RingConf,self).__init__( cell, ioPins, ioPads )
+        self.cfg.chip.block.rails.count = 2
+        self._railsCount = self.cfg.chip.block.rails.count
+        trace( 550, '\tself.railsCount={}\n'.format( self.railsCount ))
+        trace( 550, ',-' )

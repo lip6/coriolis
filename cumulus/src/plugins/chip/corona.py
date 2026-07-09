@@ -575,14 +575,16 @@ class EastSide ( VerticalSide ):
 class Builder ( object ):
 
     def __init__ ( self, block ):
-        self.block      = block
-        self.innerBb    = self.block.icoreAb
+        self.block           = block
+        self.innerBb         = self.block.icoreAb
         self.block.path.getTransformation().applyOn( self.innerBb )
         self.innerBb.inflate( self.hRailSpace//2, self.vRailSpace//2 )
-        self.southSide  = SouthSide( self )
-        self.northSide  = NorthSide( self )
-        self.westSide   = WestSide ( self )
-        self.eastSide   = EastSide ( self )
+        self.southSide       = SouthSide( self )
+        self.northSide       = NorthSide( self )
+        self.westSide        = WestSide ( self )
+        self.eastSide        = EastSide ( self )
+        self.horizontalDepth = self.conf.powerRingHorizontalDepth
+        self.verticalDepth   = self.conf.powerRingVerticalDepth
 
     @property
     def conf ( self ): return self.block.conf
@@ -592,12 +594,6 @@ class Builder ( object ):
 
     @property
     def topLayerDepth ( self ): return self.conf.topLayerDepth
-
-    @property
-    def horizontalDepth ( self ): return self.conf.horizontalDepth
-
-    @property
-    def verticalDepth ( self ): return self.conf.verticalDepth
 
     @property
     def blockageNet ( self ): return self.conf.blockageNet

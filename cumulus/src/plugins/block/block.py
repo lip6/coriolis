@@ -164,15 +164,20 @@ class Side ( object ):
             upos  = ioPin.upos
             for index in ioPin.indexes:
                 pinName  = ioPin.stem.format( index )
-                net      = self.conf.cell.getNet( pinName )
+                net      = self.conf.cellPnR.getNet( pinName )
                 if net is None:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): No net named "{}".'.format(pinName) ] ))
                     continue
                 if net.isClock() and self.conf.useClockTree:
                     print( WarningMessage( 'Side.place(IoPin): Skipping clock IoPin "{}".'.format(pinName) ))
                     continue
-                pinName += '.{}'.format(self.conf.getIoPinsCounts(net))
-                pinPos   = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
+                if net.isSupply():
+                    pinWidth = self.conf.hRailWidth * 2
+                else:
+                    pinWidth = gauge.getWireWidth()
+                pinHeight = gauge.getWireWidth() * 2
+                pinName  += '.{}'.format(self.conf.getIoPinsCounts(net))
+                pinPos    = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
                 if pinPos.getX() > self.conf.xMax or pinPos.getX() < self.conf.xMin:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): Pin "{}" is outside north or south abutment box side.' \
                                               .format(pinName)
@@ -189,8 +194,8 @@ class Side ( object ):
                                 , gauge.getLayer()
                                 , pinPos.getX()
                                 , pinPos.getY()
-                                , gauge.getWireWidth()
-                                , gauge.getWireWidth() * 2 # // 2
+                                , pinWidth
+                                , pinHeight
                                 )
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
@@ -205,12 +210,17 @@ class Side ( object ):
             upos   = ioPin.upos
             for index in ioPin.indexes:
                 pinName  = ioPin.stem.format(index)
-                net      = self.conf.cell.getNet( pinName )
+                net      = self.conf.cellPnR.getNet( pinName )
                 if net is None:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): No net named "{}".'.format(pinName) ] ))
                     continue
-                pinName += '.{}'.format(self.conf.getIoPinsCounts(net))
-                pinPos   = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
+                if net.isSupply():
+                    pinHeight = self.conf.vRailWidth * 2
+                else:
+                    pinHeight = gauge.getWireWidth()
+                pinWidth = ppitch * 2
+                pinName  += '.{}'.format(self.conf.getIoPinsCounts(net))
+                pinPos    = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
                 if pinPos.getY() > self.conf.yMax or pinPos.getY() < self.conf.yMin:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): Pin "{}" is outside east or west abutment box side.' \
                                               .format(pinName)
@@ -227,8 +237,8 @@ class Side ( object ):
                                 , gauge.getLayer()
                                 , pinPos.getX()
                                 , pinPos.getY()
-                                , ppitch * 2
-                                , gauge.getWireWidth()
+                                , pinWidth
+                                , pinHeight
                                 )
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
@@ -278,7 +288,7 @@ class Side ( object ):
                 for pin in self.pins[upos][1:]:
                     pinNames += ', ' + pin.getName()
                 print( ErrorMessage( 1, [ 'Side.checkOverlap(): On {} side of block "{}", {} pins ovelaps.' \
-                                          .format(sideName,self.conf.cell.getName(),count)
+                                          .format(sideName,self.conf.cellPnR.getName(),count)
                                         , '(@{}: {})' \
                                           .format(DbU.getValueString(upos),pinNames) ] ) )
 
@@ -787,7 +797,7 @@ class Block ( object ):
             instanceAb = instance.getMasterCell().getAbutmentBox()
             coreTransf = self.conf.icore.getTransformation()
             if self.conf.isCoreBlock:
-                pnrAb = self.conf.icorona.getMasterCell().getAbutmentBox()
+                pnrAb = self.conf.corona.getAbutmentBox()
             else:
                 pnrAb = self.conf.core.getAbutmentBox()
             trace( 550, '\tpnrAb={}, coreTransf={}\n'.format(pnrAb,coreTransf) )

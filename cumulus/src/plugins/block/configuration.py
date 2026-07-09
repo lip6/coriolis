@@ -154,11 +154,11 @@ class GaugeConf ( object ):
         self._routingGauge = AllianceFramework.get().getRoutingGauge( gaugeName )
 
         if not self._routingGauge:
-            trace( 500, '-' )
+            trace( 550, '-' )
             raise ErrorMessage( 1, [ 'RoutingGauge._loadRoutingGauge(): No routing gauge named "{}".'.format(gaugeName)
                                    , 'Please check the "anabatic.routingGauge" configuration parameter." ' ])
         if not self._cellGauge:
-            trace( 500, '-' )
+            trace( 550, '-' )
             raise ErrorMessage( 1, [ 'RoutingGauge._loadRoutingGauge(): No cell gauge named "{}".'.format(cellGaugeName)
                                    , 'Please check the "anabatic.cellGauge" configuration parameter." ' ])
 
@@ -203,7 +203,7 @@ class GaugeConf ( object ):
         trace( 550, '\t| verticalDepth      :{}\n'.format(self.verticalDepth) )
         trace( 550, '\t| horizontalDeepDepth:{}\n'.format(self.horizontalDeepDepth) )
         trace( 550, '\t| verticalDeepDepth  :{}\n'.format(self.verticalDeepDepth) )
-        trace( 500, '-' )
+        trace( 550, '-' )
         return
 
     def _loadIoPadGauge ( self, ioPadGaugeName ):
@@ -1531,6 +1531,7 @@ class BlockConf ( GaugeConf ):
         self.sparesTies    = True
         self.cloneds       = []
         self.cell          = cell
+        self.corona        = None
         self.icore         = None
         self.icorona       = None
         self.chip          = None
@@ -1608,7 +1609,7 @@ class BlockConf ( GaugeConf ):
         trace( 550, ',-' )
 
     @property
-    def isCoreBlock ( self ): return self.chip is not None
+    def isCoreBlock ( self ): return self.corona is not None
 
     @property
     def bufferWidth ( self ): return self.bufferConf.width
@@ -1617,20 +1618,20 @@ class BlockConf ( GaugeConf ):
     def bufferHeight ( self ): return self.bufferConf.height
 
     @property
-    def xMin ( self ): return self.cell.getAbutmentBox().getXMin()
+    def xMin ( self ): return self.cellPnR.getAbutmentBox().getXMin()
 
     @property
-    def yMin ( self ): return self.cell.getAbutmentBox().getYMin()
+    def yMin ( self ): return self.cellPnR.getAbutmentBox().getYMin()
 
     @property
-    def xMax ( self ): return self.cell.getAbutmentBox().getXMax()
+    def xMax ( self ): return self.cellPnR.getAbutmentBox().getXMax()
 
     @property
-    def yMax ( self ): return self.cell.getAbutmentBox().getYMax()
+    def yMax ( self ): return self.cellPnR.getAbutmentBox().getYMax()
 
     @property
     def coreAb ( self ):
-        if not hasattr(self,'coreSize'): return Box()
+        if not hasattr(self,'coreSize') or not self.coreSize: return Box()
         trace( 550, '\tcoreAb:[{} {}]\n'.format( DbU.getValueString(self.coreSize[0])
                                                , DbU.getValueString(self.coreSize[1]) ))
         return Box( 0, 0, self.coreSize[0], self.coreSize[1] )
@@ -1646,14 +1647,11 @@ class BlockConf ( GaugeConf ):
         return Box( 0, 0, self.chipSize[0], self.chipSize[1] )
 
     @property
-    def corona ( self ): return self.icorona.getMasterCell()
-
-    @property
     def core ( self ): return self.cell
 
     @property
     def cellPnR ( self ):
-        if self.icorona: return self.corona
+        if self.corona: return self.corona
         return self.cell
 
     def setEditor ( self, editor ): self.editor = editor

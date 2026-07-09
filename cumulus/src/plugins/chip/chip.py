@@ -73,7 +73,6 @@ class Chip ( Block ):
         self.conf.coreToChip.buildChip()
   
     def doChipFloorplan ( self ):
-        self.padsCorona = None
         minHCorona = self.conf.minHCorona
         minVCorona = self.conf.minVCorona
         self.conf.chipValidate()
