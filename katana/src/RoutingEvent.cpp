@@ -766,6 +766,9 @@ namespace Katana {
         cdebug_log(159,0) << "Expanding (after):" << _constraints << endl;
       }
     } else {
+      if (_segment->isLocal() and not _segment->isTerminal() and _segment->isVertical()) {
+        _constraints.inflate( _segment->getPitch() );
+      }
       if (_segment->isForOffgrid()) {
         _constraints.inflate( _segment->getPitch() );
       }

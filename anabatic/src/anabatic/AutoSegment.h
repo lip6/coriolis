@@ -146,6 +146,7 @@ namespace Anabatic {
       static const unsigned int  Revalidate        = (1 <<  3);
       static const unsigned int  RevalidatePPitch  = (1 <<  4);
       static const unsigned int  AxisChange        = (1 <<  5);
+      static const unsigned int  PromoteToPref     = (1 <<  6);
 
     public:
       class Observable : public StaticObservable<1> {

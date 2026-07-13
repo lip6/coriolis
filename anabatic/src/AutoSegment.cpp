@@ -2590,12 +2590,14 @@ namespace Anabatic {
   {
     cdebug_log(149,1) << "_changeDepth() - " << this << endl;
 
+    bool wasNonPref = false;
     if (isNonPref()) {
       if (depth != getDepth()+1)
         throw Error ( "AutoSegment::_changeDepth(): Non-Pref segment can only be moved up one layer\n"
                       "        on %s"
                     , getString(this).c_str() );
       unsetFlags( SegNonPref );
+      wasNonPref = true;
     }
 
     invalidate( Flags::Topology|Flags::NoCheckLayer );
@@ -2615,6 +2617,8 @@ namespace Anabatic {
       gcells[i]->flags() |= Flags::Invalidated;
       cdebug_log(149,0) << "changeDepth() " << gcells[i] << this << " " << endl;
     }
+
+    if (isCanonical() and wasNonPref) _observers.notify( PromoteToPref );
 
     if (not (flags & Flags::WithNeighbors)) {
       cdebug_tabw(149,-1);

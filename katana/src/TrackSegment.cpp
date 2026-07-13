@@ -983,18 +983,22 @@ namespace Katana {
   }
 
 
-
   TrackElement* TrackSegment::promoteToPref ()
   {
-    TrackElement* perpandicular = nullptr;
-    TrackElement* parallel      = nullptr;
-
     base()->setObserver( AutoSegment::Observable::TrackSegment, nullptr );
     DataNegociate* data = getDataNegociate();
     if (data and data->hasRoutingEvent())
       data->getRoutingEvent()->setDisabled( true );
 
-    base()->promoteToPref( Flags::NoFlags );
+    if (base()->isNonPref()) {
+      base()->promoteToPref( Flags::NoFlags );
+    } else {
+      Session::dogleg( base() );
+      Session::dogleg( nullptr );
+      Session::dogleg( nullptr );
+    }
+    TrackElement* perpandicular = nullptr;
+    TrackElement* parallel      = nullptr;
     _postDoglegs( perpandicular, parallel );
 
     cdebug_log(159,0) << "TrackSegment::promoteToPref() " << this << endl;
@@ -1093,9 +1097,13 @@ namespace Katana {
             Session::lookup( sourcePp )->reschedule( nonPrefLevel );
         }
 
-        cdebug_log(159,0) << "Looking up new perpand:  " << doglegs[i+1] << endl;
-        segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+1],0) );
-        segments[i+1]->setFlags( TElemSourceDogleg|TElemTargetDogleg  );
+        if (doglegs[i+1]) {
+          cdebug_log(159,0) << "Looking up new perpand:  " << doglegs[i+1] << endl;
+          segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+1],0) );
+          segments[i+1]->setFlags( TElemSourceDogleg|TElemTargetDogleg  );
+        } else {
+          segments.push_back( nullptr );
+        }
 
         cdebug_log(159,0) << "Looking up new parallel: " << doglegs[i+2] << endl;
         if (doglegs[i+2]) {

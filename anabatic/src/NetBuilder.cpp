@@ -486,7 +486,11 @@ namespace Anabatic {
               cdebug_log(145,0) << "rp: " << rp << endl;
 
               if (not rp)
-                throw Error ( "NetBuilder::setStartHook(): Null RP" );
+                throw Error( "NetBuilder::setStartHook(): Null RP in %s\n"
+                             "        For %s."
+                           , getString( _gcell ).c_str()
+                           , getString( _net ).c_str()
+                           );
 
               if (not layer) {
                 cerr << Error( "RoutingPad is still on it's Plug, routing will be incomplete.\n"

@@ -111,7 +111,12 @@ namespace Katana {
 
   void  TrackElement::notify ( TrackElement* segment, unsigned int flags )
   {
-    cdebug_log(159,1) << "TrackElement::notify() <Invalidate> on " << segment << endl;
+    cdebug_log(159,1) << "TrackElement::notify() flags=" << flags << " on " << segment << endl;
+
+    if (flags & AutoSegment::PromoteToPref) {
+      cdebug_log(159,0) << "TrackSegment::notify(PromoteToPref) " << segment << endl;
+      segment->promoteToPref();
+    }
 
     if (flags & AutoSegment::Invalidate) {
       if (not segment->isInvalidated()) {

@@ -211,6 +211,7 @@ namespace Katana {
         if (trackFree.isFull()) {
           trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
                               , perpandicular->base()->getNonPrefTargetPosition() ); 
+        //trackFree = Interval( perpandicular->base()->getAxis() );
           trackFree.inflate( pitch );
           cdebug_log(159,0) << "trackFree (no drag): " << trackFree << endl;
         }
@@ -218,7 +219,7 @@ namespace Katana {
         if (Session::getStage() < Anabatic::StagePack) {
           int pitchSlack = 1;
           if (Session::getConfiguration()->isVH() and (_trackSegment->getDepth() == 1))
-            pitchSlack = 5;
+            pitchSlack = 3;
           trackFree.inflate( pitchSlack*pitch, pitchSlack*pitch );
           cdebug_log(159,0) << "One pitch expand: " << trackFree << endl;
         }

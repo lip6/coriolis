@@ -95,8 +95,6 @@ class Corona ( object ):
         elif sideType & IoPin.WEST:
             ioPinsSide = self.ring.sides[IoPin.WEST]
             coronaSide = self.westSide
-        print( ioPinsSide )
-        print( ioPinsSide.pins )
         for upos, pins in ioPinsSide.pins.items():
             for pin in pins:
                 if not pin.getNet().isSupply(): continue
