@@ -201,6 +201,14 @@ namespace Anabatic {
     }
 
     if (flags & (HAccess|HAccessEW)) {
+      subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+      AutoSegment::create( rpContactSource, subContact1, Flags::Vertical );
+      rpContactSource = subContact1;
+
+      subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+      AutoSegment::create( rpContactSource, subContact1, Flags::Horizontal|Flags::UseNonPref );
+      rpContactSource = subContact1;
+
       if (flags & HAccessEW) {
         cdebug_log(145,0) << "case HAccessEW" << endl;
         subContact1 = AutoContactHTee::create( gcell, rp->getNet(), viaLayer1 );
@@ -226,6 +234,10 @@ namespace Anabatic {
         cdebug_log(145,0) << "case rp->isM1Offgrid() of rp->isHSmall()" << endl;
       
         subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+        AutoSegment::create( rpContactSource, subContact1, Flags::Vertical );
+        rpContactSource = subContact1;
+
+        subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
         AutoSegment::create( rpContactSource, subContact1, Flags::Horizontal|Flags::UseNonPref );
 
         rpContactSource = subContact1;
@@ -248,6 +260,10 @@ namespace Anabatic {
       } else {
         if (rp->isVSmall()) {
           cdebug_log(145,0) << "case default/VSmall" << endl;
+      
+          subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+          AutoSegment::create( rpContactSource, subContact1, Flags::Vertical );
+          rpContactSource = subContact1;
       
           if (flags & VAccessNS)
             subContact1 = AutoContactVTee::create( gcell, rp->getNet(), viaLayer1 );
@@ -597,9 +613,12 @@ namespace Anabatic {
     } else if (north() and south()) {
       AutoContact* rpContact = nullptr;
       AutoContact* htee      = nullptr;
+      AutoContact* turn      = nullptr;
       doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpContact, htee, NoFlags );
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
+      AutoSegment::create( rpContact, turn, Flags::Vertical );
       htee = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
-      AutoSegment::create( rpContact, htee, Flags::Horizontal|Flags::UseNonPref );
+      AutoSegment::create( turn, htee, Flags::Horizontal|Flags::UseNonPref );
       rpContact = htee;
 
       htee = AutoContactHTee::create( getGCell(), getNet(), Session::getDContactLayer() );
@@ -645,6 +664,10 @@ namespace Anabatic {
     uint64_t     flags      = checkRoutingPadSize( getRoutingPads()[0] );
 
     doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpContact1, rpContact2, flags );
+    AutoContact* turn = nullptr;
+    turn = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
+    AutoSegment::create( rpContact1, turn, Flags::Vertical );
+    rpContact1 = turn;
     
     if (getConnexity().fields.globals == 1) {
       cdebug_log(145,0) << "case 1G, should never be here, but in 1G_1M1." << endl;
