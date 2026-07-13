@@ -752,15 +752,18 @@ namespace Anabatic {
 
   bool  AnabaticEngine::moveUpNetTrunk ( AutoSegment* seed, set<Net*>& globalNets, GCell::Set& invalidateds )
   {
-    Net*         net       = seed->getNet();
-    unsigned int seedDepth = Session::getRoutingGauge()->getLayerDepth(seed->getLayer());
+    Net*         net                = seed->getNet();
+    unsigned int seedDepth          = Session::getRoutingGauge()->getLayerDepth(seed->getLayer());
+    float        seedMoveUpReserve  = Session::getLayerAssignSeedMoveUpReserve();
+    float        trunkMoveUpReserve = Session::getLayerAssignTrunkMoveUpReserve();
 
     DebugSession::open( net, 145, 150 );
     cdebug_log(149,0) << "moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
 
-    Flags flags = Flags::Propagate|Flags::AllowTerminal|Flags::NoCheckLayer;
+    Flags trunkFlags = (trunkMoveUpReserve > 1.0) ? Flags::CheckLowDensity : Flags::NoFlags;
+    Flags flags      = Flags::Propagate|Flags::AllowTerminal|Flags::NoCheckLayer;
     if (seedDepth > 2) flags |= Flags::IgnoreContacts;
-    if (not seed->canMoveUp( 3.0, flags) ) {
+    if (not seed->canMoveUp( seedMoveUpReserve, flags) ) {
       cdebug_log(149,0) << "Reject seed move up, cannot move up." << endl;
       DebugSession::close();
       return false;
@@ -794,8 +797,7 @@ namespace Anabatic {
         continue;
       }
 
-    // Do something here.
-      if (not segment->canMoveUp( 2.0, flags|Flags::CheckLowDensity )) {
+      if (not segment->canMoveUp( trunkMoveUpReserve, flags|trunkFlags )) {
         cdebug_log(149,0) << "| Reject global " << segment << endl;
         continue;
       }

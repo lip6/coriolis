@@ -92,6 +92,8 @@ namespace Anabatic {
       static  inline float                             getLowDensity         ();
       static  inline float                             getLowUpDensity       ();
       static  inline float                             getMoveUpReserve      ();
+      static  inline float                             getLayerAssignSeedMoveUpReserve  ();
+      static  inline float                             getLayerAssignTrunkMoveUpReserve ();
       static  inline CellGauge*                        getCellGauge          ();
       static  inline DbU::Unit                         getSliceHeight        ();
       static  inline DbU::Unit                         getSliceStep          ();
@@ -252,6 +254,8 @@ namespace Anabatic {
   inline float                             Session::getLowDensity        ()                     { return getConfiguration()->getLowDensity(); }
   inline float                             Session::getLowUpDensity      ()                     { return getConfiguration()->getLowUpDensity(); }
   inline float                             Session::getMoveUpReserve     ()                     { return getConfiguration()->getMoveUpReserve(); }
+  inline float                             Session::getLayerAssignSeedMoveUpReserve  ()         { return getConfiguration()->getLayerAssignSeedMoveUpReserve(); }
+  inline float                             Session::getLayerAssignTrunkMoveUpReserve ()         { return getConfiguration()->getLayerAssignTrunkMoveUpReserve(); }
   inline DbU::Unit                         Session::getSliceHeight       ()                     { return getCellGauge()->getSliceHeight(); }
   inline DbU::Unit                         Session::getSliceStep         ()                     { return getCellGauge()->getSliceStep(); }
   inline size_t                            Session::getGVerticalDepth    ()                     { return getConfiguration()->getGVerticalDepth(); }
