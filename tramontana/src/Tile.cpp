@@ -173,17 +173,19 @@ namespace Tramontana {
       return nullptr;
     }
     if (dynamic_cast<Polygon*>(component)) {
-      cerr << Error( "Tile::create(): Polygon are not supported for extraction.\n"
-                     "        (%s)"
-                   , getString(occurrence).c_str()
-                   ) << endl;
+      if (occurrence.getPath().isEmpty())
+        cerr << Error( "Tile::create(): Polygon are not supported for extraction.\n"
+                       "        (%s)"
+                     , getString(occurrence).c_str()
+                     ) << endl;
       return nullptr;
     }
     if (dynamic_cast<Diagonal*>(component)) {
-      cerr << Error( "Tile::create(): Diagonal are not supported for extraction.\n"
-                     "        (%s)"
-                   , getString(occurrence).c_str()
-                   ) << endl;
+      if (occurrence.getPath().isEmpty())
+        cerr << Error( "Tile::create(): Diagonal are not supported for extraction.\n"
+                       "        (%s)"
+                     , getString(occurrence).c_str()
+                     ) << endl;
       return nullptr;
     }
 
