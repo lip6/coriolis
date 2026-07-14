@@ -242,10 +242,20 @@ class GaugeConf ( object ):
     def getIoPinTrack ( self, flags, index ):
         if (flags & (IoPin.NORTH|IoPin.SOUTH)):
             layerGauge = self._routingGauge.getLayerGauge( self._northSouthPinsIndex )
+            ubegin     = self.cellPnR.getAbutmentBox().getXMin() + layerGauge.getOffset()
+            uend       = self.cellPnR.getAbutmentBox().getXMax() \
+                      - (self.cellPnR.getAbutmentBox().getXMax() % layerGauge.getPitch()) \
+                      - (layerGauge.getPitch() - layerGauge.getOffset())
         else:
             trace( 550, '\t_eastWestPinsIndex={}\n'.format( self._eastWestPinsIndex ))
             layerGauge = self._routingGauge.getLayerGauge( self._eastWestPinsIndex )
-        return layerGauge.getOffset() + index * layerGauge.getPitch()
+            ubegin     = self.cellPnR.getAbutmentBox().getYMin() + layerGauge.getOffset()
+            uend       = self.cellPnR.getAbutmentBox().getYMax() \
+                      - (self.cellPnR.getAbutmentBox().getYMax() % layerGauge.getPitch()) \
+                      - (layerGauge.getPitch() - layerGauge.getOffset())
+        if flags & IoPin.A_END:
+            return uend - index * layerGauge.getPitch()
+        return ubegin + index * layerGauge.getPitch()
 
     def getIoPinPitch ( self, flags ):
         if (flags & (IoPin.NORTH|IoPin.SOUTH)):
@@ -1582,8 +1592,6 @@ class BlockConf ( GaugeConf ):
         self.powersConf    = PowersConf( self.framework, self.cfg )
         self._setIoPinsLayerIndexes()
         for ioPinSpec in self.ioPinsArg:
-            if self.ioPinsInTracks:
-                ioPinSpec = self._toIoPinSpec( *ioPinSpec )
             self.ioPins.append( IoPin( *ioPinSpec ))
         for line in range(len(self.ioPadsArg)):
             bits = []
@@ -1723,8 +1731,8 @@ class BlockConf ( GaugeConf ):
             trace( 550, '\tRenaming cloned cell: "{}"\n'.format(cell) )
             cell.setName( cell.getName()+'_cts' )
         if self.chip is None:
-            topCell = self.cell
-            self.cell.setName( self.cell.getName()+'_r' )
+            topCell = self.cellPnR
+            topCell.setName( topCell.getName()+'_r' )
             rsave( topCell, views|flags )
         else:
             topCell = self.chip

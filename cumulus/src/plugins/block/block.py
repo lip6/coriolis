@@ -111,18 +111,22 @@ class Side ( object ):
                       function choose, must be set to zero.
         :param ustep: The distance to space from the last created Pin.
         """
+        trace( 550, '\tSide.getNextPinPosition() flags={} upos={}.\n' \
+                    .format( IoPin.toStr(flags), DbU.getValueString(upos) ))
         if not upos:
             if not ustep: ustep = self.gauge.getPitch()
             while True:
-                if flags & IoPin.A_BEGIN:
-                    self.ubegin += ustep
-                    pinOffset = self.ubegin
-                    if not self.ubegin in self.pins:
-                        break
-                else: 
+                if flags & IoPin.A_END:
+                    trace( 550, '\t  self.uend={}.\n'.format( DbU.getValueString(self.uend) ))
                     self.uend -= ustep
                     pinOffset = self.uend
                     if not self.uend in self.pins:
+                        break
+                else: 
+                    trace( 550, '\t  self.ubegin={}.\n'.format( DbU.getValueString(self.ubegin) ))
+                    self.ubegin += ustep
+                    pinOffset = self.ubegin
+                    if not self.ubegin in self.pins:
                         break
         else:
             pinOffset = upos
@@ -157,7 +161,15 @@ class Side ( object ):
         check for out of bounds coordinates.
         """
 
-        trace( 550, '\tSide.place() {}\n'.format(ioPin) )
+        trace( 550, ',+', '\tSide.place() {}\n'.format(ioPin) )
+        if self.conf.ioPinsInTracks:
+            ioPin = IoPin( *self.conf._toIoPinSpec( ioPin.flags
+                                                  , ioPin.stem
+                                                  , ioPin.upos
+                                                  , ioPin.ustep
+                                                  , ioPin.count ))
+            trace( 550, '\tTranslated to track {}\n'.format(ioPin) )
+
         status = 0
         if self.side & (IoPin.NORTH | IoPin.SOUTH):
             gauge = self.conf.vDeepRG
@@ -172,7 +184,7 @@ class Side ( object ):
                     print( WarningMessage( 'Side.place(IoPin): Skipping clock IoPin "{}".'.format(pinName) ))
                     continue
                 if net.isSupply():
-                    pinWidth = self.conf.hRailWidth * 2
+                    pinWidth = self.conf.hRailWidth * 4
                 else:
                     pinWidth = gauge.getWireWidth()
                 pinHeight = gauge.getWireWidth() * 2
@@ -200,7 +212,9 @@ class Side ( object ):
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
                 self.conf.incIoPinsCounts( net )
-                if upos: upos += ioPin.ustep
+                if upos:
+                    if ioPin.flags & IoPin.A_END: upos -= ioPin.ustep
+                    else:                         upos += ioPin.ustep
         else:
             pinDepth = self.conf.horizontalDeepDepth
             if self.conf.cfg.block.upperEastWestPins:
@@ -244,6 +258,7 @@ class Side ( object ):
                 self.append( pin )
                 self.conf.incIoPinsCounts( net )
                 if upos: upos += ioPin.ustep
+        trace( 550, ',-' )
         return status
 
     def expand ( self ):
@@ -1244,7 +1259,7 @@ class Block ( object ):
         self.conf.ioPinsInTracks = True
     
         for spec in ioPinsSpecs:
-            spec = self.conf._toIoPinSpec(*spec)
+            #spec = self.conf._toIoPinSpec(*spec)
             self.conf.ioPins.append(IoPin(*spec))
     
     def doPnR ( self ):
