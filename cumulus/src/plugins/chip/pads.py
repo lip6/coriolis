@@ -1188,7 +1188,9 @@ class Corona ( object ):
             for logo in self.conf.chipLogos:
                 print( '        - GDS Logo "{0}.gds".'.format(logo) )
                 Gds.load( logosLib, './{}.gds'.format(logo) )
-                logoCell     = logosLib.getCell( 'gds_{}'.format(logo) )
+                logoCell = logosLib.getCell( logo )
+                if not logoCell:
+                    raise ErrorMessage( 1, f'Logo GDS file do not contain a cell named "{logo}".' )
                 logoInstance = Instance.create( self.conf.chip, logo, logoCell )
                 Block.abPlace( logoInstance
                              , Transformation( xLogo, yLogo, Transformation.Orientation.ID ))
