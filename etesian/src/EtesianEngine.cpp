@@ -1129,9 +1129,35 @@ namespace Etesian {
   }
 
 
+  namespace {
+
+    coloquinte::DensificationMode  parseDensificationMode ( string mode )
+    {
+      for ( auto& c : mode ) c = tolower( c );
+      if (mode == "uniform")  return coloquinte::DensificationMode::Uniform;
+      if (mode == "targeted") return coloquinte::DensificationMode::Targeted;
+      if (mode != "disabled") {
+        cerr << Warning( "EtesianEngine::globalPlace(): Unknown \"etesian.densificationMode\" value \"%s\", disabling densification."
+                       , mode.c_str() ) << endl;
+      }
+      return coloquinte::DensificationMode::Disabled;
+    }
+
+  }  // anonymous namespace
+
+
   void  EtesianEngine::globalPlace ()
   {
     coloquinte::ColoquinteParameters params(getPlaceEffort());
+    coloquinte::DensificationParameters& densif = params.global.densification;
+    densif.mode = parseDensificationMode( getConfiguration()->getDensificationMode() );
+    densif.targetDensity        = getConfiguration()->getDensificationTargetDensity();
+    densif.maxFactor            = getConfiguration()->getDensificationMaxFactor();
+    densif.nbRampSteps          = getConfiguration()->getDensificationNbRampSteps();
+    densif.targetedStrength     = getConfiguration()->getDensificationTargetedStrength();
+    densif.keepThroughDetailed  = getConfiguration()->getDensificationKeepThroughDetailed();
+    params.check();
+    cmess1 << densif.toString();
     coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
     _circuit->placeGlobal(params, callback);
     *_placementUB = _circuit->solution();
@@ -1145,6 +1171,9 @@ namespace Etesian {
                                                          , this
                                                          , std::placeholders::_1 );
     _circuit->placeDetailed( params, callback );
+    // No-op unless a densified globalPlace() left cells inflated with
+    // densification.keepThroughDetailed set (see Circuit::restoreTrueWidths()).
+    _circuit->restoreTrueWidths();
     *_placementUB = _circuit->solution();
     *_placementLB = *_placementUB; // In case we run other passes
     _updatePlacement( _placementUB, CheckOngrid );

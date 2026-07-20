@@ -71,6 +71,12 @@ namespace Etesian {
     , _latchUpDistance  (  Cfg::getParamInt       ("etesian.latchUpDistance"  , 0                 )->asInt() )
     , _antennaGateMaxWL (  Cfg::getParamInt       ("etesian.antennaGateMaxWL" , 0                 )->asInt() )
     , _antennaDiodeMaxWL(  Cfg::getParamInt       ("etesian.antennaDiodeMaxWL", 0                 )->asInt() )
+    , _densificationMode               ( Cfg::getParamString   ("etesian.densificationMode"              , "disabled" )->asString() )
+    , _densificationTargetDensity      ( Cfg::getParamDouble   ("etesian.densificationTargetDensity"      , 0.9  )->asDouble() )
+    , _densificationMaxFactor          ( Cfg::getParamDouble   ("etesian.densificationMaxFactor"          , 2.0  )->asDouble() )
+    , _densificationNbRampSteps        ( Cfg::getParamInt      ("etesian.densificationNbRampSteps"        , 10   )->asInt() )
+    , _densificationTargetedStrength   ( Cfg::getParamDouble   ("etesian.densificationTargetedStrength"   , 1.0  )->asDouble() )
+    , _densificationKeepThroughDetailed( Cfg::getParamBool     ("etesian.densificationKeepThroughDetailed", true )->asBool() )
   {
     string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
     if (not cg)
@@ -119,6 +125,12 @@ namespace Etesian {
     , _latchUpDistance  ( other._latchUpDistance )
     , _antennaGateMaxWL ( other._antennaGateMaxWL )
     , _antennaDiodeMaxWL( other._antennaDiodeMaxWL)
+    , _densificationMode               ( other._densificationMode )
+    , _densificationTargetDensity      ( other._densificationTargetDensity )
+    , _densificationMaxFactor          ( other._densificationMaxFactor )
+    , _densificationNbRampSteps        ( other._densificationNbRampSteps )
+    , _densificationTargetedStrength   ( other._densificationTargetedStrength )
+    , _densificationKeepThroughDetailed( other._densificationKeepThroughDetailed )
   {
     if (other._rg) _rg = other._rg->getClone();
     if (other._cg) _cg = other._cg->getClone();
@@ -149,6 +161,12 @@ namespace Etesian {
     cmess1 << Dots::asString    ("     - Antenna gate Max. WL" ,DbU::getValueString(_antennaGateMaxWL )) << endl;
     cmess1 << Dots::asString    ("     - Antenna diode Max. WL",DbU::getValueString(_antennaDiodeMaxWL)) << endl;
     cmess1 << Dots::asString    ("     - Latch up Distance",DbU::getValueString(_latchUpDistance)) << endl;
+    cmess1 << Dots::asString    ("     - Densification mode"          ,_densificationMode                ) << endl;
+    cmess1 << Dots::asPercentage("     - Densification target density",_densificationTargetDensity       ) << endl;
+    cmess1 << Dots::asDouble    ("     - Densification max factor"    ,_densificationMaxFactor            ) << endl;
+    cmess1 << Dots::asInt       ("     - Densification ramp steps"    ,_densificationNbRampSteps          ) << endl;
+    cmess1 << Dots::asDouble    ("     - Densification targeted strength",_densificationTargetedStrength  ) << endl;
+    cmess1 << Dots::asBool      ("     - Densification keep through detailed",_densificationKeepThroughDetailed) << endl;
   }
 
 
@@ -184,6 +202,12 @@ namespace Etesian {
     record->add ( DbU::getValueSlot( "_latchUpDistance"  , &_latchUpDistance   ) );
     record->add ( DbU::getValueSlot( "_antennaGateMaxWL" , &_antennaGateMaxWL  ) );
     record->add ( DbU::getValueSlot( "_antennaDiodeMaxWL", &_antennaDiodeMaxWL ) );
+    record->add ( getSlot( "_densificationMode"               ,       _densificationMode                ) );
+    record->add ( getSlot( "_densificationTargetDensity"      ,       _densificationTargetDensity       ) );
+    record->add ( getSlot( "_densificationMaxFactor"          ,       _densificationMaxFactor           ) );
+    record->add ( getSlot( "_densificationNbRampSteps"        ,       _densificationNbRampSteps         ) );
+    record->add ( getSlot( "_densificationTargetedStrength"   ,       _densificationTargetedStrength    ) );
+    record->add ( getSlot( "_densificationKeepThroughDetailed",       _densificationKeepThroughDetailed ) );
     return record;
   }
 
