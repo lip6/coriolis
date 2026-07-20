@@ -1,8 +1,8 @@
 [submodule "coloquinte"]
 	path = subprojects/coloquinte
 #	url = git@github.com:Coloquinte/PlaceRoute.git
-	url = https://github.com/Coloquinte/PlaceRoute.git
-	branch = main
+	url = https://github.com/thomas-romera/PlaceRoute.git
+	branch = dev_features
 	update = merge
 [submodule "documentation/pelican-plugins"]
 	path = documentation/pelican-plugins

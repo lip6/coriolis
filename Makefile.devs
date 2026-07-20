@@ -47,11 +47,11 @@
        PYTHON_BIN   = /usr/bin/python3.11
        PYTHON_BIN   = python3
        SRC_DIR      = $(WORK_ROOT)/src
-       CORIOLIS_SRC = ${SRC_DIR}/coriolis
+       CORIOLIS_SRC = ${SRC_DIR}/coriolis-dev
        ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
        BUILDTYPE    = release
-       BUILDDIR     = ${WORK_ROOT}/$(BUILDTYPE)/build
-       PREFIX       = ${WORK_ROOT}/$(BUILDTYPE)/install
+       BUILDDIR     = ${WORK_ROOT}/$(BUILDTYPE)/build-dev
+       PREFIX       = ${WORK_ROOT}/$(BUILDTYPE)/install-dev
      endif
    endif
  endif

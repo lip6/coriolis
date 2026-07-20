@@ -74,6 +74,12 @@ namespace Etesian {
       inline DbU::Unit        getLatchUpDistance        () const;
       inline DbU::Unit        getAntennaGateMaxWL       () const;
       inline DbU::Unit        getAntennaDiodeMaxWL      () const;
+      inline string           getDensificationMode              () const;
+      inline double           getDensificationTargetDensity     () const;
+      inline double           getDensificationMaxFactor         () const;
+      inline int              getDensificationNbRampSteps       () const;
+      inline double           getDensificationTargetedStrength  () const;
+      inline bool             getDensificationKeepThroughDetailed() const;
       inline void             setSpaceMargin            ( double );
       inline void             setDensityVariation       ( double );
       inline void             setAspectRatio            ( double );
@@ -101,6 +107,12 @@ namespace Etesian {
       DbU::Unit      _latchUpDistance;
       DbU::Unit      _antennaGateMaxWL;
       DbU::Unit      _antennaDiodeMaxWL;
+      string         _densificationMode;
+      double         _densificationTargetDensity;
+      double         _densificationMaxFactor;
+      int            _densificationNbRampSteps;
+      double         _densificationTargetedStrength;
+      bool           _densificationKeepThroughDetailed;
     private:
                              Configuration ( const Configuration& );
       Configuration& operator=             ( const Configuration& );
@@ -125,6 +137,12 @@ namespace Etesian {
   inline DbU::Unit     Configuration::getLatchUpDistance        () const { return _latchUpDistance; }
   inline DbU::Unit     Configuration::getAntennaGateMaxWL       () const { return _antennaGateMaxWL; }
   inline DbU::Unit     Configuration::getAntennaDiodeMaxWL      () const { return _antennaDiodeMaxWL; }
+  inline string        Configuration::getDensificationMode               () const { return _densificationMode; }
+  inline double        Configuration::getDensificationTargetDensity      () const { return _densificationTargetDensity; }
+  inline double        Configuration::getDensificationMaxFactor          () const { return _densificationMaxFactor; }
+  inline int           Configuration::getDensificationNbRampSteps        () const { return _densificationNbRampSteps; }
+  inline double        Configuration::getDensificationTargetedStrength   () const { return _densificationTargetedStrength; }
+  inline bool          Configuration::getDensificationKeepThroughDetailed() const { return _densificationKeepThroughDetailed; }
   inline void          Configuration::setSpaceMargin            ( double margin ) { _spaceMargin = margin; }
   inline void          Configuration::setDensityVariation       ( double margin ) { _densityVariation = margin; }
   inline void          Configuration::setAspectRatio            ( double ratio  ) { _aspectRatio = ratio; }
