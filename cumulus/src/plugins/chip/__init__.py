@@ -398,7 +398,8 @@ class CoreWire ( object ):
             else:
                 contact   = self.conf.coronaContact( self.chipNet
                                                    , self.symContactLayer
-                                                   , self.bbSegment.getCenter().getX()
+                                                  #, self.bbSegment.getCenter().getX()
+                                                   , xCore
                                                    , yContact
                                                    , self.symContactSize[0]
                                                    , self.symContactSize[1]
