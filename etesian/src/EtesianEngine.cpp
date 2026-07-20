@@ -982,6 +982,7 @@ namespace Etesian {
 
     for ( Net* net : getCell()->getNets() )
     {
+    //cerr << "Net " << net << endl;
       const char* excludedType = NULL;
       if (net->getType() == Net::Type::POWER )   excludedType = "POWER";
       if (net->getType() == Net::Type::GROUND)   excludedType = "GROUND";
@@ -996,6 +997,7 @@ namespace Etesian {
       vector<int> netCells, pinX, pinY;
 
       for ( RoutingPad* rp : net->getRoutingPads() ) {
+      //cerr << "    RP " << rp << endl;
         Path path = rp->getOccurrence().getPath();
         Pin* pin  = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() ); 
         if (pin) {
