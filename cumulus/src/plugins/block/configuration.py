@@ -1193,15 +1193,25 @@ class FeedsConf ( object ):
     Store informations about feed cells and how to fill a gap.
     """
 
+    LEFT  = 0x0001
+    RIGHT = 0x0002
+
     def __init__ ( self, framework, cfg ):
         trace( 550, ',+', '\tFeedsConf.__init__()\n' )
         cfg.etesian.feedNames       = None
         cfg.etesian.latchUpDistance = None
         cfg.etesian.defaultFeed     = None
+        cfg.etesian.endcap          = None
+        cfg.etesian.endcapL         = None
+        cfg.etesian.endcapR         = None
         feeds = cfg.etesian.feedNames.split(',')
-        self.count       = 0
+        self.feedCount   = 0
+        self.endcapCount = 0
         self.feeds       = []
         self.defaultFeed = 0
+        self.endcap      = None
+        self.endcapL     = None
+        self.endcapR     = None
         for feedName in feeds:
             feedCell = framework.getCell( feedName, Catalog.State.Views )
             if not feedCell:
@@ -1214,6 +1224,26 @@ class FeedsConf ( object ):
             self.maxFeedSpacing = cfg.etesian.latchUpDistance - self.tieWidth()
         self.feeds.sort( key=itemgetter(0) )
         self.feeds.reverse()
+
+        if cfg.etesian.endcap:
+            self.endcap = framework.getCell( cfg.etesian.endcap, Catalog.State.Views )
+        if cfg.etesian.endcap and not self.endcap:
+            print( WarningMessage( 'FeedConf.__init__(): Endcap cell "{}" not found in library (skipped).' \
+                                 .format(cfg.etesian.endcap)) )
+        trace( 550, '\tEncap:  {}\n'.format( self.endcap ))
+        if cfg.etesian.endcapL:
+            self.endcapL = framework.getCell( cfg.etesian.endcapL, Catalog.State.Views )
+        if cfg.etesian.endcapL and not self.endcapL:
+            print( WarningMessage( 'FeedConf.__init__(): Endcap left cell "{}" not found in library (skipped).' \
+                                 .format(cfg.etesian.endcapL)) )
+        trace( 550, '\tEncapL: {}\n'.format( self.endcapL ))
+        if cfg.etesian.endcapR:
+            self.endcapR = framework.getCell( cfg.etesian.endcapR, Catalog.State.Views )
+        if cfg.etesian.endcapR and not self.endcapR:
+            print( WarningMessage( 'FeedConf.__init__(): Endcap right cell "{}" not found in library (skipped).' \
+                                 .format(cfg.etesian.endcapR)) )
+        trace( 550, '\tEncapR: {}\n'.format( self.endcapR ))
+
         for i in range(len(self.feeds)):
             trace( 550, '\t[{:>2}] {:>10} {}\n' \
                         .format(i,DbU.getValueString(self.feeds[i][0]),self.feeds[i][1]) ) 
@@ -1227,11 +1257,18 @@ class FeedsConf ( object ):
         if self.feeds: return self.feeds[ self.defaultFeed ][0]
         return None
 
+    def endcapWidth ( self ):
+        """Returns the master cell abutment box width of the endcap."""
+        if self.endcapL: return self.endcapL.getAbutmentBox().getWidth()
+        if self.endcapR: return self.endcapR.getAbutmentBox().getWidth()
+        if self.endcap:  return self.endcap .getAbutmentBox().getWidth()
+        return None
+
     def createFeed ( self, cell ):
         instance = Instance.create( cell
-                                  , 'spare_feed_{}'.format(self.count)
+                                  , 'spare_feed_{}'.format(self.feedCount)
                                   , self.feeds[self.defaultFeed][1] )
-        self.count += 1
+        self.feedCount += 1
         return instance
 
     def fillAt ( self, cell, transf, gapWidth ):
@@ -1244,14 +1281,14 @@ class FeedsConf ( object ):
             feedAdded = False
             for i in range(len(self.feeds)):
                 if self.feeds[i][0] <= gapWidth:
-                    instance = Instance.create( cell, 'spare_feed_{}'.format(self.count), self.feeds[i][1] )
+                    instance = Instance.create( cell, 'spare_feed_{}'.format(self.feedCount), self.feeds[i][1] )
                     instance.setTransformation( Transformation( x
                                                               , transf.getTy()
                                                               , transf.getOrientation() ))
                     instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
                     gapWidth -= self.feeds[i][0]
                     x        += self.feeds[i][0]
-                    self.count += 1
+                    self.feedCount += 1
                     feedAdded = True
             if not feedAdded: break
         if gapWidth > 0:
@@ -1261,8 +1298,23 @@ class FeedsConf ( object ):
                                      .format(transf,DbU.getValueString(gapWidth)) 
                                    ] ))
 
+    def createEndcap ( self, cell, flags ):
+        endcapCell = self.endcap
+        if flags & FeedsConf.LEFT:  endcapCell = self.endcapL
+        if flags & FeedsConf.RIGHT: endcapCell = self.endcapR
+        if not endcapCell:
+            raise ErrorMessage( 1, ['FeedConf.createEndcap(): No endcap cell defined.'
+                                   , 'Parameter cfg.etesian.endcap has not been set.'
+                                   ] )
+        instance = Instance.create( cell, 'spare_encap_{}'.format(self.endcapCount), endcapCell )
+        self.endcapCount += 1
+        return instance
+
     def resetFeedCount ( self ):
-        self.count = 0
+        self.feedCount = 0
+
+    def resetEndcapCount ( self ):
+        self.endcapCount = 0
 
 
 # ----------------------------------------------------------------------------
@@ -1556,6 +1608,7 @@ class BlockConf ( GaugeConf ):
         self.trackAvoids   = []
         self.isBuilt       = False
         self.useHarness    = False
+        self.useEndcaps    = False
         self.ioPinsInTracks = False
         self.ioPins        = []
         self.ioPinsCounts  = {}
