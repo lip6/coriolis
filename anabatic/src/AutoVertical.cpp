@@ -359,6 +359,20 @@ namespace Anabatic {
     AutoSegment* parallel        = this;
 
     if (source->isTerminal()) {
+      if (not Session::isHV()) {
+        if (not isNonPref()) {
+          AutoSegment* perpandicular = getAutoTarget()->getPerpandicular( this );
+          if (perpandicular and perpandicular->isNonPref()) {
+            size_t depth = Session::getRoutingGauge()->getLayerDepth( perpandicular->getLayer() );
+            if (depth < Session::getAllowedDepth()) {
+              perpandicular->changeDepth( depth+1, Flags::NoFlags );
+              cdebug_tabw(149,-1);
+              return true;
+            }
+          }
+        }
+      }
+      
       Interval  constraints       = source->getUConstraints      (Flags::Horizontal|Flags::NoGCellShrink);
       Interval  nativeConstraints = source->getNativeUConstraints(Flags::Horizontal|Flags::NoGCellShrink);
       int       slack             = constraints.getSize()       / getPitch();
@@ -398,6 +412,19 @@ namespace Anabatic {
     }
 
     if (target->isTerminal()) {
+      if (not Session::isHV()) {
+        if (not isNonPref()) {
+          AutoSegment* perpandicular = getAutoSource()->getPerpandicular( this );
+          if (perpandicular and perpandicular->isNonPref()) {
+            size_t depth = Session::getRoutingGauge()->getLayerDepth( perpandicular->getLayer() );
+            if (depth < Session::getAllowedDepth()) {
+              perpandicular->changeDepth( depth+1, Flags::NoFlags );
+              cdebug_tabw(149,-1);
+              return true;
+            }
+          }
+        }
+      }
       Interval  constraints       = target->getUConstraints      (Flags::Horizontal|Flags::NoGCellShrink);
       Interval  nativeConstraints = target->getNativeUConstraints(Flags::Horizontal|Flags::NoGCellShrink);
       int       slack             = constraints.getSize()       / getPitch();

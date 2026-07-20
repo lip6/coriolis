@@ -600,6 +600,9 @@ namespace Anabatic {
       AutoContact* vtee      = nullptr;
       doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpContact, vtee, NoFlags );
       vtee = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
+      AutoSegment::create( rpContact, vtee, Flags::Vertical );
+      rpContact = vtee;
+      vtee = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
       AutoSegment::create( rpContact, vtee, Flags::Horizontal|Flags::UseNonPref );
       rpContact = vtee;
 

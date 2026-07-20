@@ -985,24 +985,20 @@ namespace Katana {
 
   TrackElement* TrackSegment::promoteToPref ()
   {
+    cdebug_log(159,1) << "TrackSegment::promoteToPref() " << this << endl;
+
     base()->setObserver( AutoSegment::Observable::TrackSegment, nullptr );
     DataNegociate* data = getDataNegociate();
     if (data and data->hasRoutingEvent())
       data->getRoutingEvent()->setDisabled( true );
 
-    if (base()->isNonPref()) {
+    if (base()->isNonPref())
       base()->promoteToPref( Flags::NoFlags );
-    } else {
-      Session::dogleg( base() );
-      Session::dogleg( nullptr );
-      Session::dogleg( nullptr );
-    }
     TrackElement* perpandicular = nullptr;
     TrackElement* parallel      = nullptr;
     _postDoglegs( perpandicular, parallel );
 
-    cdebug_log(159,0) << "TrackSegment::promoteToPref() " << this << endl;
-
+    cdebug_tabw(159,-1);
     return perpandicular;
   }
   

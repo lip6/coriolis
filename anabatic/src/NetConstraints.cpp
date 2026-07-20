@@ -165,7 +165,8 @@ namespace {
               if (turn) {
                 AutoSegment* parallel = turn->getPerpandicular( perpandicular );
                 cdebug_log(149,0) << "parallel: " << parallel << endl;
-                if (   not parallel->isNonPref()
+                if (       parallel
+                   and not parallel->isNonPref()
                    and not parallel->isGlobal()) {
                   AutoContact* oppositeTurn   = parallel->getOppositeAnchor( turn );
                   Box          segConstraints = oppositeTurn->getConstraintBox();
@@ -202,6 +203,9 @@ namespace {
           AutoContact* contact = nullptr;
           for ( AutoSegment* aligned : vertical->getAligneds(Flags::WithSelf) ) {
             cdebug_log(146,0) << "aligned vertical: " << aligned << endl;
+            DbU::Unit    pitch          = vertical->getPitch();
+            AutoSegment* perpandNonPref = nullptr;
+            AutoContact* opposite       = nullptr;
 
             contact = aligned->getAutoTarget();
             if (contact and not contact->isTerminal()) {
@@ -209,6 +213,12 @@ namespace {
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , Flags::Vertical|Flags::WarnOnError );
+              perpandNonPref = contact->getPerpandicular( aligned );
+              if (perpandNonPref) {
+                if (not perpandNonPref->isNonPref()) perpandNonPref = nullptr;
+                else
+                  opposite = perpandNonPref->getOppositeAnchor( contact );
+              }
             }
             contact = aligned->getAutoSource();
             if (contact and not contact->isTerminal()) {
@@ -216,6 +226,19 @@ namespace {
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , Flags::Vertical|Flags::WarnOnError );
+              perpandNonPref = contact->getPerpandicular( aligned );
+              if (perpandNonPref) {
+                if (not perpandNonPref->isNonPref()) perpandNonPref = nullptr;
+                else
+                  opposite = perpandNonPref->getOppositeAnchor( contact );
+              }
+            }
+            if (perpandNonPref and rp->isHSmall()) {
+              opposite->restrictConstraintBox( constraintBox.getXMin() - 2*pitch
+                                             , constraintBox.getXMax() + 2*pitch
+                                             , Flags::Vertical|Flags::WarnOnError );
+              cdebug_log(146,0) << "Vertical+Horizontal NP contact " << opposite << endl;
+              cdebug_log(146,0) << "-> non-pref constraint " << opposite->getConstraintBox() << endl;
             }
           } 
         }

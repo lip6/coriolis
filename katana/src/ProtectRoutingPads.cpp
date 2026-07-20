@@ -275,7 +275,7 @@ namespace {
     }
 
   //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
-    TrackFixedSpan* element = TrackFixedSpan::create( rp->getNet(), metal2bb, vtrack );
+    TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, vtrack );
     cdebug_log(145,0) << "halfViaSsideM1=" << DbU::getValueString(halfViaSideM1) << endl;
     cdebug_log(145,0) << "halfViaSsideM2=" << DbU::getValueString(halfViaSideM2) << endl;
     cdebug_log(145,0) << "| " << element << endl;

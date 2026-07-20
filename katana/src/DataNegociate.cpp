@@ -150,7 +150,7 @@ namespace Katana {
     //interval.inflate( DbU::fromLambda(-0.5) );
 
       cdebug_log(159,0) << "| perpandicular: " << basePerpand << endl;
-      cdebug_log(159,1) << "| canonical:     " << perpandicular << endl;
+      cdebug_log(159,0) << "| canonical:     " << perpandicular << endl;
       cdebug_log(159,0) << "Canonical // interval: " << interval << endl;
 
       _perpandiculars.push_back( perpandicular );
@@ -209,10 +209,24 @@ namespace Katana {
         }
 
         if (trackFree.isFull()) {
-          trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
-                              , perpandicular->base()->getNonPrefTargetPosition() ); 
-        //trackFree = Interval( perpandicular->base()->getAxis() );
-          trackFree.inflate( pitch );
+          if (perpandicular->getTrack()) {
+            cdebug_log(159,0) << "In track, use seg length" << endl;
+            trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
+                                , perpandicular->base()->getNonPrefTargetPosition() ); 
+            trackFree.inflate( pitch );
+          } else {
+            AutoSegment* fromRp = perpandicular->base()->getPerpandicularFromRp();
+            if (fromRp) {
+              cdebug_log(159,0) << "Not in track, using terminal on " << perpandicular << endl;
+              trackFree = Interval( perpandicular->getAxis() );
+              trackFree.inflate( 3*pitch );
+            } else {
+              cdebug_log(159,0) << "No perpandicular, revert to seg length" << endl;
+              trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
+                                  , perpandicular->base()->getNonPrefTargetPosition() ); 
+              trackFree.inflate( pitch );
+            }
+          }
           cdebug_log(159,0) << "trackFree (no drag): " << trackFree << endl;
         }
 
@@ -274,7 +288,6 @@ namespace Katana {
                             << " isOneTrack=" << perpandicular->isOneTrack()
                             << " isStrap="    << perpandicular->isStrap() 
                             << endl;
-      //DbU::Unit      pitch       = Session::getPitch( perpandicular->getLayer() );
         if (perpandData and perpandicular->isLocal()) {
           uint32_t limit = Session::getKatanaEngine()->getRipupLimit( _trackSegment );
           if ((getRipupCount() + 4 < limit)

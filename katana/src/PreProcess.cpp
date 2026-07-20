@@ -342,12 +342,15 @@ namespace {
     RoutingPlane*  metal3plane   = track->getRoutingPlane()->getTop();
 
     if (track->getLayer() != metal2) {
+      cdebug_log(159,0) << "Not in " << metal2 << " skipping" << endl;
       cdebug_tabw(159,-1);
       return;
     }
 
     for ( size_t i=0 ; i<track->getSize() ; ++i ) {
       TrackElement* segment = track->getSegment(i);
+      cdebug_log(159,0) << "[" << i << "] " << segment << endl;
+      
       if (not segment or segment->isRouted()) continue;
       if (segment and (segment->isFixed() or segment->isFixedAxis()) and segment->isTerminal()) {
         DbU::Unit  ppitch = segment->getPPitch();
@@ -405,6 +408,67 @@ namespace {
   }
 
 
+  void  protectCagedTerminalsVH ( Track* track )
+  {
+    cdebug_log(159,1) << "protectCagedTerminalsVH() " << track << endl;
+
+    Configuration* configuration = Session::getConfiguration();
+    const Layer*   metal2        = configuration->getRoutingLayer( 1 );
+    DbU::Unit      ppitch        = configuration->getLayerGauge( (configuration->getAllowedDepth() > 2) ? 2 : 0 )->getPitch();
+
+    if (track->getLayer() != metal2) {
+      cdebug_log(159,0) << "Not in " << metal2 << " skipping" << endl;
+      cdebug_tabw(159,-1);
+      return;
+    }
+
+    for ( size_t i=0 ; i<track->getSize() ; ++i ) {
+      TrackElement* segment = track->getSegment(i);
+      cdebug_log(159,0) << "[" << i << "] " << segment << endl;
+      
+      if (not segment or segment->isRouted()) continue;
+      if (segment and (segment->isFixedSpanRp())) {
+        cdebug_log(159,0) << "Using P-Pitch " << DbU::getValueString(ppitch) << endl;
+
+        if (  ((segment->getSourceU() - track->getMin()) < 2*ppitch)
+           or ((track->getMax() - segment->getTargetU()) < 2*ppitch) ) continue;
+
+        Interval freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
+
+        if (  (segment->getSourceU() - freeInterval.getVMin() < ppitch*3)
+           or (freeInterval.getVMax() - segment->getTargetU() < ppitch*3) ) {
+          cparanoid << "[INFO] Caged terminal: " << segment << endl;
+
+          RoutingPad* rp = dynamic_cast<TrackFixedSpanRp*>( segment )->getRoutingPad();
+          if (not rp) continue;
+
+          for ( Component* component : rp->getSlaveComponents() ) {
+            cdebug_log(159,0) << "slave component: " << component << endl;
+
+            AutoContact* terminal = Session::lookup( dynamic_cast<Contact*>(component) );
+            if (not terminal or not terminal->isTerminal()) continue;
+            cdebug_log(159,0) << "Anchored terminal: " << terminal << endl;
+
+            AutoSegment* parallel = terminal->getSegment( 2 );
+            if (not parallel) continue;
+
+            AutoContact* opposite = parallel->getOppositeAnchor( terminal );
+
+            cdebug_log(159,0) << "Protect " << rp << endl;
+            opposite->restrictConstraintBox( freeInterval.getVMin()
+                                           , freeInterval.getVMax()
+                                           , Flags::Horizontal );
+          }
+        } else {
+          cdebug_log(159,0) << "Not caged in " << freeInterval << endl;
+        }
+      }
+    }
+
+    cdebug_tabw(159,-1);
+  }
+
+
 } // End of local namespace.
 
 
@@ -419,7 +483,22 @@ namespace Katana {
 
   void  KatanaEngine::preProcess ()
   {
-  //DebugSession::open( 145, 150 );
+    cerr << "KatanaEngine::preProcess()" << endl;
+  //DebugSession::open( 145, 160 );
+
+    if (not Session::isHV()) {
+      for ( size_t i=0 ; i<_routingPlanes.size() ; ++i ) {
+        RoutingPlane* plane = _routingPlanes[i];
+
+        Track* track = plane->getTrackByIndex( 0 );
+        while ( track ) {
+          protectCagedTerminalsVH( track );
+          track = track->getNextTrack();
+        }
+      }
+      DebugSession::close();
+      return;
+    }
 
     for ( size_t i=0 ; i<_routingPlanes.size() ; ++i ) {
       RoutingPlane* plane = _routingPlanes[i];
@@ -431,7 +510,6 @@ namespace Katana {
       }
     }
 
-  //DebugSession::close();
     Session::revalidate ();
 
     set<TrackElement*> faileds;
@@ -454,6 +532,8 @@ namespace Katana {
     }
 
     Session::revalidate ();
+  //DebugSession::close();
+    cerr << "KatanaEngine::preProcess() - end" << endl;
   }
 
 

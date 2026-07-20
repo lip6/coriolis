@@ -145,7 +145,7 @@ namespace Anabatic {
       static const unsigned int  Invalidate        = (1 <<  2);
       static const unsigned int  Revalidate        = (1 <<  3);
       static const unsigned int  RevalidatePPitch  = (1 <<  4);
-      static const unsigned int  AxisChange        = (1 <<  5);
+      static const unsigned int  AxisChange        = (1 <<  5);  
       static const unsigned int  PromoteToPref     = (1 <<  6);
 
     public:
@@ -162,6 +162,7 @@ namespace Anabatic {
     public:
       typedef  std::function< void(AutoSegment*) >  RevalidateCb_t;
     public:
+             static  std::string         asNotifyFlagsString        ( unsigned int );
              static  void                initialize                 ();
              static  void                setAnalogMode              ( bool );
              static  bool                getAnalogMode              ();
@@ -335,6 +336,7 @@ namespace Anabatic {
              virtual AutoSegment*        getCanonical               ( DbU::Unit& min , DbU::Unit& max ) const;
       inline         AutoSegment*        getCanonical               ( Interval& i ) const;
                      AutoSegment*        getNonPrefPerpand          ( AutoContact*& terminal, Flags& ) const;
+                     AutoSegment*        getPerpandicularFromRp     () const;
                      float               getMaxUnderDensity         ( Flags flags );
       inline         uint32_t            getReduceds                () const;
                      uint32_t            getNonReduceds             ( Flags flags=Flags::WithPerpands ) const;

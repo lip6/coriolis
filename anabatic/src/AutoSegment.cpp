@@ -462,6 +462,20 @@ namespace Anabatic {
   bool  AutoSegment::getAnalogMode   () { return _analogMode; }
   void  AutoSegment::setShortNetMode ( bool state ) { _shortNetMode = state; }
 
+  string  AutoSegment::asNotifyFlagsString ( unsigned int flags )
+  {
+    string s = "<";
+    if (flags & Create)  s += "Create";
+    if (flags & Destroy)          { if (s.back() != '<') s += '|'; s += "Destroy"; } 
+    if (flags & Invalidate)       { if (s.back() != '<') s += '|'; s += "Invalidate"; } 
+    if (flags & Revalidate)       { if (s.back() != '<') s += '|'; s += "Revalidate"; } 
+    if (flags & RevalidatePPitch) { if (s.back() != '<') s += '|'; s += "RevalidatePPitch"; } 
+    if (flags & AxisChange)       { if (s.back() != '<') s += '|'; s += "AxisChange"; } 
+    if (flags & PromoteToPref)    { if (s.back() != '<') s += '|'; s += "PromoteToPref"; } 
+    s += ">";
+    return s;
+  }
+
 
 //! \function AutoSegment::initialize (); 
 //! \brief    Store the segment cap extentions in a static table.
@@ -1494,6 +1508,26 @@ namespace Anabatic {
   }
 
 
+  AutoSegment* AutoSegment::getPerpandicularFromRp () const
+  {
+    if (not isNonPref() or (getRpDistance() != 1)) return nullptr;
+
+    AutoContact* turn = getAutoSource();
+    if (not turn->isTurn()) return nullptr;
+
+    AutoSegment* perpandicular = turn->getPerpandicular( this );
+    if (perpandicular and perpandicular->getRpDistance() == 0) return perpandicular;
+
+    turn = getAutoTarget();
+    if (not turn->isTurn()) return nullptr;
+
+    perpandicular = turn->getPerpandicular( this );
+    if (perpandicular and perpandicular->getRpDistance() == 0) return perpandicular;
+
+    return nullptr;
+  }
+  
+
   void  AutoSegment::computeOptimal ( set<AutoSegment*>& processeds )
   {
     cdebug_log(145,1) << "computeOptimal() - " << this << endl;
@@ -1511,6 +1545,55 @@ namespace Anabatic {
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
+
+    if (isLocal() and (source->isTurn() or target->isTurn()) and not isUserDefined()) {
+      AutoSegment* sourcePerpand = nullptr;
+      AutoSegment* targetPerpand = nullptr;
+      AutoSegment* parallelOnRp  = nullptr;
+      if (source->isTurn()) sourcePerpand = source->getPerpandicular( this );
+      if (target->isTurn()) targetPerpand = target->getPerpandicular( this );
+
+      if (getRpDistance() == 2) {
+        cdebug_log(145,0) << "Non-pref dogleg special case (for VH)." << endl;
+        if (sourcePerpand)
+          parallelOnRp = sourcePerpand->getPerpandicularFromRp();
+        if (not parallelOnRp) {
+          if (targetPerpand)
+            parallelOnRp = targetPerpand->getPerpandicularFromRp();
+        }
+
+        // if (sourcePerpand and sourcePerpand->isNonPref() and (sourcePerpand->getRpDistance() == 1)) {
+        //   if (sourcePerpand->getAutoSource() == source) {
+        //     parallelOnRp = sourcePerpand->getAutoTarget()->getPerpandicular( sourcePerpand );
+        //   } else {
+        //     parallelOnRp = sourcePerpand->getAutoSource()->getPerpandicular( sourcePerpand );
+        //   }
+        //   cdebug_log(145,0) << "| Parallel through NP (on source): " << parallelOnRp << endl;
+        // }
+
+        // if (targetPerpand and targetPerpand->isNonPref() and (targetPerpand->getRpDistance() == 1)) {
+        //   if (targetPerpand->getAutoSource() == source) {
+        //     parallelOnRp = targetPerpand->getAutoTarget()->getPerpandicular( targetPerpand );
+        //   } else {
+        //     parallelOnRp = targetPerpand->getAutoSource()->getPerpandicular( targetPerpand );
+        //   }
+        //   cdebug_log(145,0) << "| Parallel through NP (on target): " << parallelOnRp << endl;
+        // }
+
+        if (parallelOnRp) {
+          DbU::Unit optimal = parallelOnRp->getAxis();
+          cdebug_log(145,0) << "Applying constraint parallel on: " << this << endl;
+          cdebug_log(145,0) << "optimal: " << DbU::getValueString(optimal) << endl;
+        
+          setOptimalMin( optimal );
+          setOptimalMax( optimal );
+          processeds.insert( this );
+          
+          cdebug_tabw(145,-1);
+          return;
+        }
+      }
+    }
     
     if (isLocal() and source->isTurn() and target->isTurn() and not isUserDefined()) {
       AutoSegment* sourcePerpand = source->getPerpandicular(this);
@@ -2598,6 +2681,7 @@ namespace Anabatic {
                     , getString(this).c_str() );
       unsetFlags( SegNonPref );
       wasNonPref = true;
+      cdebug_log(149,0) << "-> wasNonPref=" << wasNonPref << endl;
     }
 
     invalidate( Flags::Topology|Flags::NoCheckLayer );
@@ -2618,7 +2702,13 @@ namespace Anabatic {
       cdebug_log(149,0) << "changeDepth() " << gcells[i] << this << " " << endl;
     }
 
-    if (isCanonical() and wasNonPref) _observers.notify( PromoteToPref );
+    if (isCanonical() and wasNonPref) {
+      cdebug_log(149,0) << "Calling notify (wasNonPref=" << wasNonPref << ")" << endl;
+      Session::dogleg( this );
+      Session::dogleg( nullptr );
+      Session::dogleg( nullptr );
+      _observers.notify( PromoteToPref );
+    }
 
     if (not (flags & Flags::WithNeighbors)) {
       cdebug_tabw(149,-1);
@@ -2975,7 +3065,6 @@ namespace Anabatic {
 
   bool  AutoSegment::moveUp ( Flags flags )
   {
-  //if ( not canMoveUp(0.0,flags) ) return false;
     changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) + (isNonPref() ? 1 : 2)
                , flags );
 
@@ -3315,7 +3404,6 @@ namespace Anabatic {
     AutoContact* autoTarget       = getAutoTarget();
     AutoContact* terminal         = nullptr;
 
-    unsetFlags( SegNonPref );
     if (autoSource->isTerminal()) terminal = autoSource;
     if (autoTarget->isTerminal()) terminal = autoTarget;
     if (not terminal) {
