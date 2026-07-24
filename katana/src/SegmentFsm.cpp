@@ -1405,7 +1405,7 @@ namespace Katana {
                 break;
               }
             }
-            if (segment->isNonPref() and (data->getRipupCount() > 3)) {
+            if (segment->isNonPref() /*and (data->getRipupCount() > 3)*/) {
               cdebug_log(159,0) << "Non pref. "  << data->getRipupCount() << endl;
               success = manipulator.moveUp( Manipulator::AllowLocalMoveUp|Manipulator::IgnoreContacts );
               if (success) {
