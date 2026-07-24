@@ -145,7 +145,12 @@ namespace Hurricane {
                                           , const Name& name   ) { _singleton->_addToTrace( cell, name ); }
   bool          DebugSession::_isTraced   ( const void* symbol ) const { return _symbols.find(symbol) != _symbols.end(); }
   void          DebugSession::_addToTrace ( const void* symbol ) { _symbols.insert( symbol ); }
-  void          DebugSession::_addToTrace ( const Net*  net    ) { _addToTrace( static_cast<const void*>(net) ); }
+
+  void  DebugSession::_addToTrace ( const Net* net )
+  {
+    std::cerr << "DebugSession::_addToTrace(Net*) " << net << std::endl;
+    _addToTrace( static_cast<const void*>(net) );
+  }
 
 
 

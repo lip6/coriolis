@@ -983,9 +983,8 @@ namespace Katana {
           }
         }
         if ( (_segments[i]->getAxis() != getAxis()) and not inTrackRange ) {
-          cerr << "[CHECK] Incoherency at " << i << " "
-               << _segments[i] << " is not on Track axis "
-               << DbU::getValueString(getAxis()) << "." << endl;
+          cerr << "[CHECK] Incoherency at " << i << " " << _segments[i]
+               << "\n        is not on Track axis " << DbU::getValueString(getAxis()) << "." << endl;
           coherency = false;
         } 
         

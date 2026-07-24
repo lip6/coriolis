@@ -864,6 +864,7 @@ namespace Katana {
     RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByIndex( depth );
 
     if (not perpandicular.isEmpty()) {
+      cdebug_log(159,0) << "| Normal track counting." << endl;
       Track* track = plane->getTrackByPosition( perpandicular.getVMin() );
 
       if ( track and (track->getAxis() < perpandicular.getVMin()) ) track = track->getNextTrack();
@@ -887,7 +888,8 @@ namespace Katana {
 
     _segment->computePriority();
 
-    cdebug_log(159,0) << _segment << " has " << (int)_tracksNb << " choices " << perpandicular << endl;
+    cdebug_log(159,0) << _segment << endl;
+    cdebug_log(159,0) << "  -> has " << (int)_tracksNb << " choices " << perpandicular << endl;
     cdebug_tabw(159,-1);
 
     DebugSession::close();

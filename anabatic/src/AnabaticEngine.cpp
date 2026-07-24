@@ -1615,6 +1615,9 @@ namespace Anabatic {
   //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n2126_hfns_1" ));
   //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n2128_hfns_0" ));
   //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n2123_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.u_top_4data.u_fifo_in.row[1]_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n3069_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n4917_hfns_1" ));
 
     size_t shortNets = 0;
 
