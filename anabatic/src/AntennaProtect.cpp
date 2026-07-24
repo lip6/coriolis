@@ -376,10 +376,6 @@ namespace {
     if (diode) {
       cdebug_log(147,0) << "| New diode " << diode << endl;
       _diodes.push_back( diode );
-      Transformation trans  = getRefRp()->getPlugOccurrence().getPath().getTransformation();
-      Point          center = diode->getAbutmentBox().getCenter();
-      trans.applyOn( center );
-
       Cell* diodeCell   = diode->getMasterCell();
       Net*  diodeOutput = nullptr;
       for ( Net* net : diodeCell->getNets() ) {
@@ -406,7 +402,8 @@ namespace {
       diodePlug->setNet( diodeNet );
       RoutingPad* diodeRp = RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
       _getAnabatic()->getConfiguration()->selectRpComponent( diodeRp );
-      cdebug_log(147,0) << "    " << getRefRp() << endl;
+      cdebug_log(147,0) << "    diode Rp: " << diodeRp    << endl;
+      cdebug_log(147,0) << "    ref Rp:   " << getRefRp() << endl;
 
       GCell* gcellDiodeRp = _anabatic->getGCellUnder( diodeRp->getPosition() );
       if (gcellDiodeRp != gcell) {
@@ -425,6 +422,7 @@ namespace {
           }
         }
       }
+
       bool     connectGCell = not gcell->hasNet( getTopNet() );
       Contact* contact      = gcell->hasGContact( getTopNet() );
       if (not contact)
@@ -433,9 +431,76 @@ namespace {
       contact->getBodyHook()->merge( diodeRp->getBodyHook() );
 
       if (connectGCell) {
+        GCell* turnGCell = nullptr;
+
+        if (   (backGCell->getXMin() != gcell->getXMin())
+           and (backGCell->getYMin() != gcell->getYMin())) {
+          if (backGCell->getXMin() < gcell->getXMin()) {
+            turnGCell = backGCell->getEast();
+          } else
+            turnGCell = backGCell->getWest();
+        }
+
+        if (not turnGCell) {
+          Contact* backContact = backGCell->hasGContact( getTopNet() );
+          if (not backContact)
+            backContact = backGCell->breakGoThrough( getTopNet() );
+
+          if (backGCell->getYMin() != gcell->getYMin()) {
+            bool northConnect = (backGCell->getYMin() > gcell->getYMin());
+            Vertical::create( (northConnect) ? contact     : backContact
+                            , (northConnect) ? backContact : contact
+                            , _anabatic->getConfiguration()->getGHorizontalLayer()
+                            , contact->getX()
+                            , _anabatic->getConfiguration()->getGHorizontalPitch()
+                            );
+          } else {
+            bool eastConnect = (backGCell->getXMin() < gcell->getXMin());
+            Horizontal::create( (eastConnect) ? backContact : contact
+                              , (eastConnect) ? contact     : backContact
+                              , _anabatic->getConfiguration()->getGHorizontalLayer()
+                              , contact->getY()
+                              , _anabatic->getConfiguration()->getGHorizontalPitch()
+                              );
+          }
+        } else {
+          bool     northConnect = (turnGCell->getYMin() < gcell->getYMin());
+          bool     connectH     = not turnGCell->hasNet( getTopNet() );
+          Contact* turnContact  = turnGCell->hasGContact( getTopNet() );
+          if (not turnContact)
+            turnContact = turnGCell->breakGoThrough( getTopNet() );
+          Vertical::create( (northConnect) ? turnContact : contact
+                          , (northConnect) ? contact     : turnContact
+                          , _anabatic->getConfiguration()->getGHorizontalLayer()
+                          , contact->getX()
+                          , _anabatic->getConfiguration()->getGHorizontalPitch()
+                          );
+
+          if (connectH) {
+            Contact* backContact = backGCell->hasGContact( getTopNet() );
+            if (not backContact)
+              backContact = backGCell->breakGoThrough( getTopNet() );
+
+            bool eastConnect = (turnGCell->getXMin() < backGCell->getXMin());
+            Horizontal::create( (eastConnect) ? turnContact : backContact
+                              , (eastConnect) ? backContact : turnContact
+                              , _anabatic->getConfiguration()->getGHorizontalLayer()
+                              , turnContact->getY()
+                              , _anabatic->getConfiguration()->getGHorizontalPitch()
+                              );
+          }
+        }
+      }
+
+
+#if OLD_IMPL
+      if (connectGCell) {
         GCell*   turnGCell        = nullptr;
         bool     connectTurnGCell = false;
-        Contact* backContact      = backGCell->breakGoThrough( getTopNet() );
+        Contact* backContact      = backGCell->hasGContact( getTopNet() );
+        if (not backContact) {
+          backContact = backGCell->breakGoThrough( getTopNet() );
+        }
         if (backContact->getY() != contact->getY()) {
           Contact* southContact = contact;
           Contact* northContact = backContact;
@@ -484,6 +549,7 @@ namespace {
                             );
         }
       }
+#endif
     }
     cdebug_tabw(147,-1);
     return diode;
