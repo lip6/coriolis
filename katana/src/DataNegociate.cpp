@@ -218,9 +218,20 @@ namespace Katana {
             AutoSegment* fromRp = perpandicular->base()->getPerpandicularFromRp();
             if (fromRp) {
               cdebug_log(159,0) << "Not in track, using terminal on " << perpandicular << endl;
-              trackFree = Interval( perpandicular->getAxis() );
-              trackFree.inflate( 3*pitch );
-            } else {
+              AutoContact* rpContact = nullptr;
+              if (fromRp->getAutoSource()->isTerminal()) rpContact = fromRp->getAutoSource();
+              if (fromRp->getAutoTarget()->isTerminal()) rpContact = fromRp->getAutoTarget();
+              if (rpContact) {
+                cdebug_log(159,0) << "Constraints from " << rpContact << endl;
+                if (_trackSegment->getDirection() == Flags::Horizontal)
+                  trackFree = rpContact->getUConstraints( Flags::Vertical );
+                else
+                  trackFree = rpContact->getUConstraints( Flags::Horizontal );
+                trackFree.inflate( 3*pitch );
+              }
+            }
+
+            if (trackFree.isFull()) {
               cdebug_log(159,0) << "No perpandicular, revert to seg length" << endl;
               trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
                                   , perpandicular->base()->getNonPrefTargetPosition() ); 
@@ -386,8 +397,6 @@ namespace Katana {
         } 
       }
 #endif
-
-      cdebug_tabw(159,-1);
     }
 
     if ( not _trackSegment->isTerminal() and (_perpandiculars.size()+reducedPerpands < 2) )
