@@ -200,7 +200,13 @@ namespace Katana {
     cdebug_log(155,1) << "TrackSegmentNonPref::invalidate(): " << this << endl;
     Super::invalidate();
 
-    if (getTrack()) reschedule( 0 );
+    TrackSet  packTracks;
+    bool      inTrack = getTrack();
+    detach( packTracks );
+    for ( TrackSet::iterator it=packTracks.begin() ; it != packTracks.end() ; ++it )
+      (*it)->doRemoval();
+
+    if (inTrack) reschedule( 0 );
     cdebug_tabw(155,-1);
   }
 
