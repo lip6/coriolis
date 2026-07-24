@@ -701,11 +701,16 @@ namespace Anabatic {
       }
 
       cdebug_log(145,0) << "case 3G no North or no South" << endl;
-      doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpContact2, rpContact3, flags );
       AutoContact* turnNS = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
       AutoContact* turnEW = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
       AutoSegment::create( rpContact1, turnNS, Flags::Horizontal|Flags::UseNonPref );
+
+      doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpContact2, rpContact3, flags );
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
+      AutoSegment::create( rpContact2, turn, Flags::Vertical );
+      rpContact2 = turn;
       AutoSegment::create( rpContact2, turnEW, Flags::Horizontal|Flags::UseNonPref );
+
       AutoContact* hteeEW = AutoContactHTee::create( getGCell(), getNet(), Session::getDContactLayer() );
       AutoSegment::create( turnEW, hteeEW, Flags::Vertical );
 
