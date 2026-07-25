@@ -156,12 +156,11 @@ class CoreWire ( object ):
                     arrayCount = (arrayWidth - contactMinSize) // self.viaPitch
                     trace( 550, '\tcontactMinSize: {}, arrayWidth: {}, arrayCount: {}\n' \
                                 .format(DbU.getValueString(contactMinSize),DbU.getValueString(arrayWidth),arrayCount) )
-                    if arrayCount < 0: arrayCount = 0
-                   #if arrayCount < 3:
+                    if arrayCount < 0: arrayCount = 1
                     if self.side & (North|South):
-                        self.arraySize = ( arrayCount+1, 2 )
+                        self.arraySize = ( arrayCount, 2 )
                     else:
-                        self.arraySize = ( 2, arrayCount+1 )
+                        self.arraySize = ( 2, arrayCount )
                     trace( 550, '\tarraySize = ({},{})\n'.format(self.arraySize[0], self.arraySize[1]) )
                     self.gapWidth = 4*self.viaPitch
                 trace( 550, ',-' )
@@ -301,8 +300,8 @@ class CoreWire ( object ):
                 vStrapBb = contact.getBoundingBox( padLayer )
                 coronaTransf.applyOn( vStrapBb )
             if self.arraySize:
-                if self.side == West: xContact = min( xContact, vStrapBb.getXMin() )
-                else:                 xContact = max( xContact, vStrapBb.getXMax() )
+                if self.side == West: xContact = min( xContact - vPitch, vStrapBb.getXMin() )
+                else:                 xContact = max( xContact         , vStrapBb.getXMax() )
             hCorona = self.conf.coronaHorizontal( self.chipNet
                                                 , self.symSegmentLayer
                                                 , yCore
