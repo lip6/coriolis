@@ -79,6 +79,7 @@ namespace Katana {
         Interval   segside;
         Interval   uside   = track->getKatanaEngine()->getUSide( track->getDirection() );
         DbU::Unit  cap     = track->getLayer()->getMinimalSpacing()/2 /*+ track->getLayer()->getExtentionCap()*/;
+        if (getWidth() > 5*getPitch()) cap *= 2;
         cdebug_log(159,0) << "uside:" << uside << " cap:" << DbU::getValueString(cap) << endl;
         cdebug_log(159,0) << "bb:" << boundingBox << endl;
         if (track->getDirection() == Flags::Horizontal) {
