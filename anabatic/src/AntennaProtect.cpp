@@ -346,23 +346,6 @@ namespace {
   {
     cerr << Error( "DiodeCluster::inflateArea(): Unimplemented. " ) << endl;
   }
-  
-  
-  Instance* DiodeCluster::_createDiode ( Etesian::Area* area, const Box& bb, DbU::Unit uHint )
-  {
-    cdebug_log(147,1) << "DiodeCluster::_createDiode(): under=" << bb
-                      << " uHint=" << DbU::getValueString(uHint) << endl;
-
-    Instance* diode = area->createDiodeUnder( getRefRp(), bb, uHint );
-    if (diode) {
-      cdebug_log(147,0) << "| New diode " << diode << endl;
-      _diodes.push_back( diode );
-      _connectDiode( diode, nullptr, nullptr );
-    }
-    
-    cdebug_tabw(147,-1);
-    return diode;
-  }
 
 
   void  DiodeCluster::_connectDiode ( Instance* diode, GCell* diodeGCell, GCell* backGCell )
@@ -484,6 +467,23 @@ namespace {
       }
     }
   }
+  
+  
+  Instance* DiodeCluster::_createDiode ( Etesian::Area* area, const Box& bb, DbU::Unit uHint )
+  {
+    cdebug_log(147,1) << "DiodeCluster::_createDiode(): under=" << bb
+                      << " uHint=" << DbU::getValueString(uHint) << endl;
+
+    Instance* diode = area->createDiodeUnder( getRefRp(), bb, uHint );
+    if (diode) {
+      cdebug_log(147,0) << "| New diode " << diode << endl;
+      _diodes.push_back( diode );
+      _connectDiode( diode, nullptr, nullptr );
+    }
+    
+    cdebug_tabw(147,-1);
+    return diode;
+  }
 
   
   Instance* DiodeCluster::_createDiode ( Etesian::Area* area, GCell* gcell, GCell* backGCell )
@@ -498,180 +498,7 @@ namespace {
     if (diode) {
       cdebug_log(147,0) << "| New diode " << diode << endl;
       _diodes.push_back( diode );
-      Cell* diodeCell   = diode->getMasterCell();
-      Net*  diodeOutput = nullptr;
-      for ( Net* net : diodeCell->getNets() ) {
-        if (net->isSupply() or not net->isExternal()) continue;
-        diodeOutput = net;
-        break;
-      }
-
-      Net*  topNet   = getTopNet();
-      Net*  diodeNet = topNet;
-      Plug* sinkPlug = dynamic_cast<Plug*>( getRefRp()->getPlugOccurrence().getEntity() );
-      Path  path     = Path();
-      
-      if (sinkPlug) {
-        diodeNet = sinkPlug->getNet();
-        path     = getRefRp()->getOccurrence().getPath().getHeadPath();
-      }
-
-      cdebug_log(147,0) << "  Bind diode input:" << endl;
-      cdebug_log(147,0) << "    " << diode    << " @" << diode->getTransformation() << endl;
-      cdebug_log(147,0) << "    topNet->getCell():" << topNet->getCell() << endl;
-      cdebug_log(147,0) << "    " << getRefRp()->getOccurrence().getPath() << endl;
-      Plug* diodePlug = diode->getPlug( diodeOutput );
-      diodePlug->setNet( diodeNet );
-      RoutingPad* diodeRp = RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
-      _getAnabatic()->getConfiguration()->selectRpComponent( diodeRp );
-      cdebug_log(147,0) << "    diode Rp: " << diodeRp    << endl;
-      cdebug_log(147,0) << "    ref Rp:   " << getRefRp() << endl;
-
-      GCell* gcellDiodeRp = _anabatic->getGCellUnder( diodeRp->getPosition() );
-      if (gcellDiodeRp != gcell) {
-        if (gcellDiodeRp == backGCell) {
-          gcell     = backGCell;
-          backGCell = nullptr;
-          cdebug_log(147,0) << "| Diode RP is, in fact, under backGCell -> disable backGCell" << endl;
-        } else {
-          if (not backGCell) {
-            backGCell = gcell;
-            gcell     = gcellDiodeRp;
-            cdebug_log(147,0) << "| Diode RP is *not* under gcell, no backGCell -> create backGCell" << endl;
-          } else {
-            gcell = gcellDiodeRp;
-            cdebug_log(147,0) << "| Diode RP is *not* under gcell -> change gcell" << endl;
-          }
-        }
-      }
-
-      bool     connectGCell = not gcell->hasNet( getTopNet() );
-      Contact* contact      = gcell->hasGContact( getTopNet() );
-      if (not contact)
-        contact = gcell->breakGoThrough( getTopNet() );
-      cdebug_log(147,0) << "| breakGoThrough(), contact= " << contact << endl;
-      contact->getBodyHook()->merge( diodeRp->getBodyHook() );
-
-      if (connectGCell) {
-        GCell* turnGCell = nullptr;
-
-        if (   (backGCell->getXMin() != gcell->getXMin())
-           and (backGCell->getYMin() != gcell->getYMin())) {
-          if (backGCell->getXMin() < gcell->getXMin()) {
-            turnGCell = backGCell->getEast();
-          } else
-            turnGCell = backGCell->getWest();
-        }
-
-        if (not turnGCell) {
-          Contact* backContact = backGCell->hasGContact( getTopNet() );
-          if (not backContact)
-            backContact = backGCell->breakGoThrough( getTopNet() );
-
-          if (backGCell->getYMin() != gcell->getYMin()) {
-            bool northConnect = (backGCell->getYMin() > gcell->getYMin());
-            Vertical::create( (northConnect) ? contact     : backContact
-                            , (northConnect) ? backContact : contact
-                            , _anabatic->getConfiguration()->getGHorizontalLayer()
-                            , contact->getX()
-                            , _anabatic->getConfiguration()->getGHorizontalPitch()
-                            );
-          } else {
-            bool eastConnect = (backGCell->getXMin() < gcell->getXMin());
-            Horizontal::create( (eastConnect) ? backContact : contact
-                              , (eastConnect) ? contact     : backContact
-                              , _anabatic->getConfiguration()->getGHorizontalLayer()
-                              , contact->getY()
-                              , _anabatic->getConfiguration()->getGHorizontalPitch()
-                              );
-          }
-        } else {
-          bool     northConnect = (turnGCell->getYMin() < gcell->getYMin());
-          bool     connectH     = not turnGCell->hasNet( getTopNet() );
-          Contact* turnContact  = turnGCell->hasGContact( getTopNet() );
-          if (not turnContact)
-            turnContact = turnGCell->breakGoThrough( getTopNet() );
-          Vertical::create( (northConnect) ? turnContact : contact
-                          , (northConnect) ? contact     : turnContact
-                          , _anabatic->getConfiguration()->getGHorizontalLayer()
-                          , contact->getX()
-                          , _anabatic->getConfiguration()->getGHorizontalPitch()
-                          );
-
-          if (connectH) {
-            Contact* backContact = backGCell->hasGContact( getTopNet() );
-            if (not backContact)
-              backContact = backGCell->breakGoThrough( getTopNet() );
-
-            bool eastConnect = (turnGCell->getXMin() < backGCell->getXMin());
-            Horizontal::create( (eastConnect) ? turnContact : backContact
-                              , (eastConnect) ? backContact : turnContact
-                              , _anabatic->getConfiguration()->getGHorizontalLayer()
-                              , turnContact->getY()
-                              , _anabatic->getConfiguration()->getGHorizontalPitch()
-                              );
-          }
-        }
-      }
-
-
-#if OLD_IMPL
-      if (connectGCell) {
-        GCell*   turnGCell        = nullptr;
-        bool     connectTurnGCell = false;
-        Contact* backContact      = backGCell->hasGContact( getTopNet() );
-        if (not backContact) {
-          backContact = backGCell->breakGoThrough( getTopNet() );
-        }
-        if (backContact->getY() != contact->getY()) {
-          Contact* southContact = contact;
-          Contact* northContact = backContact;
-          if (contact->getX() == backContact->getX()) {
-            if (southContact->getY() > northContact->getY())
-              std::swap( southContact, northContact );
-          } else {
-            if (contact->getY() < backContact->getY()) {
-              turnGCell        = gcell->getNorth();
-              connectTurnGCell = not turnGCell->hasNet( getTopNet() );
-              southContact     = contact;
-              northContact     = turnGCell->hasGContact( getTopNet() );
-              if (not northContact)
-                northContact = turnGCell->breakGoThrough( getTopNet() );
-              contact = northContact;
-            } else {
-              turnGCell        = gcell->getSouth();
-              connectTurnGCell = not turnGCell->hasNet( getTopNet() );
-              northContact     = contact;
-              southContact     = turnGCell->hasGContact( getTopNet() );
-              if (not southContact)
-                southContact = turnGCell->breakGoThrough( getTopNet() );
-              contact = southContact;
-            }
-          }
-          gcell = turnGCell;
-
-          Vertical::create( southContact
-                          , northContact
-                          , _anabatic->getConfiguration()->getGHorizontalLayer()
-                          , southContact->getX()
-                          , _anabatic->getConfiguration()->getGHorizontalPitch()
-                          );
-        } else
-          connectTurnGCell = true;
-
-        if (connectTurnGCell) {
-          if (contact->getX() > backContact->getX())
-            std::swap( backContact, contact );
-
-          Horizontal::create( contact
-                            , backContact
-                            , _anabatic->getConfiguration()->getGHorizontalLayer()
-                            , contact->getY()
-                            , _anabatic->getConfiguration()->getGHorizontalPitch()
-                            );
-        }
-      }
-#endif
+      _connectDiode( diode, gcell, backGCell );
     }
     cdebug_tabw(147,-1);
     return diode;
