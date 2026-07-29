@@ -44,6 +44,7 @@ namespace Katana {
   using Hurricane::Error;
   using Hurricane::Net;
   using Hurricane::Name;
+  using Hurricane::ParallelSpacings;
   using Hurricane::RegularLayer;
   using Hurricane::Technology;
   using Hurricane::DataBase;
@@ -77,9 +78,12 @@ namespace Katana {
         Point      source;
         Point      target;
         Interval   segside;
-        Interval   uside   = track->getKatanaEngine()->getUSide( track->getDirection() );
-        DbU::Unit  cap     = track->getLayer()->getMinimalSpacing()/2 /*+ track->getLayer()->getExtentionCap()*/;
-        if (getWidth() > 5*getPitch()) cap *= 2;
+        Interval   uside          = track->getKatanaEngine()->getUSide( track->getDirection() );
+        DbU::Unit  minSpacing     = track->getLayer()->getMinimalSpacing();
+        ParallelSpacings spacings = track->getLayer()->getParallelSpacings(
+                                      boundingBox, (track->getDirection() & Flags::Horizontal) );
+        DbU::Unit  cap            = std::max( minSpacing, spacings.maxSpacing() ) - minSpacing / 2;
+
         cdebug_log(159,0) << "uside:" << uside << " cap:" << DbU::getValueString(cap) << endl;
         cdebug_log(159,0) << "bb:" << boundingBox << endl;
         if (track->getDirection() == Flags::Horizontal) {
