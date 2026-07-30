@@ -1,3 +1,6 @@
+# example of standalone use:
+# python amplify.py -l gf180mcu -n arlet6502 -a amp:30 -o vlog
+
 from coriolis import Hurricane, CRL
 
 from liberty.parser import parse_liberty
@@ -5,15 +8,12 @@ from liberty.types import *
 from sympy import parse_expr, Id
 from coriolis.helpers.overlay import UpdateSession
 
-
-#Hurricane.UpdateSession.open()
-
 # Read liberty file to create a dictionary where:
 # - key is the canonical logic function of the cell (thanks to sympy read_expr)
 # - value is a list of tuples (cell's name,capa)
 # This dictionary helps to choose the appropriate cell for amplification
 # return: the created dictionary
-# TODO: add decorator to Hurricane libray?
+# TODO: add decorator to Hurricane library?
 def read_liberty(liberty_file):
     #print("LIBERTY="+liberty_file)
     library = parse_liberty(open(liberty_file).read())
@@ -57,7 +57,7 @@ def read_liberty(liberty_file):
                     fdict[str(f)].append(val)
                 except KeyError:
                     fdict[str(f)] = [val]
-    # sort by capicitance valuesq
+    # sort by capicitance values
     for v in fdict.values():
         v.sort(key=lambda gate: gate[1])
     return fdict
@@ -206,7 +206,6 @@ if __name__ == '__main__':
         if o == '-o':
             output = a
         if o == '-l':
-            #from pdks.gf180mcu import setup
             from coriolis.designflow.yosys    import Yosys
             from pathlib import Path
             import importlib
