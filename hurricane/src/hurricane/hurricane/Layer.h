@@ -131,6 +131,8 @@ namespace Hurricane {
 
     public:
     // Accessors.
+      static inline void        setS2RMode                   ( bool );
+      static inline bool        isS2RMode                    ();
       inline  void              printSpacingTable            () const;
       inline  Technology*       getTechnology                () const;
       inline  const Name&       getName                      () const;
@@ -153,9 +155,13 @@ namespace Hurricane {
       virtual DbU::Unit         getEnclosure                 ( uint32_t flags ) const;
       virtual DbU::Unit         getExtentionCap              () const;
       virtual DbU::Unit         getExtentionWidth            () const;
+      virtual DbU::Unit         getRealDeltaCap              () const;
+      virtual DbU::Unit         getRealDeltaWidth            () const;
       virtual DbU::Unit         getEnclosure                 ( const BasicLayer* layer, uint32_t flags ) const;
       virtual DbU::Unit         getExtentionCap              ( const BasicLayer* layer ) const;
       virtual DbU::Unit         getExtentionWidth            ( const BasicLayer* layer ) const;
+      virtual DbU::Unit         getRealDeltaCap              ( const BasicLayer* layer ) const;
+      virtual DbU::Unit         getRealDeltaWidth            ( const BasicLayer* layer ) const;
       virtual DbU::Unit         getTopEnclosure              ( uint32_t flags ) const;
       virtual DbU::Unit         getBottomEnclosure           ( uint32_t flags ) const;
       virtual double            getMinimalArea               () const;
@@ -175,6 +181,8 @@ namespace Hurricane {
       virtual void              setEnclosure                 ( const BasicLayer* layer, DbU::Unit, uint32_t flags );
       virtual void              setExtentionCap              ( const BasicLayer* layer, DbU::Unit );
       virtual void              setExtentionWidth            ( const BasicLayer* layer, DbU::Unit );
+      virtual void              setRealDeltaCap              ( const BasicLayer* layer, DbU::Unit );
+      virtual void              setRealDeltaWidth            ( const BasicLayer* layer, DbU::Unit );
       virtual void              setMinimalArea               ( double );
     // Hurricane Managment.
       virtual void              _toJson                      ( JsonWriter* ) const;
@@ -189,6 +197,7 @@ namespace Hurricane {
 
     private:
     // Internal: Attributes
+      static  bool              _s2rMode;
               Technology*       _technology;
               Name              _name;
               Mask              _mask;
@@ -219,6 +228,8 @@ namespace Hurricane {
 
 
 // Inline Functions.
+  inline  void                Layer::setS2RMode                   ( bool state ) { _s2rMode = state; }
+  inline  bool                Layer::isS2RMode                    () { return _s2rMode; }
   inline  void                Layer::printSpacingTable            () const { return _spacingRules.print( std::cout ); }
   inline  ParallelSpacings    Layer::getParallelSpacings          ( const Box& bb, bool isHorizontal ) const { return _spacingRules.parallelSpacings(bb,isHorizontal); }
   inline  bool                Layer::isSymbolic                   () const { return _symbolic; }

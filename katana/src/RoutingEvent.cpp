@@ -722,11 +722,31 @@ namespace Katana {
 
   //_dataNegociate->update();
 
-    setAxisHintFromParent();
-    cdebug_log(159,0) << "axisHint:" << DbU::getValueString(getAxisHint()) << endl;
+    if (   (Session::getStage() == Anabatic::StageRealign)
+       and (_segment->base()->getRpDistance() < 2)) {
+      DbU::Unit axisHint = _segment->base()->getAxisHintFromGlobal();
+      if (axisHint != _segment->getAxis())
+        setAxisHint( axisHint );
+    } else
+      setAxisHintFromParent();
 
+    // if (_segment->base()->getRpDistance() < 2) {
+    //   DbU::Unit axisHint = _segment->base()->getAxisHintFromGlobal();
+    //   if (axisHint != _segment->getAxis())
+    //     setAxisHint( axisHint );
+    // }
+    cdebug_log(159,0) << "axisHint:" << DbU::getValueString(getAxisHint()) << endl;
+    cdebug_log(159,0) << "stage:" << Session::getStage()
+                      << " (StagePack=" << Anabatic::StagePack << ")" << endl;
+
+    Anabatic::Flags segFlags = Flags::Propagate
+                              | ((Session::getStage() < Anabatic::StagePack)
+                                 ? Anabatic::Flags::NoFlags
+                                 : Anabatic::Flags::UseNativeConstraints);
+    cdebug_log(159,0) << "segFlags=" << segFlags.asString(Anabatic::FlagsFunction) << endl;
+    
     _overConstrained = false;
-    _segment->base()->getConstraints( _constraints );
+    _segment->base()->getConstraints( _constraints, segFlags );
     _segment->base()->getOptimal    ( _optimal );
 
     cdebug_log(159,0) << "Stage:" << RoutingEvent::getStage() << endl;
@@ -746,6 +766,9 @@ namespace Katana {
         cdebug_log(159,0) << "Expanding (after):" << _constraints << endl;
       }
     } else {
+      if (_segment->isLocal() and not _segment->isTerminal() and _segment->isVertical()) {
+        _constraints.inflate( _segment->getPitch() );
+      }
       if (_segment->isForOffgrid()) {
         _constraints.inflate( _segment->getPitch() );
       }
@@ -841,6 +864,7 @@ namespace Katana {
     RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByIndex( depth );
 
     if (not perpandicular.isEmpty()) {
+      cdebug_log(159,0) << "| Normal track counting." << endl;
       Track* track = plane->getTrackByPosition( perpandicular.getVMin() );
 
       if ( track and (track->getAxis() < perpandicular.getVMin()) ) track = track->getNextTrack();
@@ -864,7 +888,8 @@ namespace Katana {
 
     _segment->computePriority();
 
-    cdebug_log(159,0) << _segment << " has " << (int)_tracksNb << " choices " << perpandicular << endl;
+    cdebug_log(159,0) << _segment << endl;
+    cdebug_log(159,0) << "  -> has " << (int)_tracksNb << " choices " << perpandicular << endl;
     cdebug_tabw(159,-1);
 
     DebugSession::close();

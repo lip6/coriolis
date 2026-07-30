@@ -215,14 +215,16 @@ namespace Katana {
     cdebug_log(159,1) << "Katana::Session::_doRemovalEvents()" << endl;
 
     TrackSet  packTracks;
+    uint32_t  eventLevel = (getStage() == Anabatic::StageRealign) ? 1 : 0;
 
     for ( size_t i=0 ; i<_removeEvents.size() ; ++i ) {
       cdebug_log(159,0) << "Remove event for:" << _removeEvents[i]._segment << endl;
       cdebug_log(159,0) << "  from: " << _removeEvents[i]._segment->getTrack() << endl;
+      cdebug_log(159,0) << "  level: " << eventLevel << endl;
 
       if (not _removeEvents[i]._segment->getTrack()) continue;
       _removeEvents[i]._segment->detach( packTracks );
-      if (reschedule) _removeEvents[i]._segment->reschedule( 0 );
+      if (reschedule) _removeEvents[i]._segment->reschedule( eventLevel );
     }
     _removeEvents.clear();
 

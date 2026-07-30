@@ -129,8 +129,12 @@ namespace {
 
       cdebug_log(100,0) << "|   candidate pitched size: " << DbU::getValueString(candidateWidth)
                         <<                          " x " << DbU::getValueString(candidateHeight) << endl;
-      cdebug_log(100,0) << "|   best pitched size: " << DbU::getValueString(bestWidth)
-                        <<                     " x " << DbU::getValueString(bestHeight) << endl;
+      if (best.isEmpty()) {
+        cdebug_log(100,0) << "|   best pitched size: empty (no previous candidate)" << endl;
+      } else {
+        cdebug_log(100,0) << "|   best pitched size: " << DbU::getValueString(bestWidth)
+                          <<                     " x " << DbU::getValueString(bestHeight) << endl;
+      }
 
       if (_flags & LefImport::PinFilter_TALLEST) {
         if (candidateHeight != bestHeight) return (candidateHeight > bestHeight);
@@ -240,7 +244,12 @@ namespace {
       static        int                _pinCbk                  ( lefrCallbackType_e,       lefiPin*         , lefiUserData );
                     void               _pinStdPostProcess       ();
                     void               _pinPadPostProcess       ();
-                    Segment*           _createBestSegment       ( Rectilinear*, DbU::Unit minWidth, DbU::Unit minHeight, const RoutingLayerGauge*, uint32_t flags );
+                    bool               _createBestSegment       ( Rectilinear*
+                                                                , DbU::Unit minWidth
+                                                                , DbU::Unit minHeight
+                                                                , const RoutingLayerGauge*
+                                                                , uint32_t  flags
+                                                                , Segment*& bestSegment );
     private:                                               
       static       string                _gdsForeignDirectory;
       static       Library*              _mergeLibrary;
@@ -329,15 +338,18 @@ namespace {
   }
 
 
-  Segment* LefParser::_createBestSegment ( Rectilinear*             rectilinear
-                                         , DbU::Unit                minWidth
-                                         , DbU::Unit                minHeight
-                                         , const RoutingLayerGauge* rlg
-                                         , uint32_t                 flags )
+  bool  LefParser::_createBestSegment ( Rectilinear*             rectilinear
+                                      , DbU::Unit                minWidth
+                                      , DbU::Unit                minHeight
+                                      , const RoutingLayerGauge* rlg
+                                      , uint32_t                 flags
+                                      , Segment*&                bestSegment )
   {
+    cdebug_log(100,1) << "LefParser::_createBestSegment() " << rectilinear << endl;
+
     PinRectilinearFilter  pinFilter ( minWidth, minHeight, flags );
 
-    Segment*    segment = nullptr;
+    bool        useOngrid = true;
     vector<Box> boxes;
     rectilinear->getAsBiggestRectangles( boxes
                                        , pinFilter.getXThreshold()
@@ -345,11 +357,12 @@ namespace {
     Box best;
     Box offgrid;
     for ( Box& candidate : boxes ) {
+      cdebug_log(100,0) << "raw candidate " << candidate << endl;
+
       DbU::Unit widthAdjust  = candidate.getWidth () % DbU::twoGrid;
       DbU::Unit heightAdjust = candidate.getHeight() % DbU::twoGrid;
 
       if (heightAdjust) {
-      //candidate.inflate( 0, 0, 0, -heightAdjust );
         if (rlg->isHorizontal()) {
           DbU::Unit trackMin = rlg->getTrackPosition( getCell()->getAbutmentBox()
                                                     , candidate.getYMin() + minHeight/2
@@ -359,7 +372,6 @@ namespace {
                                                     , candidate.getYMax() - minHeight/2
                                                     , Constant::Inferior );
           DbU::Unit deltaMax = candidate.getYMax() - minHeight/2 - trackMax;
-          cdebug_log(100,0) << "  raw candidate " << candidate << endl;
           cdebug_log(100,0) << "  min height (pin)=" << DbU::getValueString(minHeight) << endl;
           cdebug_log(100,0) << "  min LZ=" << DbU::getValueString(candidate.getYMin() + minHeight/2)
                             <<  " track min=" << DbU::getValueString(trackMin) << endl;
@@ -369,6 +381,7 @@ namespace {
                             <<  " deltaMax=" << DbU::getValueString(deltaMax)
                             << endl;
           if (trackMin > trackMax) {
+            candidate.inflate( 0, 0, -widthAdjust, -heightAdjust );
             if (offgrid.isEmpty() or pinFilter.match(candidate,offgrid))
               offgrid = candidate;
             continue;
@@ -376,9 +389,11 @@ namespace {
           if (deltaMin < deltaMax) candidate.inflate( 0, 0, 0, -heightAdjust );
           else                     candidate.inflate( 0, -heightAdjust, 0, 0 );
         } else {
+          cdebug_log(100,0) << "Non PP track driven height adjust" << endl;
           candidate.inflate( 0, 0, 0, -heightAdjust );
         }
       }
+      cdebug_log(100,0) << "After height adjust: " << candidate << endl;
 
       if (widthAdjust) {
         if (rlg->isVertical()) {
@@ -390,7 +405,6 @@ namespace {
                                                     , candidate.getXMax() - minWidth/2
                                                     , Constant::Inferior );
           DbU::Unit deltaMax = candidate.getXMax() - minWidth/2 - trackMax;
-          cdebug_log(100,0) << "  raw candidate " << candidate << endl;
           cdebug_log(100,0) << "  min width (pin)=" << DbU::getValueString(minWidth) << endl;
           cdebug_log(100,0) << "  min LZ=" << DbU::getValueString(candidate.getXMin() + minWidth/2)
                             <<  " track min=" << DbU::getValueString(trackMin) << endl;
@@ -400,6 +414,7 @@ namespace {
                             <<  " deltaMax=" << DbU::getValueString(deltaMax)
                             << endl;
           if (trackMin > trackMax) {
+            candidate.inflate( 0, 0, -widthAdjust, -heightAdjust );
             if (offgrid.isEmpty() or pinFilter.match(candidate,offgrid))
               offgrid = candidate;
             continue;
@@ -407,42 +422,39 @@ namespace {
           if (deltaMin < deltaMax) candidate.inflate( 0, 0, -widthAdjust, 0 );
           else                     candidate.inflate( -widthAdjust, 0, 0, 0 );
         } else {
+          cdebug_log(100,0) << "Non PP track driven width adjust" << endl;
           candidate.inflate( 0, 0, -widthAdjust, 0 );
         }
       }
-
-      cdebug_log(100,0) << "| " << candidate << endl;
+      cdebug_log(100,0) << "After width adjust: " << candidate << endl;
       if (pinFilter.match(candidate,best))
         best = candidate;
     }
     if (best.isEmpty()) {
-      best = offgrid;
-      if (not rectilinear->getNet()->isSupply())
-        cerr << Warning( "LefParser::_createBestSegment(): Pin \"%s\" of \"%s\" has no terminal ongrid."
-                       , getString(rectilinear->getNet()->getName()).c_str()
-                       , getString(_cell->getName()).c_str() ) << endl;
+      best      = offgrid;
+      useOngrid = false;
     }
     if (not best.isEmpty()) {
       if (best.getWidth() < best.getHeight()) {
-        segment = Vertical::create( rectilinear->getNet()
-                                  , rectilinear->getLayer()
-                                  , best.getXCenter()
-                                  , best.getWidth()
-                                  , best.getYMin() 
-                                  , best.getYMax()
-                                  );
-      } else {
-        segment = Horizontal::create( rectilinear->getNet()
+        bestSegment = Vertical::create( rectilinear->getNet()
                                     , rectilinear->getLayer()
-                                    , best.getYCenter()
-                                    , best.getHeight()
-                                    , best.getXMin() 
-                                    , best.getXMax()
+                                    , best.getXCenter()
+                                    , best.getWidth()
+                                    , best.getYMin() 
+                                    , best.getYMax()
                                     );
+      } else {
+        bestSegment = Horizontal::create( rectilinear->getNet()
+                                      , rectilinear->getLayer()
+                                      , best.getYCenter()
+                                      , best.getHeight()
+                                      , best.getXMin() 
+                                      , best.getXMax()
+                                      );
       }
     }
-    cdebug_log(100,0) << "| -> " << segment << endl;
-    return segment;
+    cdebug_log(100,-1) << "Using: useOnGrid=" << useOngrid << " " << bestSegment << endl;
+    return useOngrid;
   }
 
 
@@ -505,10 +517,11 @@ namespace {
     return NULL;
   }
 
+
   void  LefParser::addLayer ( string layerName, Layer* layer, string lefType )
   {
     if (_layerLut.find(layerName) != _layerLut.end()) {
-      cerr << Warning( "LefParser::addLayer(): Duplicated layer name \"%s\" (ignored).", layerName.c_str() );
+      cerr << Warning( "LefParser::addLayer(): Duplicated layer name \"%s\" (ignored).\n", layerName.c_str() );
       return;
     }
     if (lefType == "CUT")     incNthCut();
@@ -517,11 +530,13 @@ namespace {
     _layerLut[ layerName ] = layer;
   }
 
+
   void LefParser::clearLayer ( string layerName )
   {
     auto item = _layerLut.find( layerName );
     if (item != _layerLut.end()) _layerLut.erase(item);
   }
+
 
   bool  LefParser::isUnmatchedLayer ( string layerName )
   {
@@ -783,8 +798,8 @@ namespace {
         if (cg) {
           if ( (cg->getSliceStep() != lefSiteWidth) or (cg->getSliceHeight() != lefSiteHeight)) {
             cerr << "     - Site \"" << site->name() << "\" of class PAD has mismatched redefinition OVERWRITING." << endl;
-            cerr << "       width: "  << DbU::getValueString(cg->getSliceStep  ()) << " vs. " <<  DbU::getValueString(lefSiteWidth)
-                 <<       " height: " << DbU::getValueString(cg->getSliceHeight()) << " vs. " <<  DbU::getValueString(lefSiteHeight)
+            cerr << "       width: "  << DbU::getValueString(cg->getSliceStep  ()) << " vs. (LEF) " <<  DbU::getValueString(lefSiteWidth)
+                 <<       " height: " << DbU::getValueString(cg->getSliceHeight()) << " vs. (LEF) " <<  DbU::getValueString(lefSiteHeight)
                  << endl;
           //cg->setPitch      ( lefSiteWidth  );
             cg->setSliceStep  ( lefSiteWidth  );
@@ -883,9 +898,17 @@ namespace {
         layer = parser->getLayer( geoms->getLayer(igeom) );
         if (layer)
           blockageLayer = layer->getBlockageLayer();
+        else {
+          cerr << Error( "LefImport::_obstructionCbk(): Reference to undefined layer \"%s\" (skipped).\n"
+                         "        (while parsing \"%s\")"
+                       , geoms->getLayer(igeom)
+                       , getString( cell ).c_str()
+                       ) << endl;
+        }
       }
+      if (not layer) continue;
       if (not blockageLayer) {
-        cerr << Error( "DefImport::_obstructionCbk(): No blockage layer associated to \"%s\".\n"
+        cerr << Error( "LefImport::_obstructionCbk(): No blockage layer associated to \"%s\".\n"
                        "        (while parsing \"%s\")"
                      , getString( layer->getName() ).c_str()
                      , getString( cell ).c_str()
@@ -1077,7 +1100,7 @@ namespace {
     cdebug_log(100,1) << "@ LefParser::_pinCbk()" << endl;
 
     bool  created = false;
-    parser->earlyGetCell( created );
+    Cell* cell    = parser->earlyGetCell( created );
 
     Net*      net     = nullptr;
     Net::Type netType = Net::Type::UNDEFINED;
@@ -1131,8 +1154,16 @@ namespace {
       for ( int igeom=0 ; igeom < geoms->numItems() ; ++igeom ) {
         if (geoms->itemType(igeom) == lefiGeomLayerE) {
           layer = parser->getLayer( geoms->getLayer(igeom) );
+          if (not layer) {
+            cerr << Warning( "LefImport::_pinCbk(): Reference to undefined layer \"%s\" (skipped).\n"
+                           "        (while parsing \"%s\")"
+                           , geoms->getLayer(igeom)
+                           , getString( cell ).c_str()
+                           ) << endl;
+          }
           continue;
         }
+        if (not layer) continue;
         if (geoms->itemType(igeom) == lefiGeomRectE) {
           lefiGeomRect* r          = geoms->getRect(igeom);
           DbU::Unit     xl         = parser->fromUnitsMicrons( r->xl );
@@ -1270,8 +1301,11 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
+  //if (_cell->getName() == "AOI221X1_V5")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__addh_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
-    if (_cell->getName() == "AOI221X1_V5")
+  //if (_cell->getName() == "AOI2110")
+    if (_cell->getName() == "CLKBU12")
       DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
@@ -1362,17 +1396,18 @@ namespace {
 
               DbU::Unit widthAdjust  = h->getWidth () % DbU::twoGrid;
               DbU::Unit lengthAdjust = h->getLength() % DbU::twoGrid;
-              if (widthAdjust or lengthAdjust) {
-                Vertical::create( h->getNet()
-                                , h->getLayer()
-                                , h->getY()
-                                , h->getWidth()
-                                , h->getSourceX()
-                                , h->getTargetX()
-                                );
-                if (widthAdjust)  h->setWidth(    h->getWidth()    - widthAdjust );
-                if (lengthAdjust) h->setDxTarget( h->getDxTarget() - lengthAdjust);
-              }
+              // if (widthAdjust or lengthAdjust) {
+              //   Vertical* v = Vertical::create( h->getNet()
+              //                                 , h->getLayer()
+              //                                 , h->getCenter().getX()
+              //                                 , h->getWidth()
+              //                                 , h->getSourceY()
+              //                                 , h->getTargetY()
+              //                                 );
+              // //   cdebug_log(100,0) << "> Overwrite:" << v << endl;
+              // }
+              if (widthAdjust)  h->setWidth(    h->getWidth()    - widthAdjust );
+              if (lengthAdjust) h->setDxTarget( h->getDxTarget() - lengthAdjust);
 
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
                                                                 , ab.getXMax()
@@ -1409,19 +1444,32 @@ namespace {
                                                  )
                                  );
           } else {
-            Segment* segment = _createBestSegment( rectilinear
-                                                 , minMetal1Width
-                                                 , minMetal1Height
-                                                 , gaugeMetal2
-                                                 , normalFlags );
-            if (segment) ongrids.push_back( segment );
+            Segment* candidateR = nullptr;
+            Segment* candidateN = nullptr;
+            bool     isOngridR  = false;
+            bool     isOngridN  = _createBestSegment( rectilinear
+                                                    , minMetal1Width
+                                                    , minMetal1Height
+                                                    , gaugeMetal2
+                                                    , normalFlags
+                                                    , candidateN );
+            if (isOngridN) ongrids.push_back( candidateN );
             else {
-              segment = _createBestSegment( rectilinear
-                                          , minMetal1Height
-                                          , minMetal1Width
-                                          , gaugeMetal2
-                                          , rotatedFlags );
-              if (segment) ongrids.push_back( segment );
+              isOngridR = _createBestSegment( rectilinear
+                                            , minMetal1Height
+                                            , minMetal1Width
+                                            , gaugeMetal2
+                                            , rotatedFlags
+                                            , candidateR );
+              if (isOngridR) ongrids.push_back( candidateR );
+              else {
+                if (not rectilinear->getNet()->isSupply() and not isOngridN and not isOngridR)
+                  cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" of \"%s\" has no terminal ongrid."
+                                 , getString(rectilinear->getNet()->getName()).c_str()
+                                 , getString(_cell->getName()).c_str() ) << endl;
+                if      (candidateN) ongrids.push_back( candidateN );
+                else if (candidateR) ongrids.push_back( candidateR );
+              }
             }
           }
         }
@@ -1453,8 +1501,11 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
+  //if (_cell->getName() == "AOI221X1_V5")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__addh_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
-    if (_cell->getName() == "AOI221X1_V5")
+  //if (_cell->getName() == "AOI2110")
+    if (_cell->getName() == "CLKBU12")
       DebugSession::close();
   }
 

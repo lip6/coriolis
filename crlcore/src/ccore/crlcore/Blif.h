@@ -56,7 +56,10 @@ namespace CRL {
 
   class Blif {
     public:
-      static              Cell*                  load         ( std::string netlist, bool enforceVhdl=true );
+      static const uint32_t  NoFlags     = 0;
+      static const uint32_t  EnforceVhdl = (1<<0);
+    public:
+      static              Cell*                  load         ( std::string netlist, uint32_t flags );
       static              void                   add          ( Library* );
       static inline const std::vector<Library*>& getLibraries ();
       static              Cell*                  getCell      ( std::string );

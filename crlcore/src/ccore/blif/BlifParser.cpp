@@ -832,7 +832,7 @@ namespace CRL {
   }
 
 
-  Cell* Blif::load ( string cellPath, bool enforceVhdl )
+  Cell* Blif::load ( string cellPath, uint32_t flags )
   {
     using namespace std;
     using Hurricane::Timer;
@@ -847,9 +847,12 @@ namespace CRL {
   
     auto framework = AllianceFramework::get();
   
-    // Timer  timer;
-    // timer.start();
-    // cmess2 << "     " << tab++ << "+ " << blifFile << " [blif]" << endl;
+    Timer  timer;
+    timer.start();
+
+    string strFlags = " [blif]";
+    if (flags & EnforceVhdl) strFlags.insert( strFlags.size()-1, ",EnforceVhdl" );
+    cmess2 << "     " << tab++ << "+ " << blifFile << strFlags << endl;
 
     Cell*                 mainModel = NULL;
     Model*                blifModel = NULL;
@@ -999,7 +1002,7 @@ namespace CRL {
     tab--;
 
     // timer.suspend();
-    // ostringstream result;
+    ostringstream result;
 
     // result <<  Timer::getStringTime(timer.getCombTime()) 
     //        << ", " << Timer::getStringMemory(timer.getIncrease());
@@ -1008,7 +1011,7 @@ namespace CRL {
 
     Model::orderModels();
     Model::connectModels();
-    if (enforceVhdl) Model::toVhdlModels();
+    if (flags & EnforceVhdl) Model::toVhdlModels();
     Model::clearStatic();
     UpdateSession::close();
 
@@ -1018,11 +1021,11 @@ namespace CRL {
       cerr << Warning( "Blif::load(): File %s.blif doesn't contains any \".model\".\n"
                      , blifFile.c_str()
                      );
-    // timer.stop();
-    // result.str( "" );
-    // result <<  Timer::getStringTime(timer.getCombTime()) 
-    //        << ", " << Timer::getStringMemory(timer.getIncrease());
-    // cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
+    timer.stop();
+    result.str( "" );
+    result <<  Timer::getStringTime(timer.getCombTime()) 
+           << ", " << Timer::getStringMemory(timer.getIncrease());
+    cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
 
     // if (mainModel) {
     //   cerr << "NetMap hash table of " << mainModel << endl;

@@ -7,4 +7,5 @@ chip = files([
   'pads.py',
   'power.py',
   'powerplane.py',
+  'ring.py',
 ])

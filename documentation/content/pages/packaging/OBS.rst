@@ -5,7 +5,7 @@
 1. Packaging with openSUSE Build Service (OBS)
 ==============================================
 
-Under OBS, the build & install procedure has to be performed using ``Makefile.LIP6``.
+Under OBS, the build & install procedure has to be performed using ``Makefile.devs``.
 
 .. note:: While the git repository and the tool itself is named ``coriolis``,
 	  in order to minimize confusion, the associated package is ``coriolis-eda``.
@@ -17,7 +17,7 @@ Under OBS, the build & install procedure has to be performed using ``Makefile.LI
 
 Summary of files involved in the packaging process:
 
-* ``<>/Makefile.LIP6``
+* ``<>/Makefile.devs``
 * ``<>/packaging/coriolis-eda.spec``
 * ``<>/packaging/patchenv.sh``
 * ``<>/packaging/find_files.sh``
@@ -38,7 +38,7 @@ Summary of files involved in the packaging process:
   the build and install commands. As a consequence, once the snapshot
   is taken from a valid environment on the reference machine we only
   need to *activate* the virtual environment and run the commands right
-  away. The ``Makefile.LIP6`` has been simplificated in that way.
+  away. The ``Makefile.devs`` has been simplificated in that way.
 
 * To run |pelican| and generate the documentation, we need at least
   Python 3.8 for the ``watchfiles`` module to be available. And, as
@@ -60,7 +60,7 @@ virtual environment package removal, when needed.
 
 * As the environment is being patched, the modification time of
   the directories are made more recents. This may trick the
-  ``Makefile.LIP6`` rules to try to reinstall |pdm| or some other
+  ``Makefile.devs`` rules to try to reinstall |pdm| or some other
   dependency. In order to avoid that, we have to ``touch`` the
   relevant files. For now, |pdm|, |meson| & |pelican|.
 
@@ -78,7 +78,7 @@ event of changes in the way Coriolis is installed it must be reviewed.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A dedicated script has been made to handle the whole process of making
-archives and pushing them to OBS : ``mkArchives.sh``.
+archives and pushing them to OBS : ``uploadOBS.sh``.
 
 * Using the ``git-archive-all.sh`` script, an archive of the current
   ``HEAD`` of the branch we are in is taken, *along with the submodules*.

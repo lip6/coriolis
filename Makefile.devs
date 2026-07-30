@@ -13,7 +13,7 @@
  WORK_ROOT = $(shell cd ../..; pwd)
  USE_VENV  = Yes
  ifneq ($(findstring abuild/rpmbuild,$(shell pwd)),)
-   $(info ---> Using RPM build tree scheme)
+   $(info ---> Using OBS RPM build tree scheme)
    PYTHON_BIN   = python3
    ifneq ($(findstring coriolis-eda-2.5.5-build,$(shell pwd)),)
      SRC_DIR    = ${HOME}/rpmbuild/BUILD/coriolis-eda-2.5.5-build
@@ -25,24 +25,34 @@
    BUILDDIR     = ${CORIOLIS_SRC}/build
    PREFIX       = /usr
  else
-   ifneq ($(findstring packages/BUILD,$(shell pwd)),)
-     $(info ---> Using DEB build tree scheme)
+   ifneq ($(findstring src/coriolis-rpm,$(shell pwd)),)
+     $(info ---> Using local (fast release) RPM build tree scheme)
      PYTHON_BIN   = python3
-     SRC_DIR      = /usr/src/packages/BUILD
-     CORIOLIS_SRC = ${SRC_DIR}
-     ALLIANCE_SRC = ${SRC_DIR}
+     SRC_DIR      = ${HOME}/coriolis-2.x/src/coriolis-rpm/BUILD
+     CORIOLIS_SRC = ${SRC_DIR}/coriolis-eda-2.5.5
+     ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
      BUILDDIR     = ${CORIOLIS_SRC}/build
      PREFIX       = /usr
    else
-     $(info ---> Using Developpers build tree scheme)
-#    PYTHON_BIN   = /usr/bin/python3.11
-     PYTHON_BIN   = python3
-     SRC_DIR      = $(WORK_ROOT)/src
-     CORIOLIS_SRC = ${SRC_DIR}/coriolis
-     ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
-     BUILDTYPE    = release
-     BUILDDIR     = ${WORK_ROOT}/$(BUILDTYPE)/build
-     PREFIX       = ${WORK_ROOT}/$(BUILDTYPE)/install
+     ifneq ($(findstring packages/BUILD,$(shell pwd)),)
+       $(info ---> Using DEB build tree scheme)
+       PYTHON_BIN   = python3
+       SRC_DIR      = /usr/src/packages/BUILD
+       CORIOLIS_SRC = ${SRC_DIR}
+       ALLIANCE_SRC = ${SRC_DIR}
+       BUILDDIR     = ${CORIOLIS_SRC}/build
+       PREFIX       = /usr
+     else
+       $(info ---> Using Developpers build tree scheme)
+       PYTHON_BIN   = /usr/bin/python3.11
+       PYTHON_BIN   = python3
+       SRC_DIR      = $(WORK_ROOT)/src
+       CORIOLIS_SRC = ${SRC_DIR}/coriolis
+       ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
+       BUILDTYPE    = release
+       BUILDDIR     = ${WORK_ROOT}/$(BUILDTYPE)/build
+       PREFIX       = ${WORK_ROOT}/$(BUILDTYPE)/install
+     endif
    endif
  endif
  $(info $S     WORK_ROOT = $(WORK_ROOT))

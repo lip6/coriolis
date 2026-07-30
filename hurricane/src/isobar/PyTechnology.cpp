@@ -164,8 +164,8 @@ extern "C" {
     PyObject*    pyMask  = NULL;
     BasicLayers* objects = NULL;
 
-    if (PyArg_ParseTuple( args, "O:Technology.getBasicLayers()", &pyMask)) {
-      if (not IsPyLayerMask(pyMask)) {
+    if (PyArg_ParseTuple( args, "|O:Technology.getBasicLayers()", &pyMask)) {
+      if ((pyMask != NULL) and (not IsPyLayerMask(pyMask))) {
         PyErr_SetString ( ConstructorError
                         , "Technology.getBasicLayers(): First argument is not of Layer.Mask type." );
         return NULL;

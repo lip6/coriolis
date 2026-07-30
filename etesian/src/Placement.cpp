@@ -440,9 +440,9 @@ namespace Etesian {
       return nullptr;
     }
 
-    cdebug_log(147,0) << "Slice::createDiodeUnder(): xHint=" << DbU::getValueString(xHint) << endl;
-    cdebug_log(147,0) << "  rp=" << rp << endl;
-    cdebug_log(147,0) << "  diodeArea=" << diodeArea << endl;
+    cdebug_log(147,1) << "Slice::createDiodeUnder(): xHint=" << DbU::getValueString(xHint) << endl;
+    cdebug_log(147,0) << "rp=" << rp << endl;
+    cdebug_log(147,0) << "diodeArea=" << diodeArea << endl;
 
     Instance* blockInst      = getEtesian()->getBlockInstance();
     Instance* diodeInst      = NULL;
@@ -473,6 +473,7 @@ namespace Etesian {
     
     if (not foundCandidate) {
       cdebug_log(147,0) << "No candidate found" << endl;
+      cdebug_tabw(147,-1);
       return NULL;
     }
 
@@ -510,6 +511,7 @@ namespace Etesian {
     if (fillerWidth > 0)
       fillHole( before, xmin+diodeWidth, xmin+width, _ybottom, yspin );
 
+    cdebug_tabw(147,-1);
     return diodeInst;
   }
 

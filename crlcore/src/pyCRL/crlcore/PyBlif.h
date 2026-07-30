@@ -15,9 +15,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef CRL_PY_BLIF_H
-#define CRL_PY_BLIF_H
-
+#pragma  once
 #include "hurricane/isobar/PyHurricane.h"
 #include "crlcore/Blif.h"
 
@@ -41,7 +39,8 @@ extern "C" {
   extern  PyTypeObject  PyTypeBlif;
   extern  PyMethodDef   PyBlif_Methods[];
 
-  extern  void          PyBlif_LinkPyType();
+  extern  void          PyBlif_LinkPyType     ();
+  extern  void          PyBlif_postModuleInit ();
 
 
 #define IsPyBlif(v)    ( (v)->ob_type == &PyTypeBlif )
@@ -51,5 +50,3 @@ extern "C" {
 }  // extern "C".
 
 }  // Hurricane namespace.
-
-#endif  // CRL_PY_BLIF_H

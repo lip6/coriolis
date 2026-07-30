@@ -49,5 +49,6 @@ class Druc ( FlowTask ):
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )
                , 'file_dep' : self.file_dep
+               , 'targets'  : self.targets
                }
         

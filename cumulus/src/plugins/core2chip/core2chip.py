@@ -749,7 +749,8 @@ class CoreToChip ( object ):
             print( '     - Core:    "{}".'.format(self.conf.cell.getName()) )
             print( '     - Corona:  "{}".'.format('corona') )
             print( '     - Chip:    "{}".'.format(self.conf.chip.getName()) )
-            self.corona       = af.createCell( 'corona' )
+            self.conf.corona  = af.createCell( 'corona' )
+            self.corona       = self.conf.corona
             self.conf.icore   = Instance.create( self.corona   , 'core'  , self.conf.cell )
             self.conf.icorona = Instance.create( self.conf.chip, 'corona', self.corona    )
             if self.useHarness():

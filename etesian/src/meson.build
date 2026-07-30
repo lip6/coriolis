@@ -24,6 +24,7 @@ etesian = shared_library(
   'BloatProperty.cpp',
   'EtesianEngine.cpp',
   'GraphicEtesianEngine.cpp',
+  'ScanChain.cpp',
   etesian_py,
   etesian_mocs,
   dependencies: [Hurricane, CrlCore, Coloquinte],

@@ -98,6 +98,8 @@ namespace Anabatic {
     , _lowDensity       (Cfg::getParamDouble    ("anabatic.lowDensity"      ,      0.6)->asDouble())
     , _lowUpDensity     (Cfg::getParamDouble    ("anabatic.lowUpDensity"    ,      0.2)->asDouble())
     , _moveUpReserve    (Cfg::getParamDouble    ("anabatic.moveUpReserve"   ,      1.5)->asDouble())
+    , _layerAssignSeedMoveUpReserve (Cfg::getParamDouble("anabatic.layerAssign.seedMoveUpReserve" , 3.0)->asDouble())
+    , _layerAssignTrunkMoveUpReserve(Cfg::getParamDouble("anabatic.layerAssign.trunkMoveUpReserve", 1.0)->asDouble())
     , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",  24  )->asInt()))
     , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" ,   4  )->asInt()))
     , _edgeCostH        (Cfg::getParamDouble    ("anabatic.edgeCostH"       ,      9.0)->asDouble())
@@ -217,6 +219,8 @@ namespace Anabatic {
     , _lowDensity       (other._lowDensity)
     , _lowUpDensity     (other._lowUpDensity)
     , _moveUpReserve    (other._moveUpReserve)
+    , _layerAssignSeedMoveUpReserve (other._layerAssignSeedMoveUpReserve)
+    , _layerAssignTrunkMoveUpReserve(other._layerAssignTrunkMoveUpReserve)
     , _edgeCostH        (other._edgeCostH)
     , _edgeCostK        (other._edgeCostK)
     , _edgeHInc         (other._edgeHInc)
@@ -695,7 +699,8 @@ namespace Anabatic {
     DbU::Unit punctualLength = 0;
     if (rpDepth == 0) ++rpDepth;
     DbU::Unit pitch = getPitch( rpDepth );
-    if (not isSymbolic()) punctualLength += getLayerGauge( rpDepth )->getWireWidth();
+    if (not isSymbolic())
+      punctualLength += getLayerGauge( rpDepth )->getWireWidth() + pitch/4;
     punctualLength += pitch;
 
     getPositions( rp, source, target );
@@ -706,6 +711,7 @@ namespace Anabatic {
                       << " hsmallTHreshold=" << _hsmallThreshold
                       << " vsmallTHreshold=" << _vsmallThreshold
                       << " vlargeTHreshold=" << _vlargeThreshold
+                      << " punctualLength=" << DbU::getValueString(punctualLength)
                       << endl;
     cdebug_log(145,0) << "width =" << DbU::getValueString(width ) << endl;
     cdebug_log(145,0) << "height=" << DbU::getValueString(height) << endl;
@@ -739,13 +745,15 @@ namespace Anabatic {
       topLayerName = getString( topLayer->getName() );
 
     cout << "  o  Configuration of ToolEngine<Anabatic> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
-    cout << Dots::asString    ("     - Top routing layer"           ,topLayerName     ) << endl;
-    cout << Dots::asUInt      ("     - Maximum GR iterations"       ,_globalIterations) << endl;
-    cout << Dots::asDouble    ("     - Low density threshold"       ,_lowDensity      ) << endl;
-    cout << Dots::asDouble    ("     - Low up density threshold"    ,_lowUpDensity    ) << endl;
-    cout << Dots::asDouble    ("     - Move up reserve"             ,_moveUpReserve   ) << endl;
-    cout << Dots::asDouble    ("     - Saturate ratio (per layer)"  ,_saturateRatio   ) << endl;
+    cout << Dots::asIdentifier("     - Routing Gauge"                     ,getString(_rg->getName())) << endl;
+    cout << Dots::asString    ("     - Top routing layer"                 ,topLayerName     ) << endl;
+    cout << Dots::asUInt      ("     - Maximum GR iterations"             ,_globalIterations) << endl;
+    cout << Dots::asDouble    ("     - Low density threshold"             ,_lowDensity      ) << endl;
+    cout << Dots::asDouble    ("     - Low up density threshold"          ,_lowUpDensity    ) << endl;
+    cout << Dots::asDouble    ("     - Move up reserve"                   ,_moveUpReserve   ) << endl;
+    cout << Dots::asDouble    ("     - Layer assign seed move up reserve" ,_layerAssignSeedMoveUpReserve) << endl;
+    cout << Dots::asDouble    ("     - Layer assign trunk move up reserve",_layerAssignSeedMoveUpReserve) << endl;
+    cout << Dots::asDouble    ("     - Saturate ratio (per layer)"        ,_saturateRatio   ) << endl;
   }
 
 

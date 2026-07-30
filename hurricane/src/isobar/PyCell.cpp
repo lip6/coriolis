@@ -508,6 +508,32 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_getGlobalNets()"
+
+  static PyObject* PyCell_getGlobalNets(PyCell *self) {
+    cdebug_log(20,0) << "PyCell_getGlobalNets()" << endl;
+
+    METHOD_HEAD("Cell.getGlobalNets()")
+
+    PyNetCollection* pyNetCollection = NULL;
+
+    HTRY
+    Nets* nets = new Nets(cell->getGlobalNets());
+
+    pyNetCollection = PyObject_NEW(PyNetCollection, &PyTypeNetCollection);
+    if (pyNetCollection == NULL) { 
+        return NULL;
+    }
+    pyNetCollection->_object = nets;
+
+    HCATCH
+
+    return ((PyObject*)pyNetCollection);
+  }  
+
+
+
+ // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_getExternalNets()"
 
   static PyObject* PyCell_getExternalNets(PyCell *self) {
@@ -876,6 +902,7 @@ extern "C" {
     , { "getNet"              , (PyCFunction)PyCell_getNet              , METH_VARARGS, "Returns the net of name <name> if it exists, else NULL." }
     , { "getNets"             , (PyCFunction)PyCell_getNets             , METH_NOARGS , "Returns the collection of all nets of the cell." }
     , { "getExternalNets"     , (PyCFunction)PyCell_getExternalNets     , METH_NOARGS , "Returns the collection of all external nets of the cell." }
+    , { "getGlobalNets"      , (PyCFunction)PyCell_getGlobalNets       , METH_NOARGS , "Returns the collection of all global nets of the cell." }
     , { "getClockNets"        , (PyCFunction)PyCell_getClockNets        , METH_NOARGS , "Returns the collection of all clock nets of the cell." }
     , { "getSupplyNets"       , (PyCFunction)PyCell_getSupplyNets       , METH_NOARGS , "Returns the collection of all supply nets of the cell." }
     , { "getPowerNets"        , (PyCFunction)PyCell_getPowerNets        , METH_NOARGS , "Returns the collection of all power nets of the cell." }

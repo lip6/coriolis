@@ -147,6 +147,39 @@ namespace Etesian {
   }  
 
 
+  BloatAMS_c35b4::BloatAMS_c35b4 ()
+    : BloatCell("AMS_c35b4")
+  { }
+
+
+  BloatAMS_c35b4::~BloatAMS_c35b4 ()
+  { }
+
+
+  DbU::Unit  BloatAMS_c35b4::getDx ( const Cell* cell, const EtesianEngine* etesian ) const
+  {
+    int terminals = 0;
+    for ( Net* net : cell->getNets() ) {
+      if (net->isExternal() and not net->isPower()) ++terminals;
+    }
+
+    Box ab ( cell->getAbutmentBox() );
+    DbU::Unit vpitch = etesian->getSliceHStep();;
+    int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
+
+    // float termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
+    // if (termRatio > 0.5) {
+    //   return vpitch*6;
+    // }
+
+    if (xsize < 4) return vpitch*4;
+    if (xsize < 6) return vpitch*2;
+    if (xsize < 8) return vpitch*1;
+    
+    return 0;
+  }  
+
+
   BloatChannel::BloatChannel ()
     : BloatCell("channel")
   { }

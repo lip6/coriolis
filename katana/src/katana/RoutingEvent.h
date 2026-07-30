@@ -112,6 +112,7 @@ namespace Katana {
       inline  bool                         isSheared             () const;
       inline  bool                         isRipedByLocal        () const;
       inline  bool                         isOverConstrained     () const;
+      inline  bool                         isPackable            () const;
       inline  uint32_t                     getId                 () const;
       inline  uint32_t                     getTimeStamp          () const;
       inline  bool                         getMode               () const;
@@ -241,6 +242,16 @@ namespace Katana {
   inline void                          RoutingEvent::resetInsertState        () { _insertState = 0; }
   inline void                          RoutingEvent::setEventLevel           ( uint32_t level ) { _eventLevel = level; }
   inline void                          RoutingEvent::updateKey               () { revalidate(); _key.update(this); }
+
+  inline bool  RoutingEvent::isPackable () const
+  { 
+    if (isCloned()) return false;
+    if (getSegment()->isReduced()) return false;
+    if (getSegment()->isUTurn  ()) return true;
+    if (getSegment()->base()->getAnchoredLength() > getSegment()->base()->getPPitch()) return false;
+    if (not getSegment()->base()->isSpinTopOrBottom()) return false;
+    return true;
+  }
 
   inline bool  RoutingEvent::CompareById::operator() ( const RoutingEvent* lhs, const RoutingEvent* rhs ) const
   { return lhs->getId() < rhs->getId(); }

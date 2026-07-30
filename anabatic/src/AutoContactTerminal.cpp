@@ -187,28 +187,32 @@ namespace Anabatic {
     RoutingLayerGauge* lg       = Session::getLayerGauge( Session::getLayerDepth(component->getLayer()) );
     DbU::Unit          xborder  = 0;
     DbU::Unit          yborder  = 0;
-    const Layer*       viaLayer = Session::getContactLayer( lg->getDepth() );
 
-    if (viaLayer) {
-      if (lg->isHorizontal() and (lg->getDepth() != 0)) {
-        xborder = Session::getViaWidth( lg->getDepth() )/2
-                + viaLayer->getBottomEnclosure( Layer::EnclosureH );
-      } else {
-        yborder = Session::getViaWidth( lg->getDepth() )/2
-                + viaLayer->getBottomEnclosure( Layer::EnclosureV );
-        xborder = Session::getViaWidth( lg->getDepth() )/2
-                + viaLayer->getBottomEnclosure( Layer::EnclosureH );
-
-        if (Session::getRoutingGauge()->isSymbolic()) {
-        // SxLib bug: METAL1 terminal segments are 0.5 lambdas too shorts on
-        // their extremities. Should modificate all the standard cells layout...
-        // HARDCODED.
-          if (getString(Session::getRoutingGauge()->getName()).substr(0,6) == "msxlib")
-            yborder -= DbU::fromLambda( 1.0 );
-          else
-            yborder -= DbU::fromLambda( (lg->getDepth() == 0) ? 0.5 : 0.0 );
+    if (getLayer()->getCut()) {
+      const Layer* viaLayer = Session::getContactLayer( lg->getDepth() );
+      if (viaLayer) {
+        if (lg->isHorizontal() and (lg->getDepth() != 0)) {
+          xborder = Session::getViaWidth( lg->getDepth() )/2
+                  + viaLayer->getBottomEnclosure( Layer::EnclosureH );
+        } else {
+          yborder = Session::getViaWidth( lg->getDepth() )/2
+                  + viaLayer->getBottomEnclosure( Layer::EnclosureV );
+          xborder = Session::getViaWidth( lg->getDepth() )/2
+                  + viaLayer->getBottomEnclosure( Layer::EnclosureH );
         }
       }
+      
+      if (Session::getRoutingGauge()->isSymbolic()) {
+      // SxLib bug: METAL1 terminal segments are 0.5 lambdas too shorts on
+      // their extremities. Should modificate all the standard cells layout...
+      // HARDCODED.
+        if (getString(Session::getRoutingGauge()->getName()).substr(0,6) == "msxlib")
+          yborder -= DbU::fromLambda( 1.0 );
+        else
+          yborder -= DbU::fromLambda( (lg->getDepth() == 0) ? 0.5 : 0.0 );
+      }
+    } else {
+      xborder = yborder = lg->getWireWidth() / 2;
     }
 
     DbU::Unit   xMin;
@@ -261,6 +265,7 @@ namespace Anabatic {
         }
         
         transformation.applyOn( bb );
+        cdebug_log(145,0) << "BB:" << bb << endl;
         cdebug_log(145,0) << "Shrink border x:" << DbU::getValueString(xborder)
                           <<              " y:" << DbU::getValueString(yborder)
                           << endl;

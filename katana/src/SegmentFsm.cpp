@@ -84,6 +84,7 @@ namespace {
   inline size_t     Cs1Candidate::getEnd             () const { return _end; }
   inline size_t     Cs1Candidate::getSize            () const { return _conflicts.size(); }
   inline Interval   Cs1Candidate::getLongestConflict () const { return _longestConflict; }
+  inline DbU::Unit  Cs1Candidate::getConflictLength  () const { return _conflictLength; }
   inline DbU::Unit  Cs1Candidate::getBreakPos        () const { return _breakPos; }
   inline void       Cs1Candidate::setBegin           ( size_t i ) { _begin=i; }
   inline void       Cs1Candidate::setEnd             ( size_t i ) { _end=i; }
@@ -441,6 +442,7 @@ namespace Katana {
     if (_type & EventLevel3) eventLevel = 3;
     if (_type & EventLevel4) eventLevel = 4;
     if (_type & EventLevel5) eventLevel = 5;
+    cdebug_log(159,0) << "Requeued with event level " << eventLevel << endl;
     event->setRipedByLocal( _type&RipedByLocal );
 
     if (_type & ToPref)
@@ -621,9 +623,11 @@ namespace Katana {
 
         _costs.push_back( new TrackCost(segment1,segment2,track1,track2,track1->getAxis(),symAxis) );
         cdebug_log(155,0) << "Same Ripup:" << _data1->getSameRipup() << endl;
-        if ((_data1->getSameRipup() > 10) and (track1->getAxis() == segment1->getAxis())) {
-          cdebug_log(155,0) << "Track blacklisted" << endl;
-          _costs.back()->setBlacklisted();
+        if (Session::getStage() < Anabatic::StageRepair) {
+          if ((_data1->getSameRipup() > 10) and (track1->getAxis() == segment1->getAxis())) {
+            cdebug_log(155,0) << "Track blacklisted" << endl;
+            _costs.back()->setBlacklisted();
+          }
         }
       
         cdebug_log(155,0) << "AxisWeight:" << DbU::getValueString(_costs.back()->getRefCandidateAxis())
@@ -980,7 +984,7 @@ namespace Katana {
                                      | ((_data1 and (_data1->getStateCount() < 2)) ? Manipulator::AllowExpand
                                                                                    : Manipulator::NoExpand);
 
-    cdebug_log(159,0) << "SegmentFsm::conflictSolveByPlaceds()" << endl;
+    cdebug_log(159,1) << "SegmentFsm::conflictSolveByPlaceds()" << endl;
     cdebug_log(159,0) << "| Candidates Tracks: " << endl;
 
     segment->base()->getConstraints( constraints );
@@ -996,6 +1000,7 @@ namespace Katana {
                  , getString(plane).c_str()
                  , DbU::getValueString(constraints.getVMin()).c_str()
                  ) << endl;
+      cdebug_tabw(159,-1);
       return false;
     }
 
@@ -1065,9 +1070,19 @@ namespace Katana {
 
     sort( candidates.begin(), candidates.end() );
 
+    cdebug_log(159,0) << "Conflict track candidates:" << endl;
     for ( size_t icandidate=0 ; icandidate<candidates.size() ; ++icandidate ) {
-      cdebug_log(159,0) << "Trying l:" << candidates[icandidate].getSize()
-                  << " " << candidates[icandidate].getTrack() << endl;
+      cdebug_log(159,0) << "[" << icandidate
+                        <<   "] size:" << candidates[icandidate].getSize()
+                        << " longest:" << DbU::getValueString(candidates[icandidate].getLongestConflict().getSize())
+                        <<   " total:" << DbU::getValueString(candidates[icandidate].getConflictLength())
+                        <<         " " << candidates[icandidate].getTrack() << endl;
+    }
+
+    for ( size_t icandidate=0 ; icandidate<candidates.size() ; ++icandidate ) {
+      cdebug_log(159,0) << "Trying [" << icandidate
+                        << "] l:"     << candidates[icandidate].getSize()
+                        <<    " "     << candidates[icandidate].getTrack() << endl;
 
       Interval overlap0 = candidates[icandidate].getLongestConflict();
       cdebug_log(159,0) << "| overlap0: " << overlap0 << endl;
@@ -1092,11 +1107,19 @@ namespace Katana {
       cdebug_log(159,0) << "| overlap0: " << overlap0 << endl;
 
       if (Session::getConfiguration()->isVH() and (segment->getDepth() == 1)) {
+        cdebug_log(159,0) << "VH gauge case." << endl;
         if (Manipulator(segment,*this).makeDogleg(overlap0,Flags::ShortDogleg)) {
-        //cerr << "Break using ShortDogleg." << endl;
           success = true;
           break;
         }
+        // else {
+        //   cdebug_log(159,0) << "Second try with expaned overlap " << overlap0 << endl;
+        //   overlap0.inflate( Session::getSliceHeight() );
+        //   if (Manipulator(segment,*this).makeDogleg(overlap0,Flags::ShortDogleg)) {
+        //     success = true;
+        //     break;
+        //   }
+        // }
       } else {
         cdebug_log(159,0) << "conflictSolveByPlaceds() other->isGlobal():" << other->isGlobal() << endl;
         if (other->isGlobal()) {
@@ -1134,6 +1157,7 @@ namespace Katana {
       success = true;
     }
 
+    cdebug_tabw(159,-1);
     return success;
   }
 
@@ -1381,7 +1405,7 @@ namespace Katana {
                 break;
               }
             }
-            if (segment->isNonPref() and (data->getRipupCount() > 3)) {
+            if (segment->isNonPref() /*and (data->getRipupCount() > 3)*/) {
               cdebug_log(159,0) << "Non pref. "  << data->getRipupCount() << endl;
               success = manipulator.moveUp( Manipulator::AllowLocalMoveUp|Manipulator::IgnoreContacts );
               if (success) {
@@ -1484,7 +1508,8 @@ namespace Katana {
           if (Session::getConfiguration()->isVH()
              and segment->getLength() < 6*Session::getSliceHeight()) {
             cdebug_log(159,0) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
-            break;
+            success = manipulator.ripupPerpandiculars();
+            if (success) break;
           }
         }
       case DataNegociate::Slacken:
@@ -1627,6 +1652,10 @@ namespace Katana {
         }
         if (segment1->isNonPref()) {
           actionFlags &= ~SegmentAction::AllEventLevels;
+        }
+        if (_data1->getState() == DataNegociate::Minimize) {
+          actionFlags &= ~SegmentAction::EventLevel5;
+          actionFlags |=  SegmentAction::EventLevel3;
         }
         addAction( segment1, actionFlags );
       }

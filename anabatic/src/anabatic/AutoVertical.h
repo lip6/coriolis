@@ -43,7 +43,7 @@ namespace Anabatic {
       virtual DbU::Unit     getDuSource              () const;
       virtual DbU::Unit     getDuTarget              () const;
       virtual Interval      getSpanU                 () const;
-      virtual bool          getConstraints           ( DbU::Unit& min, DbU::Unit& max ) const;
+      virtual bool          getConstraints           ( DbU::Unit& min, DbU::Unit& max, Flags flags=Flags::Propagate ) const;
       virtual Interval      getSourceConstraints     ( Flags flags=0 ) const;
       virtual Interval      getTargetConstraints     ( Flags flags=0 ) const;
       virtual DbU::Unit     getNonPrefSourcePosition () const;

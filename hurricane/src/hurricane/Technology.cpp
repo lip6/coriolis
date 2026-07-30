@@ -158,7 +158,7 @@ namespace Hurricane {
   {
     Technology* technology = new Technology( dataBase, name );
     technology->_postCreate();
-    
+
     return technology;
   }
 

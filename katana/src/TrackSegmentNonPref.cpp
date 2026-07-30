@@ -98,6 +98,7 @@ namespace Katana {
     cdebug_log(159,0) << "canPromoteToPref() " << this << endl;
     cdebug_log(159,0) << "_segment->getDirection() " << getDirection() << endl;
     cdebug_log(159,0) << "_segment->isForOffgrid() " << isForOffgrid() << endl;
+    cdebug_log(159,0) << "_segment->isUnbreakable() " << isUnbreakable() << endl;
     cdebug_log(159,0) << "Session::getDirection() " << Session::getDirection(getLayer()) << endl;
     if (Session::getStage() != Anabatic::StageNegociate) return false;
     if (isForOffgrid()) return false;
@@ -196,9 +197,17 @@ namespace Katana {
   {
     if (isInvalidated()) return;
 
+    cdebug_log(155,1) << "TrackSegmentNonPref::invalidate(): " << this << endl;
     Super::invalidate();
 
-    if (getTrack()) reschedule( 0 );
+    TrackSet  packTracks;
+    bool      inTrack = getTrack();
+    detach( packTracks );
+    for ( TrackSet::iterator it=packTracks.begin() ; it != packTracks.end() ; ++it )
+      (*it)->doRemoval();
+
+    if (inTrack) reschedule( 0 );
+    cdebug_tabw(155,-1);
   }
 
 

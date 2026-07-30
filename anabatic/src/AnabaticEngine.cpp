@@ -237,19 +237,22 @@ namespace {
   ReducedCluster::ReducedCluster( AutoSegment* seed )
     : _seed( seed )
   {
+    DebugSession::open( seed->getNet(), 145, 150 );
+    cdebug_log(145,0) << "ReducedCluster() " << seed << endl;
+
     DbU::Unit axis = seed->getAxis();
     for ( AutoSegment* perpandicular : seed->getPerpandiculars() ) {
       if (not perpandicular->isCanonical()) continue;
       if (not perpandicular->isReduced()) continue;
       perpandicular->setMergeReducedDone();
       if (seed->isHorizontal()) {
-        if (perpandicular->getAutoSource()->getY()) {
+        if (perpandicular->getAutoSource()->getY() == axis) {
           _sourceReduceds.push_back( perpandicular );
         } else {
           _targetReduceds.push_back( perpandicular );
         }
       } else {
-        if (perpandicular->getAutoSource()->getX()) {
+        if (perpandicular->getAutoSource()->getX() == axis) {
           _sourceReduceds.push_back( perpandicular );
         } else {
           _targetReduceds.push_back( perpandicular );
@@ -259,11 +262,15 @@ namespace {
 
     sort( _sourceReduceds.begin(), _sourceReduceds.end(), SortByAxis() );
     sort( _targetReduceds.begin(), _targetReduceds.end(), SortByAxis() );
+
+    DebugSession::close();
   }
 
 
   void  ReducedCluster::merge ()
   {
+    DebugSession::open( _seed->getNet(), 145, 150 );
+
     DbU::Unit ppitch = _seed->getPPitch();
     if (_sourceReduceds.size() > 1) {
       size_t i = 1;
@@ -294,40 +301,56 @@ namespace {
     }
 
     Session::revalidate();
+
+    DebugSession::close();
   }
 
   
   void    ReducedCluster::alignForSource ( size_t begin, size_t end )
   {
+    cdebug_log(145,0) << "alignForSource() " << _sourceReduceds.size() << " [" << begin << " " << end << "]" << endl;
     bool      misaligned = false;
+    DbU::Unit longest    = _sourceReduceds[ begin ]->getLength();
     DbU::Unit alignAxis  = _sourceReduceds[ begin ]->getAxis();
+    cdebug_log(145,0) << "alignAxis=" << DbU::getValueString(alignAxis) << endl;
     for ( size_t k=begin ; k<=end ; ++k ) {
       if (_sourceReduceds[k]->getAxis() == alignAxis) continue;
-      if (_sourceReduceds[k]->getAutoTarget()->getLayer() != _sourceReduceds[k]->getLayer()) {
+      if (  (_sourceReduceds[k]->getAutoTarget()->getLayer() != _sourceReduceds[k]->getLayer())
+         or (_sourceReduceds[k]->getLength() > longest) ) {
         alignAxis = _sourceReduceds[ k ]->getAxis();
+        cdebug_log(145,0) << "alignAxis=" << DbU::getValueString(alignAxis) << endl;
       }
       misaligned = true;
     }
     if (not misaligned) return;
-    for ( size_t k=begin ; k<=end ; ++k )
+    for ( size_t k=begin ; k<=end ; ++k ) {
+      cdebug_log(145,0) << "Align " << _sourceReduceds[ k ] << endl;
       _sourceReduceds[ k ]->setAxis( alignAxis );
+    }
   }
 
   
   void    ReducedCluster::alignForTarget ( size_t begin, size_t end )
   {
+    cdebug_log(145,0) << "alignForTarget() " << _targetReduceds.size() << " [" << begin << " " << end << "]" << endl;
     bool      misaligned = false;
+    DbU::Unit longest    = _targetReduceds[ begin ]->getLength();
     DbU::Unit alignAxis  = _targetReduceds[ begin ]->getAxis();
+    cdebug_log(145,0) << "alignAxis=" << DbU::getValueString(alignAxis) << endl;
     for ( size_t k=begin ; k<=end ; ++k ) {
-      if (_sourceReduceds[k]->getAxis() == alignAxis) continue;
-      if (_targetReduceds[k]->getAutoSource()->getLayer() != _targetReduceds[k]->getLayer()) {
+      if (_targetReduceds[k]->getAxis() == alignAxis) continue;
+      if (  (_targetReduceds[k]->getAutoTarget()->getLayer() != _targetReduceds[k]->getLayer())
+         or (_targetReduceds[k]->getLength() > longest) ) {
         alignAxis = _targetReduceds[ k ]->getAxis();
+        cdebug_log(145,0) << "alignAxis=" << DbU::getValueString(alignAxis) << endl;
       }
       misaligned = true;
     }
     if (not misaligned) return;
-    for ( size_t k=begin ; k<=end ; ++k )
+    for ( size_t k=begin ; k<=end ; ++k ) {
+      cdebug_log(145,0) << "Align " << _sourceReduceds[ k ] << endl;
       _targetReduceds[ k ]->setAxis( alignAxis );
+    }
   }
 
 
@@ -1585,6 +1608,16 @@ namespace Anabatic {
   //DebugSession::addToTrace( getCell()->getNet( "abc_30082_new_n3986_hfns_0" ));
   //DebugSession::addToTrace( getCell()->getNet( "abc_71600_new_n14460_hfns_7" ));
   //DebugSession::addToTrace( getCell()->getNet( "abc_71600_new_n3452_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "$abc$30656$new_n3589_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "$abc$30656$new_n3593_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "auto_ff_cc_721_flip_bits_71500_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$12855$new_n565_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n2126_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n2128_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n2123_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.u_top_4data.u_fifo_in.row[1]_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n3069_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n4917_hfns_1" ));
 
     size_t shortNets = 0;
 
@@ -1743,7 +1776,7 @@ namespace Anabatic {
 
     for ( Segment* segment : net->getSegments() ) {
       AutoSegment* autoSegment = Session::lookup( segment );
-      if (autoSegment == NULL) continue;
+      if (not autoSegment) continue;
       if (autoSegment->isInvalidated()) autoSegment->computeTerminal();
     }
 

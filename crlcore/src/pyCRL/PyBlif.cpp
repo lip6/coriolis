@@ -88,13 +88,11 @@ extern "C" {
     Cell* cell = NULL;
     
     HTRY
-      char*     benchName     = NULL;
-      PyObject* pyEnforceVhdl = NULL;
+      char*         benchName = NULL;
+      unsigned int  flags     = 0;
       
-      if (PyArg_ParseTuple( args, "s|O:Blif.load", &benchName, &pyEnforceVhdl )) {
-        bool enforceVhdl = true;
-        if (pyEnforceVhdl and (PyObject_IsTrue(pyEnforceVhdl) == 0)) enforceVhdl = false;
-        cell = Blif::load( benchName, enforceVhdl );
+      if (PyArg_ParseTuple( args, "s|I:Blif.load", &benchName, &flags )) {
+        cell = Blif::load( benchName, flags );
       } else {
         PyErr_SetString ( ConstructorError, "Blif.load(): Bad type or bad number of parameters." );
         return NULL;
@@ -132,6 +130,14 @@ extern "C" {
 
   // Type Definition.
   PyTypeObjectDefinitionsOfModule(CRL,Blif)
+
+
+  extern  void  PyBlif_postModuleInit ()
+  {
+    PyObject* constant;
+    LoadObjectConstant(PyTypeBlif.tp_dict,Blif::NoFlags    ,"NoFlags"    );
+    LoadObjectConstant(PyTypeBlif.tp_dict,Blif::EnforceVhdl,"EnforceVhdl");
+  }
 
 
 #endif  // End of Shared Library Code Part.

@@ -88,15 +88,15 @@ namespace Anabatic {
 
   AutoSegment* AutoContactTurn::getPerpandicular ( const AutoSegment* reference ) const
   {
-    cdebug_log(149,0) << _getTypeName() << "::getPerpandicular() " << this
+    cdebug_log(144,0) << _getTypeName() << "::getPerpandicular() " << this
                       << " to:" << reference << endl;
-    cdebug_log(149,0) << "  | _horizontal1:" << _horizontal1 << endl;
-    cdebug_log(149,0) << "  | _vertical1  :" << _vertical1   << endl;
+    cdebug_log(144,0) << "  | _horizontal1:" << _horizontal1 << endl;
+    cdebug_log(144,0) << "  | _vertical1  :" << _vertical1   << endl;
 
     if (reference == _horizontal1) return _vertical1;
     if (reference == _vertical1  ) return _horizontal1;
 
-    cdebug_log(149,0) << "  " << _getTypeName() << "::getPerpandicular() " << this
+    cdebug_log(144,0) << "  " << _getTypeName() << "::getPerpandicular() " << this
                       << " to:" << reference << " failed." << endl;
 
     return NULL;

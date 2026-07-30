@@ -254,19 +254,30 @@ namespace {
       return;
     }
 
-    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
-    Box           bb          = rp->getBoundingBox();
-    Track*        track       = plane->getTrackByPosition( bb.getXCenter(), Constant::Nearest );
-    DbU::Unit     halfViaSide = AutoSegment::getViaToTopCap( 0 );
-    Box           metal2bb    = Box( bb.getXMin()
-                                   , bb.getYCenter() - halfViaSide
-                                   , bb.getXMax()
-                                   , bb.getYCenter() + halfViaSide
-                                   );
+    RoutingPlane* planeM2       = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    RoutingPlane* planeM3       = Session::getKatanaEngine()->getRoutingPlaneByIndex( 2 );
+    Box           bb            = rp->getBoundingBox();
+    Track*        vtrack        = planeM2->getTrackByPosition( bb.getXCenter(), Constant::Nearest );
+    Track*        htrack        = planeM3->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
+    DbU::Unit     halfViaSideM1 = AutoSegment::getViaToTopCap   ( 0 );
+    DbU::Unit     halfViaSideM2 = AutoSegment::getViaToBottomCap( 1 );
+    Box           onGridBb      = Box( vtrack->getAxis(), htrack->getAxis() ).inflate( halfViaSideM1 );
+    Box           metal2bb      = Box( bb.getXMin()
+                                     , bb.getYCenter() - halfViaSideM2
+                                     , bb.getXMax()
+                                     , bb.getYCenter() + halfViaSideM2
+                                     );
+    cdebug_log(145,0) << "Rp bb " << bb << endl;
+    cdebug_log(145,0) << "On grid bb " << onGridBb << endl;
+    if (bb.contains(onGridBb)) {
+      cdebug_log(145,0) << "Using punctual on grid BB" << endl;
+      metal2bb = Box( vtrack->getAxis(), htrack->getAxis() ).inflate( halfViaSideM2 );
+    }
 
   //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
-    TrackFixedSpan* element = TrackFixedSpan::create( rp->getNet(), metal2bb, track );
-    cdebug_log(145,0) << "halfViaSside=" << DbU::getValueString(halfViaSide) << endl;
+    TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, vtrack );
+    cdebug_log(145,0) << "halfViaSsideM1=" << DbU::getValueString(halfViaSideM1) << endl;
+    cdebug_log(145,0) << "halfViaSsideM2=" << DbU::getValueString(halfViaSideM2) << endl;
     cdebug_log(145,0) << "| " << element << endl;
     
     cdebug_tabw(145,-1);

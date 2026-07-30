@@ -568,6 +568,8 @@ namespace Katana {
 
   TrackCost& Track::addOverlapCost ( TrackCost& cost ) const
   {
+  //show();
+    
           size_t    begin        = npos;
           size_t    end          = npos;
     const Interval& interval     = cost.getInterval();
@@ -660,7 +662,10 @@ namespace Katana {
       Interval overlap = interval.getIntersection( _segments[begin]->getCanonicalInterval() );
       cdebug_log(155,0) << "overlap:" << overlap
                         << " size:" << DbU::getValueString(overlap.getSize()) << endl;
-      if (overlap.getSize() == 0) continue;
+      if (overlap.getSize() == 0) {
+        cdebug_log(155,0) << "  No overlap with " << _segments[begin] << endl;
+        continue;
+      }
       
       if (    (_segments[begin]->getNet() == cost.getNet())
          and ((cost.getRefElement()->getAxis() != getAxis())
@@ -917,6 +922,7 @@ namespace Katana {
     }
 
     segment->setTrack ( this );
+    show();
     cdebug_tabw(155,-1);
   }
 
@@ -946,7 +952,7 @@ namespace Katana {
         if (_segments[i]->isNonPref()) {
           axisSpan = Interval ( _segments[i]->base()->getNonPrefSourcePosition()
                               , _segments[i]->base()->getNonPrefTargetPosition() );
-          axisSpan.inflate( _segments[i]->base()->getExtensionCap( Anabatic::Flags::NoFlags ));
+          axisSpan.inflate( _segments[i]->base()->getExtensionCap( Anabatic::Flags::Source ));
           inTrackRange = axisSpan.contains( _axis );
         } else {
           Interval trackRange ( _segments[i]->getAxis() - (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2
@@ -977,9 +983,8 @@ namespace Katana {
           }
         }
         if ( (_segments[i]->getAxis() != getAxis()) and not inTrackRange ) {
-          cerr << "[CHECK] Incoherency at " << i << " "
-               << _segments[i] << " is not on Track axis "
-               << DbU::getValueString(getAxis()) << "." << endl;
+          cerr << "[CHECK] Incoherency at " << i << " " << _segments[i]
+               << "\n        is not on Track axis " << DbU::getValueString(getAxis()) << "." << endl;
           coherency = false;
         } 
         
@@ -1147,6 +1152,7 @@ namespace Katana {
     }
     _segments.erase( beginRemove, _segments.end() );
 
+  //show();
     cdebug_log(155,0) << "After doRemoval " << this << endl;
     cdebug_tabw(155,-1);
 
@@ -1201,7 +1207,7 @@ namespace Katana {
   {
     if (getLayerGauge()->getType() != Constant::LayerGaugeType::Default) return 0;
 
-  //if ((getIndex() == 428) and isHorizontal()) DebugSession::open( 150, 160 );
+  //if ((getIndex() == 532) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::repair() " << this << endl;
     
     if (_segments.empty()) {
@@ -1378,8 +1384,58 @@ namespace Katana {
     if (spacing > 10*getLayerGauge()->getPitch())
       fillHole( lastTargetU, getMax() );
 
-  //if ((getIndex() == 428) and isHorizontal()) DebugSession::close();
+  //if ((getIndex() == 532) and isHorizontal()) DebugSession::close();
     return gaps;
+  }
+
+
+  void  Track::disableNearMinArea () const
+  {
+    DbU::Unit halfMinSpacing = -getLayer()->getMinimalSpacing() / 2;
+    DbU::Unit longLocal      = 0;
+
+    for ( size_t i=0 ; i+1<_segments.size() ; ++i ) {
+      if (not longLocal) longLocal = _segments[i]->getPPitch() * 3;
+      if (_segments[i]->getLength() < longLocal) continue;
+
+      Interval globalSpan = Interval( _segments[i]->getSourceU()
+                                    , _segments[i]->getTargetU() ).inflate( halfMinSpacing );
+      if (globalSpan.isEmpty()) continue;
+      if (i > 0) {
+        for ( size_t j=i ; j>0 ; --j ) {
+          if (not _segments[j-1]->base()) continue;
+          if (_segments[j-1]->getNet() != _segments[i]->getNet()) break;
+          if (_segments[j-1]->isGlobal()) break;
+          
+          if (_segments[j-1]->isLocal()) {
+            Interval localSpan = Interval( _segments[j-1]->getSourceU()
+                                         , _segments[j-1]->getTargetU() ).inflate( halfMinSpacing );
+            if (globalSpan.intersect(localSpan)) {
+              _segments[j-1]->base()->setFlags( Anabatic::AutoSegment::SegMinAreaDisabled );
+              cerr << "Disabling min area on " << _segments[j-1] << endl;
+              cerr << "  -> included (before) in " << _segments[i] << endl;
+            }
+          }
+        }
+      }
+      if (i+1 < _segments.size()) {
+        for ( size_t j=i ; j+1<_segments.size() ; ++j ) {
+          if (not _segments[j+1]->base()) continue;
+          if (_segments[j+1]->getNet() != _segments[i]->getNet()) break;
+          if (_segments[j+1]->isGlobal()) break;
+          
+          if (_segments[j+1]->isLocal()) {
+            Interval localSpan = Interval( _segments[j+1]->getSourceU()
+                                         , _segments[j+1]->getTargetU() ).inflate( halfMinSpacing );
+            if (globalSpan.intersect(localSpan)) {
+              _segments[j+1]->base()->setFlags( Anabatic::AutoSegment::SegMinAreaDisabled );
+              cerr << "Disabling min area on " << _segments[j+1] << endl;
+              cerr << "  -> included (after) in " << _segments[i] << endl;
+            }
+          }
+        }
+      }
+    }
   }
 
 
@@ -1466,7 +1522,7 @@ namespace Katana {
   {
     if (_segments.empty()) return 0;
 
-  //if ((getIndex() == 432) and isHorizontal()) DebugSession::open( 150, 160 );
+  //if ((getIndex() == 15) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::checkMinArea() " << this << endl;
 
     DbU::Unit halfMinSpacing = getLayer()->getMinimalSpacing() / 2;
@@ -1542,7 +1598,7 @@ namespace Katana {
     }
 
     cdebug_log(159,0) << "  Track done." << endl;
-  //if ((getIndex() == 432) and isHorizontal()) DebugSession::close();
+  //if ((getIndex() == 15) and isHorizontal()) DebugSession::close();
     return nonMinArea;
   }
 
@@ -1598,6 +1654,18 @@ namespace Katana {
       expandToMinArea( minSegment, maxSegment, span, prevSpanMin, getMax() );
   }
 
+
+  void  Track::show () const
+  {
+    if ((getIndex() != 330) or not isHorizontal()) return;
+
+    cdebug_log(155,1) << "Track::show() " << this << endl;
+    for ( size_t i=0 ; i<_segments.size() ; i++ ) {
+      cdebug_log(155,0) << "[" << i << "] " << _segments[i] << endl;
+    }
+    cdebug_tabw(155,-1);
+  }
+  
 
   string  Track::_getString () const
   {

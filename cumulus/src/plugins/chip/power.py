@@ -179,7 +179,7 @@ class Builder ( object ):
     def __init__ ( self, conf ):
         self.conf        = conf
         self.path        = Path()
-        self.corona      = self.conf.icorona.getMasterCell()
+        self.corona      = self.conf.corona
         self.icoreAb     = self.conf.icore.getAbutmentBox()
         self.planes      = {}
         self.activePlane = None

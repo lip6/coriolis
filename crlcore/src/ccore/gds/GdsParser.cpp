@@ -847,6 +847,9 @@ namespace {
       }
     }
 
+    cell = DataBase::getDB()->getCell( cellName );
+    if (cell) return cell;
+
     if (not create) return nullptr;
 
     cparanoid << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
@@ -2174,7 +2177,7 @@ namespace CRL {
     GdsStream gstream ( gdsPath, flags );
 
     if (not gstream.read( library ))
-      cerr << Error( "Gds::load(): An error occurred while reading GDSII stream\n"
+      cerr << Error( "Gds::load(): An error occurred while reading the GDSII stream\n"
                      "        \"%s\"."
                    , gdsPath.c_str()
                    ) << endl;

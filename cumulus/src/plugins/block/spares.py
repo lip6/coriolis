@@ -27,6 +27,7 @@ from   ...helpers         import trace, dots, l, u, n
 from   ...helpers.io      import ErrorMessage, WarningMessage, catch
 from   ...helpers.overlay import UpdateSession
 from   ..                 import getParameter, utils
+from   .configuration     import FeedsConf
 
 
 framework = AllianceFramework.get()
@@ -1045,10 +1046,11 @@ class Spares ( object ):
         transf = Transformation( x, y, orientation )
         return transf
 
-    def _addCapTies ( self ):
-        if self.conf.cfg.etesian.latchUpDistance is None:
+    def _addEndcaps ( self ):
+        trace( 540, ',+', '\tSpares._addEndcaps()\n' )
+        if not self.conf.useEndcaps:
+            trace( 550, ',-', '\tEndcap disableds\n' )
             return
-        trace( 540, ',+', '\tSpares._addCapTies()\n' )
         area = self.quadTree.area
         #area = self.conf.cell.getAbutmentBox()
         #if self.conf.isCoreBlock:
@@ -1056,17 +1058,17 @@ class Spares ( object ):
         #    self.conf.icore.getTransformation().applyOn( area )
         y           = area.getYMin()
         sliceHeight = self.conf.sliceHeight 
-        tieWidth    = self.conf.feedsConf.tieWidth()
+        endcapWidth = self.conf.feedsConf.endcapWidth()
         trace( 540, '\tarea:{}, y:{}\n'.format( area, DbU.getValueString(y) ))
         while y < area.getYMax():
-            capTie = self.conf.createFeed()
-            capTie.setTransformation ( self._getTransformation(area.getXMin(),y) )
-            capTie.setPlacementStatus( Instance.PlacementStatus.FIXED )
-            trace( 540, '\t{} @{}\n'.format( capTie, capTie.getTransformation() ))
-            capTie = self.conf.createFeed()
-            capTie.setTransformation ( self._getTransformation(area.getXMax()-tieWidth,y) )
-            capTie.setPlacementStatus( Instance.PlacementStatus.FIXED )
-            trace( 540, '\t{} @{}\n'.format( capTie, capTie.getTransformation() ))
+            endcap = self.conf.feedsConf.createEndcap( self.conf.corona, FeedsConf.LEFT )
+            endcap.setTransformation ( self._getTransformation(area.getXMin(),y) )
+            endcap.setPlacementStatus( Instance.PlacementStatus.FIXED )
+            trace( 540, '\t{} @{}\n'.format( endcap, endcap.getTransformation() ))
+            endcap = self.conf.feedsConf.createEndcap( self.conf.corona, FeedsConf.RIGHT )
+            endcap.setTransformation ( self._getTransformation(area.getXMax()-endcapWidth,y) )
+            endcap.setPlacementStatus( Instance.PlacementStatus.FIXED )
+            trace( 540, '\t{} @{}\n'.format( endcap, endcap.getTransformation() ))
             y += sliceHeight
         trace( 540, ',-' )
 
@@ -1079,7 +1081,7 @@ class Spares ( object ):
                                        , DbU.getValueString(7*self.conf.sliceHeight ) ))
         with UpdateSession():
             self.quadTree = QuadTree.create( self )
-            #self._addCapTies()
+            self._addEndcaps()
             trace( 540, "\tX Centers of the QuadTree leaf\n" )
             for x in self.quadTree.rleafX:
                 trace( 540, '\t| {}\n'.format(DbU.getValueString(x) ))

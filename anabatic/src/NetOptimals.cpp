@@ -66,8 +66,8 @@ namespace Anabatic {
     cdebug_tabw(145,1);
 
     vector<AutoSegment*> segments;
-   forEach ( Segment*, segment, net->getSegments() ) {
-      AutoSegment* autoSegment = Session::lookup( *segment );
+    for ( Segment* segment : net->getSegments() ) {
+      AutoSegment* autoSegment = Session::lookup( segment );
       if (autoSegment) segments.push_back( autoSegment );
     }
     sort( segments.begin(), segments.end(), AutoSegment::CompareId() );

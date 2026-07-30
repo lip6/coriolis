@@ -396,7 +396,7 @@ namespace Katana {
       Track* track = refTrack;
       for ( size_t ispan=0 ; track and (ispan < trackSpan) ; ++ispan, track=track->getNextTrack() ) {
         autoSegment->getCanonical( fixedSpan );
-        fixedSpan.inflate( Session::getExtensionCap(autoSegment->getLayer())-1 );
+        fixedSpan.inflate( autoSegment->getExtensionCap( Anabatic::Flags::Source ));
 
         track->getOverlapBounds( fixedSpan, begin, end );
         for ( ; (begin < end) ; begin++ ) {
@@ -406,7 +406,7 @@ namespace Katana {
           if (not other->isBlockage()) continue;
 
           other->getCanonical( blockageSpan );
-          blockageSpan.inflate( Session::getExtensionCap(autoSegment->getLayer()) );
+          blockageSpan.inflate( autoSegment->getExtensionCap( Anabatic::Flags::Source ));
 
           cdebug_log(159,0) << "  fixed:" << fixedSpan << " vs. blockage:" << blockageSpan << endl;
           if (not fixedSpan.intersect(blockageSpan)) continue;
@@ -699,9 +699,9 @@ namespace Katana {
       //   _negociatePack( count, false );
       // } 
          
-      // if (RoutingEvent::getProcesseds() == 2570) {
+      // if (RoutingEvent::getProcesseds() == 884) {
       //   UpdateSession::close();
-      //   Breakpoint::stop( 0, "After event 2570" );
+      //   Breakpoint::stop( 0, "After event 884" );
       //   UpdateSession::open();
       // }
       if (RoutingEvent::getProcesseds() >= limit) {
@@ -763,7 +763,7 @@ namespace Katana {
         // }
       }
 
-      _negociateRepair();
+    //_negociateRepair();
     }
 
     _negociatePack( count, true );
@@ -805,9 +805,7 @@ namespace Katana {
           
       DebugSession::open( event->getSegment()->getNet(), 159, 160 );
 
-      if ( event and not event->isCloned()
-         and not event->getSegment()->isReduced()
-         and     event->getSegment()->isUTurn() ) {
+      if ( event and not event->isPackable()) {
       //if (event->getSegment()->getId() != 566821) continue;
 
         event->reschedule( _eventQueue, 0 );

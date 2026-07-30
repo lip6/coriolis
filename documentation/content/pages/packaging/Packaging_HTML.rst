@@ -21,4 +21,5 @@ Packaging Notes
    :depth: 1
 
 .. include:: OBS.rst
+.. include:: FastRpmDeployment.rst
 

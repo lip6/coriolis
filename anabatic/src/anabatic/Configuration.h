@@ -136,6 +136,8 @@ namespace Anabatic {
       inline  int                getVlargeThreshold   () const;
       inline  DbU::Unit          getSmallNetWidth     () const;
       inline  DbU::Unit          getSmallNetHeight    () const;
+      inline  float              getLayerAssignSeedMoveUpReserve  () const;
+      inline  float              getLayerAssignTrunkMoveUpReserve () const;
               void               setAllowedDepth      ( size_t );
               void               setSaturateRatio     ( float );
               void               setSaturateRp        ( size_t );
@@ -183,6 +185,8 @@ namespace Anabatic {
       float                   _lowDensity;
       float                   _lowUpDensity;
       float                   _moveUpReserve;
+      float                   _layerAssignSeedMoveUpReserve;
+      float                   _layerAssignTrunkMoveUpReserve;
       DbU::Unit               _edgeLength;
       DbU::Unit               _edgeWidth;
       float                   _edgeCostH;
@@ -227,6 +231,8 @@ namespace Anabatic {
   inline  float        Configuration::getLowDensity        () const { return _lowDensity; }
   inline  float        Configuration::getLowUpDensity      () const { return _lowUpDensity; }
   inline  float        Configuration::getMoveUpReserve     () const { return _moveUpReserve; }
+  inline  float        Configuration::getLayerAssignSeedMoveUpReserve  () const { return _layerAssignSeedMoveUpReserve; }
+  inline  float        Configuration::getLayerAssignTrunkMoveUpReserve () const { return _layerAssignTrunkMoveUpReserve; }
   inline  float        Configuration::getGCellAspectRatio  () const { return _gcellAspectRatio; }
   inline  float        Configuration::getSaturateRatio     () const { return _saturateRatio; }
   inline  size_t       Configuration::getSaturateRp        () const { return _saturateRp; }

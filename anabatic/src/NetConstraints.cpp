@@ -114,7 +114,7 @@ namespace {
 
             contact = aligned->getAutoTarget();
             cdebug_log(146,0) << "contact: " << contact << endl;
-            if (contact) {
+            if (contact and not contact->isTerminal()) {
               cdebug_log(146,0) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
@@ -122,7 +122,7 @@ namespace {
             }
             contact = aligned->getAutoSource();
             cdebug_log(146,0) << "contact: " << contact << endl;
-            if (contact) {
+            if (contact and not contact->isTerminal()) {
               cdebug_log(146,0) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
@@ -165,7 +165,8 @@ namespace {
               if (turn) {
                 AutoSegment* parallel = turn->getPerpandicular( perpandicular );
                 cdebug_log(149,0) << "parallel: " << parallel << endl;
-                if (   not parallel->isNonPref()
+                if (       parallel
+                   and not parallel->isNonPref()
                    and not parallel->isGlobal()) {
                   AutoContact* oppositeTurn   = parallel->getOppositeAnchor( turn );
                   Box          segConstraints = oppositeTurn->getConstraintBox();
@@ -180,6 +181,13 @@ namespace {
                     if (parallel->getBreakLevel() > 0) {
                       cdebug_log(146,0) << "Applies on parallel turn " << turn << endl;
                       oppositeTurn->setConstraintBox( parallelConstraint );
+                    } else {
+                      // DbU::Unit axis = (parallel->isVertical() ? parallelConstraint.getXCenter()
+                      //                                          : parallelConstraint.getYCenter());
+                      // cdebug_log(146,0) << "Set parallel on axis " << DbU::getValueString(axis) << endl;
+                      // parallel->setAxis( axis, Flags::Force );
+                      // parallel->setFlags( AutoSegment::SegAxisSet );
+                      // cdebug_log(146,0) << parallel << endl;
                     }
                   }
                 }
@@ -195,20 +203,42 @@ namespace {
           AutoContact* contact = nullptr;
           for ( AutoSegment* aligned : vertical->getAligneds(Flags::WithSelf) ) {
             cdebug_log(146,0) << "aligned vertical: " << aligned << endl;
+            DbU::Unit    pitch          = vertical->getPitch();
+            AutoSegment* perpandNonPref = nullptr;
+            AutoContact* opposite       = nullptr;
 
             contact = aligned->getAutoTarget();
-            if (contact) {
+            if (contact and not contact->isTerminal()) {
               cdebug_log(146,0) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , Flags::Vertical|Flags::WarnOnError );
+              perpandNonPref = contact->getPerpandicular( aligned );
+              if (perpandNonPref) {
+                if (not perpandNonPref->isNonPref()) perpandNonPref = nullptr;
+                else
+                  opposite = perpandNonPref->getOppositeAnchor( contact );
+              }
             }
             contact = aligned->getAutoSource();
-            if (contact) {
+            if (contact and not contact->isTerminal()) {
               cdebug_log(146,0) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , Flags::Vertical|Flags::WarnOnError );
+              perpandNonPref = contact->getPerpandicular( aligned );
+              if (perpandNonPref) {
+                if (not perpandNonPref->isNonPref()) perpandNonPref = nullptr;
+                else
+                  opposite = perpandNonPref->getOppositeAnchor( contact );
+              }
+            }
+            if (perpandNonPref and rp->isHSmall()) {
+              opposite->restrictConstraintBox( constraintBox.getXMin() - 2*pitch
+                                             , constraintBox.getXMax() + 2*pitch
+                                             , Flags::Vertical|Flags::WarnOnError );
+              cdebug_log(146,0) << "Vertical+Horizontal NP contact " << opposite << endl;
+              cdebug_log(146,0) << "-> non-pref constraint " << opposite->getConstraintBox() << endl;
             }
           } 
         }
@@ -297,7 +327,7 @@ namespace Anabatic {
           vector<GCell*> gcells;
           segment->getGCells( gcells );
 
-          if (gcells.size() < 3)
+          if ((gcells.size() < 3) and Session::isHV())
             segment->setFlags( AutoSegment::SegUnbreakable );
         }
 
@@ -370,21 +400,20 @@ namespace Anabatic {
       if (autoSegment->isUnbreakable()) continue;
       if (autoSegment->getRpDistance() >= 1) continue;
 
-      vector<GCell*> gcells;
-      autoSegment->getGCells( gcells );
+      if (not autoSegment->isNonPref()) {
+        AutoContact* turn = autoSegment->getAutoSource();
+        if (not turn->isTurn()) turn = autoSegment->getAutoTarget();
+        if (not turn->isTurn()) continue;
+        AutoSegment* perpandicular = turn->getPerpandicular( autoSegment );
+        if (perpandicular->isGlobal()) continue;
 
-      if     (gcells.size() >  2) continue;
-    //if (   (gcells.size() == 2)
-    //   and (  not autoSegment->getAutoSource()->isTerminal()
-    //       or not autoSegment->getAutoTarget()->isTerminal()) ) continue;
-
+        vector<GCell*> gcells;
+        autoSegment->getGCells( gcells );
+        if (gcells.size() >  2) continue;
+      }
+      
       autoSegment->setFlags( AutoSegment::SegUnbreakable );
     }
-
-    // forEach ( Segment*, isegment, net->getSegments() ) {
-    //   AutoSegment* autoSegment = Session::lookup( *isegment );
-    //   if (autoSegment) autoSegment->toConstraintAxis();
-    // }
 
     cdebug_tabw(146,-1);
     DebugSession::close();

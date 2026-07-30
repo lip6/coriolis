@@ -34,7 +34,9 @@
 #include "hurricane/DBos.h"
 #include "hurricane/Name.h"
 #include "hurricane/Properties.h"
+#include "hurricane/Collection.h"
 
+#include <algorithm>
 
 namespace Hurricane {
 
@@ -134,6 +136,155 @@ namespace Hurricane {
   {
     JsonObject::update<T>( stack, hobject );
     stack.push_back_dbo( dynamic_cast<DBo*>(hobject) );
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "CachedVector".
+
+  template<typename DBoT>
+  class CachedVector : public Hurricane::Collection<DBoT> {
+
+    public:
+    // Sub-Class: Locator.
+      class Locator : public Hurricane::Locator<DBoT> {
+        public:
+          inline                            Locator    ( Collection<DBoT>* dbos );
+          inline                            Locator    ( const Locator& locator );
+          virtual DBoT                      getElement () const;
+          virtual Hurricane::Locator<DBoT>* getClone   () const;
+          virtual bool                      isValid    () const;
+          virtual void                      progress   ();
+          virtual string                    _getString () const;
+        protected:
+          std::vector<DBoT>  _dbos;
+          size_t             _index;
+      };
+
+    public:
+    // CachedVector Methods.
+                                           CachedVector ( GenericCollection<DBoT> );
+                                           CachedVector ( const Collection<DBoT>& );
+                                           CachedVector ( const CachedVector& );
+                                          ~CachedVector ();
+      virtual unsigned                     getSize      () const;
+      virtual Hurricane::Collection<DBoT>* getClone     () const;
+	  virtual Hurricane::Locator<DBoT>*    getLocator   () const;
+      virtual string                       _getString   () const;
+    private:
+      Collection<DBoT>* _collection;
+  };
+
+
+  template<typename DBoT>
+  inline CachedVector<DBoT> asCachedVector ( GenericCollection<DBoT> dbos )
+  { return CachedVector( dbos ); }
+
+
+  template<typename DBoT>
+  inline CachedVector<DBoT> asCachedVector ( const Collection<DBoT>& dbos )
+  { return CachedVector( dbos ); }
+
+
+  template<typename DBoT>
+  inline CachedVector<DBoT>::CachedVector ( GenericCollection<DBoT> dbos )
+    : Hurricane::Collection<DBoT>()
+    , _collection( dbos->getClone() )
+  { }
+
+
+  template<typename DBoT>
+  inline CachedVector<DBoT>::CachedVector ( const Collection<DBoT>& dbos )
+    : Hurricane::Collection<DBoT>()
+    , _collection( dbos.getClone() )
+  { }
+
+
+  template<typename DBoT>
+  inline CachedVector<DBoT>::CachedVector ( const CachedVector& other )
+    : Hurricane::Collection<DBoT>()
+    , _collection( nullptr )
+  {
+    if (other._collection) _collection = other._collection->getClone();
+  }
+
+
+  template<typename DBoT>
+  inline CachedVector<DBoT>::~CachedVector ()
+  { delete _collection; }
+
+
+  template<typename DBoT>
+  unsigned  CachedVector<DBoT>::getSize () const
+  { return _collection->getSize(); }
+
+
+  template<typename DBoT>
+  Hurricane::Collection<DBoT>* CachedVector<DBoT>::getClone () const
+  { return new CachedVector(*this); }
+
+
+  template<typename DBoT>
+  Hurricane::Locator<DBoT>* CachedVector<DBoT>::getLocator () const
+  { return new Locator(_collection); }
+
+
+  template<typename DBoT>
+  CachedVector<DBoT>::Locator::Locator ( Collection<DBoT>* dbos )
+    : Hurricane::Locator<DBoT>()
+    , _dbos ()
+    , _index(0)
+  {
+    for ( const DBoT dbo : *dbos ) _dbos.push_back( dbo );
+    std::sort( _dbos.begin(), _dbos.end(), DBo::CompareById() );
+  }
+
+
+  template<typename DBoT>
+  inline CachedVector<DBoT>::Locator::Locator ( const Locator &locator )
+    : Hurricane::Locator<DBoT>()
+    , _dbos (locator._dbos)
+    , _index(locator._index)
+  { }
+
+
+  template<typename DBoT>
+  Hurricane::Locator<DBoT>* CachedVector<DBoT>::Locator::getClone () const
+  { return new Locator(*this); }
+
+
+  template<typename DBoT>
+  bool  CachedVector<DBoT>::Locator::isValid () const
+  { return _index < _dbos.size(); }
+
+
+  template<typename DBoT>
+  void  CachedVector<DBoT>::Locator::progress ()
+  { if (isValid()) _index++; }
+
+
+  template<typename DBoT>
+  string  CachedVector<DBoT>::Locator::_getString () const
+  {
+    string s = "<" + _TName("CachedVector::Locator") + " "
+                   + ::getString(_index) + "/"
+                   + ::getString(_dbos.size())
+                   + ">";
+    return s;
+  }
+
+
+  template<typename DBoT>
+  DBoT  CachedVector<DBoT>::Locator::getElement () const
+  { return isValid() ? _dbos[_index] : nullptr; }
+
+
+  template<typename DBoT>
+  string  CachedVector<DBoT>::_getString () const
+  {
+    string s = "<" + _TName("CachedVector") + " "
+                   + ">";
+    return s;
   }
 
 

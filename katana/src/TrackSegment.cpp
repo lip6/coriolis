@@ -16,6 +16,7 @@
 
 #include <sstream>
 #include <limits>
+#include <algorithm>
 #include "hurricane/Bug.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
@@ -109,25 +110,6 @@ namespace Katana {
                << " [" << (void*)_base << ", "
                << (void*)(_base?_base->base():NULL) << "]" << endl;
     cdebug_log(160,0) << "  " << this << endl;
-
-    DbU::Unit length = base()->getAnchoredLength();
-    if ( (length > 0) and (length < getPPitch()) ) {
-      cdebug_log(160,0) << "Length below P-Pitch -> adjusting width ("
-                        << DbU::getValueString(length) << ")" << endl;
-      BasicLayer* layer  = getLayer()->getBasicLayers().getFirst();
-      DbU::Unit   width  = base()->getWidth();
-      Contact*    source = base()->getAutoSource()->base();
-      Contact*    target = base()->getAutoTarget()->base();
-      if (isHorizontal()) {
-        width = std::max( width, source->getBoundingBox(layer).getHeight() );
-        width = std::max( width, target->getBoundingBox(layer).getHeight() );
-      } else {
-        width = std::max( width, source->getBoundingBox(layer).getWidth() );
-        width = std::max( width, target->getBoundingBox(layer).getWidth() );
-      }
-      cdebug_log(160,0) << "Set width to " << DbU::getValueString(width) << endl;
-      base()->base()->setWidth( width );
-    }
 
     base()->setObserver( AutoSegment::Observable::TrackSegment, NULL );
     TrackElement::_preDestroy();
@@ -226,7 +208,13 @@ namespace Katana {
   TrackElement*  TrackSegment::getSymmetric         () { return _symmetric; }
   TrackElements  TrackSegment::getPerpandiculars    () { return new TrackElements_Perpandiculars(this); }
 // Mutators.
-  void           TrackSegment::invalidate           () { setFlags( TElemInvalidated ); _base->invalidate(); }
+
+  void  TrackSegment::invalidate ()
+  {
+    cdebug_log(155,1) << "TrackSegment::invalidate(): " << this << endl;
+    setFlags( TElemInvalidated ); _base->invalidate();
+    cdebug_tabw(155,-1);
+  }
 
 
   DbU::Unit  TrackSegment::getSourceAxis () const
@@ -545,6 +533,9 @@ namespace Katana {
   {
     cdebug_log(159,1) << "TrackSegment::reschedule() - " << this << endl;
 
+    if (Session::getStage() == Anabatic::StageRealign)
+      level = std::max( level, (uint32_t)1 );
+
     if (not _data or not _data->hasRoutingEvent())
       Session::getNegociateWindow()->addRoutingEvent( this, level );
     else {
@@ -787,6 +778,7 @@ namespace Katana {
                           << DbU::getValueString( getLength() )
                           << "/" << getBreakLevel()
                           << endl;
+        return false;
       }
     }
 
@@ -953,8 +945,18 @@ namespace Katana {
       return false;
     }
 
-    if (hasSourceDogleg() or hasTargetDogleg() or isSlackened()) {
-      cdebug_log(159,0) << "Failed: already has source and/or target dogleg or slackened." << endl;
+    if (isSlackened()) {
+      cdebug_log(159,0) << "Failed: already slackened." << endl;
+      return false;
+    }
+
+    if (hasSourceDogleg()) {
+      cdebug_log(159,0) << "Failed: already has source dogleg." << endl;
+      return false;
+    }
+
+    if (hasTargetDogleg()) {
+      cdebug_log(159,0) << "Failed: already has target dogleg." << endl;
       return false;
     }
 
@@ -981,22 +983,22 @@ namespace Katana {
   }
 
 
-
   TrackElement* TrackSegment::promoteToPref ()
   {
-    TrackElement* perpandicular = nullptr;
-    TrackElement* parallel      = nullptr;
+    cdebug_log(159,1) << "TrackSegment::promoteToPref() " << this << endl;
 
     base()->setObserver( AutoSegment::Observable::TrackSegment, nullptr );
     DataNegociate* data = getDataNegociate();
     if (data and data->hasRoutingEvent())
       data->getRoutingEvent()->setDisabled( true );
 
-    base()->promoteToPref( Flags::NoFlags );
+    if (base()->isNonPref())
+      base()->promoteToPref( Flags::NoFlags );
+    TrackElement* perpandicular = nullptr;
+    TrackElement* parallel      = nullptr;
     _postDoglegs( perpandicular, parallel );
 
-    cdebug_log(159,0) << "TrackSegment::promoteToPref() " << this << endl;
-
+    cdebug_tabw(159,-1);
     return perpandicular;
   }
   
@@ -1091,9 +1093,13 @@ namespace Katana {
             Session::lookup( sourcePp )->reschedule( nonPrefLevel );
         }
 
-        cdebug_log(159,0) << "Looking up new perpand:  " << doglegs[i+1] << endl;
-        segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+1],0) );
-        segments[i+1]->setFlags( TElemSourceDogleg|TElemTargetDogleg  );
+        if (doglegs[i+1]) {
+          cdebug_log(159,0) << "Looking up new perpand:  " << doglegs[i+1] << endl;
+          segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+1],0) );
+          segments[i+1]->setFlags( TElemSourceDogleg|TElemTargetDogleg  );
+        } else {
+          segments.push_back( nullptr );
+        }
 
         cdebug_log(159,0) << "Looking up new parallel: " << doglegs[i+2] << endl;
         if (doglegs[i+2]) {

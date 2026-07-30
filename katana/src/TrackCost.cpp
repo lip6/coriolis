@@ -113,9 +113,10 @@ namespace Katana {
   {
     if (lhs->isInfiniteOrSpanRp() xor rhs->isInfiniteOrSpanRp()) return rhs->isInfiniteOrSpanRp();
     if (lhs->isAtRipupLimit()     xor rhs->isAtRipupLimit())     return rhs->isAtRipupLimit();
-    if (lhs->isBlacklisted ()     xor rhs->isBlacklisted ())     return rhs->isBlacklisted();
-    if (Session::getStage() < Anabatic::StageRepair)
+    if (Session::getStage() < Anabatic::StagePack) {
+      if (lhs->isBlacklisted ()     xor rhs->isBlacklisted ())     return rhs->isBlacklisted();
       if (lhs->isForcedAxisChange() xor rhs->isForcedAxisChange()) return rhs->isForcedAxisChange();
+    }
 
     if (   (_flags & TrackCost::DiscardGlobals)
        and (lhs->isOverlapGlobal() xor rhs->isOverlapGlobal()) )

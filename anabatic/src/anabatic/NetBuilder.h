@@ -131,43 +131,44 @@ namespace Anabatic {
 
   class NetBuilder {
     public:
-      enum FunctionFlags { NoFlags         = 0
-                         , SortDecreasing  = (1 <<  0)
-                         , HAccess         = (1 <<  1)
-                         , HAccessEW       = (1 <<  2)
-                         , VLarge          = (1 <<  3)
-                         , VSmall          = (1 <<  4)
-                         , HSmall          = (1 <<  5)
-                         , Punctual        = (1 <<  6)
-                         , M1Offgrid       = (1 <<  7)
-                         , HCollapse       = (1 <<  8)
-                         , VCollapse       = (1 <<  9)
-                         , Terminal        = (1 << 10)
-                         , DoSourceContact = (1 << 11)
-                         , DoTargetContact = (1 << 12)
-                         , SouthBound      = (1 << 13)
-                         , NorthBound      = (1 << 14)
-                         , WestBound       = (1 << 15)
-                         , EastBound       = (1 << 16)
-                         , Middle          = (1 << 17)
-                         , UseNonPref      = (1 << 18)
-                         , NoProtect       = (1 << 19)
-                         , ToUpperRouting  = (1 << 20)
-                         , AddHNonPref     = (1 << 21)
-                         , HBothAccess     = HAccess|HAccessEW
-                         , SouthWest       = SouthBound|WestBound
-                         , NorthEast       = NorthBound|EastBound
-                         };
-      enum TopologyFlag  { Global_Vertical_End   = (1 << 0)
-                         , Global_Horizontal_End = (1 << 1)
-                         , Global_Horizontal     = (1 << 2)
-                         , Global_Vertical       = (1 << 3)
-                         , Global_Turn           = (1 << 4)
-                         , Global_Fork           = (1 << 5)
-                         , Global_Fixed          = (1 << 6)
-                         , Global_End            = Global_Vertical_End | Global_Horizontal_End
-                         , Global_Split          = Global_Horizontal | Global_Vertical | Global_Fork
-                         };
+    // Function flags.
+      static const uint32_t  NoFlags         =  0;
+      static const uint32_t  SortDecreasing  = (1 <<  0);
+      static const uint32_t  HAccess         = (1 <<  1);
+      static const uint32_t  HAccessEW       = (1 <<  2);
+      static const uint32_t  VAccessNS       = (1 <<  3);
+      static const uint32_t  VLarge          = (1 <<  4);
+      static const uint32_t  VSmall          = (1 <<  5);
+      static const uint32_t  HSmall          = (1 <<  6);
+      static const uint32_t  Punctual        = (1 <<  7);
+      static const uint32_t  M1Offgrid       = (1 <<  8);
+      static const uint32_t  HCollapse       = (1 <<  9);
+      static const uint32_t  VCollapse       = (1 << 10);
+      static const uint32_t  Terminal        = (1 << 11);
+      static const uint32_t  DoSourceContact = (1 << 12);
+      static const uint32_t  DoTargetContact = (1 << 13);
+      static const uint32_t  SouthBound      = (1 << 14);
+      static const uint32_t  NorthBound      = (1 << 15);
+      static const uint32_t  WestBound       = (1 << 16);
+      static const uint32_t  EastBound       = (1 << 17);
+      static const uint32_t  Middle          = (1 << 18);
+      static const uint32_t  UseNonPref      = (1 << 19);
+      static const uint32_t  NoProtect       = (1 << 20);
+      static const uint32_t  ToUpperRouting  = (1 << 21);
+      static const uint32_t  AddHNonPref     = (1 << 22);
+      static const uint32_t  HBothAccess     = HAccess|HAccessEW;
+      static const uint32_t  SouthWest       = SouthBound|WestBound;
+      static const uint32_t  NorthEast       = NorthBound|EastBound;
+    // Topology flags.
+      static const uint32_t  Global_Vertical_End   = (1 << 0);
+      static const uint32_t  Global_Horizontal_End = (1 << 1);
+      static const uint32_t  Global_Horizontal     = (1 << 2);
+      static const uint32_t  Global_Vertical       = (1 << 3);
+      static const uint32_t  Global_Turn           = (1 << 4);
+      static const uint32_t  Global_Fork           = (1 << 5);
+      static const uint32_t  Global_Fixed          = (1 << 6);
+      static const uint32_t  Global_End            = Global_Vertical_End | Global_Horizontal_End;
+      static const uint32_t  Global_Split          = Global_Horizontal | Global_Vertical | Global_Fork;
 
     // Connexity Union Type.
       union UConnexity {

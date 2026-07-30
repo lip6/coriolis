@@ -79,8 +79,10 @@ namespace Katana {
     cdebug_log(155,1) << "RoutingPlane::destroy() - "
                       << (void*)this << " " << this << endl;
 
-    for ( size_t index=0 ; index<_tracks.size() ; ++index )
+    for ( size_t index=0 ; index<_tracks.size() ; ++index ) {
+    //_tracks[index]->disableNearMinArea();
       _tracks[index]->destroy();
+    }
 
     delete this;
 

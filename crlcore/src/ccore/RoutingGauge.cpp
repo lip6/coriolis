@@ -206,11 +206,12 @@ namespace CRL {
 
   RoutingLayerGauge* RoutingGauge::getLayerGauge ( const Layer* layer ) const
   {
+    if (not layer) return nullptr;
     for ( size_t i=0 ; i < _layerGauges.size() ; i++ ) {
       if (_layerGauges[i]->getLayer()->getMask() == layer->getMask())
         return _layerGauges[i];
     }
-    return NULL;
+    return nullptr;
   }
 
 

@@ -82,7 +82,7 @@ namespace {
 
     cdebug_log(145,0) << "bb1=" << bb1 << endl;
     cdebug_log(145,0) << "bb2=" << bb2 << endl;
-    if (bb2.getXMin() - bb1.getXMax() > 2*Session::getDVerticalPitch()) return false;
+    if (bb2.getXMin() - bb1.getXMax() > 10*Session::getDVerticalPitch()) return false;
     if (not bb2.getVerticalSide().intersect(bb1.getVerticalSide())) return false;
     return true;
   }
@@ -258,7 +258,7 @@ namespace Anabatic {
         }
       } else {
         if (flags & HSmall) {
-          cdebug_log(145,0) << "case: HSmall" << endl;
+          cdebug_log(145,0) << "case: No HAccess and HSmall" << endl;
   
           AutoContact* subContact1 = rpSourceContact;
           AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
@@ -266,7 +266,7 @@ namespace Anabatic {
           rpSourceContact = subContact2;
   
           if (flags & Punctual) {
-            cdebug_log(145,0) << "case: HSmall + Punctual" << endl;
+            cdebug_log(145,0) << "case: No HAccess and HSmall + Punctual" << endl;
             subContact1 = subContact2;
             subContact2 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
             AutoSegment::create( subContact1, subContact2, Flags::Vertical, rpDepth+2 );
@@ -2349,24 +2349,25 @@ namespace Anabatic {
                         and not ((flagsRp0 & VSmall) and (flagsRp1 & VSmall)) ;
 
         cdebug_log(145,0) << "shortNet=" << shortNet << endl;
-        if (not shortNet and (flagsRp0 & VSmall)) {
-          turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
-          AutoSegment::create( source, turn1, Flags::Horizontal   );
-          source = turn1;
-          turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
-          AutoSegment::create( source, turn1 , Flags::Vertical   );
-          source = turn1;
-        }
-        if (not shortNet and (flagsRp1 & VSmall)) {
-          turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
-          AutoSegment::create( target, turn1, Flags::Horizontal   );
-          target = turn1;
-          turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
-          AutoSegment::create( target, turn1 , Flags::Vertical   );
-          target = turn1;
-        }
+        // if (not shortNet and (flagsRp0 & VSmall)) {
+        //   turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+        //   AutoSegment::create( source, turn1, Flags::Horizontal   );
+        //   source = turn1;
+        //   turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+        //   AutoSegment::create( source, turn1 , Flags::Vertical   );
+        //   source = turn1;
+        // }
+        // if (not shortNet and (flagsRp1 & VSmall)) {
+        //   turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+        //   AutoSegment::create( target, turn1, Flags::Horizontal   );
+        //   target = turn1;
+        //   turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+        //   AutoSegment::create( target, turn1 , Flags::Vertical   );
+        //   target = turn1;
+        // }
         AutoSegment::create( source, target, Flags::Horizontal );
       } else {
+        cdebug_log(145,0) << "Non-short net " << endl;
         turn1 = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
         turn2 = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
         AutoSegment::create( source, turn1 , Flags::Horizontal );

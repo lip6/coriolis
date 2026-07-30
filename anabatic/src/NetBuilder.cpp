@@ -486,7 +486,11 @@ namespace Anabatic {
               cdebug_log(145,0) << "rp: " << rp << endl;
 
               if (not rp)
-                throw Error ( "NetBuilder::setStartHook(): Null RP" );
+                throw Error( "NetBuilder::setStartHook(): Null RP in %s\n"
+                             "        For %s."
+                           , getString( _gcell ).c_str()
+                           , getString( _net ).c_str()
+                           );
 
               if (not layer) {
                 cerr << Error( "RoutingPad is still on it's Plug, routing will be incomplete.\n"
@@ -1328,7 +1332,11 @@ namespace Anabatic {
 
   bool  NetBuilder::_do_1G_xM1_1PinM2 ()
   {
-    throw Error ( "%s::_do_1G_xM1_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
+    throw Error ( "%s::_do_1G_xM1_1PinM2() method *not* reimplemented from base class.\n"
+                  "        On %s,\n        for %s."
+                , getTypeName().c_str()
+                , getString( getGCell() ).c_str()
+                , getString( getNet  () ).c_str() );
     return false;
   }
 

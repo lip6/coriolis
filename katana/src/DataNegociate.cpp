@@ -150,7 +150,7 @@ namespace Katana {
     //interval.inflate( DbU::fromLambda(-0.5) );
 
       cdebug_log(159,0) << "| perpandicular: " << basePerpand << endl;
-      cdebug_log(159,1) << "| canonical:     " << perpandicular << endl;
+      cdebug_log(159,0) << "| canonical:     " << perpandicular << endl;
       cdebug_log(159,0) << "Canonical // interval: " << interval << endl;
 
       _perpandiculars.push_back( perpandicular );
@@ -209,16 +209,42 @@ namespace Katana {
         }
 
         if (trackFree.isFull()) {
-          trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
-                              , perpandicular->base()->getNonPrefTargetPosition() ); 
-          trackFree.inflate( pitch );
+          if (perpandicular->getTrack()) {
+            cdebug_log(159,0) << "In track, use seg length" << endl;
+            trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
+                                , perpandicular->base()->getNonPrefTargetPosition() ); 
+            trackFree.inflate( pitch );
+          } else {
+            AutoSegment* fromRp = perpandicular->base()->getPerpandicularFromRp();
+            if (fromRp) {
+              cdebug_log(159,0) << "Not in track, using terminal on " << perpandicular << endl;
+              AutoContact* rpContact = nullptr;
+              if (fromRp->getAutoSource()->isTerminal()) rpContact = fromRp->getAutoSource();
+              if (fromRp->getAutoTarget()->isTerminal()) rpContact = fromRp->getAutoTarget();
+              if (rpContact) {
+                cdebug_log(159,0) << "Constraints from " << rpContact << endl;
+                if (_trackSegment->getDirection() == Flags::Horizontal)
+                  trackFree = rpContact->getUConstraints( Flags::Vertical );
+                else
+                  trackFree = rpContact->getUConstraints( Flags::Horizontal );
+                trackFree.inflate( 3*pitch );
+              }
+            }
+
+            if (trackFree.isFull()) {
+              cdebug_log(159,0) << "No perpandicular, revert to seg length" << endl;
+              trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
+                                  , perpandicular->base()->getNonPrefTargetPosition() ); 
+              trackFree.inflate( pitch );
+            }
+          }
           cdebug_log(159,0) << "trackFree (no drag): " << trackFree << endl;
         }
 
         if (Session::getStage() < Anabatic::StagePack) {
           int pitchSlack = 1;
           if (Session::getConfiguration()->isVH() and (_trackSegment->getDepth() == 1))
-            pitchSlack = 5;
+            pitchSlack = 3;
           trackFree.inflate( pitchSlack*pitch, pitchSlack*pitch );
           cdebug_log(159,0) << "One pitch expand: " << trackFree << endl;
         }
@@ -273,7 +299,6 @@ namespace Katana {
                             << " isOneTrack=" << perpandicular->isOneTrack()
                             << " isStrap="    << perpandicular->isStrap() 
                             << endl;
-      //DbU::Unit      pitch       = Session::getPitch( perpandicular->getLayer() );
         if (perpandData and perpandicular->isLocal()) {
           uint32_t limit = Session::getKatanaEngine()->getRipupLimit( _trackSegment );
           if ((getRipupCount() + 4 < limit)
@@ -372,8 +397,6 @@ namespace Katana {
         } 
       }
 #endif
-
-      cdebug_tabw(159,-1);
     }
 
     if ( not _trackSegment->isTerminal() and (_perpandiculars.size()+reducedPerpands < 2) )

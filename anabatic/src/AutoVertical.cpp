@@ -193,9 +193,10 @@ namespace Anabatic {
   }
 
 
-  bool  AutoVertical::getConstraints ( DbU::Unit& constraintMin, DbU::Unit& constraintMax ) const
+  bool  AutoVertical::getConstraints ( DbU::Unit& constraintMin, DbU::Unit& constraintMax, Flags flags ) const
   {
     cdebug_log(149,1) << "getConstraints() " << this << endl;
+    cdebug_log(149,0) << "flags=" << flags.asString(FlagsFunction) << endl;
 
     constraintMin = getNativeMin();
     constraintMax = getNativeMax();
@@ -205,22 +206,33 @@ namespace Anabatic {
                       << DbU::getValueString(constraintMax) << "]"
                       << endl;
 
-    constraintMin = std::max ( constraintMin, getAutoSource()->getCBXMin() );
-    constraintMax = std::min ( constraintMax, getAutoSource()->getCBXMax() );
-    cdebug_log(149,0) << "Merge with source constraints: ["
-                      << DbU::getValueString(getAutoSource()->getCBXMin()) << ":"
-                      << DbU::getValueString(getAutoSource()->getCBXMax()) << "]"
-                      << endl;
+    set<AutoContact*> contacts;
+    contacts.insert( getAutoSource() );
+    contacts.insert( getAutoTarget() );
 
-    constraintMin = std::max ( constraintMin, getAutoTarget()->getCBXMin() );
-    constraintMax = std::min ( constraintMax, getAutoTarget()->getCBXMax() );
-    cdebug_log(149,0) << "Merge with target constraints: ["
-                      << DbU::getValueString(getAutoTarget()->getCBXMin()) << ":"
-                      << DbU::getValueString(getAutoTarget()->getCBXMax()) << "]"
-                      << endl;
+    if (not isNotAligned() and (flags & Flags::Propagate)) {
+      for ( AutoSegment* segment : getAligneds() ) {
+        contacts.insert( segment->getAutoSource() );
+        contacts.insert( segment->getAutoTarget() );
+      }
+    }
+
+    Box contactConstraint;
+    for ( AutoContact* contact : contacts ) {
+      contactConstraint = (flags & Flags::UseNativeConstraints)
+                            ? contact->getNativeConstraintBox()
+                            : contact->getConstraintBox();
+      constraintMin = std::max( constraintMin, contactConstraint.getXMin() );
+      constraintMax = std::min( constraintMax, contactConstraint.getXMax() );
+      cdebug_log(155,0) << "Merge with constraints from " << contact << endl;
+      cdebug_log(155,0) << "Use native constraints: " << ((flags & Flags::UseNativeConstraints) ? "true" : "false") << endl;
+      cdebug_log(155,0) << "-> [" << DbU::getValueString(contactConstraint.getXMin()) << ":"
+                                  << DbU::getValueString(contactConstraint.getXMax()) << "]"
+                                  << endl;
+    }
 
     Interval userConstraints = getUserConstraints();
-    if (not userConstraints.isEmpty()) {
+    if (not userConstraints.isEmpty() and (Session::getStage() < StagePack)) {
       constraintMin = max ( constraintMin, userConstraints.getVMin() );
       constraintMax = min ( constraintMax, userConstraints.getVMax() );
 
@@ -324,10 +336,12 @@ namespace Anabatic {
   {
     cdebug_log(149,1) << "AutoVertical::_slacken() " << this << endl;
 
-    if (not isDrag()) {
-      if (   not isStrongTerminal()
-         or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getAnchoredLength() < getPitch()*5)) )
-        { cdebug_tabw(149,-1); return false; }
+    if (Session::isHV()) {
+        if (not isDrag()) {
+          if (   not isStrongTerminal()
+             or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getAnchoredLength() < getPitch()*5)) )
+            { cdebug_tabw(149,-1); return false; }
+        }
     }
 
     cdebug_log(149,0) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
@@ -345,6 +359,20 @@ namespace Anabatic {
     AutoSegment* parallel        = this;
 
     if (source->isTerminal()) {
+      if (not Session::isHV()) {
+        if (not isNonPref()) {
+          AutoSegment* perpandicular = getAutoTarget()->getPerpandicular( this );
+          if (perpandicular and perpandicular->isNonPref()) {
+            size_t depth = Session::getRoutingGauge()->getLayerDepth( perpandicular->getLayer() );
+            if (depth < Session::getAllowedDepth()) {
+              perpandicular->changeDepth( depth+1, Flags::NoFlags );
+              cdebug_tabw(149,-1);
+              return true;
+            }
+          }
+        }
+      }
+      
       Interval  constraints       = source->getUConstraints      (Flags::Horizontal|Flags::NoGCellShrink);
       Interval  nativeConstraints = source->getNativeUConstraints(Flags::Horizontal|Flags::NoGCellShrink);
       int       slack             = constraints.getSize()       / getPitch();
@@ -384,6 +412,19 @@ namespace Anabatic {
     }
 
     if (target->isTerminal()) {
+      if (not Session::isHV()) {
+        if (not isNonPref()) {
+          AutoSegment* perpandicular = getAutoSource()->getPerpandicular( this );
+          if (perpandicular and perpandicular->isNonPref()) {
+            size_t depth = Session::getRoutingGauge()->getLayerDepth( perpandicular->getLayer() );
+            if (depth < Session::getAllowedDepth()) {
+              perpandicular->changeDepth( depth+1, Flags::NoFlags );
+              cdebug_tabw(149,-1);
+              return true;
+            }
+          }
+        }
+      }
       Interval  constraints       = target->getUConstraints      (Flags::Horizontal|Flags::NoGCellShrink);
       Interval  nativeConstraints = target->getNativeUConstraints(Flags::Horizontal|Flags::NoGCellShrink);
       int       slack             = constraints.getSize()       / getPitch();

@@ -239,8 +239,8 @@ Components Segment::getAnchors() const
     return Segment_Anchors(this);
 }
 
-Component* Segment::getOppositeAnchor(Component* anchor) const
-// ***********************************************************
+Component* Segment::getOppositeAnchor(const Component* anchor) const
+// *****************************************************************
 {
     if (anchor) {
         Component* source = getSource();

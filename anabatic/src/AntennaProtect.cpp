@@ -161,7 +161,7 @@ namespace {
                     Instance*          _createDiode         ( Etesian::Area*, const Box&, DbU::Unit uHint );
                     Instance*          _createDiode         ( Etesian::Area*, GCell*, GCell* );
       virtual const vector<Instance*>& createDiodes         ( Etesian::Area* );
-                    bool               connectDiodes        ();
+      virtual       void               _connectDiode        ( Instance* diode, GCell* diodeGCell, GCell* backGCell );
     private:
       AnabaticEngine*    _anabatic;
       DbU::Unit          _WL;
@@ -346,7 +346,127 @@ namespace {
   {
     cerr << Error( "DiodeCluster::inflateArea(): Unimplemented. " ) << endl;
   }
-  
+
+
+  void  DiodeCluster::_connectDiode ( Instance* diode, GCell* diodeGCell, GCell* backGCell )
+  {
+    Cell* diodeCell   = diode->getMasterCell();
+    Net*  diodeOutput = nullptr;
+    for ( Net* net : diodeCell->getNets() ) {
+      if (net->isSupply() or not net->isExternal()) continue;
+      diodeOutput = net;
+      break;
+    }
+
+    Net*  topNet   = getTopNet();
+    Net*  diodeNet = topNet;
+    Plug* sinkPlug = dynamic_cast<Plug*>( getRefRp()->getPlugOccurrence().getEntity() );
+    Path  path     = Path();
+    
+    if (sinkPlug) {
+      diodeNet = sinkPlug->getNet();
+      path     = getRefRp()->getOccurrence().getPath().getHeadPath();
+    }
+
+    cdebug_log(147,0) << "  Bind diode input:" << endl;
+    cdebug_log(147,0) << "    " << diode    << " @" << diode->getTransformation() << endl;
+    cdebug_log(147,0) << "    topNet->getCell():" << topNet->getCell() << endl;
+    cdebug_log(147,0) << "    " << getRefRp()->getOccurrence().getPath() << endl;
+    Plug* diodePlug = diode->getPlug( diodeOutput );
+    diodePlug->setNet( diodeNet );
+    RoutingPad* diodeRp = RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
+    _getAnabatic()->getConfiguration()->selectRpComponent( diodeRp );
+    cdebug_log(147,0) << "    diode Rp: " << diodeRp    << endl;
+    cdebug_log(147,0) << "    ref Rp:   " << getRefRp() << endl;
+
+    GCell* gcellDiodeRp = _anabatic->getGCellUnder( diodeRp->getPosition() );
+    if (not diodeGCell) diodeGCell = gcellDiodeRp;
+    if (gcellDiodeRp != diodeGCell) {
+      if (gcellDiodeRp == backGCell) {
+        diodeGCell = backGCell;
+        backGCell  = nullptr;
+        cdebug_log(147,0) << "| Diode RP is, in fact, under backGCell -> disable backGCell" << endl;
+      } else {
+        if (not backGCell) {
+          backGCell  = diodeGCell;
+          diodeGCell = gcellDiodeRp;
+          cdebug_log(147,0) << "| Diode RP is *not* under gcell, no backGCell -> create backGCell" << endl;
+        } else {
+          diodeGCell = gcellDiodeRp;
+          cdebug_log(147,0) << "| Diode RP is *not* under gcell -> change gcell" << endl;
+        }
+      }
+    }
+
+    bool     connectGCell = not diodeGCell->hasNet( getTopNet() );
+    Contact* contact      = diodeGCell->hasGContact( getTopNet() );
+    if (not contact)
+      contact = diodeGCell->breakGoThrough( getTopNet() );
+    cdebug_log(147,0) << "| breakGoThrough(), contact= " << contact << endl;
+    contact->getBodyHook()->merge( diodeRp->getBodyHook() );
+
+    if (connectGCell) {
+      GCell* turnGCell = nullptr;
+
+      if (   (backGCell->getXMin() != diodeGCell->getXMin())
+         and (backGCell->getYMin() != diodeGCell->getYMin())) {
+        if (backGCell->getXMin() < diodeGCell->getXMin()) {
+          turnGCell = backGCell->getEast();
+        } else
+          turnGCell = backGCell->getWest();
+      }
+
+      if (not turnGCell) {
+        Contact* backContact = backGCell->hasGContact( getTopNet() );
+        if (not backContact)
+          backContact = backGCell->breakGoThrough( getTopNet() );
+
+        if (backGCell->getYMin() != diodeGCell->getYMin()) {
+          bool northConnect = (backGCell->getYMin() > diodeGCell->getYMin());
+          Vertical::create( (northConnect) ? contact     : backContact
+                          , (northConnect) ? backContact : contact
+                          , _anabatic->getConfiguration()->getGHorizontalLayer()
+                          , contact->getX()
+                          , _anabatic->getConfiguration()->getGHorizontalPitch()
+                          );
+        } else {
+          bool eastConnect = (backGCell->getXMin() < diodeGCell->getXMin());
+          Horizontal::create( (eastConnect) ? backContact : contact
+                            , (eastConnect) ? contact     : backContact
+                            , _anabatic->getConfiguration()->getGHorizontalLayer()
+                            , contact->getY()
+                            , _anabatic->getConfiguration()->getGHorizontalPitch()
+                            );
+        }
+      } else {
+        bool     northConnect = (turnGCell->getYMin() < diodeGCell->getYMin());
+        bool     connectH     = not turnGCell->hasNet( getTopNet() );
+        Contact* turnContact  = turnGCell->hasGContact( getTopNet() );
+        if (not turnContact)
+          turnContact = turnGCell->breakGoThrough( getTopNet() );
+        Vertical::create( (northConnect) ? turnContact : contact
+                        , (northConnect) ? contact     : turnContact
+                        , _anabatic->getConfiguration()->getGHorizontalLayer()
+                        , contact->getX()
+                        , _anabatic->getConfiguration()->getGHorizontalPitch()
+                        );
+
+        if (connectH) {
+          Contact* backContact = backGCell->hasGContact( getTopNet() );
+          if (not backContact)
+            backContact = backGCell->breakGoThrough( getTopNet() );
+
+          bool eastConnect = (turnGCell->getXMin() < backGCell->getXMin());
+          Horizontal::create( (eastConnect) ? turnContact : backContact
+                            , (eastConnect) ? backContact : turnContact
+                            , _anabatic->getConfiguration()->getGHorizontalLayer()
+                            , turnContact->getY()
+                            , _anabatic->getConfiguration()->getGHorizontalPitch()
+                            );
+        }
+      }
+    }
+  }
   
   
   Instance* DiodeCluster::_createDiode ( Etesian::Area* area, const Box& bb, DbU::Unit uHint )
@@ -358,6 +478,7 @@ namespace {
     if (diode) {
       cdebug_log(147,0) << "| New diode " << diode << endl;
       _diodes.push_back( diode );
+      _connectDiode( diode, nullptr, nullptr );
     }
     
     cdebug_tabw(147,-1);
@@ -368,6 +489,7 @@ namespace {
   Instance* DiodeCluster::_createDiode ( Etesian::Area* area, GCell* gcell, GCell* backGCell )
   {
     cdebug_log(147,1) << "DiodeCluster::_createDiode(): under=" << gcell << endl;
+    cdebug_log(147,0) << "> backGCell: " << backGCell << endl;
 
     Box bb = gcell->getBoundingBox(); 
     cdebug_log(147,0) << "> GCell area: " << bb << endl;
@@ -376,50 +498,7 @@ namespace {
     if (diode) {
       cdebug_log(147,0) << "| New diode " << diode << endl;
       _diodes.push_back( diode );
-      Transformation trans  = getRefRp()->getPlugOccurrence().getPath().getTransformation();
-      Point          center = diode->getAbutmentBox().getCenter();
-      trans.applyOn( center );
-      bool     newContact = false;
-      Contact* contact    = gcell->hasGContact( getTopNet() );
-      if (not contact) {
-        newContact = true;
-        contact    = gcell->breakGoThrough( getTopNet() );
-      }
-      cdebug_log(147,0) << "| breakGoThrough(), contact= " << contact << endl;
-
-      if (backGCell and newContact) {
-        Contact* backContact = backGCell->breakGoThrough( getTopNet() );
-        if (backContact->getY() == contact->getY()) {
-          if (contact->getX() > backContact->getX())
-              std::swap( backContact, contact );
-
-          Horizontal::create( contact
-                            , backContact
-                            , _anabatic->getConfiguration()->getGHorizontalLayer()
-                            , contact->getY()
-                            , _anabatic->getConfiguration()->getGHorizontalPitch()
-                            );
-        } else {
-          if (backContact->getX() == contact->getX()) {
-            if (contact->getY() > backContact->getY())
-              std::swap( backContact, contact );
-
-            Vertical::create( contact
-                            , backContact
-                            , _anabatic->getConfiguration()->getGHorizontalLayer()
-                            , contact->getX()
-                            , _anabatic->getConfiguration()->getGHorizontalPitch()
-                            );
-          } else {
-            cerr << Error( "DiodeCluster::_createDiode(): Back GCell not aligned with diode GCell.\n"
-                           "        * %s\n"
-                           "        * %s"
-                         , getString(gcell).c_str()
-                         , getString(backGCell).c_str()
-                         ) << endl;
-          }
-        }
-      }
+      _connectDiode( diode, gcell, backGCell );
     }
     cdebug_tabw(147,-1);
     return diode;
@@ -460,51 +539,6 @@ namespace {
     cdebug_tabw(147,-1);
 
     return _diodes;
-  }
-
-
-  bool  DiodeCluster::connectDiodes ()
-  {
-    EtesianEngine* etesian = static_cast<EtesianEngine*>
-      ( ToolEngine::get( _anabatic->getCell(), EtesianEngine::staticGetName() ));
-
-    Cell* diodeCell   = etesian->getDiodeCell();
-    Net*  diodeOutput = NULL;
-    for ( Net* net : diodeCell->getNets() ) {
-      if (net->isSupply() or not net->isExternal()) continue;
-      diodeOutput = net;
-      break;
-    }
-
-    Net*  topNet   = getTopNet();
-    Net*  diodeNet = topNet;
-    Plug* sinkPlug = dynamic_cast<Plug*>( getRefRp()->getPlugOccurrence().getEntity() );
-    Path  path     = Path();
-
-    if (sinkPlug) {
-      diodeNet = sinkPlug->getNet();
-      path     = getRefRp()->getOccurrence().getPath().getHeadPath();
-    }
-
-    for ( Instance* diode : _diodes ) {
-      cdebug_log(147,0) << "  Bind diode input:" << endl;
-      cdebug_log(147,0) << "    " << diode    << " @" << diode->getTransformation() << endl;
-      cdebug_log(147,0) << "    topNet->getCell():" << topNet->getCell() << endl;
-      cdebug_log(147,0) << "    " << getRefRp()->getOccurrence().getPath() << endl;
-      Plug* diodePlug = diode->getPlug( diodeOutput );
-      diodePlug->setNet( diodeNet );
-      RoutingPad* diodeRp = RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
-      _getAnabatic()->getConfiguration()->selectRpComponent( diodeRp );
-      cdebug_log(147,0) << "    " << getRefRp() << endl;
-
-      GCell* gcell = _anabatic->getGCellUnder( diodeRp->getPosition() );
-      if (gcell) {
-        Contact* contact = gcell->breakGoThrough( topNet );
-        contact->getBodyHook()->merge( diodeRp->getBodyHook() );
-      }
-    }
-
-    return true;
   }
 
 
@@ -665,6 +699,11 @@ namespace {
     for ( size_t neighbor : getNeighbors() ) { m << " " << neighbor; }
     m << " ]";
     cdebug_log(147,0) << m.str() << endl;
+    for ( const Box& bb : _boxes ) {
+      cdebug_log(147,0) << "| Box W=" << DbU::getValueString(bb.getWidth ())
+                        <<      " H=" << DbU::getValueString(bb.getHeight())
+                        << endl;
+    }
     
     DbU::Unit antennaDiodeMaxWL = getAntennaDiodeMaxWL();
 
@@ -695,7 +734,7 @@ namespace {
         if (gcells->size()) {
           size_t gcellPeriod = antennaDiodeMaxWL / gcells->gcellAt(0)->getHeight();
           for ( size_t i=0 ; i<gcells->size() ; ++i ) {
-            Instance* diode = _createDiode( area, gcells->gcellAt(i), NULL );
+            Instance* diode = _createDiode( area, gcells->gcellAt(i), nullptr );
             if (diode) {
               i += gcellPeriod - (i%gcellPeriod);
             }
@@ -1060,10 +1099,10 @@ namespace Anabatic {
       total += clusters.size();
       cdebug_log(147,1) << "Net \"" << net->getName() << " has " << clusters.size() << " diode clusters." << endl;
       DbU::Unit  clustersWL = 0;
-      for ( DiodeCluster* cluster : clusters ) {
-        cdebug_log(147,0) << "| Cluster WL=" << DbU::getValueString(cluster->getWL())
-                          << " needsDiode=" << cluster->needsDiode() << endl;
-        clustersWL += cluster->getWL();
+      for ( size_t i=0 ; i<clusters.size() ; ++i ) {
+        cdebug_log(147,0) << "| Cluster [" << i << "] WL=" << DbU::getValueString(clusters[i]->getWL())
+                          << " needsDiode=" << clusters[i]->needsDiode() << endl;
+        clustersWL += clusters[i]->getWL();
       }
       if (clustersWL < antennaGateMaxWL) {
         cdebug_log(147,0) << "Sum WL " << DbU::getValueString(clustersWL) << " below gate threshold "
@@ -1085,9 +1124,7 @@ namespace Anabatic {
 
         if (clusters[i]->needsDiode()) {
           const vector<Instance*>& diodes = clusters[i]->createDiodes( etesian->getArea() );
-          if (not diodes.empty()) {
-            clusters[i]->connectDiodes();
-          } else {
+          if (diodes.empty()) {
             cerr << Error( "EtesianEngine::antennaProtect(): For %s (rps:%u, clusters:%u)\n"
                            "        Cannot find a diode nearby %s."
                          , getString(net).c_str()

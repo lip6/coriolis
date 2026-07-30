@@ -13,9 +13,11 @@
 # +-----------------------------------------------------------------+
 
 
-from coriolis.Hurricane  import DataBase
-from coriolis.helpers    import stype
-from coriolis.helpers.io import catch, ErrorMessage
+import re
+from   coriolis            import Viewer
+from   coriolis.Hurricane  import DataBase
+from   coriolis.helpers    import stype
+from   coriolis.helpers.io import catch, ErrorMessage
 
 
 def loadGdsLayers ( gdsLayersTable ):
@@ -57,3 +59,34 @@ def loadGdsLayers ( gdsLayersTable ):
       except Exception as e:
         catch( e )
     return
+
+
+def addStyle ( datas, metalNb ):
+    """
+    Build a compete display style from structured set of datas.
+    """
+    reMetal = re.compile( r'metal(?P<nb>\d+)' )
+    reCut   = re.compile( r'cut(?P<nb>\d+)' )
+
+    style = Viewer.DisplayStyle( datas['Name'] )
+    style.setDescription( datas['Description'] )
+    if 'Darkening' in datas and datas['Darkening']: style.setDarkening( datas['Darkening'] )
+    if 'Inherit'   in datas and datas['Inherit'  ]: style.inheritFrom ( datas['Inherit'  ] )
+
+    for groupName, group in datas.items():
+        if not isinstance(group,list): continue
+        for layerStyle in group:
+            m = reMetal.match( layerStyle[0] )
+            if m and int(m.group('nb')) > metalNb: continue
+            m = reCut.match( layerStyle[0] )
+            if m and int(m.group('nb')) >= metalNb: continue
+            
+            arguments = { 'group' : groupName
+                        , 'name'  : layerStyle[0]
+                        }
+            if not (layerStyle[1] is None): arguments[ 'color'     ] = layerStyle[1]
+            if not (layerStyle[2] is None): arguments[ 'border'    ] = layerStyle[2]
+            if not (layerStyle[3] is None): arguments[ 'pattern'   ] = layerStyle[3]
+            if not (layerStyle[4] is None): arguments[ 'threshold' ] = layerStyle[4]
+            style.addDrawingStyle( **arguments )
+    Viewer.Graphics.addStyle( style )

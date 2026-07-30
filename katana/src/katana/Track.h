@@ -67,6 +67,7 @@ namespace Katana {
       virtual bool               isHorizontal        () const = 0;
       virtual bool               isVertical          () const = 0;
       inline  bool               isLocalAssigned     () const;
+              void               show                () const;
       inline  RoutingPlane*      getRoutingPlane     () const;
               RoutingLayerGauge* getLayerGauge       () const;
               KatanaEngine*      getKatanaEngine     () const;
@@ -105,6 +106,7 @@ namespace Katana {
               DbU::Unit          getSourcePosition   ( size_t index ) const;
               uint32_t           repair              () const;
               void               fillHole            ( DbU::Unit umin, DbU::Unit umax ) const;
+              void               disableNearMinArea  () const;
               bool               check               ( uint32_t& overlaps, const char* message=NULL ) const;
               uint32_t           checkOverlap        ( uint32_t& overlaps ) const;
               uint32_t           checkMinArea        () const;

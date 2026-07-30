@@ -254,6 +254,7 @@ extern "C" {
     PyAllianceFramework_postModuleInit ();
     PySpice_postModuleInit ();
     PyVerilog_postModuleInit ();
+    PyBlif_postModuleInit ();
     PyGds_postModuleInit ();
     PyLefImport_postModuleInit ();
     PyDefImport_postModuleInit ();

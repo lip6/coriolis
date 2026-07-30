@@ -203,14 +203,14 @@ template<class Type> class Collection {
     }
 
   public:
-    class iterator {
+    class const_iterator {
       public:
-                  iterator   ( Locator<Type>* l )        : _locator(l) {} 
-                 ~iterator   ()                          { delete _locator; }
-        bool      operator== ( const iterator& o) const  { return not (*this != o); }
-        iterator& operator++ ()                          { _locator->progress(); return *this; }
-        Type      operator*  ()                          { return _locator->getElement(); }
-        bool      operator!= ( const iterator& o ) const
+                        const_iterator ( const Locator<Type>* l )        : _locator( const_cast< Locator<Type>* >(l) ) {} 
+                       ~const_iterator ()                                { delete _locator; }
+        bool            operator==     ( const const_iterator& o) const  { return not (*this != o); }
+        const_iterator& operator++     ()                                { _locator->progress(); return *this; }
+        Type            operator*      ()                                { return _locator->getElement(); }
+        bool            operator!=     ( const const_iterator& o ) const
         { 
           bool invalidA = (  _locator == NULL) or not (  _locator->isValid());
           bool invalidB = (o._locator == NULL) or not (o._locator->isValid());
@@ -221,9 +221,9 @@ template<class Type> class Collection {
     };
 
   public:
-    iterator begin() { return iterator(getLocator()); }
-    iterator end()   { return iterator(NULL); }
-    bool     empty() { return begin() == end(); }
+    const_iterator begin () const { return const_iterator(getLocator()); }
+    const_iterator end   () const { return const_iterator(NULL); }
+    bool           empty () const { return begin() == end(); }
 };
 
 

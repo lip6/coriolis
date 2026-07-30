@@ -347,6 +347,8 @@ class Side ( object ):
        #self.u += gapWidth
 
     def _placePad ( self, padInstance ):
+        trace( 550, '+,', '\t_placePad() self.u={} @{}\n'.format(DbU.getValueString(self.u),padInstance) )
+
         padAb = padInstance.getMasterCell().getAbutmentBox()
         if self.type == North:
             x = self.conf.chipAb.getXMin() + self.u - padAb.getXMin()
@@ -358,6 +360,9 @@ class Side ( object ):
                 y          -= self.conf.ioPadHeight
             x = self.toGrid( x )
         elif self.type == South:
+            trace( 550, '\tchipAb.getXMin()={} padAb.getXMin()={}\n' \
+                   .format( DbU.getValueString(self.conf.chipAb.getXMin())
+                          , DbU.getValueString(padAb.getXMin()) ))
             x = self.conf.chipAb.getXMin() + self.u - padAb.getXMin()
             y = self.conf.chipAb.getYMin()
             if self.corona.padOrient == Transformation.Orientation.ID:
@@ -388,7 +393,9 @@ class Side ( object ):
                 x          -= padAb.getHeight()
                 y          += padAb.getWidth()
             y = self.toGrid( y )
-        padInstance.setTransformation ( Transformation( x, y, orientation ) )
+        position = Transformation( x, y, orientation )
+        trace( 550, '\t_placePad() {} @{}\n'.format(padInstance,position) )
+        padInstance.setTransformation ( position )
         padInstance.setPlacementStatus( Instance.PlacementStatus.FIXED )
         self.u += padAb.getWidth()
         p = None
@@ -424,6 +431,7 @@ class Side ( object ):
                                     , rp.getOccurrence().getEntity().getLayer()
                                     , rp.getBoundingBox() )
                     NetExternalComponents.setExternal( pad )
+        trace( 550, ',-' )
         return
 
     def _placePads ( self ):
@@ -448,6 +456,8 @@ class Side ( object ):
             padPosition = self.conf.PadPosition( self )
             for i in range( len(self.pads) ):
                 self.pads[i][0] = self.toGrid( padPosition( i ))
+                trace( 550, '\tPlace pad (auto) {} @{}\n' \
+                            .format(self.pads[i][1],DbU.getValueString(self.pads[i][0])) )
            #spacing    = 0
            #minSpacing = self.corona.minPadSpacing
            #position   = self.u
@@ -655,7 +665,7 @@ class Corona ( object ):
     @property
     def minPadSpacing ( self ): return self.conf.cfg.chip.minPadSpacing
   
-    def toGrid ( self, u ): return u - (u % self.conf.ioPadPitch)
+    def toGrid ( self, u ): return u - ((u - self.conf.ioPadHeight) % self.conf.ioPadPitch)
   
     def validate ( self ):
         self._allPadsAnalysis()
@@ -1178,7 +1188,9 @@ class Corona ( object ):
             for logo in self.conf.chipLogos:
                 print( '        - GDS Logo "{0}.gds".'.format(logo) )
                 Gds.load( logosLib, './{}.gds'.format(logo) )
-                logoCell     = logosLib.getCell( 'gds_{}'.format(logo) )
+                logoCell = logosLib.getCell( logo )
+                if not logoCell:
+                    raise ErrorMessage( 1, f'Logo GDS file do not contain a cell named "{logo}".' )
                 logoInstance = Instance.create( self.conf.chip, logo, logoCell )
                 Block.abPlace( logoInstance
                              , Transformation( xLogo, yLogo, Transformation.Orientation.ID ))

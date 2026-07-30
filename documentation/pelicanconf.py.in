@@ -101,6 +101,7 @@ IGNORE_FILES = [ 'UsersGuide.rst'       # For User's Guide.
                , 'Name.rst'
 
                , 'OBS.rst'           # For Packaging
+               , 'FastRpmDeployment.rst'
 
                , 'December_2023.rst' # For Technical Logs
 
