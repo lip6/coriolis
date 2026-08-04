@@ -20,8 +20,11 @@ import os.path
 import re
 import traceback
 from   ..          import Cfg
-from   ..Hurricane import UpdateSession
+from   ..Hurricane import UpdateSession, HurricaneError
 from   ..Viewer    import Graphics, ErrorWidget
+
+
+DoExit = 0x0001
 
 
 def textStackTrace ( trace, showIndent=True, scriptPath=None ):
@@ -42,8 +45,8 @@ def textStackTrace ( trace, showIndent=True, scriptPath=None ):
     maxdepth = len( trace )
     for depth in range( maxdepth ):
         filename, line, function, code = trace[ maxdepth-depth-1 ]
-        if len(filename) > 58:
-            filename = filename[-58:]
+        if len(filename) > 48:
+            filename = filename[-48:]
             filename = '.../' + filename[ filename.find('/')+1 : ]
        #s += indent + '[%02d] %45s:%-5d in \"{}()\"' % ( maxdepth-depth-1, filename, line, function )
         s += indent + '#{} in {:>25}() at {}:{}\n'.format( depth, function, filename, line )
@@ -170,23 +173,36 @@ class ErrorMessage ( Exception ):
 
 # -------------------------------------------------------------------
 # Function  :  "catch()".
-#
-# Try to smartly display any exception on the TTY and the graphic
-# display, if available.
 
-def catch ( errorObject ):
+def catch ( errorObject, flags=0 ):
+    """
+    Try to smartly display any exception on the TTY and the graphic
+    display, if available.
+
+    * If the exception is of HurricaneError type, do not display it 
+      again (already done at C++ level).
+
+    * If ``flags`` contains ``DoExit``, then terminate the program
+      at once.
+    """
+    showError = True
+    if isinstance(errorObject,HurricaneError):
+        showError = False
     if isinstance(errorObject,ErrorMessage):
         em = errorObject
     else:
         em            = ErrorMessage( 2, errorObject )
         em.trace      = traceback.extract_tb( sys.exc_info()[2] )
        #em.scriptPath = __file__
-    print( em )
+    if showError:
+        print( em )
+        print( '' )
     print( textStackTrace( em.trace, True, em.scriptPath ))
     if Graphics.get().isEnabled():
         ErrorWidget.run( em.getLinesAsString()
                        , textStackTrace( em.trace, False, em.scriptPath ))
     if UpdateSession.getStackSize() > 0: UpdateSession.close()
+    if flags & DoExit: sys.exit( 1 )
     return
 
 
