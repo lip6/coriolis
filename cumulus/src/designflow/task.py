@@ -95,7 +95,6 @@ class ShellEnv ( object ):
                 libPath += ':' + LD_LIBRARY_PATH
             self.shellEnv[ 'LD_LIBRARY_PATH' ] = libPath
 
-
     def export ( self, flags=0 ):
         """
         Write back the variables into the environement for usage by the
@@ -124,6 +123,188 @@ class ShellEnv ( object ):
         _setEnviron( 'PDK'              , ShellEnv.PDK              , flags )
         _setEnviron( 'KLAYOUT_PATH'     , ShellEnv.KLAYOUT_PATH     , flags )
         _setEnviron( 'KLAYOUT_HOME'     , ShellEnv.KLAYOUT_HOME     , flags )
+
+
+class EdaVendorsShellEnv ( object ):
+    """
+    Manage and export to the sub-processes the EDA vendors variables.
+
+    Environment variables stored at class level, should be set once and
+    for all at startup:
+
+    * ``CDSDIR``, Cadence IC root directory. Also exported as ``CDS_ROOT``
+      and ``CDS_INST_DIR``
+    """
+
+    Show                 = 0x0001
+    _LC_ALL              = "C"
+    _W3264_NO_HOST_CHECK = "1"
+    _DD_DONT_DO_OS_LOCKS = "set"
+    _CDS_AUTO_64BIT      = "ALL"
+    _CDS_Netlisting_Mode = "Analog"
+    _CDSDIR              = None
+    _CDS_MMSIM_DIR       = None
+    _ASSURAHOME          = None
+    _PVSHOME             = None
+    _QRC_HOME            = None
+    _CDS_IUS_DIR         = None
+    _CDS_SYNTH_ROOT      = None
+    _INNOVUS             = None
+    _CDS_LICENSE         = None
+    _SIEMENS_LICENSE     = None
+    _MGC_HOME            = None
+    _MGC_AMS_HOME        = None
+    _USE_CALIBRE_VCO     = "aok"
+    _opusver             = "618"
+    _amsdbtype           = "OpenAccess"
+    _PATH                = []
+    _LD_LIBRARY_PATH     = []
+
+    def __init__ ( self, name='unamed_env' ):
+        self.name     = name
+        self.localEnv = {}
+        self.capture()
+
+    def capture ( self ):
+        """
+        Get the default values of the PATH & LD_LIBRARY_PATH environment variables
+        """
+        self.systemPATH            = os.environ[ 'PATH'            ].split( ':' )
+        self.systemLD_LIBRARY_PATH = os.environ[ 'LD_LIBRARY_PATH' ].split( ':' )
+
+    def __setattr__ ( self, attr, value ):
+        if attr == 'MGC_HOME':
+            EdaVendorsShellEnv._MGC_HOME = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/bin' )
+        if attr == 'MGC_AMS_HOME':
+            EdaVendorsShellEnv._MGC_AMS_HOME = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/bin' )
+        if attr == 'CDSDIR':
+            EdaVendorsShellEnv._CDSDIR = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/bin' )
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/bin' )
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/dfII/bin' )
+            EdaVendorsShellEnv._LD_LIBRARY_PATH.append( f'{value}/tools/lib' )
+        if attr == 'CDS_MMSIM_DIR':
+            EdaVendorsShellEnv._CDS_MMSIM_DIR = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/bin' )
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools.lnx86/bin' )
+            EdaVendorsShellEnv._LD_LIBRARY_PATH.append( f'{value}/tools/lib' )
+        if attr == 'CDS_IUS_DIR':
+            EdaVendorsShellEnv._CDS_IUS_DIR = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/bin' )
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/dfII/bin' )
+           #EdaVendorsShellEnv._LD_LIBRARY_PATH.append( f'{value}/tools/lib' )
+        if attr == 'CDS_SYNTH_ROOT':
+            EdaVendorsShellEnv._SYNTH_ROOT = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/bin' )
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/bin' )
+            EdaVendorsShellEnv._LD_LIBRARY_PATH.append( f'{value}/tools/lib' )
+        if attr == 'ASSURAHOME':
+            EdaVendorsShellEnv._ASSURAHOME = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/bin' )
+            EdaVendorsShellEnv._PATH.append( f'{value}/assura/bin' )
+           #EdaVendorsShellEnv._LD_LIBRARY_PATH.append( f'{value}/tools/lib' )
+        if attr == 'PVSHOME':
+            EdaVendorsShellEnv._PVSHOME = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/bin' )
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/dfII/bin' )
+           #EdaVendorsShellEnv._LD_LIBRARY_PATH.append( f'{value}/tools/lib' )
+        if attr == 'QRC_HOME':
+            EdaVendorsShellEnv._QRC_HOME = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/bin' )
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/dfII/bin' )
+           #EdaVendorsShellEnv._LD_LIBRARY_PATH.append( f'{value}/tools/lib' )
+        if attr == 'INNOVUS':
+            EdaVendorsShellEnv._INNOVUS = value
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/bin' )
+            EdaVendorsShellEnv._PATH.append( f'{value}/tools/bin' )
+            EdaVendorsShellEnv._LD_LIBRARY_PATH.append( f'{value}/tools/lib/64bits' )
+        elif attr == 'USE_CALIBRE_VCO':     EdaVendorsShellEnv._USE_CALIBRE_VCO     = value
+        elif attr == 'opusver':             EdaVendorsShellEnv._opusver             = value
+        elif attr == 'amsdbtype':           EdaVendorsShellEnv._amsdbtype           = value
+        elif attr == 'SIEMENS_LICENSE':     EdaVendorsShellEnv._SIEMENS_LICENSE     = value
+        elif attr == 'CDS_LICENSE':         EdaVendorsShellEnv._CDS_LICENSE         = value
+        elif attr == 'CDS_Netlisting_Mode': EdaVendorsShellEnv._CDS_Netlisting_Mode = value
+        else:
+            object.__setattr__( self, attr, value )
+
+    def __getitem__ ( self, key ):
+        return self.localEnv[ key ]
+
+    def __setitem__ ( self, key, value ):
+        self.localEnv[ key ] = str( value )
+
+    def export ( self, flags=0 ):
+        """
+        Write back the variables into the environement for usage by the
+        sub-processes.
+        """
+        def _setEnviron ( variable, value, flags ):
+            if value is None: return
+            if isinstance( value, Path ):
+                stringValue = value.as_posix()
+            elif isinstance( value, list ):
+                stringValue = ':'.join( value )
+            else:
+                stringValue = value
+            os.environ[ variable ] = stringValue
+            if flags & EdaVendorsShellEnv.Show:
+                if isinstance( value, list ):
+                    print( '    {}:'.format( variable ))
+                    for component in value:
+                        print( '      "{}"'.format( component ))
+                else:
+                    print( '    {}: "{}"'.format( variable, stringValue ))
+
+        if flags & EdaVendorsShellEnv.Show:
+            print( 'EdaVendorsShellEnv:' )
+            print( '  Name:', self.name )
+            print( '  Variable:' )
+        LICENSE = ''
+        for license in (EdaVendorsShellEnv._CDS_LICENSE
+                       ,EdaVendorsShellEnv._SIEMENS_LICENSE):
+            if license is None: continue
+            colon = ''
+            if LICENSE != '': colon = ':'
+            LICENSE = f'{LICENSE}{colon}{license}'
+        _setEnviron( 'LM_LICENSE_FILE'    , LICENSE                               , flags )
+        _setEnviron( 'LC_ALL'             , EdaVendorsShellEnv._LC_ALL             , flags )
+        _setEnviron( 'W3264_NO_HOST_CHECK', EdaVendorsShellEnv._W3264_NO_HOST_CHECK, flags )
+        _setEnviron( 'DD_DONT_DO_OS_LOCKS', EdaVendorsShellEnv._DD_DONT_DO_OS_LOCKS, flags )
+        _setEnviron( 'CDS_AUTO_64BIT'     , EdaVendorsShellEnv._CDS_AUTO_64BIT     , flags )
+        _setEnviron( 'CDS_Netlisting_Mode', EdaVendorsShellEnv._CDS_Netlisting_Mode, flags )
+        _setEnviron( 'CDSDIR'             , EdaVendorsShellEnv._CDSDIR             , flags )
+        _setEnviron( 'CDS_ROOT'           , EdaVendorsShellEnv._CDSDIR             , flags )
+        _setEnviron( 'CDS_INST_DIR'       , EdaVendorsShellEnv._CDSDIR             , flags )
+        _setEnviron( 'CDS_MMSIM_DIR'      , EdaVendorsShellEnv._CDS_MMSIM_DIR      , flags )
+        _setEnviron( 'CDS_SYNTH_ROOT'     , EdaVendorsShellEnv._CDS_SYNTH_ROOT     , flags )
+        _setEnviron( 'MMSIMHOME'          , EdaVendorsShellEnv._CDS_MMSIM_DIR      , flags )
+        _setEnviron( 'SPECTRE_ROOT'       , EdaVendorsShellEnv._CDS_MMSIM_DIR      , flags )
+        _setEnviron( 'ASSURAHOME'         , EdaVendorsShellEnv._ASSURAHOME         , flags )
+        _setEnviron( 'PVSHOME'            , EdaVendorsShellEnv._PVSHOME            , flags )
+        _setEnviron( 'QRC_HOME'           , EdaVendorsShellEnv._QRC_HOME           , flags )
+        _setEnviron( 'CDS_IUS_DIR'        , EdaVendorsShellEnv._CDS_IUS_DIR        , flags )
+        _setEnviron( 'IUSDIR'             , EdaVendorsShellEnv._CDS_IUS_DIR        , flags )
+        _setEnviron( 'LDVDIR'             , EdaVendorsShellEnv._CDS_IUS_DIR        , flags )
+        _setEnviron( 'INNOVUS'            , EdaVendorsShellEnv._INNOVUS            , flags )
+        _setEnviron( 'MGC_HOME'           , EdaVendorsShellEnv._MGC_HOME           , flags )
+        _setEnviron( 'CALIBRE_HOME'       , EdaVendorsShellEnv._MGC_HOME           , flags )
+        _setEnviron( 'USE_CALIBRE_VCO'    , EdaVendorsShellEnv._USE_CALIBRE_VCO    , flags )
+        _setEnviron( 'MGC_AMS_HOME'       , EdaVendorsShellEnv._MGC_AMS_HOME       , flags )
+        _setEnviron( 'opusver'            , EdaVendorsShellEnv._opusver            , flags )
+        _setEnviron( 'amsdbtype'          , EdaVendorsShellEnv._amsdbtype          , flags )
+
+        if len(self.systemPATH):
+            PATH = EdaVendorsShellEnv._PATH + self.systemPATH
+        _setEnviron( 'PATH', PATH, flags )
+
+        if len(self.systemLD_LIBRARY_PATH):
+            LD_LIBRARY_PATH = EdaVendorsShellEnv._LD_LIBRARY_PATH + self.systemLD_LIBRARY_PATH
+        _setEnviron( 'LD_LIBRARY_PATH', LD_LIBRARY_PATH, flags )
+
+        for variable, value in self.localEnv.items():
+            _setEnviron( variable, value, flags )
             
 
 class Tasks ( object ):
