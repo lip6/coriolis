@@ -184,9 +184,11 @@ extern "C" {
       PyObject* arg0 = NULL;
       PyObject* arg1 = NULL;
       __cs.init ("Rectilinear.translate");
-      if (PyArg_ParseTuple(args,"O&O&:Rectilinear.translate", Converter, &arg0, Converter, &arg1)) {
-        if (__cs.getObjectIds() == INTS2_ARG) rectilinear->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
-        else {
+      if (PyArg_ParseTuple(args,"O&|O&:Rectilinear.translate", Converter, &arg0, Converter, &arg1)) {
+        if      (__cs.getObjectIds() == INTS2_ARG) rectilinear->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+        else if (__cs.getObjectIds() == POINT_ARG) {
+          rectilinear->translate( PYPOINT_O(arg0)->getX(), PYPOINT_O(arg0)->getY() );
+        } else {
           PyErr_SetString ( ConstructorError, "Rectilinear.translate(): Invalid type for parameter(s)." );
           return NULL;
         }
