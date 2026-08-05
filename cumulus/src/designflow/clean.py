@@ -75,4 +75,51 @@ class Clean ( FlowTask ):
                                 } ]
                , 'uptodate' : [ False ]
                }
+
+
+class CustomClean ( FlowTask ):
+    """
+    Delete files based on names and globs, purely user-defined.
+    That is, do not automatically remove targets generated files.
+    """
+
+    @staticmethod
+    def mkRule ( rule, cleanFiles=[], cleanGlobs=[] ):
+        return CustomClean( cleanFiles, cleanGlobs )
+
+    def __init__ ( self, rule, cleanFiles, cleanGlobs ):
+        super().__init__( rule, [], [] )
+        self.cleanFiles = FlowTask._normFileList( cleanFiles )
+        self.cleanGlobs = cleanGlobs
+
+    def __repr__ ( self ):
+        return '<CustomClean "{}">'.format( self.basename )
+
+    def doTask ( self ):
+        print( '   Removing files' )
+        print( '   ==============' )
+        if len(self.cleanFiles):
+            for filePath in self.cleanFiles:
+                if filePath.is_file():
+                    print( '   - {:<40} [removed]'.format( filePath.as_posix() ))
+                    filePath.unlink()
+                elif filePath.is_dir():
+                    print( '   - {:<40} [removed (directory)]'.format( filePath.as_posix() ))
+                    shutil.rmtree( filePath )
+                else:
+                    print( '   - {}'.format( filePath.as_posix() ))
+        if len(self.cleanGlobs):
+            for directory, glob in self.cleanGlobs:
+                for filePath in Path(directory).glob(glob):
+                    if filePath.is_file():
+                        print( '   - {:<40} [removed]'.format( filePath.as_posix() ))
+                        filePath.unlink()
+        return True
+
+    def asDoitTask ( self ):
+        return { 'basename' : self.basename
+               , 'actions'  : [ self.doTask ]
+               , 'doc'      : 'Custom clean files & directories.'
+               , 'uptodate' : [ False ]
+               }
         

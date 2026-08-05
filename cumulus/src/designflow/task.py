@@ -129,8 +129,25 @@ class EdaVendorsShellEnv ( object ):
     """
     Manage and export to the sub-processes the EDA vendors variables.
 
-    Environment variables stored at class level, should be set once and
-    for all at startup:
+    Environment variables that are common to all vendor tools are stored
+    are stored as class attributes and should be set once and for all at
+    startup:
+
+    .. code:: python
+
+       edaVendorEnv = EdaVendorsShellEnv()
+       edaVendorEnv.CDSDIR = '/root/of/cadence/IC/installation'
+
+    Then, environment variables that are specific to a PDK should be set
+    as class *instance* attributes, using the supplied dictionnary-like
+    access.
+
+    .. code:: python
+
+       edaVendorEnv = EdaVendorsShellEnv()
+       edaVendorEnv[ 'PDK_ROOT' ] = '/root/of/foundry/pdk'
+
+    List of supported common variables:
 
     * ``CDSDIR``, Cadence IC root directory. Also exported as ``CDS_ROOT``
       and ``CDS_INST_DIR``
