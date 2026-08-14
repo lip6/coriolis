@@ -187,7 +187,7 @@ class Side ( object ):
                     pinWidth = self.conf.hRailWidth * 4
                 else:
                     pinWidth = gauge.getWireWidth()
-                pinHeight = gauge.getWireWidth() * 2
+                pinHeight = gauge.getWireWidth() #* 2
                 pinName  += '.{}'.format(self.conf.getIoPinsCounts(net))
                 pinPos    = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
                 if pinPos.getX() > self.conf.xMax or pinPos.getX() < self.conf.xMin:
