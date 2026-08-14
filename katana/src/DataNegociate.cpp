@@ -277,7 +277,9 @@ namespace Katana {
         RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandicular->getLayer());
         Track*        track = plane->getTrackByPosition( perpandicular->getAxis() );
         if (track and (perpandicular->getAxis() == track->getAxis())) {
-          Interval  trackFree = track->getFreeInterval( perpandicular->getSourceU(), _trackSegment->getNet() );
+          DbU::Unit freeSeed = perpandicular->getSourceU();
+          if (perpandicular->base()->getAutoTarget()->isTerminal()) freeSeed = perpandicular->getTargetU();
+          Interval  trackFree = track->getFreeInterval( freeSeed, _trackSegment->getNet() );
           cdebug_log(159,0) << "SourceU: " << DbU::getValueString(perpandicular->getSourceU()) << endl;
           cdebug_log(159,0) << "Track Perpandicular Free (fixed axis, source): " << trackFree << endl;
 
