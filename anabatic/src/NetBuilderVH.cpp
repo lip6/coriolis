@@ -174,6 +174,34 @@ namespace Anabatic {
                                                    );
     }
 
+    if (rp->isM1Offgrid()) {
+      const Layer* viaLayer1 = Session::getBuildContactLayer( 1 );
+      target = AutoContactTurn::create( gcell, rp->getNet(), rpLayer );
+      AutoSegment::create( source, target, Flags::Horizontal|Flags::UseNonPref );
+      source = target;
+
+      if (flags & (HAccess|HAccessEW)) {
+        if (flags & HAccessEW) {
+          cdebug_log(145,0) << "case Offgrid + HAccessEW" << endl;
+          target = AutoContactHTee::create( gcell, rp->getNet(), viaLayer1 );
+        } else {
+          cdebug_log(145,0) << "case Offgrid + HAccess" << endl;
+          target = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+        }
+        AutoSegment::create( source, target, Flags::Vertical );
+        source = target;
+      } else  {
+        cdebug_log(145,0) << "case Offgrid + vertical access" << endl;
+        target = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+        AutoSegment::create( source, target, Flags::Vertical );
+        source = target;
+
+        target = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+        AutoSegment::create( source, target, Flags::Horizontal );
+        source = target;
+      }
+    }
+
     cdebug_tabw(145,-1);
     return;
   }
@@ -198,6 +226,8 @@ namespace Anabatic {
 
     if (rp->isM1Offgrid()) {
       cerr << Warning( "NetNuilderVH::doRpAccess(): Offgrid %s.", getString(rp).c_str() ) << endl;
+      cdebug_tabw(145,-1);
+      return rpContactSource;
     }
 
     if (flags & (HAccess|HAccessEW)) {
@@ -685,7 +715,7 @@ namespace Anabatic {
     if (getConnexity().fields.globals == 3) {
       if (not east() or not west()) {
         cdebug_log(145,0) << "case 3G no East or no West" << endl;
-        doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpContact2, rpContact3, flags );
+        doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpContact2, rpContact3, flags|HAccess );
         AutoContact* turnN = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
         AutoContact* turnS = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
         AutoSegment::create( rpContact1, turnN, Flags::Horizontal|Flags::UseNonPref );
