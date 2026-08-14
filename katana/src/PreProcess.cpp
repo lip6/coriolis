@@ -333,6 +333,7 @@ namespace {
 
   void  protectCagedTerminals ( Track* track )
   {
+  //if (track and (track->getIndex() == 156)) DebugSession::open( 150, 160 );
     cdebug_log(159,1) << "protectCagedTerminals() " << track << endl;
 
     DbU::Unit      lastMovedUp   = track->getMin();
@@ -344,6 +345,7 @@ namespace {
     if (track->getLayer() != metal2) {
       cdebug_log(159,0) << "Not in " << metal2 << " skipping" << endl;
       cdebug_tabw(159,-1);
+    //if (track and (track->getIndex() == 156)) DebugSession::close();
       return;
     }
 
@@ -358,7 +360,9 @@ namespace {
         if (  ((segment->getSourceU() - track->getMin()) < 2*ppitch)
            or ((track->getMax() - segment->getTargetU()) < 2*ppitch) ) continue;
 
-        Interval freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
+        Interval freeInterval   = track->getFreeInterval      ( segment->getSourceU(), segment->getNet() );
+        Interval markerInterval = track->getFreeMarkerInterval( segment->getSourceU(), segment->getNet(), 50 );
+        freeInterval.intersection( markerInterval );
 
         if (  (segment->getSourceU() - freeInterval.getVMin() < ppitch*3)
            or (freeInterval.getVMax() - segment->getTargetU() < ppitch*3) ) {
@@ -405,11 +409,13 @@ namespace {
     }
 
     cdebug_tabw(159,-1);
+  //if (track and (track->getIndex() == 156)) DebugSession::close();
   }
 
 
   void  protectCagedTerminalsVH ( Track* track )
   {
+    if (track and (track->getIndex() == 516)) DebugSession::open( 150, 160 );
     cdebug_log(159,1) << "protectCagedTerminalsVH() " << track << endl;
 
     Configuration* configuration = Session::getConfiguration();
@@ -419,6 +425,7 @@ namespace {
     if (track->getLayer() != metal2) {
       cdebug_log(159,0) << "Not in " << metal2 << " skipping" << endl;
       cdebug_tabw(159,-1);
+      if (track and (track->getIndex() == 516)) DebugSession::close();
       return;
     }
 
@@ -433,7 +440,9 @@ namespace {
         if (  ((segment->getSourceU() - track->getMin()) < 2*ppitch)
            or ((track->getMax() - segment->getTargetU()) < 2*ppitch) ) continue;
 
-        Interval freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
+        Interval freeInterval   = track->getFreeInterval      ( segment->getSourceU(), segment->getNet() );
+        Interval markerInterval = track->getFreeMarkerInterval( segment->getSourceU(), segment->getNet(), 50 );
+        freeInterval.intersection( markerInterval );
 
         if (  (segment->getSourceU() - freeInterval.getVMin() < ppitch*3)
            or (freeInterval.getVMax() - segment->getTargetU() < ppitch*3) ) {
@@ -455,9 +464,12 @@ namespace {
             AutoContact* opposite = parallel->getOppositeAnchor( terminal );
 
             cdebug_log(159,0) << "Protect " << rp << endl;
+            cdebug_log(159,0) << "freeInterval " << freeInterval << endl;
             opposite->restrictConstraintBox( freeInterval.getVMin()
                                            , freeInterval.getVMax()
                                            , Flags::Horizontal );
+            cdebug_log(159,0) << "Applied on " << opposite << endl;
+            cdebug_log(159,0) << "  -> " << opposite->getConstraintBox() << endl;
           }
         } else {
           cdebug_log(159,0) << "Not caged in " << freeInterval << endl;
@@ -466,6 +478,7 @@ namespace {
     }
 
     cdebug_tabw(159,-1);
+    if (track and (track->getIndex() == 516)) DebugSession::close();
   }
 
 

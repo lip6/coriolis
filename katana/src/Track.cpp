@@ -873,6 +873,55 @@ namespace Katana {
   }
 
 
+  Interval  Track::getFreeMarkerInterval ( DbU::Unit position, Net* net, uint32_t threshold ) const
+  {
+    cdebug_log(155,0) << "Track::getFreeMarkerInterval() "
+                      << DbU::getValueString(position)
+                      << " threshold=" << threshold
+                      << " for " << net << endl;
+
+    Interval  markerFree ( false );
+    vector<TrackMarker*>::const_iterator lowerBound
+      = lower_bound( _markers.begin(), _markers.end(), position, TrackMarkerBase::Compare() );
+    if (lowerBound == _markers.end()) return markerFree;
+
+    size_t mpos = lowerBound - _markers.begin();
+    cdebug_log(155,0) << "Markers mpos=" << mpos << endl;
+
+    size_t mbegin = mpos;
+    if (mbegin > 0) --mbegin;
+    while ( true ) {
+      if (_markers[mbegin]->getNet() != net) {
+        TrackMarker* marker = dynamic_cast<TrackMarker*>( _markers[mbegin] );
+        if (marker and (marker->getWeight(this) >= threshold)) {
+          markerFree.intersection( marker->getTargetU(), markerFree.getVMax() );
+          cdebug_log(155,0) << "| before " << marker << endl;
+          break;
+        }
+      }
+      if (mbegin == 0) break;
+      --mbegin;
+    }
+
+    size_t mend = mpos;
+    while ( true ) {
+      if (_markers[mend]->getNet() != net) {
+        TrackMarker* marker = dynamic_cast<TrackMarker*>( _markers[mend] );
+        if (marker and (marker->getWeight(this) >= threshold)) {
+          markerFree.intersection( markerFree.getVMin(), marker->getSourceU() );
+          cdebug_log(155,0) << "| after " << marker << endl;
+          break;
+        }
+      }
+
+      if (mend+1 == _markers.size()) break;
+      ++mend;
+    }
+
+    return markerFree;
+  }
+  
+
   void  Track::invalidate ()
   { _segmentsValid = false; }
 
