@@ -857,6 +857,9 @@ namespace {
                         , getString(_library).c_str()
                         ) << endl;
     _cells.push_back( Cell::create( workLibrary, cellName ));
+    if (_flags & Gds::HideGdsOffgridError) {
+      _cells.back()->setHideGdsOffgridError( true );
+    }
     return _cells.back();
   }
 
@@ -1676,11 +1679,12 @@ namespace {
           ++offgrid;
         }
       }
-      cerr << Error( "GdsStream::xyToAbutmentBox(): %u offgrid points on abutment box (foundry grid: %s).\n"
-                     "%s"
-                   , offgrids.size()
-                   , DbU::getValueString(oneGrid).c_str()
-                   , m.str().c_str() ) << endl;
+      if (not _cell->doHideGdsOffgridError())
+        cerr << Error( "GdsStream::xyToAbutmentBox(): %u offgrid points on abutment box (foundry grid: %s).\n"
+                       "%s"
+                     , offgrids.size()
+                     , DbU::getValueString(oneGrid).c_str()
+                     , m.str().c_str() ) << endl;
     } 
 
     _stream >> _record;
@@ -1732,7 +1736,7 @@ namespace {
 
   void  GdsStream::xyToComponent ( const Layer* layer )
   {
-    cdebug_log(101,1) << "GdsStream::xyToAbutmetBox()" << endl;
+    cdebug_log(101,1) << "GdsStream::xyToComponent()" << endl;
     
     DbU::Unit oneGrid = DbU::fromGrid( 1 );
     
@@ -1805,15 +1809,16 @@ namespace {
           ++offgrid;
         }
       }
-      cerr << Error( "GdsStream::xyToComponent(): %u offgrid points on layer \"%s\" (foundry grid: %s),\n"
-                     "        In net \"%s\" of cell \"%s\".\n"
-                     "%s"
-                   , offgrids.size()
-                   , getString(layer->getName()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
-                   , getString(net->getName()).c_str()
-                   , getString(net->getCell()->getName()).c_str()
-                   , m.str().c_str() ) << endl;
+      if (not net->getCell()->doHideGdsOffgridError())
+        cerr << Error( "GdsStream::xyToComponent(): %u offgrid points on layer \"%s\" (foundry grid: %s),\n"
+                       "        In net \"%s\" of cell \"%s\".\n"
+                       "%s"
+                     , offgrids.size()
+                     , getString(layer->getName()).c_str()
+                     , DbU::getValueString(oneGrid).c_str()
+                     , getString(net->getName()).c_str()
+                     , getString(net->getCell()->getName()).c_str()
+                     , m.str().c_str() ) << endl;
     } 
     
     if (points.size() > 2) {

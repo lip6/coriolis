@@ -78,32 +78,32 @@ class Cell : public Entity {
 
     public: class Flags : public BaseFlags {
       public:
-        enum Flag { NoFlags                 =  0
-                  , BuildRings              = (1 <<  1)
-                  , BuildClockRings         = (1 <<  2)
-                  , BuildSupplyRings        = (1 <<  3)
-                  , NoClockFlatten          = (1 <<  4)
-                  , WarnOnUnplacedInstances = (1 <<  5)
-                  , StayOnPlugs             = (1 <<  6)
-                  , MaskRings               = BuildRings|BuildClockRings|BuildSupplyRings
-                  // Flags set for Observers.
-                  , CellAboutToChange       = (1 << 10)
-                  , CellChanged             = (1 << 11)
-                  , CellDestroyed           = (1 << 12)
-                  // Cell states
-                  , TerminalNetlist         = (1 << 20)
-                  , Pad                     = (1 << 21)
-                  , Feed                    = (1 << 22)
-                  , Diode                   = (1 << 23)
-                  , PowerFeed               = (1 << 24)
-                  , FlattenedNets           = (1 << 25)
-                  , AbstractedSupply        = (1 << 26) 
-                  , Placed                  = (1 << 27)
-                  , Routed                  = (1 << 28)
-                  , SlavedAb                = (1 << 29)
-                  , Materialized            = (1 << 30) 
-                  , NoExtractConsistent     = (1 << 31) 
-                  };
+        static const uint64_t  NoFlags                 =  0;
+        static const uint64_t  BuildRings              = (1L <<  1);
+        static const uint64_t  BuildClockRings         = (1L <<  2);
+        static const uint64_t  BuildSupplyRings        = (1L <<  3);
+        static const uint64_t  NoClockFlatten          = (1L <<  4);
+        static const uint64_t  WarnOnUnplacedInstances = (1L <<  5);
+        static const uint64_t  StayOnPlugs             = (1L <<  6);
+        static const uint64_t  MaskRings               = BuildRings|BuildClockRings|BuildSupplyRings;
+        // Flags set for Observers.
+        static const uint64_t  CellAboutToChange       = (1L << 10);
+        static const uint64_t  CellChanged             = (1L << 11);
+        static const uint64_t  CellDestroyed           = (1L << 12);
+        // Cell states
+        static const uint64_t  TerminalNetlist         = (1L << 20);
+        static const uint64_t  Pad                     = (1L << 21);
+        static const uint64_t  Feed                    = (1L << 22);
+        static const uint64_t  Diode                   = (1L << 23);
+        static const uint64_t  PowerFeed               = (1L << 24);
+        static const uint64_t  FlattenedNets           = (1L << 25);
+        static const uint64_t  AbstractedSupply        = (1L << 26);
+        static const uint64_t  Placed                  = (1L << 27);
+        static const uint64_t  Routed                  = (1L << 28);
+        static const uint64_t  SlavedAb                = (1L << 29);
+        static const uint64_t  Materialized            = (1L << 30);
+        static const uint64_t  NoExtractConsistent     = (1L << 31);
+        static const uint64_t  HideGdsOffgridError     = (1L << 32);
 
       public:
                              Flags        ( uint64_t flags = NoFlags );
@@ -503,6 +503,7 @@ class Cell : public Entity {
     public: bool isRouted() const {return _flags.isset(Flags::Routed);};
     public: bool isExtractConsistent() const {return not _flags.isset(Flags::NoExtractConsistent);};
     public: bool isNetAlias(const Name& name) const;
+    public: bool doHideGdsOffgridError() const {return _flags.isset(Flags::HideGdsOffgridError);};
 
 // Updators
 // ********
@@ -519,6 +520,7 @@ class Cell : public Entity {
     public: void setRouted(bool state) {_flags.set(Flags::Routed,state);};
     public: void setAbstractedSupply(bool state) { _flags.set(Flags::AbstractedSupply,state); };
     public: void setNoExtractConsistent(bool state) { _flags.set(Flags::NoExtractConsistent,state); };
+    public: void setHideGdsOffgridError(bool state) { _flags.set(Flags::HideGdsOffgridError,state); };
     public: void flattenNets(uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, const std::set<std::string>& excludeds, uint64_t flags=Flags::BuildRings);

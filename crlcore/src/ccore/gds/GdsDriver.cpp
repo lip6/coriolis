@@ -480,6 +480,7 @@ namespace {
 
   class GdsStream {
     public:
+      static const  uint64_t   HideGdsOffgridError = (1 << 0);
       static const  GdsRecord  BOUNDARY;
       static const  GdsRecord  ENDLIB;
       static const  GdsRecord  ENDEL;
@@ -489,6 +490,8 @@ namespace {
     public:
                                GdsStream    ( string filename );
                               ~GdsStream    ();
+             inline void       setFlags     ( uint64_t );
+             inline void       resetFlags   ( uint64_t );
              inline Point      putOnGrid    ( const Point& ) const;
              inline int32_t    toGdsDbu     ( DbU::Unit ) const;
       static inline GdsRecord  PROPATTR     ( int16_t );
@@ -516,6 +519,7 @@ namespace {
       double     _dbuPerUu;
       double     _metricDbU;
       DbU::Unit  _oneGrid;
+      uint64_t   _flags;
   };
 
   
@@ -540,9 +544,12 @@ namespace {
   inline GdsRecord  GdsStream::STRING       ( const Name& n )  { return GdsRecord(GdsRecord::STRING,getString(n)); }
   inline GdsRecord  GdsStream::STRING       ( const string s ) { return GdsRecord(GdsRecord::STRING,s); }
 
+  inline void       GdsStream::setFlags     ( uint64_t flags ) { _flags |=  flags; }
+  inline void       GdsStream::resetFlags   ( uint64_t flags ) { _flags &= ~flags; }
+
   inline int32_t    GdsStream::toGdsDbu     ( DbU::Unit v )   const
   {
-    if (v % _oneGrid) {
+    if (not (_flags & HideGdsOffgridError) and (v % _oneGrid)) {
       cerr << getString( Error( "Offgrid value %s (DbU=%d), grid %s (DbU=%d)."
                               , DbU::getValueString(v).c_str(), v
                               , DbU::getValueString(_oneGrid).c_str(), _oneGrid ))
@@ -564,6 +571,7 @@ namespace {
     , _dbuPerUu (Cfg::getParamDouble("gdsDriver.dbuPerUu" ,0.001)->asDouble())  // 1000
     , _metricDbU(Cfg::getParamDouble("gdsDriver.metricDbu",10e-9)->asDouble())  // 1um.
     , _oneGrid  (DbU::grid(1.0))
+    , _flags    (0)
   {
     std::fesetround( FE_TONEAREST );
     _ostream.open( filename, ios_base::out|ios_base::binary );
@@ -940,6 +948,10 @@ namespace CRL {
 
     DepthOrder cellOrder ( cell );
     for ( auto element : cellOrder.getCellDepths() ) {
+      if (element.first->doHideGdsOffgridError())
+        gstream.setFlags( GdsStream::HideGdsOffgridError );
+      else
+        gstream.resetFlags( GdsStream::HideGdsOffgridError );
       gstream << element.first;
     }
 

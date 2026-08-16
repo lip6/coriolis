@@ -153,10 +153,11 @@ extern "C" {
   extern  void  PyGds_postModuleInit ()
   {
     PyObject* constant;
-    LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoGdsPrefix       ,"NoGdsPrefix");
-    LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoBlockages       ,"NoBlockages");
-    LoadObjectConstant(PyTypeGds.tp_dict,Gds::LefForeign        ,"LefForeign");
-    LoadObjectConstant(PyTypeGds.tp_dict,Gds::Layer_0_IsBoundary,"Layer_0_IsBoundary");
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoGdsPrefix        ,"NoGdsPrefix");
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoBlockages        ,"NoBlockages");
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::LefForeign         ,"LefForeign");
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::HideGdsOffgridError,"HideGdsOffgridError");
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::Layer_0_IsBoundary ,"Layer_0_IsBoundary");
   }
 
 
