@@ -641,6 +641,20 @@ namespace CRL {
   }
 
 
+  void  AllianceFramework::renameCell ( Cell* cell, string newName )
+  {
+    if (not cell) return;
+
+    string  oldName = getString( cell->getName() );
+    if (oldName == newName) return;
+
+    Catalog*        catalog = getCatalog();
+    Catalog::State* state   = catalog->getState( oldName );
+    cell->setName( newName );
+    catalog->rename( oldName, newName );
+  }
+
+  
   Library* AllianceFramework::getLibrary ( unsigned index )
   {
     if ( index >= _libraries.size() )

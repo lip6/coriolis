@@ -52,31 +52,52 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False )
     if cell.isUniquified():             views |= CRL.Catalog.State.Logical
     if cell.getName().endswith('_cts'): views |= CRL.Catalog.State.Logical
     if cell.getName().endswith('_r'  ): views |= CRL.Catalog.State.Logical
-    sviews = ''
+    catalog      = framework.getCatalog()
+    sviews       = ''
+    rviews       = 0
+    renableSpice = False
+
     if views & CRL.Catalog.State.Logical:
-        sviews += 'netlist'
-        if views & CRL.Catalog.State.VstUseConcat:
-            if sviews: sviews += ', '
-            sviews += 'uses &'
-        if views & CRL.Catalog.State.VstNoLowerCase:
-            if sviews: sviews += ', '
-            sviews += 'no lowercase'
-        if views & CRL.Catalog.State.VstUniquifyUpperCase:
-            if sviews: sviews += ', '
-            sviews += 'uniquify uppercase'
-        if views & CRL.Catalog.State.VstNoLinkage:
-            if sviews: sviews += ', '
-            sviews += 'no linkage'
-        if enableSpice:
-            if sviews: sviews += ', '
-            sviews += 'SPICE'
+        state = catalog.getState( cell.getName() )
+        #print( f'{cell} -> {state}' )
+        if isinstance(state,CRL.Catalog.State):
+            if state.isVhdl():
+                sviews += 'VHDL'
+                rviews |= CRL.Catalog.State.Logical
+                if views & CRL.Catalog.State.VstUseConcat:
+                    if sviews: sviews += ','
+                    sviews += 'uses &'
+                    rviews |= CRL.Catalog.State.VstUseConcat
+                if views & CRL.Catalog.State.VstNoLowerCase:
+                    if sviews: sviews += ','
+                    sviews += 'no lowercase'
+                    rviews |= CRL.Catalog.State.VstNoLowerCase
+                if views & CRL.Catalog.State.VstUniquifyUpperCase:
+                    if sviews: sviews += ','
+                    sviews += 'uniquify uppercase'
+                    rviews |= CRL.Catalog.State.VstUniquifyUpperCase
+                if views & CRL.Catalog.State.VstNoLinkage:
+                    if sviews: sviews += ','
+                    sviews += 'no linkage'
+                    rviews |= CRL.Catalog.State.VstNoLinkage
+            if state.isLogical() and enableSpice:
+                if sviews: sviews += ','
+                sviews += 'SPICE'
+                renableSpice = True
+
     if views & CRL.Catalog.State.Physical:
         if sviews: sviews += ','
         sviews += 'layout'
+        rviews |= CRL.Catalog.State.Physical
+
     print( '     {}+ {} ({}).'.format(' '*(depth*2), cell.getName(), sviews) )
-    framework.saveCell( cell, views )
-    spiceFlags = CRL.Spice.TopCell if depth == 0 else 0
-    CRL.Spice.save( cell, spiceFlags )
+    framework.saveCell( cell, rviews )
+    if renableSpice:
+        sys.stdout.flush()
+        print( 'SPICE save ', cell )
+        sys.stdout.flush()
+        spiceFlags = CRL.Spice.TopCell if depth == 0 else 0
+        CRL.Spice.save( cell, spiceFlags )
     for instance in cell.getInstances():
         #print( '     {}| {}.'.format(' '*(depth*2), instance) )
         masterCell = instance.getMasterCell()

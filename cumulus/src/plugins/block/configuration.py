@@ -1777,21 +1777,22 @@ class BlockConf ( GaugeConf ):
         cells, then call rsave().
         """
         trace( 550,'\tBlockConf.save() on "{}"\n'.format(self.cell.getName()) )
+        af    = AllianceFramework.get()
         views = Catalog.State.Logical
         if self.routingGauge.isSymbolic():
             views = views | Catalog.State.Physical
         for cell in self.cloneds:
             trace( 550, '\tRenaming cloned cell: "{}"\n'.format(cell) )
-            cell.setName( cell.getName()+'_cts' )
+            af.renameCell( cell, cell.getName()+'_cts' )
         if self.chip is None:
             topCell = self.cellPnR
-            topCell.setName( topCell.getName()+'_r' )
-            rsave( topCell, views|flags )
+            af.renameCell( topCell, topCell.getName()+'_r' )
+            rsave( topCell, views|flags, enableSpice=True )
         else:
             topCell = self.chip
             if not self.useHarness:
-                self.corona.setName( self.corona.getName()+'_r' )
-                self.chip  .setName( self.chip  .getName()+'_r' )
+                af.renameCell( self.corona, self.corona.getName()+'_r' )
+                af.renameCell( self.chip  , self.chip  .getName()+'_r' )
             rsave( self.corona, views|flags, enableSpice=True )
             rsave( self.chip  , views|flags, enableSpice=True )
         if not self.routingGauge.isSymbolic():

@@ -82,7 +82,11 @@ namespace CRL {
     s += (isPad()            ) ? 'P' : '-';
     s += (isGds()            ) ? 'G' : '-';
     s += (isDelete()         ) ? 'D' : '-';
+    s += (isLogical()        ) ? 'L' : '-';
+    s += (isPhysical()       ) ? 'P' : '-';
     s += (isInMemory()       ) ? 'm' : '-';
+    s += (isVhdl()           ) ? 'h' : '-';
+    s += (isVerilog()        ) ? 'v' : '-';
 
     return s;
   }
@@ -225,6 +229,20 @@ namespace CRL {
     _states.erase ( it );
 
     return true;
+  }
+
+
+  void  Catalog::rename ( const Name oldName, const Name newName )
+  {
+    map<Name,State*>::iterator it;
+    if ( (it=_states.find(oldName)) == _states.end() ) {
+      getState( newName, true );
+      return;
+    }
+
+    State *state = it->second;
+    _states.erase( it );
+    _states[ newName ] = state;
   }
 
 

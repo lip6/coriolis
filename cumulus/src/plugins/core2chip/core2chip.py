@@ -738,18 +738,25 @@ class CoreToChip ( object ):
         from the core cell.
         """
         af = AllianceFramework.get()
+        coreState = af.getCatalog().getState( self.conf.cell.getName() )
         self.conf.cfg.apply()
         chipName = self.conf.chipConf.name
         if self.useHarness():
             self.conf.chip = self._loadHarness()
         else:
             self.conf.chip = af.createCell( self.conf.chipConf.name )
+            chipState = af.getCatalog().getState( self.conf.chipConf.name )
+            chipState.setLogical( True )
+            if coreState.isVhdl(): chipState.setVhdl( True )
         with UpdateSession():
             print( '  o  Build Chip from Core.' )
             print( '     - Core:    "{}".'.format(self.conf.cell.getName()) )
             print( '     - Corona:  "{}".'.format('corona') )
             print( '     - Chip:    "{}".'.format(self.conf.chip.getName()) )
             self.conf.corona  = af.createCell( 'corona' )
+            coronaState = af.getCatalog().getState( 'corona' )
+            coronaState.setLogical( True )
+            if coreState.isVhdl(): coronaState.setVhdl( True )
             self.corona       = self.conf.corona
             self.conf.icore   = Instance.create( self.corona   , 'core'  , self.conf.cell )
             self.conf.icorona = Instance.create( self.conf.chip, 'corona', self.corona    )

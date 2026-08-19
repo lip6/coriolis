@@ -63,6 +63,8 @@ extern "C" {
   DirectGetBoolAttribute(PyCatalogState_isTerminalNetlist,isTerminalNetlist,PyCatalogState,Catalog::State)
   DirectGetBoolAttribute(PyCatalogState_isFeed           ,isFeed           ,PyCatalogState,Catalog::State)
   DirectGetBoolAttribute(PyCatalogState_isGds            ,isGds            ,PyCatalogState,Catalog::State)
+  DirectGetBoolAttribute(PyCatalogState_isVhdl           ,isVhdl           ,PyCatalogState,Catalog::State)
+  DirectGetBoolAttribute(PyCatalogState_isVerilog        ,isVerilog        ,PyCatalogState,Catalog::State)
   DirectGetBoolAttribute(PyCatalogState_isDelete         ,isDelete         ,PyCatalogState,Catalog::State)
   DirectGetBoolAttribute(PyCatalogState_isPhysical       ,isPhysical       ,PyCatalogState,Catalog::State)
   DirectGetBoolAttribute(PyCatalogState_isLogical        ,isLogical        ,PyCatalogState,Catalog::State)
@@ -71,6 +73,8 @@ extern "C" {
   DirectSetBoolAttribute(PyCatalogState_setTerminalNetlist,setTerminalNetlist,PyCatalogState,Catalog::State)
   DirectSetBoolAttribute(PyCatalogState_setFeed           ,setFeed           ,PyCatalogState,Catalog::State)
   DirectSetBoolAttribute(PyCatalogState_setGds            ,setGds            ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setVhdl           ,setVhdl           ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setVerilog        ,setVerilog        ,PyCatalogState,Catalog::State)
   DirectSetBoolAttribute(PyCatalogState_setDelete         ,setDelete         ,PyCatalogState,Catalog::State)
   DirectSetBoolAttribute(PyCatalogState_setPhysical       ,setPhysical       ,PyCatalogState,Catalog::State)
   DirectSetBoolAttribute(PyCatalogState_setLogical        ,setLogical        ,PyCatalogState,Catalog::State)
@@ -110,6 +114,10 @@ extern "C" {
                             , "Return true if the Cell is a feed through." }
     , { "isGds"             , (PyCFunction)PyCatalogState_isGds, METH_NOARGS
                             , "Return true if the Cell is a GDSII import." }
+    , { "isVhdl"             , (PyCFunction)PyCatalogState_isVhdl, METH_NOARGS
+                            , "Return true if the Cell has been loaded through the VHDL parser." }
+    , { "isVerilog"         , (PyCFunction)PyCatalogState_isVerilog, METH_NOARGS
+                            , "Return true if the Cell has been loaded through the Verilog parser." }
     , { "isDelete"          , (PyCFunction)PyCatalogState_isDelete, METH_NOARGS
                             , "Return true if the Cell has the Catalog Delete attribute." }
     , { "isPhysical"        , (PyCFunction)PyCatalogState_isPhysical, METH_NOARGS
@@ -126,6 +134,10 @@ extern "C" {
                             , "Sets/reset the Feed flag of a Cell." }
     , { "setGds"            , (PyCFunction)PyCatalogState_setGds, METH_VARARGS
                             , "Sets/reset the Gds flag of a Cell." }
+    , { "setVhdl"           , (PyCFunction)PyCatalogState_setVhdl, METH_VARARGS
+                            , "Sets/reset the VHDL flag of a Cell." }
+    , { "setVerilog"        , (PyCFunction)PyCatalogState_setVerilog, METH_VARARGS
+                            , "Sets/reset the Verilog flag of a Cell." }
     , { "setDelete"         , (PyCFunction)PyCatalogState_setDelete, METH_VARARGS
                             , "Sets/reset the Delete flag of a Cell." }
     , { "setPhysical"       , (PyCFunction)PyCatalogState_setPhysical, METH_VARARGS
@@ -171,6 +183,8 @@ extern "C" {
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::TerminalNetlist     ,"TerminalNetlist");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Feed                ,"Feed");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::GDS                 ,"GDS");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Vhdl                ,"Vhdl");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Verilog             ,"Verilog");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Delete              ,"Delete");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Logical             ,"Logical");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Physical            ,"Physical");

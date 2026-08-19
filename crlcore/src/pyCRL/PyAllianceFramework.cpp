@@ -52,6 +52,7 @@ namespace  CRL {
   using Isobar::PyLibrary_Link;
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
+  using Isobar::PyTypeCell;
 
 
   PyObject* AllianceLibsToList ( const AllianceLibraries& libs )
@@ -281,6 +282,27 @@ extern "C" {
     HCATCH
 
     return PyCell_Link(cell);
+  }
+
+
+  static PyObject* PyAllianceFramework_renameCell ( PyAllianceFramework* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_renameCell ()" << endl;
+    HTRY
+      PyObject* pyCell  = NULL;
+      char*     newName = NULL;
+      METHOD_HEAD("AllianceFramework.renameCell()")
+      if ( not PyArg_ParseTuple( args, "Os:AllianceFramework.renameCell", &pyCell, &newName )) {
+        PyErr_SetString( ConstructorError, "AllianceFramework.renameCell(): Invalid number or bad type of parameters.");
+        return NULL;
+      }
+      if (not IsPyCell(pyCell)) {
+        PyErr_SetString( ConstructorError, "AllianceFramework.renameCell(): First argument must be of type Cell.");
+        return NULL;
+      }
+      af->renameCell( PYCELL_O(pyCell), newName );
+    HCATCH
+    Py_RETURN_NONE;
   }
 
 
@@ -652,6 +674,8 @@ extern "C" {
                                , "Gets an Alliance Cell." }                            
     , { "saveCell"             , (PyCFunction)PyAllianceFramework_saveCell             , METH_VARARGS
                                , "Saves an Alliance Cell." }                           
+    , { "renameCell"           , (PyCFunction)PyAllianceFramework_renameCell           , METH_VARARGS
+                               , "Renames an Alliance Cell (update the catalog)." }                           
     , { "createCell"           , (PyCFunction)PyAllianceFramework_createCell           , METH_VARARGS
                                , "Create a Cell in the Alliance framework." }
     , { "createLibrary"        , (PyCFunction)PyAllianceFramework_createLibrary        , METH_VARARGS

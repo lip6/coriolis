@@ -17,6 +17,7 @@
 #include <cctype>
 #include "crlcore/ToolBox.h"
 #include "hurricane/Instance.h"
+#include "crlcore/AllianceFramework.h"
 
 
 namespace CRL {
@@ -130,7 +131,16 @@ namespace CRL {
 
     if (converter == nullptr) return;
 
-    topCell->setName( converter(topCell->getName(),flags) );
+    Name            oldName = topCell->getName();
+    Catalog*        catalog = AllianceFramework::get()->getCatalog();
+    Catalog::State* state   = catalog->getState( oldName );
+    topCell->setName( converter( topCell->getName(), flags ));
+    if (oldName != topCell->getName())
+      catalog->rename( oldName, topCell->getName() );
+    state->setVhdl( true );
+    // cerr << "toVhdl() (" << oldName << ")" << topCell << " state:" << state << endl;
+    // cerr << "  oldState:" << catalog->getState( oldName ) << endl; 
+    // cerr << "  newState:" << catalog->getState( topCell->getName() ) << endl; 
 
     vector<Net*> nets;
     for ( Net* net : topCell->getNets() ) nets.push_back( net );

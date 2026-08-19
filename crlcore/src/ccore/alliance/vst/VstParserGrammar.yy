@@ -1271,6 +1271,7 @@ void  vstParser ( const string cellPath, Cell *cell )
 
   Vst::states->_state = sprop->getState ();
   Vst::states->_state->setLogical ( true );
+  Vst::states->_state->setVhdl    ( true );
   Vst::states->_cell = cell;
 
   IoFile ccell ( cellPath );

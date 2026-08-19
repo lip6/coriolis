@@ -385,7 +385,7 @@ class FlowTask ( object ):
     def _normFile ( depend ):
         if isinstance(depend,FlowTask) or isinstance(depend,Path): return depend
         if isinstance(depend,str): return Path(depend)
-        raise UnsupportedFileType( 'FlowTask._normFile(): Unsupported type for "{}"'.format(depend) )
+        raise UnsupportedFileType( 'FlowTask._normFile(): Unsupported type for target or dependency for "{}"'.format(depend) )
 
     @staticmethod
     def _normFileList ( depends ):

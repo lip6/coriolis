@@ -40,7 +40,7 @@ class Blif2Vst ( FlowTask ):
         if not self.targets[0].suffix == '.vst':
             raise TargetNotVst( 'Blif2Vst.__init__(): First target *must* "{}" be a vst file.' \
                                 .format( self.targets[0] ))
-        self.targets.append( Path(self.file_depend(0).stem + '.spi') )
+        self.targets.append( Path(self.file_target(0).stem + '.spi') )
         self.addClean( self.targets )
 
     def __repr__ ( self ):
@@ -60,16 +60,15 @@ class Blif2Vst ( FlowTask ):
         from ..plugins    import rsave
 
         views = CRL.Catalog.State.Logical | self.flags
-        cell  = CRL.Blif.load( self.file_depend().as_posix() )
+        cell  = CRL.Blif.load( self.file_depend().as_posix(), CRL.Blif.EnforceVhdl )
         if cell.getName() == 'top':
             print( '  o  Renaming RTLIL anonymous top cell "top" into "{}".'.format(self.design) )
             cell.setName( self.design )
         renameNMigenUniquify( cell )
         CRL.restoreNetsDirection( cell, Cell.Flags_TerminalNetlist )
-        kw          = {}
-        kw['views'] = views
-        kw['cell' ] = cell
-        rsave.scriptMain( **kw )
+        lowerName = cell.getName().lower()
+        CRL.AllianceFramework.get().renameCell( cell, lowerName )
+        rsave.rsave( cell, views, enableSpice=True )
 
         return self.checkTargets( 'Blif2Vst.doTask' )
 

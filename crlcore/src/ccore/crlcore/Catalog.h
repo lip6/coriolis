@@ -61,6 +61,7 @@ namespace CRL {
              State*            getState     ( const Name& name, bool add=false );
              void              mergeState   ( const Name& name, const State& other );
              bool              deleteState  ( const Name& name );
+             void              rename       ( const Name oldName, const Name newName );
              void              clear        ();
              bool              loadFromFile ( const string& path, Library* library );
              void              saveToFile   ( const string& path, Library* library );
@@ -88,6 +89,8 @@ namespace CRL {
                      , VstNoLowerCase       = 1 << 10
                      , VstUniquifyUpperCase = 1 << 11
                      , VstNoLinkage         = 1 << 12
+                     , Vhdl                 = 1 << 13
+                     , Verilog              = 1 << 14
                      , Views                = Physical|Logical
                      };
         // Constructors.
@@ -98,6 +101,8 @@ namespace CRL {
           inline bool          isFeed             () const;
           inline bool          isPad              () const;
           inline bool          isGds              () const;
+          inline bool          isVhdl             () const;
+          inline bool          isVerilog          () const;
           inline bool          isDelete           () const;
           inline bool          isPhysical         () const;
           inline bool          isLogical          () const;
@@ -109,6 +114,8 @@ namespace CRL {
           inline bool          setFeed            ( bool value );
           inline bool          setPad             ( bool value );
           inline bool          setGds             ( bool value );
+          inline bool          setVhdl            ( bool value );
+          inline bool          setVerilog         ( bool value );
           inline bool          setDelete          ( bool value );
           inline bool          setPhysical        ( bool value );
           inline bool          setLogical         ( bool value );
@@ -209,6 +216,8 @@ namespace CRL {
   inline bool              Catalog::State::isFeed             () const { return (_flags&Feed           )?1:0; }
   inline bool              Catalog::State::isPad              () const { return (_flags&Pad            )?1:0; }
   inline bool              Catalog::State::isGds              () const { return (_flags&GDS            )?1:0; }
+  inline bool              Catalog::State::isVhdl             () const { return (_flags&Vhdl           )?1:0; }
+  inline bool              Catalog::State::isVerilog          () const { return (_flags&Verilog        )?1:0; }
   inline bool              Catalog::State::isDelete           () const { return (_flags&Delete         )?1:0; }
   inline bool              Catalog::State::isPhysical         () const { return (_flags&Physical       )?1:0; }
   inline bool              Catalog::State::isLogical          () const { return (_flags&Logical        )?1:0; }
@@ -223,6 +232,8 @@ namespace CRL {
   inline bool              Catalog::State::setFeed            ( bool value ) { return setFlags(Feed       ,value); }
   inline bool              Catalog::State::setPad             ( bool value ) { return setFlags(Pad        ,value); }
   inline bool              Catalog::State::setGds             ( bool value ) { return setFlags(GDS        ,value); }
+  inline bool              Catalog::State::setVhdl            ( bool value ) { return setFlags(Vhdl       ,value); }
+  inline bool              Catalog::State::setVerilog         ( bool value ) { return setFlags(Verilog    ,value); }
   inline bool              Catalog::State::setDelete          ( bool value ) { return setFlags(Delete     ,value); }
   inline bool              Catalog::State::setPhysical        ( bool value ) { return setFlags(Physical   ,value); }
   inline bool              Catalog::State::setLogical         ( bool value ) { return setFlags(Logical    ,value); }
@@ -256,6 +267,8 @@ namespace CRL {
       static inline bool             isFeed             ( const Cell* );
       static inline bool             isPad              ( const Cell* );
       static inline bool             isGds              ( const Cell* );
+      static inline bool             isVhdl             ( const Cell* );
+      static inline bool             isVerilog          ( const Cell* );
       static inline bool             isDelete           ( const Cell* );
       static inline bool             isPhysical         ( const Cell* );
       static inline bool             isLogical          ( const Cell* );
@@ -266,6 +279,8 @@ namespace CRL {
       static inline bool             setFeed            ( const Cell*, bool value );
       static inline bool             setPad             ( const Cell*, bool value );
       static inline bool             setGds             ( const Cell*, bool value );
+      static inline bool             setVhdl            ( const Cell*, bool value );
+      static inline bool             setVerilog         ( const Cell*, bool value );
       static inline bool             setDelete          ( const Cell*, bool value );
       static inline bool             setPhysical        ( const Cell*, bool value );
       static inline bool             setLogical         ( const Cell*, bool value );
@@ -299,6 +314,20 @@ namespace CRL {
   {
     Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->isGds();
+  }
+
+
+  inline bool  CatalogExtension::isVhdl ( const Cell* cell )
+  {
+    Catalog::State* state = get(cell);
+    return (state == NULL) ? false : state->isVhdl();
+  }
+
+
+  inline bool  CatalogExtension::isVerilog ( const Cell* cell )
+  {
+    Catalog::State* state = get(cell);
+    return (state == NULL) ? false : state->isVerilog();
   }
 
 
@@ -369,6 +398,20 @@ namespace CRL {
   {
     Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->setGds(value);
+  }
+
+
+  inline bool  CatalogExtension::setVhdl ( const Cell* cell, bool value )
+  {
+    Catalog::State* state = get(cell);
+    return (state == NULL) ? false : state->setVhdl(value);
+  }
+
+
+  inline bool  CatalogExtension::setVerilog ( const Cell* cell, bool value )
+  {
+    Catalog::State* state = get(cell);
+    return (state == NULL) ? false : state->setVerilog(value);
   }
 
 

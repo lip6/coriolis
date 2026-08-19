@@ -84,9 +84,29 @@ extern "C" {
   }
 
 
+  static PyObject* PyCatalog_rename ( PyCatalog* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyCatalog_rename ()" << endl;
+
+    char* oldName = NULL;
+    char* newName = NULL;
+    HTRY
+      METHOD_HEAD("Catalog.rename()")
+      if ( not PyArg_ParseTuple(args,"ss:Catalog.rename",&oldName,&newName) ) {
+        PyErr_SetString( ConstructorError, "Catalog.rename(): Invalid number or bad type of parameters.");
+        return NULL;
+      }
+      catalog->rename( Name(oldName), Name(newName) );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   PyMethodDef PyCatalog_Methods[] =
     { { "getState"          , (PyCFunction)PyCatalog_getState, METH_VARARGS
                             , "Gets the catalog state of a cell." }
+    , { "rename"            , (PyCFunction)PyCatalog_rename, METH_VARARGS
+                            , "Rename the catalog state of a cell." }
     , {NULL, NULL, 0, NULL} /* sentinel */
     };
 

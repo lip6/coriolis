@@ -123,6 +123,7 @@ namespace CRL {
                                                                 , unsigned int  depth=(unsigned int)-1 );
               Cell*                    createCell               ( const string& name, AllianceLibrary* library=NULL );
               void                     saveCell                 ( Cell* , unsigned int mode );
+              void                     renameCell               ( Cell*, std::string newName );
               void                     bindLibraries            ();
               unsigned int             loadLibraryCells         ( Library* );
               unsigned int             loadLibraryCells         ( const Name& );

@@ -40,6 +40,7 @@ using namespace Hurricane;
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/NetExtension.h"
 #include "crlcore/ToolBox.h"
+#include "crlcore/VhdlEntity.h"
 #include "crlcore/Blif.h"
 using namespace CRL;
 
@@ -48,6 +49,7 @@ namespace {
 
   using namespace std;
   using CRL::NamingScheme;
+  using Vhdl::EntityExtension;
 
 
 //inline bool  isAbcAutomaticName ( string name )
@@ -1011,7 +1013,10 @@ namespace CRL {
 
     Model::orderModels();
     Model::connectModels();
-    if (flags & EnforceVhdl) Model::toVhdlModels();
+    if (flags & EnforceVhdl) {
+      Model::toVhdlModels();
+      EntityExtension::destroyAll();
+    }
     Model::clearStatic();
     UpdateSession::close();
 
