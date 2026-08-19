@@ -75,6 +75,16 @@ namespace Spice {
   }
 
 
+  void  Entity::_remove ( Bit* bit )
+  {
+    for ( auto ibit=_bits.begin() ; ibit != _bits.end() ; ++ibit ) {
+      if (*ibit == bit) {
+        _bits.erase( ibit );
+      }
+    }
+  }
+
+
   void  Entity::_recheckNets ()
   {
     bool  complete = true;
@@ -99,8 +109,10 @@ namespace Spice {
 
   void  Entity::setOrder ( const vector<Net*>& orderedNets )
   {
+    _flags |= DeleteBits;
     for ( auto bit : _bits )
       BitExtension::remove( bit->getNet() );
+    _flags &= ~DeleteBits;
     _bits.clear();
 
     for ( auto net : orderedNets ) {
@@ -114,14 +126,15 @@ namespace Spice {
 
   Entity::~Entity ()
   {
+    for ( auto bit : _bits )
+      BitExtension::remove( bit->getNet() );
+
     for ( auto ientity=_entities.begin() ; ientity!=_entities.end() ; ++ientity ) {
       if (*ientity == this) {
         _entities.erase( ientity );
         break;
       }
     }
-    for ( auto bit : _bits )
-      BitExtension::remove( bit->getNet() );
   }
 
 

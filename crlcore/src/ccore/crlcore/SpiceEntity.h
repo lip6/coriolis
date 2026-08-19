@@ -52,26 +52,29 @@ namespace Spice {
     public:
       static const uint64_t  TopCell       = (1 << 0);
       static const uint64_t  ReferenceCell = (1 << 1);
+      static const uint64_t  DeleteBits    = (1 << 2);
     public:
       static std::vector<Entity*>&
                                getAllEntities  ();
       static void              orderPlugs      ( Instance*, std::vector<Plug*>& );
-    public:           
+    public:                                    
                                Entity          ( EntityProperty*, Cell*, uint64_t flags );
                               ~Entity          ();
       inline        bool       isTopCell       () const;
       inline        bool       isReferenceCell () const;
+      inline        bool       isInDeleteBits  () const;
       inline        uint64_t   getFlags        () const;
               const Cell*      getCell         () const;
-      inline  const std::vector<Bit*>&
+      inline  const std::vector<Bit*>&         
                                getBits         () const;
       inline        void       setFlags        ( uint64_t );
               void             setOrder        ( const std::vector<Net*>& );
               void             toNodeList      ( ostream&, bool asInterf=true ) const;
               void             toEntity        ( ostream& ) const;
+              void             _remove         ( Bit* );
               std::string      _getString      () const;
               Record*          _getRecord      () const;
-    private:
+    private:                                   
               void             _recheckNets    ();
     private:
       static std::vector<Entity*>  _entities;
@@ -85,6 +88,7 @@ namespace Spice {
 
   inline        bool               Entity::isTopCell       () const { return _flags & TopCell; }
   inline        bool               Entity::isReferenceCell () const { return _flags & ReferenceCell; }
+  inline        bool               Entity::isInDeleteBits  () const { return _flags & DeleteBits; }
   inline        uint64_t           Entity::getFlags        () const { return _flags; }
   inline  const std::vector<Bit*>& Entity::getBits         () const { return _bits; }
   inline        void               Entity::setFlags        ( uint64_t flags ) { _flags |= flags; }

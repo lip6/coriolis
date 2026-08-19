@@ -40,8 +40,8 @@ namespace Spice {
     public:
       static const size_t  nindex;
     public:
-                           Bit         ( BitProperty*, const Net*, size_t index, std::string name="" );
-                           Bit         ( size_t index, std::string name="" );
+                           Bit         ( BitProperty*, const Net*, size_t index, std::string name );
+                           Bit         ( size_t index, std::string name );
                           ~Bit         ();
              bool          isExternal  () const;
       inline BitProperty*  getProperty () const;
@@ -90,12 +90,13 @@ namespace Spice {
       Bit  _bit;
     protected:
     // Constructor.
-      inline  BitProperty ( Net* owner, size_t );
+      inline   BitProperty ( Net* owner, size_t );
+      virtual ~BitProperty ();
   };
 
 
   inline BitProperty::BitProperty ( Net* owner, size_t index )
-    : PrivateProperty(), _bit(this,owner,index)
+    : PrivateProperty(), _bit(this,owner,index,"")
   { }
 
   inline Net*         BitProperty::getNet     () { return const_cast<Net*>( _bit.getNet() ); }

@@ -15,6 +15,7 @@
 
 
 #include "crlcore/SpiceBit.h"
+#include "crlcore/SpiceEntity.h"
 
 #include <limits>
 
@@ -22,6 +23,7 @@ namespace Spice {
 
   using namespace std;
   using Hurricane::_TName;
+  using Hurricane::Error;
   using Hurricane::Property;
 
 
@@ -98,6 +100,14 @@ namespace Spice {
 
     property->_postCreate ();
     return property;
+  }
+
+
+  BitProperty::~BitProperty ()
+  {
+    Entity* entity = EntityExtension::get( getNet()->getCell() );
+    if (not entity or entity->isInDeleteBits()) return;
+    entity->_remove( getBit() );
   }
 
 
