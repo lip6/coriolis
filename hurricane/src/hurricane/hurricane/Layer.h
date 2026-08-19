@@ -70,8 +70,8 @@ namespace Hurricane {
   inline size_t     ParallelSpacings::size              () const { return _spacings.size(); }
   inline DbU::Unit  ParallelSpacings::spacing           ( size_t i ) const { return (i < size()) ? _spacings[i].first  : 0; }
   inline DbU::Unit  ParallelSpacings::parallelLength    ( size_t i ) const { return (i < size()) ? _spacings[i].second : 0; }
-  inline DbU::Unit  ParallelSpacings::maxSpacing        () const { return _spacings.back().first ; }
-  inline DbU::Unit  ParallelSpacings::maxParallelLength () const { return _spacings.back().second; }
+  inline DbU::Unit  ParallelSpacings::maxSpacing        () const { return (_spacings.empty()) ? 0 : _spacings.back().first ; }
+  inline DbU::Unit  ParallelSpacings::maxParallelLength () const { return (_spacings.empty()) ? 0 : _spacings.back().second; }
   inline void       ParallelSpacings::push_back         ( DbU::Unit spacing, DbU::Unit parallelLength )
                                                         { _spacings.push_back( make_pair( spacing, parallelLength )); }
 
