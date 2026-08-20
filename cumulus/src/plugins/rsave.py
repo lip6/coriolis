@@ -94,7 +94,6 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False )
     framework.saveCell( cell, rviews )
     if renableSpice:
         sys.stdout.flush()
-        print( 'SPICE save ', cell )
         sys.stdout.flush()
         spiceFlags = CRL.Spice.TopCell if depth == 0 else 0
         CRL.Spice.save( cell, spiceFlags )

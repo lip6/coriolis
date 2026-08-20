@@ -892,7 +892,7 @@ namespace Hurricane {
        and (rectangle.height() > 15*_cellWidget->getPixelThreshold()))
       _cellWidget->drawText ( Point(bb.getXMin(),bb.getYMin())
                             , getString(getInstance()->getName()).c_str()
-                            , Reverse|Top
+                            , Left|Top
                             , -90
                             );
   }
@@ -1383,20 +1383,6 @@ namespace Hurricane {
         _drawingQuery.setTransformation    ( Transformation() );
         _drawingQuery.setThreshold         ( screenToDbuLength(_pixelThreshold) );
 
-        if ( /*not timeout("redraw [boundaries]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
-          if (isDrawable("boundaries")) {
-             _drawingPlanes.setPen  ( Graphics::getPen  ("boundaries",getDarkening()) );
-             _drawingPlanes.setBrush( Graphics::getBrush("boundaries",getDarkening()) );
-
-             _drawingQuery.setBasicLayer( NULL );
-             _drawingQuery.setFilter    ( getQueryFilter().unset(Query::DoComponents
-                                                                |Query::DoRubbers
-                                                                |Query::DoMarkers
-                                                                |Query::DoExtensionGos) );
-             _drawingQuery.doQuery      ();
-          }
-        }
-
         for ( BasicLayer* layer : _technology->getBasicLayers() ) {
           _drawingPlanes.setPen  ( Graphics::getPen  (layer->getName(),getDarkening()) );
           _drawingPlanes.setBrush( Graphics::getBrush(layer->getName(),getDarkening()) );
@@ -1416,7 +1402,32 @@ namespace Hurricane {
         //if ( timeout("redraw [layer]",timer,10.0,timedout) ) break;
         }
 
+        if ( /*not timeout("redraw [boundaries]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
+          if (isDrawable("boundaries")) {
+             _drawingPlanes.setPen  ( Graphics::getPen  ("boundaries",getDarkening()) );
+             _drawingPlanes.setBrush( Graphics::getBrush("boundaries",getDarkening()) );
+
+             _drawingQuery.setBasicLayer( NULL );
+             _drawingQuery.setFilter    ( getQueryFilter().unset(Query::DoComponents
+                                                                |Query::DoRubbers
+                                                                |Query::DoMarkers
+                                                                |Query::DoExtensionGos) );
+             _drawingQuery.doQuery      ();
+          }
+        }
+
         _drawingQuery.setStopLevel( _state->getStartLevel() + 1 );
+        if ( /*not timeout("redraw [text.instances]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
+          if (isDrawable("text.instance")) {
+            _drawingPlanes.setPen              ( Graphics::getPen  ("text.instance",getDarkening()) );
+            _drawingPlanes.setBrush            ( Graphics::getBrush("text.instance",getDarkening()) );
+            _drawingPlanes.setBackground       ( Graphics::getBrush("boundaries"   ,getDarkening()) );
+            _textDrawingQuery.setArea          ( redrawBox );
+            _textDrawingQuery.setTransformation( Transformation() );
+            _textDrawingQuery.doQuery          ();
+          }
+        }
+
         if ( /*not timeout("redraw [markers]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
           if ( isDrawable("marker") ) {
              _drawingPlanes.setPen  ( Graphics::getPen  ("marker",getDarkening()) );
@@ -1446,16 +1457,6 @@ namespace Hurricane {
         }
 
         if (_enableRedrawInterrupt) QApplication::processEvents();
-        if ( /*not timeout("redraw [text.instances]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
-          if (isDrawable("text.instance")) {
-            _drawingPlanes.setPen              ( Graphics::getPen  ("text.instance",getDarkening()) );
-            _drawingPlanes.setBrush            ( Graphics::getBrush("text.instance",getDarkening()) );
-            _drawingPlanes.setBackground       ( Graphics::getBrush("boundaries"   ,getDarkening()) );
-            _textDrawingQuery.setArea          ( redrawBox );
-            _textDrawingQuery.setTransformation( Transformation() );
-            _textDrawingQuery.doQuery          ();
-          }
-        }
 
       //_drawingQuery.setFilter ( getQueryFilter() & ~Query::DoMasterCells );
         for ( ExtensionSlice* slice : getCell()->getExtensionSlices() ) {

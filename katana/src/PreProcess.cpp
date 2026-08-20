@@ -496,7 +496,6 @@ namespace Katana {
 
   void  KatanaEngine::preProcess ()
   {
-    cerr << "KatanaEngine::preProcess()" << endl;
   //DebugSession::open( 145, 160 );
 
     if (not Session::isHV()) {
@@ -546,7 +545,6 @@ namespace Katana {
 
     Session::revalidate ();
   //DebugSession::close();
-    cerr << "KatanaEngine::preProcess() - end" << endl;
   }
 
 
