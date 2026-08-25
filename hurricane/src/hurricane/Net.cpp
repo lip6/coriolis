@@ -296,9 +296,9 @@ Box Net::getBoundingBox() const
 // ****************************
 {
     Box boundingBox;
-    for_each_component(component, getComponents()) {
-        boundingBox.merge(component->getBoundingBox());
-        end_for;
+    for ( Component* component : getComponents()) {
+      if (dynamic_cast<Plug*>(component)) continue;
+      boundingBox.merge( component->getBoundingBox() );
     }
     return boundingBox;
 }
