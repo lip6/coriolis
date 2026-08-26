@@ -196,8 +196,6 @@ class Ring ( Chip ):
         self.placeIoPins()
         self.padsCorona.copyPowerPins()
         self.conf.findPowerAndClockNets()
-
-        
         trace( 550, ',-' )
   
     def doPnR ( self ):

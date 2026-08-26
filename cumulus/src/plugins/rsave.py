@@ -52,10 +52,11 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False )
     if cell.isUniquified():             views |= CRL.Catalog.State.Logical
     if cell.getName().endswith('_cts'): views |= CRL.Catalog.State.Logical
     if cell.getName().endswith('_r'  ): views |= CRL.Catalog.State.Logical
-    catalog      = framework.getCatalog()
-    sviews       = ''
-    rviews       = 0
-    renableSpice = False
+    catalog        = framework.getCatalog()
+    sviews         = ''
+    rviews         = 0
+    renableSpice   = False
+    renableVerilog = False
 
     if views & CRL.Catalog.State.Logical:
         state = catalog.getState( cell.getName() )
@@ -80,6 +81,9 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False )
                     if sviews: sviews += ','
                     sviews += 'no linkage'
                     rviews |= CRL.Catalog.State.VstNoLinkage
+            if state.isVerilog():
+                sviews += 'Verilog'
+                renableVerilog = True
             if state.isLogical() and enableSpice:
                 if sviews: sviews += ','
                 sviews += 'SPICE'
@@ -92,9 +96,10 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False )
 
     print( '     {}+ {} ({}).'.format(' '*(depth*2), cell.getName(), sviews) )
     framework.saveCell( cell, rviews )
+    if renableVerilog:
+        verilogFlags = 0
+        CRL.Verilog.save( cell, verilogFlags )
     if renableSpice:
-        sys.stdout.flush()
-        sys.stdout.flush()
         spiceFlags = CRL.Spice.TopCell if depth == 0 else 0
         CRL.Spice.save( cell, spiceFlags )
     for instance in cell.getInstances():
