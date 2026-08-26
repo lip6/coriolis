@@ -1,16 +1,63 @@
 import getopt
 
-from coriolis.designflow.technos import setupSky130_c4m
+#from coriolis.designflow.technos import setupSky130_c4m
+from coriolis.designflow.technos import setupSky130_nsx2
 from coriolis import CRL
 from coriolis import Hurricane
 
-setupSky130_c4m( '../../..', '../../../pdkmaster/C4M.Sky130' )
+from liberty.parser import parse_liberty
+from liberty.types import *
+from sympy import parse_expr
+
+#setupSky130_c4m( '../../..', '../../../pdkmaster/C4M.Sky130' )
+setupSky130_nsx2( checkToolkit='../../..' )
 
 # Buffer's cell in the library
 # TODO: get it in the library
+LIB = '/dsk/l1/misc/roselyne/coriolis/src/alliance-check-toolkit/cells/nsxlib/nsxlib.lib'
 AF = CRL.AllianceFramework.get()
 BUF = AF.getCell('buf_x2', CRL.Catalog.State.Views)
 Hurricane.UpdateSession.open()
+
+# Read liberty file to create a dictionary where:
+# - key is the canonical logic function of the cell (thanks to sympy read_expr)
+# - value is a list of dictionaries (cell's name,capa)
+# This dictionary helps to choose the appropriate cell for amplification
+# return: the created dictionary
+# TODO: add decorator to cells
+def read_liberty():
+    # TODO: read from setup
+    liberty_file = LIB
+    library = parse_liberty(open(liberty_file).read())
+    fdict = {}
+    for cell_group in library.get_groups('cell'):
+        #print("\n" + cell_group.args[0])
+        #print(cell_group.__repr__()
+        for pin_group in cell_group.get_groups('pin'):
+            #print("   " + pin_group.args[0])
+            pin = select_pin(cell_group, pin_group.args[0])
+            #print(pin)
+            #print(pin.__repr__())
+            if pin['direction'] == 'output':
+                f = str(parse_expr(str(pin['function']).replace("!","~").replace("\"","")))
+                val = (cell_group.args[0],float(pin['capacitance']))
+                #print("   f: " + f)
+                #print("   cap: " + str(pin['capacitance']))
+                try:
+                    fdict[f].append(val)
+                except KeyError:
+                    fdict[f] = [val]
+    return fdict
+
+# Find a cell given by its model's name in a liberty file
+# return the corresponding (key,value), False if not found
+def find_in_liberty(cell):
+    lib = read_liberty()
+    for (k,v) in lib.items():
+        for l in v:
+            if l[0] == cell:
+                return (k,v)
+    return False
 
 # Arrange the cells's nets in a dictonary where:
 # - keys are the number of cells drived by nets
@@ -52,84 +99,44 @@ def isClock(net):
 # - tech is the technic used (buffer or cell amplification)
 # raise ValueError if the technic is not defined
 def amplify_net(net, cell, tech):
+    print(net.getName())
     # find the source plug
+    p_found = False # keep False if the net is an input TODO: how to bufferize?
     for p in net.getPlugs():
         if p.getMasterNet().getDirection() == Hurricane.Net.Direction.OUT:
             p_found = p
             break
+    # not output plug found mean net is an input of the circuit then exit
+    # TODO: think how to do on inputs
+    if not p_found:
+        return
     # modify the source plug net
     if tech == 'buf':
         # Add a buffer
         p_found.setNet(bufferize(net,cell))
     elif tech == 'amp':
-        # Amplify the source cell
-        amplify_source(p_found)
+        # Get the model of the instance of the found plug
+        model = p_found.getInstance().getMasterCell().getName()
+        # Find the cell in the library
+        res = find_in_liberty(model)
+        new_cell = choose_cell(res)
+        # Amplify the source cell 
+        p_found.getInstance().setMasterCell(AF.getCell(new_cell, CRL.Catalog.State.Views))
     else:
         raise ValueError(f'Unknown technic {tech}')
 
+# Choose the remplacing cell (biggest one)
+# TODO: think about a searching technic
+def choose_cell(dict_elem):
+    # search the cell with the max capacitance
+    dict_elem[1].sort(key=lambda capa: capa[1])
+    return dict_elem[1][-1][0]
+    
 # Amplify the cell of a given plug
 def amplify_source(plug):
     inst = plug.getInstance()
     newModel = find_bigger_cell(inst.getMasterCell())
     inst.setMasterCell(newModel)
-
-# Return the biggest (in term of load) cell equivalent of a given cell
-# TODO: try to access cells by technology file
-# TODO: support the other load for cells
-def find_bigger_cell(model):
-    equivalence = {
-        'a2_x2': ['a2_x4'],
-        'a3_x2': ['a3_x4'],
-        'a4_x2': ['a4_x4'],
-        'an12_x1': ['an12_x4'],
-        #'ao22_x2': ['ao22_x4'],
-        'ao22_x2': ['a3_x2'], # POUR C4M sky essais
-        'ao2o22_x2': ['ao2o22_x4'],
-        'buf_x2': ['buf_x4', 'buf_x8'],
-        'inv_x1': ['inv_x2', 'inv_x4', 'inv_x8'],
-        'mx2_x2': ['mx2_x4'],
-        'mx3_x2': ['mx3_x4'],
-        'na2_x1': ['na2_x4'],
-        'na3_x1': ['na3_x4'],
-        'na4_x1': ['na4_x4'],
-        'nao22_x1': ['nao22_x4'],
-        'nao2o22_x1': ['nao2o22_x4'],
-        'nmx2_x1': ['nmx2_x4'],
-        #'nmx3_x1':
-        'nor2_x0': ['nxr2_x1'], # POUR C4M sky essais
-        'no2_x1': ['no2_x4'],
-        'no3_x1': ['no3_x4'],
-        'no4_x1': ['no4_x4'],
-        'noa22_x1': ['noa22_x4'],
-        'noa2a22_x1': ['noa2a22_x4'],
-        'noa2a2a23_x1': ['noa2a2a23_x4'],
-        'noa2a2a2a24_x1': ['noa2a2a2a24_x4'],
-        'noa2ao222_x1': ['noa2ao222_x4'],
-        'noa3ao322_x1': ['noa3ao322_x4'],
-        'nts_x1': ['nts_x2'],
-        'nxr2_x1': ['nxr2_x4'],
-        'o2_x2': ['o2_x4'],
-        'o3_x2': ['o3_x4'],
-        'o4_x2': ['o4_x4'],
-        'oa22_x2': ['oa22_x4'],
-        'oa2a22_x2': ['oa2a22_x4'],
-        'oa2a2a23_x2': ['oa2a2a23_x4'],
-        'oa2a2a2a24_x2': ['oa2a2a2a24_x4'],
-        'oa2ao222_x2': ['oa2ao222_x4'],
-        'oa3ao322_x2': ['oa3ao322_x4'],
-        'on12_x1': ['on12_x4'],
-        #'one_x0': 
-        #'powmid_x0':
-        #'rowend_x0':
-        #'sff1_x4':
-        #'sff1r_x4':
-        #'sff2_x4':
-        #'tie_x0':
-        'ts_x4': ['ts_x8'],
-        'xr2_x1': ['xr2_x4']
-        #'zero_x0':
-    }
-    return AF.getCell(equivalence[model.getName()][0], CRL.Catalog.State.Views)
 
 # Add a buffer to a given net to amplify it
 # parameters:
@@ -153,6 +160,7 @@ def bufferize(net, cell):
 # - nb_max: bufferize all the nets with nb_max maximal thresholds
 def amplify(cell, tech, threshold=0, nb_max=0):
     lnets = net_by_load(cell)
+    #print(lnets)
     max_keys = sorted(lnets.keys(), reverse=True)
     for i in max_keys[0:nb_max]:
         if i >= threshold:
