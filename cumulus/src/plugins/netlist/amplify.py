@@ -69,13 +69,12 @@ def pretty_display(libdict):
         for e in libdict[k]:
             print("         ",e)
 
-# Find a cell given by its model's name in a given liberty librairy
+# Find a cell given by its model's name in a given liberty library
 # return the corresponding (key,value), False if not found
 def find_in_liberty(cell,lib):
     for (k,v) in lib.items():
         for l in v:
-            # replace to be coherent with Coriolis cells' naming
-            if l[0].replace("__","_") == cell:
+            if l[0] == cell:
                 return (k,v)
     return False
 
