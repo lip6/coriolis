@@ -1,6 +1,5 @@
 import getopt
 
-#from coriolis.designflow.technos import setupSky130_c4m
 from coriolis.designflow.technos import setupSky130_nsx2
 from coriolis import CRL
 from coriolis import Hurricane
@@ -9,7 +8,6 @@ from liberty.parser import parse_liberty
 from liberty.types import *
 from sympy import parse_expr
 
-#setupSky130_c4m( '../../..', '../../../pdkmaster/C4M.Sky130' )
 setupSky130_nsx2( checkToolkit='../../..' )
 
 # Buffer's cell in the library
@@ -24,7 +22,7 @@ Hurricane.UpdateSession.open()
 # - value is a list of dictionaries (cell's name,capa)
 # This dictionary helps to choose the appropriate cell for amplification
 # return: the created dictionary
-# TODO: add decorator to cells
+# TODO: add decorator to cells?
 def read_liberty():
     # TODO: read from setup
     liberty_file = LIB
@@ -59,24 +57,6 @@ def find_in_liberty(cell):
                 return (k,v)
     return False
 
-# Arrange the cells's nets in a dictonary where:
-# - keys are the number of cells drived by nets
-# - values are lists of nets which have the key drived cells
-# parameter: the cell to analyze
-# return: the corresponding dictionary
-def net_by_load(cell):
-    #lnets = list(cell.getNets())
-    #lnets.sort(key=lambda net: size(net.getPlugs()), reverse=True)
-    #for net in lnets:
-    #    print("net: %s (%d)" %(net.getName(), size(net.getPlugs())))
-    sorted_dict = {}
-    for net in cell.getNets():
-        try:
-            sorted_dict[size(net.getPlugs())].append(net)
-        except KeyError:
-            sorted_dict[size(net.getPlugs())] = [net]
-    return sorted_dict
-
 # TODO: move this function to a common place as it is usefull for lots of operations
 # Return the number of elements (size) of a given collection 
 def size(collection):
@@ -99,7 +79,6 @@ def isClock(net):
 # - tech is the technic used (buffer or cell amplification)
 # raise ValueError if the technic is not defined
 def amplify_net(net, cell, tech):
-    print(net.getName())
     # find the source plug
     p_found = False # keep False if the net is an input TODO: how to bufferize?
     for p in net.getPlugs():
@@ -156,25 +135,21 @@ def bufferize(net, cell):
 # Parameters:
 # - cell is the cell to amplify
 # - tech is the technic used (buffer or cell amplification)
-# - threshold: if net has a load > threshold then bufferize
-# - nb_max: bufferize all the nets with nb_max maximal thresholds
-def amplify(cell, tech, threshold=0, nb_max=0):
-    lnets = net_by_load(cell)
-    #print(lnets)
-    max_keys = sorted(lnets.keys(), reverse=True)
-    for i in max_keys[0:nb_max]:
-        if i >= threshold:
-            for net in lnets[i]:
-                if not isClock(net):
-                    amplify_net(net,cell,tech)
+# - threshold: if net has a load (in number of target cells) > threshold then amplify
+def amplify(cell, tech, threshold=0):
+    for net in cell.getNets():
+        if not isClock(net):
+            s = size(net.getPlugs())
+            if s > threshold:
+                print(net.getName() + " th: " + str(s))
+                amplify_net(net,cell,tech)
 
 def usage():
     print("python utilities.py [option]")
     print("Utility functions to amplify nets from a netlist")
     print("-n (blif): the name of the blif netlist")
-    print("-a (tech:th:nb): the amplification technique used (buf to bufferize the nets and amp to amplify the cells)")
+    print("-a (tech:th): the amplification technique used (buf to bufferize the nets and amp to amplify the cells)")
     print("                 - th is the threshold corresponding to the load of a signal (in number of targetting cells)")
-    print("                 - nb is the maximal number of thresholds to treat") 
     print("-h (help): this message")
     
 if __name__ == '__main__':
@@ -193,8 +168,8 @@ if __name__ == '__main__':
             cell = CRL.Blif.load(a)
             fname = a
         if o == "-a":
-            tech,th,nb = a.split(':')
+            tech,th = a.split(':')
             
-    print(f'Amplify the {nb} nets of {fname} with a threshold of {th} with {tech}')
-    amplify(cell,tech,int(th),int(nb))
+    print(f'Amplify the nets of {fname} with a threshold of {th} with {tech}')
+    amplify(cell,tech,int(th))
     AF.saveCell(cell,CRL.Catalog.State.Logical)
