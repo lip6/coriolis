@@ -35,9 +35,7 @@
 // ===================================================================
 
 
-#ifndef  CRL_BLIF_H
-#define  CRL_BLIF_H
-
+#pragma  once
 #include <string>
 #include <vector>
 
@@ -56,8 +54,9 @@ namespace CRL {
 
   class Blif {
     public:
-      static const uint32_t  NoFlags     = 0;
-      static const uint32_t  EnforceVhdl = (1<<0);
+      static const uint32_t  NoFlags        =  0;
+      static const uint32_t  EnforceVhdl    = (1<<0);
+      static const uint32_t  EnforceVerilog = (1<<1);
     public:
       static              Cell*                  load         ( std::string netlist, uint32_t flags );
       static              void                   add          ( Library* );
@@ -72,5 +71,3 @@ namespace CRL {
 
 
 } // CRL namespace.
-
-#endif  // CRL_BLIF_H

@@ -261,29 +261,30 @@ namespace {
       static  Net*                          _masterNetZero;
       static  Net*                          _masterNetOne;
     public:
-      static  void          staticInit     ();
-      static  string        getGroundName  ();
-      static  string        getPowerName   ();
-      static  Model*        find           ( string modelName );
-      static  void          orderModels    ();
-      static  void          connectModels  ();
-      static  void          toVhdlModels   ();
-      static  void          clearStatic    ();
-      static  const Lut&    getLut         ();
+      static  void          staticInit      ();
+      static  string        getGroundName   ();
+      static  string        getPowerName    ();
+      static  Model*        find            ( string modelName );
+      static  void          orderModels     ();
+      static  void          connectModels   ();
+      static  void          toVhdlModels    ();
+      static  void          toVerilogModels ();
+      static  void          clearStatic     ();
+      static  const Lut&    getLut          ();
     public:                                
-                            Model          ( Cell* );
-      inline               ~Model          ();
-      inline Cell*          getCell        () const;
-             Net*           newOne         ();
-             Net*           newZero        ();
-      inline size_t         getDepth       () const;
-      inline const Subckts& getSubckts     () const;
-             Subckt*        addSubckt      ( string modelName );
-             size_t         computeDepth   ();
-             void           connectSubckts ();
-             Net*           mergeNet       ( string name, bool isExternal, unsigned int );
-             Net*           mergeAlias     ( string name1, string name2 );
-             Net*           newDummyNet    ();
+                            Model           ( Cell* );
+      inline               ~Model           ();
+      inline Cell*          getCell         () const;
+             Net*           newOne          ();
+             Net*           newZero         ();
+      inline size_t         getDepth        () const;
+      inline const Subckts& getSubckts      () const;
+             Subckt*        addSubckt       ( string modelName );
+             size_t         computeDepth    ();
+             void           connectSubckts  ();
+             Net*           mergeNet        ( string name, bool isExternal, unsigned int );
+             Net*           mergeAlias      ( string name1, string name2 );
+             Net*           newDummyNet     ();
     private:
       Cell*         _cell;
       Subckts       _subckts;
@@ -471,6 +472,18 @@ namespace {
                                , CRL::NamingScheme::Recursive
                                | CRL::NamingScheme::FromVerilog
                                | CRL::NamingScheme::NoLowerCase );
+  }
+
+
+  void  Model::toVerilogModels ()
+  {
+    Catalog* catalog = AllianceFramework::get()->getCatalog();
+    if (not catalog) return;
+
+    for ( Model* model : _blifOrder ) {
+      Catalog::State* state = catalog->getState( model->getCell()->getName(), true );
+      state->setVerilog( true );
+    }
   }
 
 
@@ -853,7 +866,8 @@ namespace CRL {
     timer.start();
 
     string strFlags = " [blif]";
-    if (flags & EnforceVhdl) strFlags.insert( strFlags.size()-1, ",EnforceVhdl" );
+    if (flags & EnforceVhdl   ) strFlags.insert( strFlags.size()-1, ",EnforceVhdl" );
+    if (flags & EnforceVerilog) strFlags.insert( strFlags.size()-1, ",EnforceVerilog" );
     cmess2 << "     " << tab++ << "+ " << blifFile << strFlags << endl;
 
     Cell*                 mainModel = NULL;
@@ -1016,6 +1030,9 @@ namespace CRL {
     if (flags & EnforceVhdl) {
       Model::toVhdlModels();
       EntityExtension::destroyAll();
+    }
+    if (flags & EnforceVerilog) {
+      Model::toVerilogModels();
     }
     Model::clearStatic();
     UpdateSession::close();

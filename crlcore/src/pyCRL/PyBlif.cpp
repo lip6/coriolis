@@ -135,8 +135,9 @@ extern "C" {
   extern  void  PyBlif_postModuleInit ()
   {
     PyObject* constant;
-    LoadObjectConstant(PyTypeBlif.tp_dict,Blif::NoFlags    ,"NoFlags"    );
-    LoadObjectConstant(PyTypeBlif.tp_dict,Blif::EnforceVhdl,"EnforceVhdl");
+    LoadObjectConstant(PyTypeBlif.tp_dict,Blif::NoFlags       ,"NoFlags"       );
+    LoadObjectConstant(PyTypeBlif.tp_dict,Blif::EnforceVhdl   ,"EnforceVhdl"   );
+    LoadObjectConstant(PyTypeBlif.tp_dict,Blif::EnforceVerilog,"EnforceVerilog");
   }
 
 
