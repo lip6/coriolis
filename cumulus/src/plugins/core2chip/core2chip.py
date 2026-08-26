@@ -747,7 +747,8 @@ class CoreToChip ( object ):
             self.conf.chip = af.createCell( self.conf.chipConf.name )
             chipState = af.getCatalog().getState( self.conf.chipConf.name )
             chipState.setLogical( True )
-            if coreState.isVhdl(): chipState.setVhdl( True )
+            if coreState.isVhdl   (): chipState.setVhdl   ( True )
+            if coreState.isVerilog(): chipState.setVerilog( True )
         with UpdateSession():
             print( '  o  Build Chip from Core.' )
             print( '     - Core:    "{}".'.format(self.conf.cell.getName()) )
@@ -756,7 +757,8 @@ class CoreToChip ( object ):
             self.conf.corona  = af.createCell( 'corona' )
             coronaState = af.getCatalog().getState( 'corona' )
             coronaState.setLogical( True )
-            if coreState.isVhdl(): coronaState.setVhdl( True )
+            if coreState.isVhdl   (): coronaState.setVhdl   ( True )
+            if coreState.isVerilog(): coronaState.setVerilog( True )
             self.corona       = self.conf.corona
             self.conf.icore   = Instance.create( self.corona   , 'core'  , self.conf.cell )
             self.conf.icorona = Instance.create( self.conf.chip, 'corona', self.corona    )
