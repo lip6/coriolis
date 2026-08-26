@@ -238,13 +238,18 @@ namespace Anabatic {
         lengths[depth] += length;
 
         DbU::Unit sideLength = (segment->isHorizontal()) ? hSideLength : vSideLength;
-        if ( not segment->isUnbound() and (abs(length) > sideLength) )
-          cerr << Error( "AutoContact::getLength(): Suspicious length %s (> %s) of %s.\n"
-                         "        (on: %s)"
-                       , DbU::getValueString(length).c_str()
-                       , DbU::getValueString(sideLength).c_str()
-                       , getString(segment).c_str()
-                       , getString(this).c_str()) << endl;
+        if (not segment->isUnbound()) {
+          if (abs(length) > sideLength) {
+            Error e = Error( "AutoContact::getLengths(): Suspicious length %s (> %s) of %s.\n"
+                             "        (on: %s)"
+                           , DbU::getValueString(length).c_str()
+                           , DbU::getValueString(sideLength).c_str()
+                           , getString(segment).c_str()
+                           , getString(this).c_str());
+            if (abs(length) > 2*sideLength) cerr      << e << endl;
+            else                            cparanoid << e << endl;
+          }
+        }
       } else {
         if (segment->isHorizontal()) {
           if (isSourceHook)
