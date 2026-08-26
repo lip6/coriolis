@@ -4,6 +4,7 @@ subdir('core2chip')
 subdir('harness')
 subdir('macro')
 subdir('sram')
+subdir('netlist')
 
 plugins = files([
   '__init__.py',
