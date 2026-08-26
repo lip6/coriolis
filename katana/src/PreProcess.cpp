@@ -415,7 +415,7 @@ namespace {
 
   void  protectCagedTerminalsVH ( Track* track )
   {
-    if (track and (track->getIndex() == 516)) DebugSession::open( 150, 160 );
+  //if (track and (track->getIndex() == 516)) DebugSession::open( 150, 160 );
     cdebug_log(159,1) << "protectCagedTerminalsVH() " << track << endl;
 
     Configuration* configuration = Session::getConfiguration();
@@ -478,7 +478,7 @@ namespace {
     }
 
     cdebug_tabw(159,-1);
-    if (track and (track->getIndex() == 516)) DebugSession::close();
+  //if (track and (track->getIndex() == 516)) DebugSession::close();
   }
 
 

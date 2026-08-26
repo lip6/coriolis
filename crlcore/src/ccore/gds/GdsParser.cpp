@@ -852,7 +852,7 @@ namespace {
 
     if (not create) return nullptr;
 
-    cparanoid << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
+    cparanoid << Warning( "GdsStream::getCell(): No Cell named \"%s\" in Library \"%s\" (created)."
                         , cellName.c_str()
                         , getString(_library).c_str()
                         ) << endl;
