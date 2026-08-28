@@ -292,8 +292,10 @@ namespace Anabatic {
           subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
 
         AutoSegment* segment = AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical, rpDepth+1 );
-        if (rp->isPunctual())
+        if (rp->isPunctual()) {
+          segment->setOnGrid();
           segment->setFlags( AutoSegment::SegFixed );
+        }
       } else {
 #if OFFGRID_M2_DISABLED
         Box                cellAb    = getAnabatic()->getCell()->getAbutmentBox();
@@ -1750,7 +1752,8 @@ namespace Anabatic {
 
   bool  NetBuilderHV::_do_xG_xM2 ()
   {
-    cdebug_log(145,1) << getTypeName() << "::_do_"
+    cdebug_log(145,1) << getTypeName() << "::_do_xG_xM2()" << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_"
                       << (int)getConnexity().fields.globals << "G_"
                       << (int)getConnexity().fields.M2 << "M2() [Managed Configuration - x]" << endl;
 

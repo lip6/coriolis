@@ -341,6 +341,7 @@ namespace Anabatic {
       inline         uint32_t            getReduceds                () const;
                      uint32_t            getNonReduceds             ( Flags flags=Flags::WithPerpands ) const;
                      DbU::Unit           getAxisHintFromGlobal      () const;
+             virtual bool                getTrackBounds             ( DbU::Unit& trackMin, DbU::Unit& trackMax ) const = 0;
     // Modifiers.                                            
       inline         void                unsetFlags                 ( uint64_t );
       inline         void                setFlags                   ( uint64_t );
@@ -378,6 +379,7 @@ namespace Anabatic {
       inline         void                mergeNativeMax             ( DbU::Unit max );
       inline         void                resetNativeConstraints     ( DbU::Unit min, DbU::Unit max );
                      bool                checkNotInvalidated        () const;
+             virtual bool                setOnGrid                  ();
       inline         void                setParent                  ( AutoSegment* );
                      void                revalidate                 ();
                      bool                promoteToPref              ( Flags );

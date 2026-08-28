@@ -121,6 +121,20 @@ namespace Anabatic {
   }
 
 
+  bool  AutoVertical::getTrackBounds ( DbU::Unit& trackMin, DbU::Unit& trackMax ) const
+  {
+    if (isNonPref()) return false;
+
+    Box                ab    = getCell()->getAbutmentBox();
+    RoutingLayerGauge* gauge = Session::getLayerGauge( getLayer() );
+    if (not gauge) return false;
+
+    trackMin = gauge->getTrackPosition( ab.getXMin(), ab.getXMax(), getAxis(), Constant::Inferior );
+    trackMax = gauge->getTrackPosition( ab.getXMin(), ab.getXMax(), getAxis(), Constant::Superior );
+    return true;
+  }
+
+
   void  AutoVertical::setDuSource ( DbU::Unit du )
   {
     _vertical->setDySource(du);

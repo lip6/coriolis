@@ -169,6 +169,20 @@ namespace Anabatic {
   }
 
 
+  bool  AutoHorizontal::getTrackBounds ( DbU::Unit& trackMin, DbU::Unit& trackMax ) const
+  {
+    if (isNonPref()) return false;
+
+    Box                ab    = getCell()->getAbutmentBox();
+    RoutingLayerGauge* gauge = Session::getLayerGauge( getLayer() );
+    if (not gauge) return false;
+
+    trackMin = gauge->getTrackPosition( ab.getYMin(), ab.getYMax(), getAxis(), Constant::Inferior );
+    trackMax = gauge->getTrackPosition( ab.getYMin(), ab.getYMax(), getAxis(), Constant::Superior );
+    return true;
+  }
+  
+
   Interval  AutoHorizontal::getSourceConstraints ( Flags flags ) const
   {
     if (flags & Flags::NativeConstraints) {

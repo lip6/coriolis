@@ -3292,6 +3292,35 @@ namespace Anabatic {
   }
 
 
+  bool  AutoSegment::setOnGrid ()
+  {
+    cdebug_log(149,0) << "AutoSegment::setOnGrid() " << this << endl;
+    DbU::Unit minPos = 0;
+    DbU::Unit maxPos = 0;
+    if (not getTrackBounds(minPos,maxPos)) return false;
+
+    Interval constraints;
+    getConstraints( constraints.getVMin(), constraints.getVMax(), Flags::Propagate );
+
+    bool useMin = constraints.contains( minPos );
+    bool useMax = constraints.contains( maxPos );
+    cdebug_log(149,0) << "minPos=" << DbU::getValueString(minPos) << " useMin=" << useMin << endl;
+    cdebug_log(149,0) << "maxPos=" << DbU::getValueString(maxPos) << " useMax=" << useMax << endl;
+
+    if (not (useMin or useMax)) return false;
+    if (useMin and useMax) {
+      DbU::Unit minDist = getAxis() - minPos;
+      DbU::Unit maxDist = maxPos - getAxis();
+      if (minDist < maxDist) setAxis( minPos, Flags::Force|Flags::Propagate );
+      else                   setAxis( maxPos, Flags::Force|Flags::Propagate );
+    } else {
+      if (useMin) setAxis( minPos, Flags::Force|Flags::Propagate );
+      else        setAxis( maxPos, Flags::Force|Flags::Propagate );
+    }
+    return true;
+  }
+
+
 #if THIS_IS_DISABLED
   bool  AutoSegment::shearUp ( GCell* upGCell, AutoSegment*& movedUp, float reserve, Flags flags )
   {

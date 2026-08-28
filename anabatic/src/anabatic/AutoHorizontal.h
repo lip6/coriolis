@@ -50,6 +50,7 @@ namespace Anabatic {
       virtual DbU::Unit       getNonPrefTargetPosition () const;
       virtual Flags           getDirection             () const;
       virtual bool            getGCells                ( vector<GCell*>& ) const;
+      virtual bool            getTrackBounds           ( DbU::Unit& trackMin, DbU::Unit& trackMax ) const;
     // Modifiers.                                      
       virtual void            setDuSource              ( DbU::Unit );
       virtual void            setDuTarget              ( DbU::Unit );
