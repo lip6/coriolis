@@ -1605,7 +1605,8 @@ namespace Anabatic {
       return;
     }
 
-    uint32_t driverCount = 0;
+    uint32_t driver3State = 0;
+    uint32_t driverCount  = 0;
     for ( auto rp : rps ) {
       if (not _anabatic->getConfiguration()->selectRpComponent(rp)) {
         if (not _anabatic->getConfiguration()->isM1Offgrid())
@@ -1642,6 +1643,9 @@ namespace Anabatic {
           cdebug_log(112,0) << "masterNet: " << rpNet << endl;
           ++driverCount;
           isDriver = true;
+          if (rpNet->getDirection() & (Net::Direction::ConnTristate|Net::Direction::ConnWiredOr)) {
+            ++driver3State;
+          }
         }
       } else {
         Pin* pin = dynamic_cast<Pin*>( rp->getPlugOccurrence().getEntity() );
@@ -1652,6 +1656,9 @@ namespace Anabatic {
             cdebug_log(112,0) << "masterNet: " << rpNet << endl;
             ++driverCount;
             isDriver = true;
+            if (rpNet->getDirection() & (Net::Direction::ConnTristate|Net::Direction::ConnWiredOr)) {
+              ++driver3State;
+            }
           }
         }
       }
@@ -1718,10 +1725,14 @@ namespace Anabatic {
     }
 
     if (driverCount == 0) {
-      _pushError( Error( "Dijkstra::load(): Net \"%s\" do not have a driver."
-                       , getString(_net->getName()).c_str() ));
+      if (_net->getDirection() & Net::Direction::DirIn)
+        _pushWarning( Warning( "Dijkstra::load(): Net \"%s\" does not have an exernal terminal."
+                             , getString(_net->getName()).c_str() ));
+      else 
+        _pushError( Error( "Dijkstra::load(): Net \"%s\" do not have a driver."
+                         , getString(_net->getName()).c_str() ));
     }
-    if ((driverCount > 1) and not (net->getDirection() & (Net::Direction::ConnTristate|Net::Direction::ConnWiredOr))) {
+    if ((driverCount > 1) and (driverCount != driver3State)) {
       _pushError( Error( "Dijkstra::load(): Net \"%s\" have multiple drivers (%u)."
                        , getString(_net->getName()).c_str(), driverCount ));
     }
