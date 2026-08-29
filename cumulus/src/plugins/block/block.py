@@ -1570,7 +1570,7 @@ class Block ( object ):
         return Instance.create(cell, name, master_cell)
 
 
-    def find_best_scan_chain_and_io(self, workCell, cells, sout_buffer):
+    def find_best_scan_chain_and_io(self, workCell, cells, sout_buffer,fast=0):
         """
         This function finds the best stitching configuration of the scan ffs:
         the ffs are already placed. The order of stitching is defined 
@@ -1578,6 +1578,8 @@ class Block ( object ):
         distances between ffs + distance from last ff to sout_buffer
         (this buffer is linked to the output SOUT). There are 4 ffs candidates 
         for the start ff (that will be linked to SIN).
+        If  fast = 1, a fast heuristic is used to select the stitiching order,
+        but it is less optimized than the version fast =0 
         """
         best_cost = None
         best_order = None
@@ -1623,7 +1625,8 @@ class Block ( object ):
                 start_x,
                 start_y,
                 end_x,
-                end_y
+                end_y,
+                fast
             )
     
             # --- cost  ---
@@ -1854,13 +1857,14 @@ class Block ( object ):
      return scan_ff
      
 
-    def doPnRDFT ( self ):
+    def doPnRDFT ( self,fast=0 ):
         """
-        Perform all the steps required to build the layout of the block + inseerting the DFT.
+        Perform all the steps required to build the layout of the block + inserting the DFT.
         The FFs are replaced by scan FFs before the placement but not stitched to not impact
         the placement optimization. Then the placement is operated and the SFFs are then stitched
         just before the routing.
-        3 cases covered
+        If  fast = 1, a fast heuristic is used to select the stitiching order,
+        but it is less optimized than the version fast =0 .
         """
     
         # PRE-PLACEMENT DFT
@@ -2126,7 +2130,7 @@ class Block ( object ):
     
         # POST-PLACEMENT DFT
         # Reorder flip-flops according to placement to minimize stitching length
-        sdffs = self.find_best_scan_chain_and_io(workCell, sdffs,sout_buf)
+        sdffs = self.find_best_scan_chain_and_io(workCell, sdffs,sout_buf,fast)
         side_sin , px_sin , py_sin  = self.project_to_edge(workCell, sdffs[0],  scan_pins["si"])
         side_sout, px_sout, py_sout = self.project_to_edge(workCell, sout_buf, buf_pins["z"])
     
