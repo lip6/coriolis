@@ -1059,10 +1059,11 @@ namespace Etesian {
 
     _circuit->setupRows(*_surface, rowHeight);
 
-    // Apply changes to match target density variation; we add a small margin to be safer
-    float rowSideMarginInCellHeight = 0.3;
-    float maxExpansionInRowWidth = 1.0 / 8.0;
-    _circuit->expandCellsToDensity(1.0 - getDensityVariation(), rowSideMarginInCellHeight, maxExpansionInRowWidth);
+    //TR: what is this ? Why increase the cell dimensions/width here ?
+    // // Apply changes to match target density variation; we add a small margin to be safer
+    // float rowSideMarginInCellHeight = 0.3;
+    // float maxExpansionInRowWidth = 1.0 / 8.0;
+    // _circuit->expandCellsToDensity(1.0 - getDensityVariation(), rowSideMarginInCellHeight, maxExpansionInRowWidth);
 
     _circuit->check();
     _placementLB = new coloquinte::PlacementSolution ();
