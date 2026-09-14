@@ -1427,7 +1427,7 @@ class IoPin ( object ):
                                                 , self.count )
         return s
 
-    def __init__ ( self, flags, stem, upos, ustep=0, count=1 ):
+    def __init__ ( self, flags, stem, upos, ustep=0, count=1, indexes=None):
         """
         Create an I/O Pin(s) on the abutment box of a block. Could be for one
         net or a vector of net.
@@ -1473,6 +1473,10 @@ class IoPin ( object ):
         if self.count > 1 and (self.ustep == 0) and not (self.flags & IoPin.A_MASK):
             raise ErrorMessage( 1, [ 'IoPin.__init__(): "ustep" parameter cannot be zero when "count" more than 1.'
                                    , 'For net "{}"'.format(stem) ] )
+
+        # Must add in order to copy correct range in _toIoPinSpec
+        if indexes is not None:
+            self.indexes = indexes
 
 #   def place ( self, block ):
 #       """
@@ -1631,10 +1635,10 @@ class BlockConf ( GaugeConf ):
         self.katana     = None
         self.tramontana = None
 
-    def _toIoPinSpec ( self, flags, stem, uindex, ustep, count ):
+    def _toIoPinSpec ( self, flags, stem, uindex, ustep, count, indexes ):
         trackPos  = self.getIoPinTrack( flags, uindex )
         trackStep = ustep * self.getIoPinPitch( flags )
-        return (flags, stem, trackPos, trackStep, count)
+        return (flags, stem, trackPos, trackStep, count, indexes)
 
     def _postInit ( self ):
         trace( 550, ',+', '\tblock.configuration._postInit()\n' )
