@@ -1137,7 +1137,7 @@ namespace Etesian {
       for ( auto& c : mode ) c = tolower( c );
       if (mode == "uniform")  return coloquinte::DensificationMode::Uniform;
       if (mode == "targeted") return coloquinte::DensificationMode::Targeted;
-      if (mode != "disabled") {
+      if ((mode != "disabled") and (mode != "old")) {
         cerr << Warning( "EtesianEngine::globalPlace(): Unknown \"etesian.densificationMode\" value \"%s\", disabling densification."
                        , mode.c_str() ) << endl;
       }

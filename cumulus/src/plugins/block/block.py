@@ -167,7 +167,8 @@ class Side ( object ):
                                                   , ioPin.stem
                                                   , ioPin.upos
                                                   , ioPin.ustep
-                                                  , ioPin.count ))
+                                                  , ioPin.count
+                                                  , ioPin.indexes ))
             trace( 550, '\tTranslated to track {}\n'.format(ioPin) )
 
         status = 0
