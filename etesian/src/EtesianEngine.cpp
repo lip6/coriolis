@@ -694,6 +694,23 @@ namespace Etesian {
   }
 
 
+  namespace {
+
+    coloquinte::DensificationMode  parseDensificationMode ( string mode )
+    {
+      for ( auto& c : mode ) c = tolower( c );
+      if (mode == "uniform")  return coloquinte::DensificationMode::Uniform;
+      if (mode == "targeted") return coloquinte::DensificationMode::Targeted;
+      if ((mode != "disabled") and (mode != "old")) {
+        cerr << Warning( "EtesianEngine::globalPlace(): Unknown \"etesian.densificationMode\" value \"%s\", disabling densification."
+                       , mode.c_str() ) << endl;
+      }
+      return coloquinte::DensificationMode::Disabled;
+    }
+
+  }  // anonymous namespace
+
+
   size_t  EtesianEngine::toColoquinte ()
   {
     clearColoquinte();
@@ -1059,11 +1076,15 @@ namespace Etesian {
 
     _circuit->setupRows(*_surface, rowHeight);
 
-    //TR: what is this ? Why increase the cell dimensions/width here ?
-    // // Apply changes to match target density variation; we add a small margin to be safer
-    // float rowSideMarginInCellHeight = 0.3;
-    // float maxExpansionInRowWidth = 1.0 / 8.0;
-    // _circuit->expandCellsToDensity(1.0 - getDensityVariation(), rowSideMarginInCellHeight, maxExpansionInRowWidth);
+    string densificationMode = getConfiguration()->getDensificationMode();
+
+    if(densificationMode == "old" || densificationMode == "Old") {
+      // Apply changes to match target density variation; we add a small margin to be safer
+      float rowSideMarginInCellHeight = 0.3;
+      float maxExpansionInRowWidth = 1.0 / 8.0;
+      _circuit->expandCellsToDensity(1.0 - getDensityVariation(), rowSideMarginInCellHeight, maxExpansionInRowWidth);
+      cmess1 << "  o  Using Etesian expandCells as dedensifier" << endl;
+    }
 
     _circuit->check();
     _placementLB = new coloquinte::PlacementSolution ();
@@ -1128,23 +1149,6 @@ namespace Etesian {
 
     if (updatePlacement) _updatePlacement( &placement, NoFlags );
   }
-
-
-  namespace {
-
-    coloquinte::DensificationMode  parseDensificationMode ( string mode )
-    {
-      for ( auto& c : mode ) c = tolower( c );
-      if (mode == "uniform")  return coloquinte::DensificationMode::Uniform;
-      if (mode == "targeted") return coloquinte::DensificationMode::Targeted;
-      if ((mode != "disabled") and (mode != "old")) {
-        cerr << Warning( "EtesianEngine::globalPlace(): Unknown \"etesian.densificationMode\" value \"%s\", disabling densification."
-                       , mode.c_str() ) << endl;
-      }
-      return coloquinte::DensificationMode::Disabled;
-    }
-
-  }  // anonymous namespace
 
 
   void  EtesianEngine::globalPlace ()
