@@ -73,6 +73,7 @@ p = Cfg.getParamInt   ( "katana.localRipupLimit"      ); p.setInt   ( 9       );
 p = Cfg.getParamInt   ( "katana.globalRipupLimit"     ); p.setInt   ( 5       ); p.setMin(1)
 p = Cfg.getParamInt   ( "katana.longGlobalRipupLimit" ); p.setInt   ( 5       ); p.setMin(1)
 p = Cfg.getParamString( 'chip.padCoreSide'            ); p.setString( 'South' )
+p = Cfg.getParamBool  ( "block.upperEastWestPins"     ); p.setBool  ( False   );
 
 
 tech = DataBase.getDB().getTechnology()
