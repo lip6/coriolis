@@ -80,7 +80,7 @@ namespace Cfg {
     private:
     // Attributes.
       static Configuration*                         _singleton;
-      std::map<const std::string,Parameter*>              _parameters;
+      std::map<const std::string,Parameter*>        _parameters;
       LayoutDescription                             _layout;
       unsigned int                                  _flags;
       std::map< unsigned int, std::set<LogEntry> >  _logSets;

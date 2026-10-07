@@ -38,6 +38,7 @@ namespace Etesian {
   using  std::setprecision;
   using  std::ostringstream;
   using  std::vector;
+  using  Cfg::Parameter;
   using  Hurricane::tab;
   using  Hurricane::Error;
   using  Hurricane::Warning;
@@ -51,33 +52,37 @@ namespace Etesian {
 // Class  :  "Etesian::Configuration".
 
   Configuration::Configuration ( const RoutingGauge* rg, const CellGauge* cg )
-    : _rg               ( NULL )
-    , _cg               ( NULL )
-    , _placeEffort      ( static_cast<Effort>
-                          (Cfg::getParamEnumerate ("etesian.effort"           , Standard          )->asInt()) )
-    , _updateConf       ( static_cast<GraphicUpdate>                        
-                          (Cfg::getParamEnumerate ("etesian.graphics"         , FinalOnly         )->asInt()) )
-    , _routingDriven    (  Cfg::getParamBool      ("etesian.routingDriven"    , false             )->asBool())
-    , _tiesInEmptyArea  (  Cfg::getParamBool      ("etesian.tiesInEmptyArea"  , true              )->asBool() )
-    , _spaceMargin      (  Cfg::getParamPercentage("etesian.spaceMargin"      ,   5.0             )->asDouble() )
-    , _densityVariation (  Cfg::getParamPercentage("etesian.densityVariation" ,   5.0             )->asDouble() )
-    , _aspectRatio      (  Cfg::getParamPercentage("etesian.aspectRatio"      , 100.0             )->asDouble() )
-    , _tieName          (  Cfg::getParamString    ("etesian.tieName"          , "tie_x0"          )->asString() )
-    , _feedNames        (  Cfg::getParamString    ("etesian.feedNames"        , "tie_x0,rowend_x0")->asString() )
-    , _diodeName        (  Cfg::getParamString    ("etesian.diodeName"        , "dio_x0"          )->asString() )
-    , _spareBufferName  (  Cfg::getParamString    ("spares.buffer"            , "buf_x8"          )->asString() )
-    , _hfnsBufferName   (  Cfg::getParamString    ("spares.hfnsBuffer"        , "buf_x8"          )->asString() )
-    , _bloat            (  Cfg::getParamString    ("etesian.bloat"            , "disabled"        )->asString() )
-    , _latchUpDistance  (  Cfg::getParamInt       ("etesian.latchUpDistance"  , 0                 )->asInt() )
-    , _antennaGateMaxWL (  Cfg::getParamInt       ("etesian.antennaGateMaxWL" , 0                 )->asInt() )
-    , _antennaDiodeMaxWL(  Cfg::getParamInt       ("etesian.antennaDiodeMaxWL", 0                 )->asInt() )
-    , _densificationMode               ( Cfg::getParamString   ("etesian.densificationMode"              , "disabled" )->asString() )
-    , _densificationTargetDensity      ( Cfg::getParamDouble   ("etesian.densificationTargetDensity"      , 0.9  )->asDouble() )
-    , _densificationMaxFactor          ( Cfg::getParamDouble   ("etesian.densificationMaxFactor"          , 2.0  )->asDouble() )
-    , _densificationNbRampSteps        ( Cfg::getParamInt      ("etesian.densificationNbRampSteps"        , 10   )->asInt() )
-    , _densificationTargetedStrength   ( Cfg::getParamDouble   ("etesian.densificationTargetedStrength"   , 1.0  )->asDouble() )
-    , _densificationKeepThroughDetailed( Cfg::getParamBool     ("etesian.densificationKeepThroughDetailed", true )->asBool() )
+    : _rg                              ( NULL )
+    , _cg                              ( NULL )
+    , _placeEffort                     ( static_cast<Effort>
+                                         (Cfg::getParamEnumerate ("etesian.effort"                          , Standard          )->asInt()) )
+    , _updateConf                      ( static_cast<GraphicUpdate>                                         
+                                         (Cfg::getParamEnumerate ("etesian.graphics"                        , FinalOnly         )->asInt()) )
+    , _routingDriven                   (  Cfg::getParamBool      ("etesian.routingDriven"                   , false             )->asBool())
+    , _tiesInEmptyArea                 (  Cfg::getParamBool      ("etesian.tiesInEmptyArea"                 , true              )->asBool() )
+    , _spaceMargin                     (  Cfg::getParamPercentage("etesian.spaceMargin"                     ,   5.0             )->asDouble() )
+    , _densityVariation                (  Cfg::getParamPercentage("etesian.densityVariation"                ,   5.0             )->asDouble() )
+    , _aspectRatio                     (  Cfg::getParamPercentage("etesian.aspectRatio"                     , 100.0             )->asDouble() )
+    , _tieName                         (  Cfg::getParamString    ("etesian.tieName"                         , "tie_x0"          )->asString() )
+    , _feedNames                       (  Cfg::getParamString    ("etesian.feedNames"                       , "tie_x0,rowend_x0")->asString() )
+    , _diodeName                       (  Cfg::getParamString    ("etesian.diodeName"                       , "dio_x0"          )->asString() )
+    , _spareBufferName                 (  Cfg::getParamString    ("spares.buffer"                           , "buf_x8"          )->asString() )
+    , _hfnsBufferName                  (  Cfg::getParamString    ("spares.hfnsBuffer"                       , "buf_x8"          )->asString() )
+    , _bloat                           (  Cfg::getParamString    ("etesian.bloat"                           , "disabled"        )->asString() )
+    , _latchUpDistance                 (  Cfg::getParamInt       ("etesian.latchUpDistance"                 , 0                 )->asInt() )
+    , _antennaGateMaxWL                (  Cfg::getParamInt       ("etesian.antennaGateMaxWL"                , 0                 )->asInt() )
+    , _antennaDiodeMaxWL               (  Cfg::getParamInt       ("etesian.antennaDiodeMaxWL"               , 0                 )->asInt() )
+    , _densificationMode               (  Cfg::getParamString    ("etesian.densificationMode"               , "disabled"        )->asString() )
+    , _densificationTargetDensity      (  Cfg::getParamDouble    ("etesian.densificationTargetDensity"      , 0.9               )->asDouble() )
+    , _densificationMaxFactor          (  Cfg::getParamDouble    ("etesian.densificationMaxFactor"          , 2.0               )->asDouble() )
+    , _densificationNbRampSteps        (  Cfg::getParamInt       ("etesian.densificationNbRampSteps"        , 10                )->asInt() )
+    , _densificationTargetedStrength   (  Cfg::getParamDouble    ("etesian.densificationTargetedStrength"   , 1.0               )->asDouble() )
+    , _densificationKeepThroughDetailed(  Cfg::getParamBool      ("etesian.densificationKeepThroughDetailed", true              )->asBool() )
   {
+    std::transform( _densificationMode.begin()
+                  , _densificationMode.end()
+                  , _densificationMode.begin(), [](unsigned char c){ return std::tolower(c); } );
+    
     string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
     if (not cg)
       cg = AllianceFramework::get()->getCellGauge( gaugeName );
@@ -150,22 +155,22 @@ namespace Etesian {
   void  Configuration::print ( Cell* cell ) const
   {
     cmess1 << "  o  Configuration of ToolEngine<Etesian> for Cell <" << cell->getName() << ">" << endl;
-    cmess1 << Dots::asIdentifier("     - Cell Gauge"       ,getString(_cg->getName())) << endl;
-    cmess1 << Dots::asInt       ("     - Place Effort"     ,_placeEffort             ) << endl;
-    cmess1 << Dots::asInt       ("     - Update Conf"      ,_updateConf              ) << endl;
-    cmess1 << Dots::asBool      ("     - Routing driven"   ,_routingDriven           ) << endl;
-    cmess1 << Dots::asPercentage("     - Space Margin"     ,_spaceMargin             ) << endl;
-    cmess1 << Dots::asPercentage("     - Spread Margin"    ,_densityVariation            ) << endl;
-    cmess1 << Dots::asPercentage("     - Aspect Ratio"     ,_aspectRatio             ) << endl;
-    cmess1 << Dots::asString    ("     - Bloat model"      ,_bloat                   ) << endl;
-    cmess1 << Dots::asString    ("     - Antenna gate Max. WL" ,DbU::getValueString(_antennaGateMaxWL )) << endl;
-    cmess1 << Dots::asString    ("     - Antenna diode Max. WL",DbU::getValueString(_antennaDiodeMaxWL)) << endl;
-    cmess1 << Dots::asString    ("     - Latch up Distance",DbU::getValueString(_latchUpDistance)) << endl;
-    cmess1 << Dots::asString    ("     - Densification mode"          ,_densificationMode                ) << endl;
-    cmess1 << Dots::asPercentage("     - Densification target density",_densificationTargetDensity       ) << endl;
-    cmess1 << Dots::asDouble    ("     - Densification max factor"    ,_densificationMaxFactor            ) << endl;
-    cmess1 << Dots::asInt       ("     - Densification ramp steps"    ,_densificationNbRampSteps          ) << endl;
-    cmess1 << Dots::asDouble    ("     - Densification targeted strength",_densificationTargetedStrength  ) << endl;
+    cmess1 << Dots::asIdentifier("     - Cell Gauge"                         ,getString(_cg->getName())) << endl;
+    cmess1 << Dots::asInt       ("     - Place Effort"                       ,_placeEffort             ) << endl;
+    cmess1 << Dots::asInt       ("     - Update Conf"                        ,_updateConf              ) << endl;
+    cmess1 << Dots::asBool      ("     - Routing driven"                     ,_routingDriven           ) << endl;
+    cmess1 << Dots::asPercentage("     - Space Margin"                       ,_spaceMargin             ) << endl;
+    cmess1 << Dots::asPercentage("     - Spread Margin"                      ,_densityVariation        ) << endl;
+    cmess1 << Dots::asPercentage("     - Aspect Ratio"                       ,_aspectRatio             ) << endl;
+    cmess1 << Dots::asString    ("     - Bloat model"                        ,_bloat                   ) << endl;
+    cmess1 << Dots::asString    ("     - Antenna gate Max. WL"               ,DbU::getValueString(_antennaGateMaxWL )) << endl;
+    cmess1 << Dots::asString    ("     - Antenna diode Max. WL"              ,DbU::getValueString(_antennaDiodeMaxWL)) << endl;
+    cmess1 << Dots::asString    ("     - Latch up Distance"                  ,DbU::getValueString(_latchUpDistance  )) << endl;
+    cmess1 << Dots::asString    ("     - Densification mode"                 ,_densificationMode               ) << endl;
+    cmess1 << Dots::asPercentage("     - Densification target density"       ,_densificationTargetDensity      ) << endl;
+    cmess1 << Dots::asDouble    ("     - Densification max factor"           ,_densificationMaxFactor          ) << endl;
+    cmess1 << Dots::asInt       ("     - Densification ramp steps"           ,_densificationNbRampSteps        ) << endl;
+    cmess1 << Dots::asDouble    ("     - Densification targeted strength"    ,_densificationTargetedStrength   ) << endl;
     cmess1 << Dots::asBool      ("     - Densification keep through detailed",_densificationKeepThroughDetailed) << endl;
   }
 

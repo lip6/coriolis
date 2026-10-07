@@ -1078,11 +1078,13 @@ namespace Etesian {
 
     string densificationMode = getConfiguration()->getDensificationMode();
 
-    if(densificationMode == "old" || densificationMode == "Old") {
+    if (densificationMode == "old") {
       // Apply changes to match target density variation; we add a small margin to be safer
       float rowSideMarginInCellHeight = 0.3;
-      float maxExpansionInRowWidth = 1.0 / 8.0;
-      _circuit->expandCellsToDensity(1.0 - getDensityVariation(), rowSideMarginInCellHeight, maxExpansionInRowWidth);
+      float maxExpansionInRowWidth    = 1.0 / 8.0;
+      _circuit->expandCellsToDensity( 1.0 - getDensityVariation()
+                                    , rowSideMarginInCellHeight
+                                    , maxExpansionInRowWidth );
       cmess1 << "  o  Using Etesian expandCells as dedensifier" << endl;
     }
 
@@ -1336,17 +1338,17 @@ namespace Etesian {
     return os.str();
   }
 
-  void EtesianEngine::_checkNotAFeed( Occurrence occurrence ) const {
-    Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
-    Cell*     masterCell   = instance->getMasterCell();
+
+  void EtesianEngine::_checkNotAFeed ( Occurrence occurrence ) const
+  {
+    Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
+    Cell*     masterCell = instance->getMasterCell();
     if (CatalogExtension::isFeed(masterCell)) {
       string feedName = getString( instance->getName() );
-      if (  (feedName.substr(0,11) != "spare_feed_")
-          or (not instance->isFixed())) {
-        string    instanceName = occurrence.getCompactString();
-        // Remove the enclosing brackets...
-        instanceName.erase( 0, 1 );
-        instanceName.erase( instanceName.size()-1 );
+      if ((   (feedName.substr(0,11) != "spare_feed_")
+          and (feedName.substr(0, 4) != "tie_"))
+         or (not instance->isFixed())) {
+        string instanceName = occurrence.getCompactString();
         throw Error( "EtesianEngine::toColoquinte(): Feed instance \"%s\" found."
                     , instanceName.c_str() );
       }

@@ -23,6 +23,7 @@ namespace Etesian {
 
   using Hurricane::DbU;
   using Hurricane::Cell;
+  using Hurricane::Instance;
   class EtesianEngine;
 
 
@@ -32,6 +33,7 @@ namespace Etesian {
       inline  size_t       feedNumbers           () const;
               bool         isFeedOrTie           ( Cell* ) const;
               bool         isFeed                ( Cell* ) const;
+              bool         isFeed                ( Instance* ) const;
               void         useTie                ( Cell* );
               void         useFeed               ( Cell* );
               Cell*        getBiggestFeed        () const;

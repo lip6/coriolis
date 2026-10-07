@@ -214,13 +214,15 @@ namespace Etesian {
   class SubSlice {
     public:
                                               SubSlice        ( Slice*, const std::list<Tile>::iterator& beginTile );
+      inline       bool                       isFirst         () const;
+      inline       bool                       isLast          () const;
       inline const std::list<Tile>::iterator  getBeginTile    () const;
       inline const std::list<Tile>::iterator  getEndTile      () const;
       inline       DbU::Unit                  getYBottom      () const;
       inline       DbU::Unit                  getXMin         () const;
       inline       DbU::Unit                  getXMax         () const;
                    size_t                     getUsedVTracks  ( const Tile& , std::set<DbU::Unit>& vtracks );
-                   DbU::Unit                  getAverageChunk ( size_t& ) const;
+                   DbU::Unit                  getAverageChunk ( size_t&, DbU::Unit latchUpMax ) const;
                    void                       trackAvoid      ( DbU::Unit xTrack );
                    uint32_t                   insertTies      ( DbU::Unit latchUpMax, size_t yspin );
     private:
@@ -278,6 +280,10 @@ namespace Etesian {
     string s = "<Slice @" + DbU::getValueString(_ybottom) + ">";
     return s;
   }
+
+
+  inline       bool                       SubSlice::isFirst      () const { return _beginTile == _slice->getTiles().begin(); }
+  inline       bool                       SubSlice::isLast       () const { return _endTile   == _slice->getTiles().end  (); }
 
 
 // -------------------------------------------------------------------

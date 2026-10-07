@@ -49,6 +49,14 @@ namespace Etesian {
   }
 
 
+  bool  FeedCells::isFeed ( Instance* instance ) const
+  {
+    if (not instance) return false;
+    if (getString(instance->getName()).substr(0,4) == "tie_") return false;
+    return isFeed( instance->getMasterCell() );
+  }
+
+
   void  FeedCells::useTie ( Cell* cell )
   {
     if (cell == NULL) return;

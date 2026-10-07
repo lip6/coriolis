@@ -1198,6 +1198,7 @@ class FeedsConf ( object ):
 
     def __init__ ( self, framework, cfg ):
         trace( 550, ',+', '\tFeedsConf.__init__()\n' )
+        cfg.etesian.tieName         = None
         cfg.etesian.feedNames       = None
         cfg.etesian.latchUpDistance = None
         cfg.etesian.defaultFeed     = None
@@ -1205,10 +1206,12 @@ class FeedsConf ( object ):
         cfg.etesian.endcapL         = None
         cfg.etesian.endcapR         = None
         feeds = cfg.etesian.feedNames.split(',')
+        self.tieCount    = 0
         self.feedCount   = 0
         self.endcapCount = 0
         self.feeds       = []
         self.defaultFeed = 0
+        self.tie         = None
         self.endcap      = None
         self.endcapL     = None
         self.endcapR     = None
@@ -1225,6 +1228,12 @@ class FeedsConf ( object ):
         self.feeds.sort( key=itemgetter(0) )
         self.feeds.reverse()
 
+        if cfg.etesian.tieName:
+            self.tie = framework.getCell( cfg.etesian.tieName, Catalog.State.Views )
+        if cfg.etesian.tie and not self.tie:
+            print( WarningMessage( 'FeedConf.__init__(): Tie cell "{}" not found in library (skipped).' \
+                                 .format(cfg.etesian.tie)) )
+        trace( 550, '\tTie:  {}\n'.format( self.tie ))
         if cfg.etesian.endcap:
             self.endcap = framework.getCell( cfg.etesian.endcap, Catalog.State.Views )
         if cfg.etesian.endcap and not self.endcap:
@@ -1254,8 +1263,8 @@ class FeedsConf ( object ):
 
     def tieWidth ( self ):
         """Returns the master cell abutment box width of the tie."""
-        if self.feeds: return self.feeds[ self.defaultFeed ][0]
-        return None
+        if self.tie: return self.tie.getAbutmentBox().getWidth()
+        return 0
 
     def endcapWidth ( self ):
         """Returns the master cell abutment box width of the endcap."""
@@ -1263,6 +1272,11 @@ class FeedsConf ( object ):
         if self.endcapR: return self.endcapR.getAbutmentBox().getWidth()
         if self.endcap:  return self.endcap .getAbutmentBox().getWidth()
         return None
+
+    def createTie ( self, cell ):
+        instance = Instance.create( cell, 'tie_{}'.format(self.tieCount), self.tie )
+        self.tieCount += 1
+        return instance
 
     def createFeed ( self, cell ):
         instance = Instance.create( cell
@@ -1594,7 +1608,7 @@ class BlockConf ( GaugeConf ):
         self.chipConf      = None
         self.bColumns      = 2
         self.bRows         = 2
-        self.sparesTies    = True
+        self.sparesTies    = False
         self.cloneds       = []
         self.cell          = cell
         self.corona        = None
@@ -1647,6 +1661,7 @@ class BlockConf ( GaugeConf ):
         self.constantsConf = ConstantsConf( self.framework, self.cfg )
         self.feedsConf     = FeedsConf( self.framework, self.cfg )
         self.powersConf    = PowersConf( self.framework, self.cfg )
+        self.sparesTies    = self.feedsConf.tie is not None
         self._setIoPinsLayerIndexes()
         for ioPinSpec in self.ioPinsArg:
             self.ioPins.append( IoPin( *ioPinSpec ))
@@ -1731,6 +1746,9 @@ class BlockConf ( GaugeConf ):
     def createBuffer ( self, cell=None ):
         if cell is None: cell = self.cellPnR
         return self.bufferConf.createBuffer( cell )
+
+    def createTie ( self ):
+        return self.feedsConf.createTie( self.cellPnR )
 
     def createFeed ( self ):
         return self.feedsConf.createFeed( self.cellPnR )

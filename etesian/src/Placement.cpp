@@ -180,7 +180,7 @@ namespace Etesian {
     cdebug_log(121,0) << "+ Slice @" << DbU::getValueString(_ybottom) << endl;
     for ( const SubSlice& subSlice : _subSlices ) {
       size_t    count = 0;
-      DbU::Unit avg   = subSlice.getAverageChunk( count );
+      DbU::Unit avg   = subSlice.getAverageChunk( count, 0 );
       cdebug_log(121,0) << "| [" << DbU::getValueString(subSlice.getXMin())
                         << " " << DbU::getValueString(subSlice.getXMax())
                         << "] tiles:" << count
@@ -435,10 +435,10 @@ namespace Etesian {
       cerr << Error("Slice::createDiodeUnder(): No tie has been registered, ignoring.") << endl;
       return nullptr;
     }
-    if (getEtesian()->getFeedCells().isFeed(tie)) {
-      cerr << Error("Slice::createDiodeUnder(): Cannot discriminate between tie and feed, ignoring.") << endl;
-      return nullptr;
-    }
+    // if (getEtesian()->getFeedCells().isFeed(tie)) {
+    //   cerr << Error("Slice::createDiodeUnder(): Cannot discriminate between tie and feed, ignoring.") << endl;
+    //   return nullptr;
+    // }
 
     cdebug_log(147,1) << "Slice::createDiodeUnder(): xHint=" << DbU::getValueString(xHint) << endl;
     cdebug_log(147,0) << "rp=" << rp << endl;
@@ -455,7 +455,7 @@ namespace Etesian {
       if ((*iTile).getXMin()  >= diodeArea.getXMax()) break;
       if ((*iTile).getWidth() <  diodeWidth) continue;
       cdebug_log(147,0) << "| " << (*iTile) << endl;
-      if (not getEtesian()->getFeedCells().isFeed((*iTile).getMasterCell())) continue;
+      if (not getEtesian()->getFeedCells().isFeed((*iTile).getInstance())) continue;
       if (blockInst) {
         if ((*iTile).getOccurrence().getPath().getHeadInstance() != blockInst) {
           cdebug_log(147,0) << "> Reject, not in block instance" << endl;
@@ -618,6 +618,7 @@ namespace Etesian {
 
   void  Area::addFeeds ()
   {
+    cmess2 << "  o  Adding feed cells." << endl;
     for ( size_t islice=0 ; islice<_slices.size() ; islice++ ) {
       _slices[islice]->addFeeds( islice );
     }
@@ -657,8 +658,11 @@ namespace Etesian {
 
   uint32_t  Area::insertTies ()
   {
+
     DbU::Unit latchUpMax = getEtesian()->getLatchUpMax();
     if (latchUpMax == 0) return EtesianEngine::NoFlags;
+
+    cmess2 << "  o  Adding tie cells." << endl;
 
     if (not getEtesian()->getFeedCells().getTie()) {
       cerr << Error( "SubSlice::insertTies(): No feed has been registered, ignoring." ) << endl;
@@ -755,7 +759,7 @@ namespace Etesian {
   }
 
 
-  DbU::Unit  SubSlice::getAverageChunk ( size_t& count ) const
+  DbU::Unit  SubSlice::getAverageChunk ( size_t& count, DbU::Unit latchUpMax ) const
   {
     count = 0;
     Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
@@ -763,16 +767,26 @@ namespace Etesian {
     //cerr << Error("SubSlice::getAverageChunk(): No feed has been registered, ignoring.") << endl;
       return -1;
     }
-    DbU::Unit  feedWidth  = feed->getAbutmentBox().getWidth();
-    DbU::Unit  usedLength = 0;
-    DbU::Unit  xmin       = getXMin();
-    DbU::Unit  xmax       = getXMax();
+    DbU::Unit  halfLatchUpMax = latchUpMax / 2;
+    DbU::Unit  feedWidth      = feed->getAbutmentBox().getWidth();
+    DbU::Unit  usedLength     = 0;
+    DbU::Unit  xmin           = getXMin();
+    DbU::Unit  xmax           = getXMax();
     list<Tile>::const_iterator iTile = _beginTile;
-    for ( ; iTile != _endTile ; ++iTile, ++count )
+    for ( ; iTile != _endTile ; ++iTile, ++count ) {
       usedLength += (*iTile).getWidth();
+      if (_slice->getYBottom() == DbU::fromMicrons( 272.16 ))
+        cdebug_log(121,0) << "| " << (*iTile).getOccurrence() << endl;
+    }
+    if (not isFirst()) { usedLength -= halfLatchUpMax; xmin += halfLatchUpMax; }
+    if (not isLast ()) { usedLength -= halfLatchUpMax; xmax -= halfLatchUpMax; }
 
-    cdebug_log(121,0) << "SubSlice::getAverageChunk(): length=" << DbU::getValueString(xmax-xmin)
-                      << " used=" << DbU::getValueString(usedLength) << endl;
+    cdebug_log(121,0) << "SubSlice::getAverageChunk():"
+	              << " [" << DbU::getValueString(xmin)
+	              << " "  << DbU::getValueString(xmax) << "]"
+	              << " tieWidth=" << DbU::getValueString(feedWidth)
+	              << " length="   << DbU::getValueString(xmax-xmin)
+                      << " used="     << DbU::getValueString(usedLength) << endl;
 
     if (xmax - xmin - usedLength == 0) return DbU::Max;
     return (feedWidth * (xmax - xmin)) / (xmax - xmin - usedLength);
@@ -859,12 +873,18 @@ namespace Etesian {
   {
     uint32_t  status       = EtesianEngine::NoFlags;
     size_t    count        = 0;
-    DbU::Unit averageChunk = getAverageChunk( count );
+    DbU::Unit averageChunk = getAverageChunk( count, latchUpMax );
     if (averageChunk > latchUpMax) {
-      cerr << Error( "SubSlice::insertTies(): Not enough free space to insert polarization ties.\n"
-                     "        @Y=%s, begin=%s"
+      Transformation transf = static_cast<Instance*>( (*_beginTile).getOccurrence().getEntity() )->getTransformation();
+      (*_beginTile).getOccurrence().getPath().getTransformation().applyOn( transf );
+      cerr << Error( "SubSlice::insertTies(): Not enough free space to insert polarization ties @Y=%s.\n"
+                     "        begin=%s\n"
+                     "        transf=%s\n"
+                     "        averageChunk=%s"
                    , getString(DbU::getValueString(getYBottom())).c_str()
                    , getString((*_beginTile).getOccurrence()).c_str()
+                   , getString(transf).c_str()
+                   , getString(DbU::getValueString(averageChunk)).c_str()
                    ) << endl;
       return EtesianEngine::FailedPolarizationTies;
     }
@@ -984,12 +1004,22 @@ namespace Etesian {
         tileLength   += (*iTile).getWidth();
 
         if (iTile == _beginTile) {
-          status |= EtesianEngine::FailedPolarizationTies;
-          cerr << Error( "SubSlice::insertTies(): Not enough free space to insert polarization ties.\n"
-                         "        @Y=%s, begin=%s"
-                       , getString(DbU::getValueString(getYBottom())).c_str()
-                       , getString((*iTile).getOccurrence()).c_str()
-                       ) << endl;
+	  if (leftPosition < _slice->getXMin()) {
+            status |= EtesianEngine::FailedPolarizationTies;
+            Transformation transf = static_cast<Instance*>( (*_beginTile).getOccurrence().getEntity() )->getTransformation();
+            (*_beginTile).getOccurrence().getPath().getTransformation().applyOn( transf );
+            cerr << Error( "SubSlice::insertTies(): Not enough free space to insert polarization ties @Y=%s.\n"
+                           "        begin=%s\n"
+                           "        transf=%s\n"
+                           "        averageChunk=%s"
+                         , getString(DbU::getValueString(getYBottom())).c_str()
+                         , getString((*_beginTile).getOccurrence()).c_str()
+                         , getString(transf).c_str()
+                         , getString(DbU::getValueString(averageChunk)).c_str()
+                         ) << endl;
+          } else {
+            cdebug_log(121,0) << "All excess has been compensated *on first tile*." << endl;
+          }
           break;
         }
         --iTile;
@@ -1032,7 +1062,6 @@ namespace Etesian {
     }
 
   //Breakpoint::stop( 100, "Before adding feeds." );
-    cmess2 << "  o  Adding feed cells." << endl;
 
   //DebugSession::open( 120, 150 );
     UpdateSession::open();

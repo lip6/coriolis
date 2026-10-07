@@ -171,7 +171,7 @@ class BufferPool ( object ):
                     self.buffers[ index ][1] = instance 
                     trace( 540, '\tBuffer[{}]: {} @{}\n'.format(index,self.buffers[index],transf) )
                 else:
-                    instance = conf.createFeed()
+                    instance = conf.createTie()
                 instance.setTransformation( transf )
                 instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
                 length += instance.getMasterCell().getAbutmentBox().getWidth()
@@ -197,12 +197,12 @@ class BufferPool ( object ):
         y = self.quadTree.area.getYMin()
         while y < self.quadTree.area.getYMax():
             for column in range(columns):
-                feed   = conf.feedsConf.createFeed( conf.corona )
+                tie    = conf.feedsConf.createTie( conf.corona )
                 transf = self._getTransformation \
                              ( self.quadTree.area.getXMin() + stepX//2 + column*stepX, y )
-                feed.setTransformation( transf )
-                feed.setPlacementStatus( Instance.PlacementStatus.FIXED )
-                trace( 540, '\tBulk tie: {}\n'.format(feed) )
+                tie.setTransformation( transf )
+                tie.setPlacementStatus( Instance.PlacementStatus.FIXED )
+                trace( 540, '\tBulk tie: {}\n'.format(tie) )
                 trace( 540, '\ttransf:{}\n'.format(transf) )
             y += sliceHeight
         trace( 540, ',-' )
@@ -313,7 +313,8 @@ class QuadTree ( object ):
                 masterCell = instance.getMasterCell()
                 if not masterCell.isTerminalNetlist():
                     continue
-                if instance.getName().startswith('spare_'):
+                if    instance.getName().startswith('spare_') \
+                   or instance.getName().startswith('tie_') :
                     continue
                 trace( 540, '\t| Overlap {}\n'.format(occurrence.getEntity()) )
                 if raiseError:
