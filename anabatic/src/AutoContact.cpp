@@ -239,8 +239,8 @@ namespace Anabatic {
 
         DbU::Unit sideLength = (segment->isHorizontal()) ? hSideLength : vSideLength;
         if (not segment->isUnbound()) {
-          if (abs(length) > sideLength) {
-            Error e = Error( "AutoContact::getLengths(): Suspicious length %s (> %s) of %s.\n"
+          if (abs(length) > sideLength + sideLength/2) {
+            Error e = Error( "AutoContact::getLengths(): Suspicious length %s (> 1.5*%s) of %s.\n"
                              "        (on: %s)"
                            , DbU::getValueString(length).c_str()
                            , DbU::getValueString(sideLength).c_str()

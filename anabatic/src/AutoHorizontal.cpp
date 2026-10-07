@@ -238,10 +238,12 @@ namespace Anabatic {
     contacts.insert( getAutoSource() );
     contacts.insert( getAutoTarget() );
 
+    bool hasWeakGlobal = false;
     if (not isNotAligned() and (flags & Flags::Propagate)) {
       for ( AutoSegment* segment : getAligneds() ) {
         contacts.insert( segment->getAutoSource() );
         contacts.insert( segment->getAutoTarget() );
+        if (segment->isWeakGlobal()) hasWeakGlobal = true;
       }
     }
 
@@ -277,8 +279,9 @@ namespace Anabatic {
                       << endl;
 
     if (constraintMin > constraintMax) {
-      if (  (getAutoSource()->getLayer() != getLayer()) 
-         or (getAutoTarget()->getLayer() != getLayer()) )
+      if (not hasWeakGlobal
+         and (  (getAutoSource()->getLayer() != getLayer()) 
+             or (getAutoTarget()->getLayer() != getLayer())) )
         cerr << Error( "AutoHorizontal::getConstraints(): Invalid interval [%s : %s] -> [%d : %d]\n"
                        "        on %s"
                      , DbU::getValueString(constraintMin).c_str()

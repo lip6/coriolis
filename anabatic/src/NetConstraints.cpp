@@ -167,7 +167,8 @@ namespace {
                 cdebug_log(149,0) << "parallel: " << parallel << endl;
                 if (       parallel
                    and not parallel->isNonPref()
-                   and not parallel->isGlobal()) {
+                   and not parallel->isGlobal()
+                   /*and not parallel->isWeakGlobal()*/) {
                   AutoContact* oppositeTurn   = parallel->getOppositeAnchor( turn );
                   Box          segConstraints = oppositeTurn->getConstraintBox();
                   segConstraints = segConstraints.getIntersection( parallelConstraint );
@@ -390,8 +391,8 @@ namespace Anabatic {
     }
 
     for ( size_t i=0 ; i<routingPads.size() ; i++ ) {
-      propagateConstraintFromRp( routingPads[i] );
       propagateDistanceFromRp  ( routingPads[i] );
+      propagateConstraintFromRp( routingPads[i] );
     }
 
     for ( Segment* segment : net->getSegments() ) {
