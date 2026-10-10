@@ -124,24 +124,29 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::isCaged ( DbU::Unit axis ) const
+  uint32_t  Manipulator::isCaged ( DbU::Unit axis ) const
   {
     Track* track = _segment->getTrack();
-    if ( not track ) return false;
+    if (not track) return Uncaged;
 
-    TrackElement* neighbor = _segment->getPrevious();
-    if (neighbor and (neighbor->isFixed() or neighbor->isBlockage())) {
-      if (abs(axis - neighbor->getTargetU()) < getPPitch()*2)
-        return true;
+    uint32_t      cagedState = Uncaged;
+    TrackElement* neighbor   = _segment->getPrevious();
+    if (neighbor and (neighbor->isFixed() or neighbor->isBlockage() or neighbor->isFixedSpanRp())) {
+      if (abs(axis - neighbor->getTargetU()) < getPPitch()*2) {
+        cdebug_log(159,0) << "Left caged by " << neighbor << endl;
+        cagedState |= LeftCaged;
+      }
     }
 
     neighbor = _segment->getNext();
-    if (neighbor and (neighbor->isFixed() or neighbor->isBlockage())) {
-      if (abs(axis - neighbor->getSourceU()) < getPPitch()*2)
-        return true;
+    if (neighbor and (neighbor->isFixed() or neighbor->isBlockage() or neighbor->isFixedSpanRp())) {
+      if (abs(axis - neighbor->getSourceU()) < getPPitch()*2) {
+        cdebug_log(159,0) << "Right caged by " << neighbor << endl;
+        cagedState |= RightCaged;
+      }
     }
 
-    return false;
+    return cagedState;
   }
 
 
@@ -244,11 +249,8 @@ namespace Katana {
         }
       }
 
-      bool dislodgeCaged = false;
-      if (Manipulator(perpandiculars[i],_fsm).isCaged(_event->getSegment()->getAxis())) {
-        cagedPerpandiculars = true;
-        dislodgeCaged       = true;
-      }
+      uint32_t dislodgeCaged = Manipulator(perpandiculars[i],_fsm).isCaged( _event->getSegment()->getAxis() );
+      if (dislodgeCaged) cagedPerpandiculars = true;
 
       placedPerpandiculars++;
 
@@ -261,8 +263,17 @@ namespace Katana {
       }
         
       if (Manipulator(perpandiculars[i],_fsm).ripup(perpandicularActionFlags)) {
-        if (dislodgeCaged) {
-          _event->setAxisHint( _event->getSegment()->getAxis() + _event->getSegment()->getPitch() );
+        switch( dislodgeCaged) {
+          case LeftCaged:
+            _event->setAxisHint( _event->getSegment()->getAxis() + _event->getSegment()->getPitch() );
+            break;
+          case RightCaged:
+            _event->setAxisHint( _event->getSegment()->getAxis() - _event->getSegment()->getPitch() );
+            break;
+          case FullyCaged:
+          // Force crossing the "same ripup" threshold to have the current track blacklisted.
+            data2->setSameRipup( 11 );
+            break;
         }
         continue;
       }

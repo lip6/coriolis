@@ -34,20 +34,23 @@ namespace Katana {
 
   class Manipulator {
     public:
-      enum FunctionFlag { ToRipupLimit        = (1 <<  0)
-                        , AllowExpand         = (1 <<  1)
-                        , NoExpand            = (1 <<  2)
-                        , PerpandicularsFirst = (1 <<  3)
-                        , ToMoveUp            = (1 <<  4)
-                        , AllowLocalMoveUp    = (1 <<  5)
-                        , AllowTerminalMoveUp = (1 <<  6)
-                        , AllowShortPivotUp   = (1 <<  7)
-                        , NoDoglegReuse       = (1 <<  8)
-                        , LeftAxisHint        = (1 <<  9)
-                        , RightAxisHint       = (1 << 10) 
-                        , NotOnLastRipup      = (1 << 11) 
-                        , IgnoreContacts      = (1 << 12) 
-                        };
+      static const uint32_t ToRipupLimit        = (1 <<  0);
+      static const uint32_t AllowExpand         = (1 <<  1);
+      static const uint32_t NoExpand            = (1 <<  2);
+      static const uint32_t PerpandicularsFirst = (1 <<  3);
+      static const uint32_t ToMoveUp            = (1 <<  4);
+      static const uint32_t AllowLocalMoveUp    = (1 <<  5);
+      static const uint32_t AllowTerminalMoveUp = (1 <<  6);
+      static const uint32_t AllowShortPivotUp   = (1 <<  7);
+      static const uint32_t NoDoglegReuse       = (1 <<  8);
+      static const uint32_t LeftAxisHint        = (1 <<  9);
+      static const uint32_t RightAxisHint       = (1 << 10); 
+      static const uint32_t NotOnLastRipup      = (1 << 11); 
+      static const uint32_t IgnoreContacts      = (1 << 12); 
+      static const uint32_t Uncaged             = 0;
+      static const uint32_t LeftCaged           = (1 << 13); 
+      static const uint32_t RightCaged          = (1 << 14); 
+      static const uint32_t FullyCaged          = LeftCaged|RightCaged;
     public:
                                   Manipulator             ( TrackElement*, SegmentFsm& );
                                  ~Manipulator             ();
@@ -60,7 +63,7 @@ namespace Katana {
       inline DbU::Unit            getPitch                () const;
       inline DbU::Unit            getPPitch               () const;
              bool                 canRipup                ( uint32_t flags=0 ) const;
-             bool                 isCaged                 ( DbU::Unit ) const;
+             uint32_t             isCaged                 ( DbU::Unit ) const;
              bool                 ripup                   ( uint32_t type, DbU::Unit axisHint=0 );
              bool                 ripupPerpandiculars     ( uint32_t flags=0 );
              void                 repackPerpandiculars    ( uint32_t flags );
