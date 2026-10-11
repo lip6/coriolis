@@ -260,14 +260,16 @@ extern "C" {
      long long start_y = 0;
      long long end_x   = 0;
      long long end_y   = 0;
+     int fast = 0;
+     if (not PyArg_ParseTuple(args,"OOLLLLi:EtesianEngine.orderScanChain()"
+                             ,&xs_obj
+                             ,&ys_obj
+                             ,&start_x
+                             ,&start_y
+                             ,&end_x
+                             ,&end_y
+                             ,&fast)) {
  
-     if (not PyArg_ParseTuple(args,"OOLLLL:EtesianEngine.orderScanChain()"
-                                  ,&xs_obj
-                                  ,&ys_obj
-                                  ,&start_x
-                                  ,&start_y
-                                  ,&end_x
-                                  ,&end_y)) {
        PyErr_SetString( ConstructorError
                       , "Bad parameters given to EtesianEngine.orderScanChain()." );
        return NULL;
@@ -313,7 +315,8 @@ extern "C" {
          (int64_t)start_x,
          (int64_t)start_y,
          (int64_t)end_x,
-         (int64_t)end_y
+         (int64_t)end_y,
+	 fast
      );
  
      PyObject* pyOrder = PyList_New((Py_ssize_t)order.size());
