@@ -2752,7 +2752,7 @@ namespace Anabatic {
       cdebug_log(149,0) << "  Terminal vertical in VH mode -> allow." << endl;
       return true;
     }
-    cdebug_log(149,0) << Session::isHV() << " " << isNotAligned() << endl;
+    cdebug_log(149,0) << "  isVH=" << Session::isHV() << " isNotAligned=" << isNotAligned() << endl;
 
     if (not isGlobal() and not (flags & Flags::Propagate)) return false;
 

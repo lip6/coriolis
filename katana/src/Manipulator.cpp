@@ -255,11 +255,9 @@ namespace Katana {
       placedPerpandiculars++;
 
     // Try to ripup the perpandicular.
-      DataNegociate* data2 = perpandiculars[i]->getDataNegociate();
-
-      if ( (flags & Manipulator::ToMoveUp) and (data2->getState() < DataNegociate::MoveUp) ) {
+      if ( (flags & Manipulator::ToMoveUp) and (dataPp->getState() < DataNegociate::MoveUp) ) {
         cdebug_log(159,0) << "Force move up of perpandicular." << endl;
-        data2->setState( DataNegociate::MoveUp );
+        dataPp->setState( DataNegociate::MoveUp );
       }
         
       if (Manipulator(perpandiculars[i],_fsm).ripup(perpandicularActionFlags)) {
@@ -272,7 +270,7 @@ namespace Katana {
             break;
           case FullyCaged:
           // Force crossing the "same ripup" threshold to have the current track blacklisted.
-            data2->setSameRipup( 11 );
+            dataPp->setSameRipup( 11 );
             break;
         }
         continue;
@@ -1331,6 +1329,7 @@ namespace Katana {
     kflags |= (flags & AllowLocalMoveUp   ) ? Flags::AllowLocal     : Flags::NoFlags;
     kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : Flags::NoFlags;
     kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : Flags::NoFlags;
+    Flags kUpFlags = (flags & IgnoreLowUpDensity) ? Flags::NoFlags : Flags::CheckLowDensity;
 
     float reserve = Session::getMoveUpReserve();
     if (_segment->base() and (_segment->base()->getRpDistance() > 2)) reserve = 1.0;
@@ -1346,9 +1345,9 @@ namespace Katana {
           if (Session::getConfiguration()->isVH()) kflags |=  Flags::IgnoreContacts;
           else                                     kflags &= ~Flags::IgnoreContacts;
           if (not (flags & AllowShortPivotUp)) return false;
-          if (not _segment->canPivotUp(1.0,kflags|Flags::CheckLowDensity)) return false;
+          if (not _segment->canPivotUp(1.0,kflags|kUpFlags)) return false;
         } else
-          if (not _segment->canMoveUp(reserve,kflags|Flags::CheckLowDensity)) return false;
+          if (not _segment->canMoveUp(reserve,kflags|kUpFlags)) return false;
       }
     } else {
       if (not _segment->canMoveUp(1.0,kflags)) return false;

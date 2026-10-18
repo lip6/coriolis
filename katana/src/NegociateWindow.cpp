@@ -668,8 +668,8 @@ namespace Katana {
       //   DebugSession::close();
       // }
 
-      // if (   (RoutingEvent::getProcesseds() > 152474)
-      //    and (RoutingEvent::getProcesseds() < 152490)) {
+      // if (   (RoutingEvent::getProcesseds() > 204048)
+      //    and (RoutingEvent::getProcesseds() < 204060)) {
       //   UpdateSession::close();
       //   ostringstream message;
       //   message << "After processing RoutingEvent " << (count-1) << ".";
@@ -717,6 +717,10 @@ namespace Katana {
     _negociateRepair();
 
     if (_katana->getConfiguration()->runRealignStage()) {
+      UpdateSession::close();
+      Breakpoint::stop( 100, "NegociateWindow::_negociate() - realign" );
+      UpdateSession::open();
+
       cmess1 << "     o  Realign Stage." << endl;
       
       cdebug_log(159,0) << "Loading realign queue." << endl;
@@ -787,9 +791,9 @@ namespace Katana {
 
   void  NegociateWindow::_negociatePack ( size_t& count, bool last )
   {
-    // UpdateSession::close();
-    // Breakpoint::stop( 0, "NegociateWindow::_negociatePack()" );
-    // UpdateSession::open();
+    UpdateSession::close();
+    Breakpoint::stop( 100, "NegociateWindow::_negociatePack()" );
+    UpdateSession::open();
 
     cmess1 << "     o  Pack Stage." << endl;
 
@@ -853,7 +857,7 @@ namespace Katana {
   void  NegociateWindow::_negociateRepair ()
   {
     UpdateSession::close();
-    Breakpoint::stop( 99, "NegociateWindow::_negociateRepair()" );
+    Breakpoint::stop( 100, "NegociateWindow::_negociateRepair()" );
     UpdateSession::open();
     cdebug_log(159,1) << "NegociateWindow::_negociateRepair() - " << _segments.size() << endl;
 

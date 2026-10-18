@@ -165,6 +165,7 @@ namespace Katana {
              bool                   conflictSolveByHistory ();
              bool                   conflictSolveByPlaceds ();
              bool                   solveTerminalVsGlobal  ();
+             bool                   solveTerminalVsPpGlobal ();
              bool                   desaturate             ();
              bool                   slackenTopology        ( uint32_t flags=0 );
              bool                   solveFullBlockages     ();

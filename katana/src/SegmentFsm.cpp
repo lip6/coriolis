@@ -355,7 +355,10 @@ namespace Katana {
     , _type    (type)
     , _axisHint(axisHint)
     , _toState (toState)
-  { }
+  {
+    cdebug_log(159,0) << "SegmentAction::SegmentAction()" << endl;
+    cdebug_log(159,0) << "  _type&ToRipupLimit=" << (_type & ToRipupLimit) << endl;
+  }
 
 
   bool  SegmentAction::doAction ( RoutingEventQueue& queue )
@@ -366,6 +369,7 @@ namespace Katana {
 
     DebugSession::open( _segment->getNet(), 156, 160 );
     cdebug_log(159,1) << "* doAction() on "<< _segment << endl;
+    cdebug_log(159,0) << "_type&ToRipupLimit=" << (_type & ToRipupLimit) << endl;
 
     DataNegociate* data = _segment->getDataNegociate();
     if (data == NULL) {
@@ -430,10 +434,13 @@ namespace Katana {
       _segment->setAxis( _axisHint );
     }
 
+    cdebug_log(159,0) << " _type&ToRipupLimit=" << (_type & ToRipupLimit) << endl;
     if (_type & ToRipupLimit) {
       uint32_t limit = Session::getKatanaEngine()->getRipupLimit(_segment);
       if (limit > data->getRipupCount())
         data->setRipupCount( limit );
+      cdebug_log(159,0) << "isStrap=" << _segment->isStrap()
+                        << " _type&ToPref= " << (_type & ToPref) << endl;
     }
 
     uint32_t eventLevel = 0;
@@ -723,6 +730,8 @@ namespace Katana {
     
     _actions.push_back ( SegmentAction(segment,type,axisHint,toSegmentFsm) );
     cdebug_log(159,0) << "SegmentFsm::addAction(): " << segment << endl;
+    if (type & SegmentAction::ToRipupLimit)
+      cdebug_log(159,0) << "  type & SegmentAction::ToRipupLimit" << endl;
   }
 
 
@@ -1124,7 +1133,7 @@ namespace Katana {
         cdebug_log(159,0) << "conflictSolveByPlaceds() other->isGlobal():" << other->isGlobal() << endl;
         if (other->isGlobal()) {
           cdebug_log(159,0) << "conflictSolveByPlaceds() - Conflict with global, other move up" << endl;
-          if ((success = Manipulator(other,*this).moveUp(Manipulator::IgnoreContacts))) break;
+          if ((success = Manipulator(other,*this).moveUp(Manipulator::IgnoreContacts|Manipulator::IgnoreLowUpDensity))) break;
         }
         
         cdebug_log(159,0) << "conflictSolveByPlaceds() - Relaxing self" << endl;
@@ -1165,9 +1174,13 @@ namespace Katana {
   bool  SegmentFsm::solveTerminalVsGlobal ()
   {
     TrackElement* segment = getEvent()->getSegment();
-    cdebug_log(159,0) << "SegmentFsm::solveTerminalVsGlobal: " << " " << segment << endl;
+    cdebug_log(159,1) << "SegmentFsm::solveTerminalVsGlobal: " << " " << segment << endl;
 
-    if (not (segment->isTerminal() and segment->isLocal())) return false;
+    if ((segment->base()->getRpDistance() > 2) or not segment->isLocal()) {
+      cdebug_log(159,0) << "False: rpDistance > 2 or not isLocal()" << endl;
+      cdebug_tabw(159,-1);
+      return false;
+    }
 
     for ( size_t icost=0 ; icost<_costs.size() ; ++icost ) {
       Interval overlap = segment->getCanonicalInterval();
@@ -1184,13 +1197,57 @@ namespace Katana {
         if (not otherOverlap.contains(overlap)) continue;
 
         cdebug_log(159,0) << "| Global candidate:" << other << endl;
-        if (Manipulator(other,*this).moveUp(Manipulator::AllowTerminalMoveUp)) {
+        if (Manipulator(other,*this).moveUp(Manipulator::AllowTerminalMoveUp
+                                           |Manipulator::IgnoreContacts
+                                           |Manipulator::IgnoreLowUpDensity)) {
           cdebug_log(159,0) << "| Global candidate selected." << endl;
+          cdebug_tabw(159,-1);
           return true;
         }
       }
     }
 
+    cdebug_log(159,0) << "False: no global to dislodge." << endl;
+    cdebug_tabw(159,-1);
+    return false;
+  }
+
+
+  bool  SegmentFsm::solveTerminalVsPpGlobal ()
+  {
+    TrackElement* segment = getEvent()->getSegment();
+    cdebug_log(159,1) << "SegmentFsm::solveTerminalVsPpGlobal: " << " " << segment << endl;
+
+    if ((segment->base()->getRpDistance() > 2) or not segment->isLocal()) {
+      cdebug_log(159,0) << "False: rpDistance > 2 or not isLocal()" << endl;
+      cdebug_tabw(159,-1);
+      return false;
+    }
+
+    Track* track = NULL;
+    const vector<TrackElement*>& perpandiculars = _event1->getPerpandiculars();
+
+    bool nonPrefFounds = false;
+    for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
+      cdebug_log(159,0) << "| " << perpandiculars[i] << endl;
+
+      track = perpandiculars[i]->getTrack();
+      DataNegociate* dataPp = perpandiculars[i]->getDataNegociate();
+
+      if (not track) continue;
+      if (perpandiculars[i]->isNonPref()) continue;
+      if (not perpandiculars[i]->getDataNegociate()) continue;
+      if (not perpandiculars[i]->getDataNegociate()->hasRoutingEvent()) continue;
+      
+      SegmentFsm fsmPp ( perpandiculars[i]->getDataNegociate()->getRoutingEvent(), _queue, _history );
+      if (fsmPp.solveTerminalVsGlobal()) {
+        cdebug_tabw(159,-1);
+        return true;
+      }
+    }
+    
+    cdebug_log(159,0) << "False: no perpandicular global to dislodge." << endl;
+    cdebug_tabw(159,-1);
     return false;
   }
 
@@ -1344,20 +1401,28 @@ namespace Katana {
             break;
           }
         case DataNegociate::ConflictSolveByHistory:
-        case DataNegociate::ConflictSolveByPlaceds:
         case DataNegociate::MoveUp:
         case DataNegociate::MaximumSlack:
+          cerr << "We are about to fail on " << segment << endl;
+          nextState = DataNegociate::Unimplemented;
+          success   = solveTerminalVsPpGlobal();
+          break;
         case DataNegociate::Unimplemented:
           nextState = DataNegociate::Unimplemented;
+          break;
+        case DataNegociate::ConflictSolveByPlaceds:
+          nextState = DataNegociate::MaximumSlack;
+          success   = solveTerminalVsGlobal();
           break;
       }
     }
     
-    if (not success and (nextState != DataNegociate::Unimplemented))
+    data->setState( nextState );
+    if (not success and (nextState != DataNegociate::Unimplemented)) {
       success = manipulator.ripupPerpandiculars(Manipulator::ToRipupLimit);
+    }
 
     // if (not (flags&NoTransition)) {
-      data->setState( nextState );
       cdebug_log(159,0) << "Incrementing state (after): " << nextState
                         << " count:" << data->getStateCount()
                         << " ripup:" << data->getRipupCount() << endl;
