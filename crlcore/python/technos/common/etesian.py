@@ -29,7 +29,7 @@ Cfg.getParamString    ( 'etesian.cell.one'         ).setString    ( 'one_x0' )
 Cfg.getParamString    ( 'etesian.bloat'            ).setString    ( 'disabled' )
 Cfg.getParamInt       ( 'etesian.latchUpDistance'  ).setInt       ( 0 )
 
-Cfg.getParamString    ( 'etesian.densificationMode'               ).setString( 'disabled' )
+Cfg.getParamString    ( 'etesian.densificationMode'               ).setString( 'PrePlace' )  # PrePlace / Uniform / Targeted / Disabled
 Cfg.getParamDouble    ( 'etesian.densificationTargetDensity'      ).setDouble( 0.9  )
 Cfg.getParamDouble    ( 'etesian.densificationMaxFactor'          ).setDouble( 2.0  )
 Cfg.getParamInt       ( 'etesian.densificationNbRampSteps'        ).setInt   ( 10   )

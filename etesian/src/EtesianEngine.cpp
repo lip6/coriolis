@@ -696,12 +696,25 @@ namespace Etesian {
 
   namespace {
 
-    coloquinte::DensificationMode  parseDensificationMode ( string mode )
+    string  normalizeDensificationMode ( string mode )
     {
       for ( auto& c : mode ) c = tolower( c );
+      if (mode == "old") {
+        cerr << Warning( "EtesianEngine: \"etesian.densificationMode\" value \"Old\" is deprecated, use \"PrePlace\"." ) << endl;
+        return "preplace";
+      }
+      return mode;
+    }
+
+
+    // "PrePlace" is done on the Etesian side (Circuit::expandCellsToDensity()
+    // in toColoquinte()), so Coloquinte itself must not densify.
+    coloquinte::DensificationMode  parseDensificationMode ( string mode )
+    {
+      mode = normalizeDensificationMode( mode );
       if (mode == "uniform")  return coloquinte::DensificationMode::Uniform;
       if (mode == "targeted") return coloquinte::DensificationMode::Targeted;
-      if ((mode != "disabled") and (mode != "old")) {
+      if ((mode != "disabled") and (mode != "preplace")) {
         cerr << Warning( "EtesianEngine::globalPlace(): Unknown \"etesian.densificationMode\" value \"%s\", disabling densification."
                        , mode.c_str() ) << endl;
       }
@@ -1076,16 +1089,16 @@ namespace Etesian {
 
     _circuit->setupRows(*_surface, rowHeight);
 
-    string densificationMode = getConfiguration()->getDensificationMode();
+    string densificationMode = normalizeDensificationMode( getConfiguration()->getDensificationMode() );
 
-    if (densificationMode == "old") {
+    if (densificationMode == "preplace") {
       // Apply changes to match target density variation; we add a small margin to be safer
       float rowSideMarginInCellHeight = 0.3;
       float maxExpansionInRowWidth    = 1.0 / 8.0;
       _circuit->expandCellsToDensity( 1.0 - getDensityVariation()
                                     , rowSideMarginInCellHeight
                                     , maxExpansionInRowWidth );
-      cmess1 << "  o  Using Etesian expandCells as dedensifier" << endl;
+      cmess1 << "  o  Using PrePlace densification (Etesian expandCells)." << endl;
     }
 
     _circuit->check();
