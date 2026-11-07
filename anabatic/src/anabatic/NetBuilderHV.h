@@ -67,6 +67,7 @@ namespace Anabatic {
       virtual bool          _do_3G_xM1_1PinM3        ();
       virtual bool          _do_globalSegment        ();
       virtual void          singleGCell              ( AnabaticEngine*, Net* );
+      virtual void          _do_unconnected          ();
     public:                                          
       virtual string        getTypeName              () const;
   };

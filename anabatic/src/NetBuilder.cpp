@@ -1477,6 +1477,10 @@ namespace Anabatic {
   }
 
 
+  void  NetBuilder::_do_unconnected ()
+  { }
+
+
 #if THIS_IS_DISABLED
   bool isVertical ( RoutingPad* rp )
   {
@@ -1910,6 +1914,9 @@ namespace Anabatic {
       return;
     }
     if (degree < 2) {
+      _net = net;
+      _do_unconnected();
+      Session::revalidate();
       cdebug_tabw(145,-1);
       return;
     }

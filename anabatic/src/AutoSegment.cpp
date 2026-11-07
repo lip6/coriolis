@@ -480,47 +480,47 @@ namespace Anabatic {
 //! \function AutoSegment::initialize (); 
 //! \brief    Store the segment cap extentions in a static table.
 //!
-//!           The cap extension of a segment is the length of metal that will
-//!           be added from the source axis to the true beginning of the segment
-//!           and form the target axis to it's true end. Mainly this involve the
-//!           size of the VIAs that will be attached to source and target.
+//! The cap extension of a segment is the length of metal that will
+//! be added from the source axis to the true beginning of the segment
+//! and form the target axis to it's true end. Mainly this involve the
+//! size of the VIAs that will be attached to source and target.
 //!
-//!           Three kind of VIAs are possible:
+//! Three kind of VIAs are possible:
 //!
-//!           1. VIAs going to the metal *above* (named: **Up**). 
-//!           2. VIAs going to the metal *below* (named: **Bottom**). 
-//!           3. VIAs in the same metal *turn* (named: **Same**). 
+//! 1. VIAs going to the metal *above* (named: **Up**). 
+//! 2. VIAs going to the metal *below* (named: **Bottom**). 
+//! 3. VIAs in the same metal *turn* (named: **Same**). 
 //!
-//!           We further distinguish two cases:
+//! We further distinguish two cases:
 //!
-//!           1. Cap in the preferred routing direction, this is the most
-//!              common. This apply, obviously to segments that are in the
-//!              right direction. If the preferred routing direction is
-//!              horizontal, then the cap is a *dX*.
+//! 1. Cap in the preferred routing direction, this is the most
+//!    common. This apply, obviously to segments that are in the
+//!    right direction. If the preferred routing direction is
+//!    horizontal, then the cap is a *dX*.
 //!
-//!           2. Cap in the non-preferred routing direction. Again, if the
-//!              routing direction is horizontal, that means the segment is
-//!              *vertical*. In this case the cap is a *dY*. The caps are
-//!              stored in an alternate table with **Np** suffix.
+//! 2. Cap in the non-preferred routing direction. Again, if the
+//!    routing direction is horizontal, that means the segment is
+//!    *vertical*. In this case the cap is a *dY*. The caps are
+//!    stored in an alternate table with **Np** suffix.
 //!
-//!              This second case is needed in case of non-square VIAs,
-//!              and it usually amounts to exchanging X an Y extensions.
+//!    This second case is needed in case of non-square VIAs,
+//!    and it usually amounts to exchanging X an Y extensions.
 //!
-//!              This kind of cap is used to compute the footprint of the
-//!              non-preferred (vertical) across the preferred (horizontal)
-//!              tracks.
+//!    This kind of cap is used to compute the footprint of the
+//!    non-preferred (vertical) across the preferred (horizontal)
+//!    tracks.
 //!
-//!           We finally get a table that *for each layer*, defines:
+//! We finally get a table that *for each layer*, defines:
 //!
-//!           Name                   | Definition
-//!           ---------------------- | ---------------------------------------------------
-//!           ``viaToTopCap``        | Extention of bottom metal for VIA going up (top)
-//!           ``viaToBottomCap``     | Extention of top metal for VIA going down (bottom)
-//!           ``viaToSameCap``       | Extention for a turn in the *same* metal.
-//!           ``viaToTopCapNp``      | Non-pref extention of the bottom metal for up VIA.
-//!           ``viaToBottomCapNp``   | Non-pref extention of the top metal for down VIA.
-//!           ``viaToSameCapNp``     | Non-pref extension for a turn in the *same metal*
-//!           ``minimalLength``      | Minimal length to ensure minimal area of a segment
+//! Name                   | Definition
+//! ---------------------- | ---------------------------------------------------
+//! ``viaToTopCap``        | Extention of bottom metal for VIA going up (top)
+//! ``viaToBottomCap``     | Extention of top metal for VIA going down (bottom)
+//! ``viaToSameCap``       | Extention for a turn in the *same* metal.
+//! ``viaToTopCapNp``      | Non-pref extention of the bottom metal for up VIA.
+//! ``viaToBottomCapNp``   | Non-pref extention of the top metal for down VIA.
+//! ``viaToSameCapNp``     | Non-pref extension for a turn in the *same metal*
+//! ``minimalLength``      | Minimal length to ensure minimal area of a segment
 
   void  AutoSegment::initialize ()
   {
@@ -2462,7 +2462,7 @@ namespace Anabatic {
 
     if (not Session::getAnabatic()->isChannelStyle()
        and (getDepth() == 1) and isSpinBottom()) return false;
-    if ((flags & Flags::WithPerpands) and _reduceds) {
+    if ((flags & Flags::WithPerpands) and (_reduceds > 0)) {
       cdebug_log(159,0) << "  Flags::WithPerpands and (_reduceds > 0)" << endl;
       return false;
     }
@@ -2476,7 +2476,6 @@ namespace Anabatic {
       DbU::Unit targetAxis   = 0;
       uint64_t  alignedFlags = 0;
       getEndAxes( sourceAxis, targetAxis );
-
       if (   (sourceAxis != targetAxis)
          or ((alignedFlags != SegSpinTop) and (alignedFlags != SegSpinBottom)) )
         return false;
@@ -2752,7 +2751,7 @@ namespace Anabatic {
       cdebug_log(149,0) << "  Terminal vertical in VH mode -> allow." << endl;
       return true;
     }
-    cdebug_log(149,0) << "  isVH=" << Session::isHV() << " isNotAligned=" << isNotAligned() << endl;
+    cdebug_log(149,0) << "  isHV=" << Session::isHV() << " isNotAligned=" << isNotAligned() << endl;
 
     if (not isGlobal() and not (flags & Flags::Propagate)) return false;
 

@@ -212,7 +212,17 @@ namespace Katana {
   inline  void                          KatanaEngine::setMinimumWL            ( double minimum ) { _minimumWL = minimum; }
   inline  void                          KatanaEngine::setPostEventCb          ( Configuration::PostEventCb_t cb ) { getConfiguration()->setPostEventCb(cb); }
   inline  void                          KatanaEngine::printConfiguration      () const { getConfiguration()->print(getCell()); }
-  inline  TrackElement*                 KatanaEngine::_lookup                 ( AutoSegment* segment ) const { return segment->getObserver<TrackElement>(AutoSegment::Observable::TrackSegment); }
+
+  inline  TrackElement* KatanaEngine::_lookup ( AutoSegment* segment ) const
+  {
+    if (not segment) return nullptr;
+    if (not segment->isCanonical()) {
+      DbU::Unit dummyMin = 0;
+      DbU::Unit dummyMax = 0;
+      segment = segment->getCanonical( dummyMin, dummyMax );
+    }
+    return segment->getObserver<TrackElement>( AutoSegment::Observable::TrackSegment );
+  }
 
   inline  void  KatanaEngine::_addShortDogleg ( TrackElement* segmentA, TrackElement* segmentB )
   {

@@ -518,6 +518,26 @@ namespace Katana {
 
   void  KatanaEngine::runGlobalRouter ( Flags flags )
   {
+  //DebugSession::addToTrace( getCell()->getNet( "core.abc_161789_new_n23199_hfns_2" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_30082_new_n3408_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "CLK_I_root_bl_bl_br_br_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_30082_new_n3986_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_71600_new_n14460_hfns_7" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_71600_new_n3452_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "$abc$30656$new_n3589_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "$abc$30656$new_n3593_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "auto_ff_cc_721_flip_bits_71500_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$12855$new_n565_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n2126_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n2128_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n2123_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.u_top_4data.u_fifo_in.row[1]_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n3069_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "core.$abc$73493$new_n4917_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "$abc$32073$new_n3387_hfns_2" ));
+  //DebugSession::addToTrace( getCell()->getNet( "$abc$71845$new_n13198_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "$\\cpuregs$rdreg[1]$q[1]_hfns_10" ));
+
     if (getStage() >= Anabatic::StageGlobalRouted)
       throw Error ("KatanaEngine::runGlobalRouter(): Global routing already done or loaded.");
 

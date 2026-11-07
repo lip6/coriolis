@@ -297,6 +297,44 @@ namespace Anabatic {
   using Hurricane::Cell;
 
 
+  bool  AnabaticEngine::_unStiffen ( Net* net )
+  {
+    bool                 unstiffened = false;
+    set<Segment*>        exploredSegments;
+    vector<AutoSegment*> unexploreds;
+
+    for ( Component* component : net->getComponents() ) {
+      Segment* segment = dynamic_cast<Segment*>(component);
+      if (segment) {
+        AutoSegment* autoSegment = Session::lookup( segment );
+        if (autoSegment and autoSegment->isGlobal()) unexploreds.push_back( autoSegment );
+      }
+    }
+    sort( unexploreds.begin(), unexploreds.end(), AutoSegment::CompareId() );
+
+    for ( size_t i=0 ; i<unexploreds.size() ; i++ ) {
+      AutoSegment* globalSegment = unexploreds[i];
+      if (exploredSegments.find(globalSegment->base()) != exploredSegments.end()) 
+        continue;
+
+      exploredSegments.insert( globalSegment->base() );
+      for ( AutoSegment* aligned : globalSegment->getAligneds() ) {
+        if (aligned->isGlobal()) exploredSegments.insert( aligned->base() );
+      }
+
+      DbU::Unit constraintMin = 0;
+      DbU::Unit constraintMax = 0;
+      globalSegment->getConstraints( constraintMin, constraintMax, Flags::Propagate );
+      if (constraintMin <= constraintMax) continue;
+
+      globalSegment->makeDogleg( globalSegment->getAutoSource() );
+      unstiffened = true;
+    }
+
+    return unstiffened;
+  }
+
+
   void  propagateDistanceFromRp ( RoutingPad* rp )
   {
     cdebug_log(146,1) << "propagateDistanceFromRp() - " << rp << endl;

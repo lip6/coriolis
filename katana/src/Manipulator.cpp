@@ -176,13 +176,19 @@ namespace Katana {
   {
     cdebug_log(159,1) << "Manipulator::ripupPerpandiculars() - " << flags << endl;
 
-    bool      success                  = true;
-    bool      cagedPerpandiculars      = false;
-    Interval  constraints              ( _event->getConstraints() );
-    Interval  perpandicularConstraints ( constraints );
-    size_t    placedPerpandiculars     = 0;
-    uint32_t  parallelActionFlags      = SegmentAction::SelfRipup|SegmentAction::EventLevel4;
-    uint32_t  perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
+    bool       success                  = true;
+    bool       cagedPerpandiculars      = false;
+    Interval   constraints              ( _event->getConstraints() );
+    Interval   perpandicularConstraints ( constraints );
+    size_t     placedPerpandiculars     = 0;
+    uint32_t   parallelActionFlags      = SegmentAction::SelfRipup|SegmentAction::EventLevel4;
+    uint32_t   perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
+    DbU::Unit  pPitch                   = _segment->getPitch();
+    DbU::Unit  promoteLength            = 10 * pPitch;
+    bool       ignoreGLength            =
+         ((getData()->getState() >= DataNegociate::Minimize           ) and (getData()->getStateCount() >= 2))
+      or ((getData()->getState() == DataNegociate::RipupPerpandiculars) and (getData()->getStateCount() >= 2))
+      or  (getData()->getState() >= DataNegociate::Slacken            );
 
     if (flags & Manipulator::PerpandicularsFirst) {
       cdebug_log(159,0) << "Ripup perpandicular first flag." << endl;
@@ -215,7 +221,7 @@ namespace Katana {
           AutoContact*  terminal = nullptr;
           TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
           cdebug_log(159,0) << "parallel " << parallel << endl;
-          if (parallel and (parallel->getBreakLevel() < 2)) {
+          if (parallel and (ignoreGLength or (parallel->getLength() < promoteLength)) and (parallel->getBreakLevel() < 2)) {
             parallel->makeDogleg( terminal->getGCell(), flags );
             nonPrefFounds = true;
           }
@@ -242,7 +248,7 @@ namespace Katana {
         Flags         flags    = Flags::NoFlags;
         AutoContact*  terminal = nullptr;
         TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
-        if (parallel and (parallel->getBreakLevel() < 2)) {
+        if (parallel and (ignoreGLength or (parallel->getLength() < promoteLength)) and (parallel->getBreakLevel() < 2)) {
           parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
           nonPrefFounds = true;
           continue;
@@ -280,7 +286,7 @@ namespace Katana {
       cdebug_log(159,0) << "Try to ripup neighbors." << endl;
       size_t begin;
       size_t end;
-      track->getOverlapBounds( constraints, begin, end );
+      track->getOverlapBounds( constraints, begin, end, _segment->getNet() );
 
       for ( ; (begin < end) ; begin++ ) {
         TrackElement* other = track->getSegment(begin);
@@ -1251,7 +1257,7 @@ namespace Katana {
       size_t begin;
       size_t end;
 
-      track->getOverlapBounds( _segment->getCanonicalInterval(), begin, end );
+      track->getOverlapBounds( _segment->getCanonicalInterval(), begin, end, _segment->getNet() );
       for ( ; begin < end ; begin++ ) {
         TrackElement* other = track->getSegment(begin);
         cdebug_log(159,0) << "| " << other << endl;
@@ -1490,65 +1496,94 @@ namespace Katana {
       return true;
     }
 
-    DbU::Unit  minSpan = DbU::Max;
-    DbU::Unit  maxSpan = DbU::Min;
-    Interval   punctualSpan ( false );
+    DataNegociate* data    = getSegment()->getDataNegociate();
+    DbU::Unit      minSpan = DbU::Max;
+    DbU::Unit      maxSpan = DbU::Min;
+    DbU::Unit      promoteLength = 10 * _segment->getPitch();
+    AutoContact*   turn    = nullptr;
+    Interval       punctualSpan      ( false );
+    Interval       turnSpan          ( false );
+    bool           isSourceTerminal  = false;
+    bool           isTargetTerminal  = false;
+    bool           isTrappedTerminal = false;
+    bool           isMinimize        = (getData()->getState() >= DataNegociate::Minimize);
+
+    if (   (_fsm.getCosts().size() == 1)
+       and not getSegment()->isNonPref()
+       and _fsm.getCost(0)->isOverlapSpanRp()
+       and (getSegment()->base()->getRpDistance() == 0)
+       and (data->getRipupCount() == 1)) {
+      cerr << "TRAPPED terminal " << getSegment() << endl;
+      isTrappedTerminal = true;
+    }
 
     if (_segment->base()->getAutoSource()->getAnchor()) {
       cdebug_log(159,0) << "  | " << _segment->base()->getAutoSource() << endl;
       Interval constraints ( _segment->base()->getAutoSource()->getUConstraints
                                                                   (_segment->getDirection()) );
-      cdebug_log(159,0) << "  | Constraints: " << constraints << endl;
+      cdebug_log(159,0) << "  | Source constraints: " << constraints << endl;
 
       minSpan = min( minSpan, constraints.getVMax() );
       maxSpan = max( maxSpan, constraints.getVMin() );
       punctualSpan.intersection( constraints );
+      isSourceTerminal = true;
     }
 
     if (_segment->base()->getAutoTarget()->getAnchor()) {
       cdebug_log(159,0) << "  | " << _segment->base()->getAutoTarget() << endl;
       Interval constraints ( _segment->base()->getAutoTarget()->getUConstraints
                                                                   (_segment->getDirection()) );
-      cdebug_log(159,0) << "  | Constraints: " << constraints << endl;
+      cdebug_log(159,0) << "  | Target constraints: " << constraints << endl;
 
       minSpan = min( minSpan, constraints.getVMax() );
       maxSpan = max( maxSpan, constraints.getVMin() );
       punctualSpan.intersection( constraints );
+      isTargetTerminal = true;
+    }
+
+    if (isTrappedTerminal and (isSourceTerminal xor isTargetTerminal)) {
+      turn = (_segment->base()->getAutoSource()->getAnchor())
+               ? _segment->base()->getAutoTarget()
+               : _segment->base()->getAutoSource();
+      turnSpan = turn->getUConstraints( _segment->getDirection() );
+      cdebug_log(159,0) << "  | Turn constraints: " << turnSpan << endl;
     }
 
     const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
     for ( size_t i=0 ; i<perpandiculars.size() ; i++ ) {
-      DataNegociate* data2 = perpandiculars[i]->getDataNegociate();
-      if (not data2) continue;
+      DataNegociate* dataPp = perpandiculars[i]->getDataNegociate();
+      if (not dataPp) continue;
 
       cdebug_log(159,0) << "  | " << perpandiculars[i] << endl;
 
-      RoutingEvent* event2 = data2->getRoutingEvent();
-      if (not event2) continue;
+      RoutingEvent* eventPp = dataPp->getRoutingEvent();
+      if (not eventPp) continue;
 
       if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
         Flags         flags    = Flags::NoFlags;
         AutoContact*  terminal = nullptr;
         TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
-        if (parallel and (parallel->getBreakLevel() < 2)) {
+        if (parallel
+           and (isMinimize or (parallel->getLength() < promoteLength))
+           and (parallel->getBreakLevel() < 2)) {
           parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
           return true;
         }
       }
 
-      cdebug_log(159,0) << "  | Constraints: " << event2->getConstraints() << endl;
+      cdebug_log(159,0) << "  | Constraints: " << eventPp->getConstraints() << endl;
 
-      minSpan = min( minSpan, event2->getConstraints().getVMax() );
-      maxSpan = max( maxSpan, event2->getConstraints().getVMin() );
-      punctualSpan.intersection( event2->getConstraints() );
+      minSpan = min( minSpan, eventPp->getConstraints().getVMax() );
+      maxSpan = max( maxSpan, eventPp->getConstraints().getVMin() );
+      punctualSpan.intersection( eventPp->getConstraints() );
     }
     if (minSpan > maxSpan) swap( minSpan, maxSpan );
 
     cdebug_log(159,0) << "punctualSpan: " << punctualSpan
-                << " min/max span: [" << DbU::getValueString(minSpan)
-                <<                ":" << DbU::getValueString(maxSpan) << "]"
-                << " long: ["         << minSpan
-                <<                ":" << maxSpan << "]" << endl;
+                      << " min/max span: [" << DbU::getValueString(minSpan)
+                      <<                ":" << DbU::getValueString(maxSpan) << "]"
+                      << " long: ["         << minSpan
+                      <<                ":" << maxSpan << "]" << endl;
 
     vector<Interval> holes;
     for ( size_t itrack=0 ; itrack<_fsm.getCosts().size() ; itrack++ ) {
@@ -1601,8 +1636,24 @@ namespace Katana {
 
       if (biggestHole.intersect(punctualSpan)) {
         cdebug_log(159,0) << "Go as punctual into biggest hole: " << biggestHole << endl;
-        axisHint = biggestHole.intersection(punctualSpan).getCenter();
+        DbU::Unit freeLeft     = punctualSpan.getVMin() - biggestHole .getVMin();
+        DbU::Unit freeRight    = biggestHole .getVMax() - punctualSpan.getVMax();
+        Interval  ppConstraint = biggestHole.getIntersection( turnSpan );
+        if (turn) {
+          if (freeLeft >= freeRight) {
+            cdebug_log(159,0) << "Push left" << endl;
+            turn->setUConstraints( _segment->getDirection(), ppConstraint.getVMin(), punctualSpan.getCenter() );
+            axisHint = ppConstraint.getVMin() + freeLeft/2;
+          } else {
+            cdebug_log(159,0) << "Push right" << endl;
+            turn->setUConstraints( _segment->getDirection(), punctualSpan.getCenter(), ppConstraint.getVMax() );
+            axisHint = ppConstraint.getVMax() - freeRight/2;
+          }
+        } else {
+          axisHint = biggestHole.intersection(punctualSpan).getCenter();
+        }
         success = true;
+
       } else {
         for ( size_t i=0 ; i<holes.size() ; i++ ) {
           cdebug_log(159,0) << "Trying secondary hole: " << holes[i] << endl;
@@ -1635,13 +1686,13 @@ namespace Katana {
     cdebug_log(159,0) << "Axis Hint: " << DbU::getValueString(axisHint) << endl;
 
     for ( size_t i=0 ; i<perpandiculars.size() ; i++ ) {
-      DataNegociate* data2 = perpandiculars[i]->getDataNegociate();
-      if (not data2) continue;
+      DataNegociate* dataPp = perpandiculars[i]->getDataNegociate();
+      if (not dataPp) continue;
 
       cdebug_log(159,0) << "  | " << perpandiculars[i] << endl;
 
-      RoutingEvent* event2 = data2->getRoutingEvent();
-      if (not event2) continue;
+      RoutingEvent* eventPp = dataPp->getRoutingEvent();
+      if (not eventPp) continue;
 
       _fsm.addAction( perpandiculars[i], SegmentAction::SelfRipupPerpandWithAxisHint, axisHint );
     }

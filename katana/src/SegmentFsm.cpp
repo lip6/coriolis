@@ -247,7 +247,7 @@ namespace {
       size_t   begin    = Track::npos;
       size_t   end      = Track::npos;
       Interval interval = _masterEvent->getSegment()->getCanonicalInterval();
-      track->getOverlapBounds( interval, begin, end );
+      track->getOverlapBounds( interval, begin, end, event->getSegment()->getNet() );
 
       if (begin != Track::npos) {
         for ( ; begin < end ; ++begin ) {
@@ -1023,7 +1023,7 @@ namespace Katana {
       Interval      otherOverlap;
       bool          otherIsGlobal = false;
 
-      track->getOverlapBounds( overlap, begin, end );
+      track->getOverlapBounds( overlap, begin, end, segment->getNet() );
       candidates.back().setBegin( begin );
       candidates.back().setEnd  ( end );
 
@@ -1186,7 +1186,7 @@ namespace Katana {
       Interval overlap = segment->getCanonicalInterval();
       size_t   begin;
       size_t   end;
-      getTrack1(icost)->getOverlapBounds( overlap, begin, end );
+      getTrack1(icost)->getOverlapBounds( overlap, begin, end, segment->getNet() );
 
       for ( ; begin<end ; ++begin ) {
         TrackElement* other        = getTrack1(icost)->getSegment(begin);
@@ -1272,7 +1272,7 @@ namespace Katana {
       size_t   begin;
       size_t   end;
 
-      getTrack1(0)->getOverlapBounds ( overlap, begin, end );
+      getTrack1(0)->getOverlapBounds ( overlap, begin, end, segment->getNet() );
       for ( ; begin<end ; ++begin ) {
         TrackElement* other        = getTrack1(0)->getSegment(begin);
         Interval      otherOverlap = other->getCanonicalInterval();
@@ -1373,6 +1373,7 @@ namespace Katana {
       cdebug_log(159,0) << "Non-preferred conflicts with a blockage or other's at ripup limit." << endl;
       success = manipulator.avoidBlockage();
     }
+
 
     Flags slackenFlags = Flags::NoFlags;
     if (not success) {

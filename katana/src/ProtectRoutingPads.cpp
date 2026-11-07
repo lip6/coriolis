@@ -178,8 +178,10 @@ namespace {
     cdebug_log(145,0) << "m2spacing=" << DbU::getValueString(m2spacing) << endl;
 
 #if FEATURE_SPAN_GCELL_CENTER
+    cdebug_log(145,0) << "RP trackBb=" << bb << endl;
     Box trackBb = bb;
     trackBb.inflate( 0, -halfViaBotSide );
+    cdebug_log(145,0) << "V shrink trackBb=" << trackBb << endl;
 
     DbU::Unit y     = trackBb.getYCenter();
     DbU::Unit x     = trackBb.getXCenter();
@@ -198,8 +200,10 @@ namespace {
     }
     if (planeM3) {
       trackBb.inflate( -halfViaBotSide, 0 );
+      cdebug_log(145,0) << "H shrink trackBb=" << trackBb << endl;
       if (not trackBb.isEmpty()) {
         Track* track = planeM3->getTrackByPosition( x, Constant::Superior );
+        cdebug_log(145,0) << "Superior track axis =" << DbU::getValueString(track->getAxis()) << endl;
         if (track->getAxis() <= trackBb.getXMax()) {
           x = track->getAxis();
         }
@@ -471,7 +475,7 @@ namespace {
           overlap = true;
           size_t ovBegin = 0;
           size_t ovEnd   = 0;
-          track->getOverlapBounds( termSpan, ovBegin, ovEnd );
+          track->getOverlapBounds( termSpan, ovBegin, ovEnd, rp->getNet() );
           if (ovBegin != Track::npos) {
             for ( ; ovBegin <= ovEnd ; ++ovBegin ) {
               TrackElement*       overlaped = track->getSegment( ovBegin );
@@ -507,6 +511,30 @@ namespace {
     Session::revalidate();
     cdebug_tabw(145,-1);
   }
+
+
+  void  separateQuasiPunctuals ( KatanaEngine* katana )
+  {
+    RoutingPlane*      planeM2        = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit          minViaDistance = planeM2->getLayer()->getMinimalSpacing();
+
+    cerr << "separateQuasiPunctuals() minViadistance=" << DbU::getValueString(minViaDistance) << endl;
+
+    for ( Track* track : planeM2->getTracks() ) {
+      TrackFixedSpanRp* rpSpanPrev = dynamic_cast<TrackFixedSpanRp*>( track->getSegment((size_t)0) );
+      TrackFixedSpanRp* rpSpanCurr = nullptr;
+      for ( size_t i=1 ; i<track->getSize() ; ++i, rpSpanPrev=rpSpanCurr ) {
+        rpSpanCurr = dynamic_cast<TrackFixedSpanRp*>( track->getSegment(i) );
+        if (not rpSpanPrev or not rpSpanCurr) continue;
+        if (rpSpanCurr->getSourceU() - rpSpanPrev->getTargetU() < minViaDistance) {
+          cerr << "RP Span too close:" << "[" << i << "]" << endl;
+          cerr << "  " << track << endl;
+          cerr << "  " << rpSpanPrev << endl;
+          cerr << "  " << rpSpanCurr << endl;
+        }
+      }
+    }
+  }
   
 
 } // End of anonymous namespace.
@@ -535,11 +563,11 @@ namespace Katana {
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply()) continue;
 
-      DebugSession::open( net, 145, 150 );
-      cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
-
       NetData* data = getNetData( net );
       if (data and data->isFixed()) continue;
+
+      DebugSession::open( net, 145, 150 );
+      cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
 
       vector<RoutingPad*> rps;
       for ( RoutingPad* rp : net->getRoutingPads() )
@@ -555,11 +583,11 @@ namespace Katana {
       for ( Net* net : getCell()->getNets() ) {
         if (net->isSupply()) continue;
 
-        DebugSession::open( net, 145, 150 );
-        cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
-
         NetData* data = getNetData( net );
         if (data and data->isFixed()) continue;
+
+        DebugSession::open( net, 145, 150 );
+        cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
 
         vector<RoutingPad*> rps;
         for ( RoutingPad* rp : net->getRoutingPads() ) {

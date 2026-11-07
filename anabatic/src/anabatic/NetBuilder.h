@@ -296,6 +296,7 @@ namespace Anabatic {
       virtual bool                          _do_2G_xM1_1PinM3      ();
       virtual bool                          _do_3G_xM1_1PinM3      ();
       virtual bool                          _do_globalSegment      ();
+      virtual void                          _do_unconnected        ();
       virtual void                          singleGCell            ( AnabaticEngine*, Net* );
               void                          _do_2G_Analog          ();
               void                          _doHChannel            ();

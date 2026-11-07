@@ -2567,6 +2567,7 @@ TAGFILES               =
 
 GENERATE_TAGFILE       = "@TAGDIR@/hurricane.tag"
 
+
 # If the ALLEXTERNALS tag is set to YES, all external classes and namespaces
 # will be listed in the class and namespace index. If set to NO, only the
 # inherited external classes will be listed.

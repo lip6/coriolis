@@ -205,7 +205,7 @@ namespace Anabatic {
     DbU::Unit targetPos2 = getSourceY() + getExtensionCap( Flags::Source|Flags::CapInNonPrefDir|Flags::NoSegExt );
     return std::max( targetPos1, targetPos2 ) - 1;
   }
-
+  
 
   bool  AutoVertical::getConstraints ( DbU::Unit& constraintMin, DbU::Unit& constraintMax, Flags flags ) const
   {
@@ -265,7 +265,8 @@ namespace Anabatic {
                       << endl;
 
     if (constraintMin > constraintMax)
-      if (not hasWeakGlobal
+      if ((flags & Flags::WarnOnError)
+         and not hasWeakGlobal
          and (  (getAutoSource()->getLayer() != getLayer()) 
              or (getAutoTarget()->getLayer() != getLayer())) )
         cerr << Error( "AutoVertical::getConstraints(): Invalid interval [%s : %s]\n"

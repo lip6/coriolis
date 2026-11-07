@@ -398,7 +398,7 @@ namespace Katana {
         autoSegment->getCanonical( fixedSpan );
         fixedSpan.inflate( autoSegment->getExtensionCap( Anabatic::Flags::Source ));
 
-        track->getOverlapBounds( fixedSpan, begin, end );
+        track->getOverlapBounds( fixedSpan, begin, end, nullptr );
         for ( ; (begin < end) ; begin++ ) {
           TrackElement* other = track->getSegment(begin);
           cdebug_log(159,0) << "| overlap: " << other << endl;
@@ -668,8 +668,8 @@ namespace Katana {
       //   DebugSession::close();
       // }
 
-      // if (   (RoutingEvent::getProcesseds() > 204048)
-      //    and (RoutingEvent::getProcesseds() < 204060)) {
+      // if (   (RoutingEvent::getProcesseds() > 18642 )
+      //    and (RoutingEvent::getProcesseds() < 18642+2)) {
       //   UpdateSession::close();
       //   ostringstream message;
       //   message << "After processing RoutingEvent " << (count-1) << ".";
@@ -845,6 +845,15 @@ namespace Katana {
           //   Breakpoint::stop( 0, "Stoping after event 161769 (pack stage)" );
           //   UpdateSession::open();
           // }
+
+          // if (   (RoutingEvent::getProcesseds() > 374423)
+          //    and (RoutingEvent::getProcesseds() < 374425)) {
+          //   UpdateSession::close();
+          //   ostringstream message;
+          //   message << "After processing RoutingEvent " << (count-1) << ".";
+          //   Breakpoint::stop( 0, message.str() );
+          //   UpdateSession::open();
+          // }
         }
       }
 
@@ -905,8 +914,8 @@ namespace Katana {
       count++;
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
 
-      // if (   (RoutingEvent::getProcesseds() > 143848+1)
-      //    and (RoutingEvent::getProcesseds() < 143858+1)) {
+      // if (   (RoutingEvent::getProcesseds() > 300387)
+      //    and (RoutingEvent::getProcesseds() < 300387+2)) {
       //   UpdateSession::close();
       //   ostringstream message;
       //   message << "After processing repair RoutingEvent " << (RoutingEvent::getProcesseds()-1) << ".";

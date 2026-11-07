@@ -2434,6 +2434,7 @@ namespace Anabatic {
     if (_sources.empty()) {
       cdebug_log(112,0) << "No source to start, not routed." << endl;
       cdebug_tabw(112,-1);
+      DebugSession::close();
       return;
     }
 

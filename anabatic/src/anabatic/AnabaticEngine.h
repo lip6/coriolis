@@ -332,6 +332,7 @@ namespace Anabatic {
                     void              _computeNetOptimals     ( Net* );
                     void              _computeNetTerminals    ( Net* );
                     void              _alignate               ( Net* );
+                    bool              _unStiffen              ( Net* );
                     void              _desaturate             ( unsigned int depth, set<Net*>&, unsigned long& total, unsigned long& globals );
                     void              _layerAssignByLength    ( unsigned long& total, unsigned long& global, set<Net*>& );
                     void              _layerAssignByLength    ( Net*, unsigned long& total, unsigned long& global, set<Net*>& );

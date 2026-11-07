@@ -58,23 +58,21 @@ namespace Anabatic {
   class AutoVertical;
 
 
+//! -------------------------------------------------------------------
+//!
 //! \class    AutoSegment
 //! \brief    Base class for articulated segments.
 //!
 //! \section  secAutoSegment  Extension Cap Management
 //!
-//!           Extension cap are the amount the segment extends before the
-//!           source perpandiculars axis and after the target perpandicular
-//!           axis. That extension cap depends on the kind of VIA that is
-//!           connected on source and target.
+//! Extension cap are the amount the segment extends before the
+//! source perpandiculars axis and after the target perpandicular
+//! axis. That extension cap depends on the kind of VIA that is
+//! connected on source and target.
 //!
-//!           Extension cap are always calculated in the direction of the
-//!           segment, regardless of whether it is preferred routing
-//!           direction of not.
-
-
-// -------------------------------------------------------------------
-// Class  :  "AutoSegment".
+//! Extension cap are always calculated in the direction of the
+//! segment, regardless of whether it is preferred routing
+//! direction of not.
 
   class AutoSegment {
       friend class AutoHorizontal;
@@ -655,7 +653,7 @@ namespace Anabatic {
   inline  void            AutoSegment::setRpDistance          ( unsigned int distance ) { _rpDistance=distance; }
   inline  void            AutoSegment::setBreakLevel          ( unsigned int level ) { _breakLevel=level; }
   inline  void            AutoSegment::incBreakLevel          () { if (_breakLevel<15) ++_breakLevel; }
-  inline  void            AutoSegment::incReduceds            () { if (_reduceds<3) ++_reduceds; }
+  inline  void            AutoSegment::incReduceds            () { if (_reduceds<15) ++_reduceds; }
   inline  void            AutoSegment::decReduceds            () { if (_reduceds>0) --_reduceds; }
   inline  void            AutoSegment::setReducedDone         () { _flags |= SegIsReducedDone; }
   inline  void            AutoSegment::setMergeReducedDone    () { _flags |= SegIsMergeReducedDone; }

@@ -302,6 +302,18 @@ namespace Anabatic {
   }
 
 
+  void  AutoContact::setUConstraints ( Flags direction, DbU::Unit uMin, DbU::Unit uMax )
+  {
+    if (direction & Flags::Horizontal) {
+      setCBXMin( uMin );
+      setCBXMax( uMax );
+    } else {
+      setCBYMin( uMin );
+      setCBYMax( uMax );
+    }
+  }
+
+
   void  AutoContact::invalidate ( Flags flags )
   {
     if (flags & Flags::Topology ) setFlags( CntInvalidatedCache|CntInvalidatedTopology );

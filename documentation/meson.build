@@ -150,13 +150,15 @@ htmldoc = custom_target( 'htmldoc'
 docs = run_target( 'docs'
                  , command: 'true'
                  , depends: [ htmldoc
-		            , crlcore_docs
-			    , analog_docs
-			    , hurricane_docs
-			    , viewer_docs
-			    , oroshi_docs
-			    , unicorn_docs
-			    ]
+		         , crlcore_docs
+			     , analog_docs
+			     , hurricane_docs
+			     , anabatic_docs
+			     , katana_docs
+			     , viewer_docs
+			     , oroshi_docs
+			     , unicorn_docs
+			     ]
                  )
 
 install_data( install_dir: pdfdir

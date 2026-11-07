@@ -216,6 +216,7 @@ namespace Anabatic {
       cdebug_log(145,0) << "Anabatic::Session::_revalidateTopology(Net*)" << net << endl;
       _anabatic->updateNetTopology    ( net );
       _anabatic->computeNetConstraints( net );
+      _anabatic->_unStiffen           ( net );
       _anabatic->_computeNetOptimals  ( net );
     //_anabatic->_computeNetTerminals ( net );
     }

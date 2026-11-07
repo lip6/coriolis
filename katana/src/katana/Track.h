@@ -28,6 +28,7 @@ namespace Katana {
 
   using Hurricane::Point;
   using Hurricane::Layer;
+  using Hurricane::DbU;
   using CRL::RoutingLayerGauge;
 
   class TrackMarker;
@@ -36,31 +37,118 @@ namespace Katana {
   class KatanaEngine;
 
 
-// -------------------------------------------------------------------
-// Class  :  "Track".
+//! -------------------------------------------------------------------
+//!
+//! \class        Track
+//! \brief        Contains all the TrackElement placed inside a routing track.
+//!
+//! \defgroup     TrackIndexState  Index State Flag
+//!
+//! This set of constants is used to give meaning to the indexes returned by
+//! Track::getBeginIndex(). It tells how the bounds of the returned segment
+//! should be interpreted to compute the requested interval or position.
+//! Constants are divided in three groups:
+//!
+//! - How to interpret the `begin` index to compute the *lower bound*.
+//! - How to interpret the `end` index to compute the *upper bound*.
+//! - Combinations of the two previous ones in order to get the complete
+//!   interval specification.
+//!
+//! Recapitulative table of the combinated states values and the associateds
+//! intervals:
+//!
+//! State Value                |  Interval Computation
+//! ---------------------------|--------------------------------------------------
+//! Track::BeforeFirstElement  | `[ trackMin, elem[begin].getVMin() ]`
+//! Track::InsideElement       | `[ elem[begin].getVMin(), elem[end].getVMax() ]`
+//! Track::OutsideElement      | `[ elem[begin].getVMax(), elem[end].getVMin() ]`
+//! Track::AfterLastElement    | `[ element[begin].getVMax(), trackMax ]`
+//! Track::EmptyTrack          | `[ trackMin, trackMax ]`
+//!
+//!
+//! \{
+//!
+//! \var  size_t Track::npos;
+//!       Special value that indicates that the index has no meaningful value.
+//!       (set to the largest size_t number possible). 
+//!
+//! \var  uint32_t Track::BeginIsTrackMin;
+//!       The requested interval starts with the *beginning* of the track,
+//!       that is, it is *before* any TrackElement.
+//!
+//! \var  uint32_t Track::BeginIsSegmentMin;
+//!       The requested interval starts with the *lower bound* of the `begin`
+//!       TrackElement.
+//!
+//! \var  uint32_t Track::BeginIsSegmentMax;
+//!       The requested interval starts with the *upper bound* of the `begin`
+//!       TrackElement.
+//!
+//! \var  uint32_t Track::EndIsTrackMax;
+//!       The requested interval ends with the *end* of the track,
+//!       that is, it is *after* all TrackElement.
+//!
+//! \var  uint32_t Track::EndIsSegmentMin;
+//!       The requested interval ends with the *lower bound* of the `end`
+//!       TrackElement.
+//!
+//! \var  uint32_t Track::EndIsSegmentMax;
+//!       The requested interval ends with the *upper bound* of the `end`
+//!       TrackElement.
+//!
+//! \var  uint32_t Track::BeforeFirstElement;
+//!       Tells that the track index is *before* the first TrackElement, the
+//!       associated interval is:
+//!
+//!       >  `[ trackMin, element[begin].getVMin() ]`
+//!
+//! \var  uint32_t Track::InsideElement;
+//!       Tells that the track index is inside a TrackElement, or a set of
+//!       TrackElement, the associated interval is:
+//!
+//!       >  `[ element[begin].getVMin(), element[end].getVMax() ]`
+//!
+//! \var  uint32_t Track::OutsideElement;
+//!       Tells that the track index is betwwen two TrackElement,
+//!       the associated interval is:
+//!
+//!       >  `[ element[begin].getVMax(), element[end].getVMin() ]`
+//!
+//! \var  uint32_t Track::AfterLastElement;
+//!       Tells that the track index is *after* the last TrackElement, the
+//!       associated interval is:
+//!
+//!       >  `[ element[begin].getVMax(), trackMax ]`
+//!
+//! \var  uint32_t Track::EmptyTrack;
+//!       The whole track is empty (the returned indexes should be Track::npos
+//!       and must not be used. The associated interval is:
+//!
+//!       >  `[ trackMin, trackMax ]`
+//! \}
 
   class Track {
 
     public:
-      enum IndexState { BeginIsTrackMin     = (1 <<  0)
-                      , BeginIsSegmentMin   = (1 <<  1)
-                      , BeginIsSegmentMax   = (1 <<  2)
-                      , EndIsTrackMax       = (1 <<  3)
-                      , EndIsSegmentMin     = (1 <<  4)
-                      , EndIsNextSegmentMin = (1 <<  5)
-                      , EndIsSegmentMax     = (1 <<  6)
-                      , BeforeFirstElement  = BeginIsTrackMin  |EndIsSegmentMin
-                      , InsideElement       = BeginIsSegmentMin|EndIsSegmentMax
-                      , OutsideElement      = BeginIsSegmentMax|EndIsNextSegmentMin
-                      , AfterLastElement    = BeginIsSegmentMax|EndIsTrackMax
-                      , EmptyTrack          = BeginIsTrackMin  |EndIsTrackMax
-                      , BeginMask           = BeginIsTrackMin  |BeginIsSegmentMin|BeginIsSegmentMax
-                      , EndMask             = EndIsTrackMax    |EndIsSegmentMin  |EndIsNextSegmentMin|EndIsSegmentMax
-                      };
+      static const uint32_t BeginIsTrackMin     = (1 <<  0);
+      static const uint32_t BeginIsSegmentMin   = (1 <<  1);
+      static const uint32_t BeginIsSegmentMax   = (1 <<  2);
+      static const uint32_t EndIsTrackMax       = (1 <<  3);
+      static const uint32_t EndIsSegmentMin     = (1 <<  4);
+      static const uint32_t EndIsNextSegmentMin = (1 <<  5);
+      static const uint32_t EndIsSegmentMax     = (1 <<  6);
+      static const uint32_t ForFreeInterval     = (1 <<  7);
+      static const uint32_t BeforeFirstElement  = BeginIsTrackMin  |EndIsSegmentMin;
+      static const uint32_t InsideElement       = BeginIsSegmentMin|EndIsSegmentMax;
+      static const uint32_t OutsideElement      = BeginIsSegmentMax|EndIsNextSegmentMin;
+      static const uint32_t AfterLastElement    = BeginIsSegmentMax|EndIsTrackMax;
+      static const uint32_t EmptyTrack          = BeginIsTrackMin  |EndIsTrackMax;
+      static const uint32_t BeginMask           = BeginIsTrackMin  |BeginIsSegmentMin|BeginIsSegmentMax;
+      static const uint32_t EndMask             = EndIsTrackMax    |EndIsSegmentMin  |EndIsNextSegmentMin|EndIsSegmentMax;
 
     public:
     // Static Attributes.
-      static const size_t  npos;
+      static const size_t  npos = (size_t)-1;;
 
     public:
               void               destroy               ();
@@ -100,8 +188,8 @@ namespace Katana {
               bool               hasViaMarker          ( Net* net, Interval span );
               Interval           getOccupiedInterval   ( size_t& begin ) const;
               Interval           expandFreeInterval    ( DbU::Unit position, size_t& begin, size_t& end, uint32_t state, Net* ) const;
-              void               getBeginIndex         ( DbU::Unit position, size_t& begin, uint32_t& state ) const;
-              void               getOverlapBounds      ( Interval, size_t& begin, size_t& end ) const;
+              void               getBeginIndex         ( DbU::Unit position, size_t& begin, uint32_t& state, Net* ) const;
+              void               getOverlapBounds      ( Interval, size_t& begin, size_t& end, Net* net ) const;
               TrackCost&         addOverlapCost        ( TrackCost& ) const;
               void               getTerminalWeight     ( Interval, Net*, size_t& count, uint32_t& weight ) const;
               DbU::Unit          getSourcePosition     ( size_t index ) const;

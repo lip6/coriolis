@@ -181,9 +181,9 @@ namespace Anabatic {
   static const uint32_t  StageGlobalLoaded           =  2;
   static const uint32_t  StageDetailInit             =  3;
   static const uint32_t  StageNegociate              =  4;
-  static const uint32_t  StagePack                   =  5;
-  static const uint32_t  StageRepair                 =  6;
-  static const uint32_t  StageRealign                =  7;
+  static const uint32_t  StageRepair                 =  5;
+  static const uint32_t  StageRealign                =  6;
+  static const uint32_t  StagePack                   =  7;
   static const uint32_t  StageChainReduce            =  8;
   static const uint32_t  StagePostProcessRoutingPads =  9;
   static const uint32_t  StagePreDestroying          = 10;

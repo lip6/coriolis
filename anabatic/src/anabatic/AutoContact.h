@@ -189,6 +189,7 @@ namespace Anabatic {
       inline  void             setCBXMax                  ( DbU::Unit xMax );
       inline  void             setCBYMin                  ( DbU::Unit yMin );
       inline  void             setCBYMax                  ( DbU::Unit yMax );
+              void             setUConstraints            ( Flags direction, DbU::Unit uMin, DbU::Unit uMax );
               void             setConstraintBox           ( const Box& box );
               bool             restrictConstraintBox      ( DbU::Unit constraintMin
                                                           , DbU::Unit constraintMax

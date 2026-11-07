@@ -276,9 +276,6 @@ namespace Katana {
 // Class  :  "Track".
 
 
-  const size_t  Track::npos = (size_t)-1;
-
-
   Track::Track ( RoutingPlane* routingPlane, unsigned int index )
     : _routingPlane       (routingPlane)
     , _index              (index)
@@ -374,13 +371,12 @@ namespace Katana {
 
   TrackElement* Track::getSegment ( DbU::Unit position ) const
   {
-    cdebug_log(155,0) << "Track::getSegment() "
-                      << DbU::getValueString(position) << endl;
+    cdebug_log(155,0) << "Track::getSegment() " << DbU::getValueString(position) << endl;
 
     uint32_t  state = 0;
     size_t    begin = npos;
 
-    getBeginIndex( position, begin, state );
+    getBeginIndex( position, begin, state, nullptr );
 
     if (state & (BeginIsTrackMin|EndIsTrackMax)) return NULL;
     return getSegment(begin);
@@ -407,8 +403,9 @@ namespace Katana {
       --index;
       cdebug_log(155,0) << "| " << index << ":" << _segments[index] << endl;
       if (_segments[index]->getNet() != net) {
-        if ((Session::getStage() < Anabatic::StageRepair) or not _segments[index]->isFixedSpanRp())
-          return _segments[index];
+        if ((Session::getStage() >= Anabatic::StageRepair) and _segments[index]->isFixedSpanRp())
+          continue;
+        return _segments[index];
       }
     } while ( index != 0 );
     index = npos;
@@ -432,7 +429,7 @@ namespace Katana {
     size_t begin = Track::npos;
     size_t end   = Track::npos;
 
-    getOverlapBounds( span, begin, end );
+    getOverlapBounds( span, begin, end, nullptr );
     if (begin == npos) return 0;
     for ( ; begin < end ; begin++ ) {
       TrackFixedSpanRp* fixedSpan = dynamic_cast<TrackFixedSpanRp*>( _segments[begin] );
@@ -460,12 +457,24 @@ namespace Katana {
   }
 
 
-  void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, uint32_t& state ) const
+//! \function  void  Track::getBeginIndex( DbU::Unit position, size_t& begin, uint32_t& state, Net* net ) const;
+//! \param     position  The position in track from which to start the search.
+//! \param     begin     The index of the element in the track to start from.
+//! \param     state     Indicate the status of the segment at `begin` index
+//!                      relative to the *position*.
+//! \param     net       The for which we are searching the index.
+//!
+//! \brief     Return the index of the leftmost TrackElement overlapping `position`.
+//!
+//!
+//!
+  
+  void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, uint32_t& state, Net* net ) const
   {
     cdebug_log(155,1) << "Track::getBeginIndex(): @" << DbU::getValueString(position)
-                      << " begin=" << begin << endl;
-    cdebug_log(155,0) << "  npos=" << npos << endl;
+                      << " begin=" << begin << " " << net << endl;
     
+    bool forFreeInterval = state & ForFreeInterval;
     if (_segments.empty()) {
       state = EmptyTrack;
       begin = 0;
@@ -500,10 +509,19 @@ namespace Katana {
 
     size_t sameNetDelta = 0;
     if (begin < _segments.size()) {
+      cdebug_log(155,0) << "  | begin [" << begin << "]: " << _segments[begin] << endl;
+
       Interval span     = _segments[begin]->getCanonicalInterval();
       size_t   minBegin = begin;
-      for ( size_t i=begin; (i > 0) and (_segments[i-1]->getNet() == _segments[i]->getNet())
-            ; --i ) {
+      for ( size_t i=begin; (i > 0); --i ) {
+        cdebug_log(155,0) << "  | back [" << (i-1) << "]: " << _segments[i-1] << endl;
+
+        if (_segments[i-1]->isFixedSpanRp()
+           and (not forFreeInterval
+               or (_segments[i-1]->getNet() == net)
+               or (Session::getStage() >= Anabatic::StageRepair))) continue;
+        if (_segments[i-1]->getNet() != _segments[begin]->getNet()) break;
+        
         Interval current = _segments[i-1]->getCanonicalInterval();
         if (current.intersect(span)) {
           span.merge( current );
@@ -543,32 +561,50 @@ namespace Katana {
   }
   
 
-  void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end ) const
+//! \function  void  Track::getOverlapBounds( Interval interval, size_t& begin, size_t& end, Net* net ) const;
+//! \param     interval  The intersection span over the track.
+//! \param     begin     Index of the first TrackElement intersecting the `span`
+//! \param     end       Index of the last TrackElement intersecting the `span`
+//! \param     net       The for which we are searching the overlaping segments.
+//!
+//! \brief     Find the index range of TrackElement `[begin,end]` overlapping `interval`.
+
+  void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end, Net* net ) const
   {
+    cdebug_log(155,1) << "Track::getOverlapBounds(): " << interval << " begin:" << begin << " end:" << end << endl;
+
     uint32_t iState = 0;
 
     if (  _segments.empty()
        or (interval.getVMax() <= _min)
        or (interval.getVMin() >= _max)) {
       begin = end = npos;
+      cdebug_tabw(155,-1);
       return;
     }
 
-    getBeginIndex      ( interval.getVMin(), begin, iState );
+    getBeginIndex      ( interval.getVMin(), begin, iState, net );
     getOccupiedInterval( begin );
+    if (begin > 0) --begin;
 
-    getBeginIndex( interval.getVMax(), end, iState );
+    getBeginIndex( interval.getVMax(), end, iState, net );
     for ( ; end < _segments.size() ; ++end ) {
       if (_segments[end]->getSourceU() >= interval.getVMax()) break;
     }
 
     cdebug_log(155,0) << "Track::getOverlapBounds(): begin:" << begin << " end:" << end << " AfterLastElement:" << (iState == AfterLastElement) << endl;
+    cdebug_tabw(155,-1);
   }
 
 
+//! \function  TrackCost&  Track::addOverlapCost( TrackCost& cost ) const;
+//! \param     cost  Where to accumulate the this track's cost.
+//! \return    A reference to the TrackCost passed as argument.
+//!
+//! \brief     Accumulate this track cost to the complete *cost*.
+
   TrackCost& Track::addOverlapCost ( TrackCost& cost ) const
   {
-  //show();
     
           size_t    begin        = npos;
           size_t    end          = npos;
@@ -581,7 +617,7 @@ namespace Katana {
     } else {
       cost.setFreeLength( freeInterval.getSize() );
     }
-    getOverlapBounds( cost.getInterval(), begin, end );
+    getOverlapBounds( cost.getInterval(), begin, end, cost.getNet() );
     cost.setTrack( const_cast<Track*>(this), begin, end );
 
     cdebug_log(155,1) << "addOverlapCost() @" << DbU::getValueString(_axis)
@@ -593,6 +629,7 @@ namespace Katana {
     cdebug_log(155,0) << "freeInterval [" << DbU::getValueString(freeInterval.getVMin())
                       << ":"  << DbU::getValueString(freeInterval.getVMax()) << "]"
                       << endl;
+  //show();
 
     vector<TrackMarker*>::const_iterator lowerBound
       = lower_bound( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarkerBase::Compare() );
@@ -746,9 +783,18 @@ namespace Katana {
   }
 
 
+//! \function  Interval  Track::getFreeInterval( DbU::Unit position, Net* net ) const;
+//! \param     position  The *position* along the track around which to
+//!                      find the free interval.
+//! \param     net       For which *net* we want the free interval.
+//! \return    The free interval. If the `position` is inside another TrackElement,
+//!            the empty interval is returned.
+//!
+//! \brief     Return the free interval enclosing *position*, for the given *net*.
+
   Interval  Track::getFreeInterval ( DbU::Unit position, Net* net ) const
   {
-    cdebug_log(155,0) << "Track::getFreeInterval() "
+    cdebug_log(155,1) << "Track::getFreeInterval() "
                       << DbU::getValueString(position)
                       << " for " << net << endl;
     
@@ -756,24 +802,35 @@ namespace Katana {
     size_t    begin = npos;
     size_t    end   = npos;
 
-    if (_segments.empty()) return Interval(_min,_max);
+    if (_segments.empty()) {
+      cdebug_tabw(155,-1);
+      return Interval(_min,_max);
+    }
 
-    getBeginIndex( position, begin, state );
-    if ( (state == InsideElement) and (_segments[begin]->getNet() != net) ) {
+    state |= ForFreeInterval;
+    getBeginIndex( position, begin, state, net );
+    if ( (state & InsideElement) and (_segments[begin]->getNet() != net) ) {
       cdebug_log(155,0) << "Track::getFreeInterval(): Inside other element @" << begin
                         << " - " << _segments[begin] << endl;
+      cdebug_tabw(155,-1);
       return Interval();
     }
 
     end = begin;
+    cdebug_tabw(155,-1);
+
     return expandFreeInterval( position, begin, end, state, net );
   }
 
 
   Interval  Track::expandFreeInterval ( DbU::Unit position, size_t& begin, size_t& end, uint32_t state, Net* net ) const
   {
-    cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end
+    cdebug_log(155,1) << "Track::expandFreeInterval() pos:" << DbU::getValueString(position)
+                      << " begin:" << begin << " end:" << end
                       << " state:" << state << " " << net << endl;
+
+  //show();
+
     if (begin != Track::npos)
       cdebug_log(155,0) << _segments[begin] << endl;
 
@@ -798,12 +855,24 @@ namespace Katana {
     if (not (state & EndIsTrackMax) ) {
       if (state & EndIsNextSegmentMin) ++end;
  
-      if ((_segments[end]->getNet() == net) or _segments[end]->isNonPref()) {
+      if (  (_segments[end]->getNet() == net) or _segments[end]->isNonPref()
+         or ((Session::getStage() >= Anabatic::StageRepair) and _segments[end]->isFixedSpanRp())) {
         getNext( end, net );
         if (end != npos) {
           cdebug_log(155,0) << "| same net, end:" << end << " " << _segments[end] << endl;
         } else {
           cdebug_log(155,0) << "| same net, end:" << end << " (after last)" << endl;
+        }
+      }
+      if (end != npos) {
+        if ((Session::getStage() >= Anabatic::StageRepair) and _segments[end]->isFixedSpanRp()) {
+          if (end+1 == _segments.size()) end = npos;
+          else end++;
+          if (end != npos) {
+            cdebug_log(155,0) << "| same net, end:" << end << " " << _segments[end] << endl;
+          } else {
+            cdebug_log(155,0) << "| same net, end:" << end << " (after last)" << endl;
+          }
         }
       }
       if (end == npos) {
@@ -971,7 +1040,7 @@ namespace Katana {
     }
 
     segment->setTrack ( this );
-    show();
+  //show();
     cdebug_tabw(155,-1);
   }
 
@@ -1145,6 +1214,7 @@ namespace Katana {
   {
     cdebug_log(155,0) << "Track::getOccupiedInterval() begin=" << begin << endl;
     if (begin == npos) return Interval();
+    cdebug_tabw(155,1);
 
     size_t  seed  = begin;
     Net*    owner = _segments[seed]->getNet();
@@ -1157,6 +1227,9 @@ namespace Katana {
 
     size_t i = seed;
     while ( --i != npos ) {
+      if (_segments[i]->isFixedSpanRp()
+         and (Session::getStage() >= Anabatic::StageRepair)) continue;
+
       if (_segments[i]->getNet() != owner) break;
 
       _segments[i]->getCanonical ( segmentInterval );
@@ -1183,6 +1256,7 @@ namespace Katana {
       mergedInterval.merge( segmentInterval );
     }
 
+    cdebug_tabw(155,-1);
     return mergedInterval;
   }
 
@@ -1492,8 +1566,10 @@ namespace Katana {
   {
     if ( !_segments.size() ) return 0;
 
+    cdebug_log(159,0) << "Track::checkOverlap() " << this << endl;
     size_t j = 0;
     for ( size_t i=0 ; i<_segments.size()-1 ; i++ ) {
+      cdebug_log(159,0) << "| [" << i << "] " << _segments[i] << endl;
       if (not _segments[i]->isBlockage() and (_segments[i]->getLayer() != getLayer()) ) {
         cerr << Error( " Track vs. Segment Layer discrepency:\n  %s\n  %s  "
                      , getString(this).c_str()
@@ -1706,7 +1782,9 @@ namespace Katana {
 
   void  Track::show () const
   {
-    if ((getIndex() != 330) or not isHorizontal()) return;
+  //if ((getIndex() != 651) or not isHorizontal()) return;
+  //if ((getIndex() != 608) or not isHorizontal()) return;
+  //if ((getIndex() != 382) or not isHorizontal()) return;
 
     cdebug_log(155,1) << "Track::show() " << this << endl;
     for ( size_t i=0 ; i<_segments.size() ; i++ ) {

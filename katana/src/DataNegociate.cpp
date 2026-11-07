@@ -241,7 +241,7 @@ namespace Katana {
           cdebug_log(159,0) << "trackFree (no drag): " << trackFree << endl;
         }
 
-        if (Session::getStage() < Anabatic::StagePack) {
+        if (Session::getStage() < Anabatic::StageRepair) {
           int pitchSlack = 1;
           if (Session::getConfiguration()->isVH() and (_trackSegment->getDepth() == 1))
             pitchSlack = 3;
@@ -329,9 +329,8 @@ namespace Katana {
             } else {
               cdebug_log(159,0) << "Track Perpandicular Free empty, ignoring." << endl;
             }
-          }
-          else if (   perpandicular->isOneTrack()
-                  and (perpandData->getState() >= MaximumSlack)) {
+          } else if (   perpandicular->isOneTrack()
+                  and (perpandData->getState() >= Minimize)) {
             cdebug_log(159,0) << "One track local perpandicular" << endl;
             Flags         isSource  = std::get<1>( perpandiculars[i] );
             RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandicular->getLayer());
@@ -351,54 +350,6 @@ namespace Katana {
           cdebug_log(159,0) << "Not in any track " << perpandicular << endl;
         }
       }
-
-#if 0
-      if (interval.isPonctual()) {
-        cdebug_log(159,0) << "Punctual attractor @" << DbU::getValueString(interval.getVMin()) << endl;
-        _attractors.push_back( interval.getVMin() );
-        cdebug_tabw(159,-1);
-        continue;
-      }
-
-      if (  (interval.getVMin() != _trackSegment->getAxis())
-         or AutoSegment::isTopologicalBound(basePerpand
-                                           ,perpandicular->isHorizontal() ? Flags::Horizontal : 0
-                                           ) ) {
-        map<DbU::Unit,int>::iterator iattractor = attractorSpins.find( interval.getVMin() );
-        if (iattractor == attractorSpins.end()) {
-          attractorSpins.insert( make_pair(interval.getVMin(),-1) );
-        } else {
-          iattractor->second -= 1;
-        }
-        cdebug_log(159,0) << "Left attractor @" << DbU::getValueString(interval.getVMin()) << endl;
-      }
-
-      if (  (interval.getVMax() != _trackSegment->getAxis())
-         or AutoSegment::isTopologicalBound(basePerpand
-                                           ,Flags::Propagate | (perpandicular->isHorizontal() ? Flags::Horizontal : 0)
-                                           ) ) {
-        map<DbU::Unit,int>::iterator iattractor = attractorSpins.find( interval.getVMax() );
-        if (iattractor == attractorSpins.end()) {
-          attractorSpins.insert( make_pair(interval.getVMax(),1) );
-        } else {
-          iattractor->second += 1;
-        }
-        cdebug_log(159,0) << "Right attractor @" << DbU::getValueString(interval.getVMax()) << endl;
-      }
-
-      if (perpandicular->base()->isReduceCandidate()) {
-        if (reduceCandidates < 2) {
-          if (interval.getVMin()+DbU::fromLambda(0.5) == _trackSegment->getAxis()) {
-            _reduceRanges[reduceCandidates] = Interval( interval.getVMax()-pitch
-                                                      , interval.getVMax()+pitch );
-          } else if (interval.getVMax()-DbU::fromLambda(0.5) == _trackSegment->getAxis()) {
-            _reduceRanges[reduceCandidates] = Interval( interval.getVMin()-pitch
-                                                      , interval.getVMin()+pitch );
-          }
-          ++reduceCandidates;
-        } 
-      }
-#endif
     }
 
     if ( not _trackSegment->isTerminal() and (_perpandiculars.size()+reducedPerpands < 2) )
