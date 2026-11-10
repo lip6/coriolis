@@ -486,6 +486,11 @@ namespace {
   //DbU::Unit     delta     =   plane->getLayerGauge()->getObstacleDw() - DbU::fromLambda(0.1);
     DbU::Unit     delta     =   0;
     DbU::Unit     extension = layer->getExtentionCap();
+    // Obstruction geometry is booked exactly as drawn: extending (or, with a
+    // negative cap, shrinking) an obstruction chunk either over-reserves the
+    // track or collapses a short chunk into a degenerate, null-based segment
+    // that Track::repair() later reports as "Base of first element is NULL".
+    if (layer->isBlockage()) extension = 0;
   //DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getLayer()->getMinimalSpacing()/2;
   //DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getHalfPitch() + getHalfWireWidth();
   //DbU::Unit     extension = layer->getExtentionCap();
@@ -547,6 +552,7 @@ namespace {
                                      , (*ichunk).getVMin()+extension
                                      , (*ichunk).getVMax()-extension
                                      );
+        if (not segment) continue;   // degenerate chunk: never book a null base
         if ( segment and net->isExternal() )
           NetExternalComponents::setExternal ( segment );
 
@@ -589,6 +595,7 @@ namespace {
                                    , (*ichunk).getVMin()+extension
                                    , (*ichunk).getVMax()-extension
                                    );
+        if (not segment) continue;   // degenerate chunk: never book a null base
         if ( segment and net->isExternal() )
           NetExternalComponents::setExternal ( segment );
 

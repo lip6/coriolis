@@ -1416,6 +1416,12 @@ namespace Katana {
                 cerr << Bug("Track::repair(): Assersion gapsetCurr.span(j+1).first < _segments.size() is false.") << endl;
               } else {
                 TrackElement* element = _segments[gapsetCurr.span(j+1).first];
+                // A TrackElement without a base segment cannot be repaired:
+                // obstruction geometry booked by PowerRails is created outside
+                // Anabatic's canonicalisation, so base() is NULL by design and
+                // there is nothing to stretch.  Bailing out of the whole track
+                // here (as the Bug did) leaves every other gap on it unfixed.
+                if (element->isFixedSpan() or not element->base()) continue;
                 AutoSegment*  first   = element->base();
                 
                 cdebug_log(159,0) << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
