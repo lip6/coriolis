@@ -120,7 +120,6 @@ namespace Katana {
       inline RoutingEventLoop&             getEventLoop         ();
              void                          setGCells            ( const vector<GCell*>& );
       inline void                          setInterrupt         ( bool );
-             double                        computeWirelength    ();
              TrackElement*                 createTrackSegment   ( AutoSegment*, Flags flags );
              void                          addRoutingEvent      ( TrackElement*, uint32_t level );
       inline void                          rescheduleEvent      ( RoutingEvent*, uint32_t level );

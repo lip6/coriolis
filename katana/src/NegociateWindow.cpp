@@ -524,46 +524,6 @@ namespace Katana {
   }
 
 
-  double  NegociateWindow::computeWirelength ()
-  {
-    bool isSymbolic = getKatanaEngine()->getConfiguration()->getRoutingGauge()->isSymbolic();
-    set<TrackElement*> accounteds;
-    double totalWL = 0.0;
-
-    for ( size_t igcell=0 ; igcell<_gcells.size() ; ++igcell ) {
-      double        gcellWL = 0.0;
-      Segment*      segment;
-      TrackElement* trackSegment;
-
-      const vector<AutoContact*>& contacts = _gcells[igcell]->getContacts();
-      for ( size_t i=0 ; i<contacts.size() ; i++ ) {
-        for( Hook* hook : contacts[i]->getBodyHook()->getSlaveHooks() ) {
-          Hook* sourceHook = dynamic_cast<Segment::SourceHook*>(hook);
-          if (not sourceHook) continue;
-          
-          segment       = dynamic_cast<Segment*>(sourceHook->getComponent());
-          trackSegment  = Session::lookup( segment );
-          if (trackSegment) {
-            if (accounteds.find(trackSegment) != accounteds.end()) continue;
-
-            accounteds.insert( trackSegment );
-            if (isSymbolic)
-              gcellWL += DbU::getLambda( trackSegment->getLength() );
-            else
-              gcellWL += DbU::toPhysical( trackSegment->getLength(), DbU::UnitPower::Nano );
-          }
-        }
-      }
-
-    // Partial sum to limit rounding errors.
-      totalWL += gcellWL;
-    }
-
-    if (not isSymbolic) totalWL /= 1000.0;
-    return totalWL;
-  }
-
-
   void  NegociateWindow::_computePriorities ()
   {
     for ( Net* net : getCell()->getNets() ) {
@@ -949,7 +909,7 @@ namespace Katana {
       Session::revalidate();
     }
 
-    _katana->setMinimumWL( computeWirelength() );
+    getKatanaEngine()->computeInitialStats();
 
 #if defined(CHECK_DATABASE)
     uint32_t overlaps = 0;
@@ -963,6 +923,7 @@ namespace Katana {
 
     _flags |= flags;
     _negociate();
+    getKatanaEngine()->computeRoutedStats();
     printStatistics();
 
     if (flags & Flags::PreRoutedStage) {
@@ -982,6 +943,7 @@ namespace Katana {
 # endif
 
     cdebug_tabw(159,-1);
+
   }
 
 

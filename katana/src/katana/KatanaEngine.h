@@ -51,6 +51,68 @@ namespace Katana {
 
 
 // -------------------------------------------------------------------
+// Class  :  "RoutingStatistics".
+
+  class RoutingStatistics {
+    public:
+      static const uint32_t  NoFlags   = 0;
+      static const uint32_t  InitialWL = (1 << 0);
+    public:
+      inline                              RoutingStatistics ( const KatanaEngine* );
+      inline       bool                   hasSucceeded      () const;
+      inline       float                  getInitialWL      () const;
+      inline       float                  getRoutedWL       () const;
+      inline       float                  getTotalWL        () const;
+      inline       float                  getNormedWL       () const;
+      inline const vector<TrackElement*>& getUnrouteds      () const;
+      inline       float                  segmentRatio      () const;
+      inline       float                  expandRatio       () const;
+      inline       float                  wlRatio           () const;
+                   void                   print             () const;
+                   void                   computeWL         ( uint32_t flags );
+    private:
+      const KatanaEngine*    _katana;
+      float                  _initialWL;
+      float                  _routedWL;
+      float                  _totalWL;
+      float                  _normedWL;
+      vector<TrackElement*>  _unrouteds;
+      uint64_t               _routeds;
+      uint64_t               _hunrouteds;
+      uint64_t               _vunrouteds;
+  };
+
+    
+  inline RoutingStatistics::RoutingStatistics ( const KatanaEngine* katana )
+    : _katana    (katana)
+    , _initialWL (0.0)
+    , _routedWL  (0.0)
+    , _totalWL   (0.0)
+    , _normedWL  (0.0)
+    , _unrouteds ()
+    , _routeds   (0)
+    , _hunrouteds(0)
+    , _vunrouteds(0)
+  { }
+  
+  inline       float                  RoutingStatistics::getInitialWL () const { return _initialWL; }
+  inline       float                  RoutingStatistics::getRoutedWL  () const { return _routedWL; }
+  inline       float                  RoutingStatistics::getTotalWL   () const { return _totalWL; }
+  inline       float                  RoutingStatistics::getNormedWL  () const { return _normedWL; }
+  inline       bool                   RoutingStatistics::hasSucceeded () const { return _unrouteds.empty(); }
+  inline const vector<TrackElement*>& RoutingStatistics::getUnrouteds () const { return _unrouteds; }
+
+  inline float  RoutingStatistics::segmentRatio () const
+  { return (_routeds+_unrouteds.size()) ? ((float)(_routeds) / (float)(_routeds+_unrouteds.size()) * 100.0) : 0.0; }
+
+  inline float  RoutingStatistics::wlRatio () const
+  { return (_routedWL != 0.0) ? (_routedWL / _totalWL * 100.0) : 0.0; }
+
+  inline float  RoutingStatistics::expandRatio () const
+  { return (_initialWL != 0.0) ? ((_routedWL - _initialWL) / _initialWL * 100.0) : 0.0; }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Katana::KatanaEngine".
 
   class KatanaEngine : public AnabaticEngine {
@@ -115,6 +177,8 @@ namespace Katana {
       inline  void                     setBloatOverloadAdd        ( uint32_t );
       inline  void                     setHTracksReservedLocal    ( uint32_t );
       inline  void                     setVTracksReservedLocal    ( uint32_t );
+      inline  void                     computeInitialStats        ();
+      inline  void                     computeRoutedStats         ();
       inline  void                     addBlock                   ( Block* );
               DataSymmetric*           addDataSymmetric           ( Net* );
               void                     setupChannelMode           ();
@@ -162,6 +226,7 @@ namespace Katana {
               TrackElementPairing      _shortDoglegs;
               DataSymmetricMap         _symmetrics;
       mutable uint32_t                 _successState;
+              RoutingStatistics        _routingStatistics;
     protected:
     // Constructors & Destructors.
                             KatanaEngine  ( Cell* );
@@ -212,7 +277,10 @@ namespace Katana {
   inline  void                          KatanaEngine::setMinimumWL            ( double minimum ) { _minimumWL = minimum; }
   inline  void                          KatanaEngine::setPostEventCb          ( Configuration::PostEventCb_t cb ) { getConfiguration()->setPostEventCb(cb); }
   inline  void                          KatanaEngine::printConfiguration      () const { getConfiguration()->print(getCell()); }
+  inline  void                          KatanaEngine::computeInitialStats     () { _routingStatistics.computeWL( RoutingStatistics::InitialWL ); setMinimumWL( _routingStatistics.getInitialWL() ); }
+  inline  void                          KatanaEngine::computeRoutedStats      () { _routingStatistics.computeWL( RoutingStatistics::NoFlags ); setDetailedRoutingSuccess( _routingStatistics.hasSucceeded() ); }
 
+    
   inline  TrackElement* KatanaEngine::_lookup ( AutoSegment* segment ) const
   {
     if (not segment) return nullptr;
