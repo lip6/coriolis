@@ -492,7 +492,8 @@ namespace Anabatic {
     cmess1 << "  o  Assign Layer (simple wirelength)." << endl;
 
     forEach ( Net* , inet , getCell()->getNets() ) {
-      if (NetRoutingExtension::get(*inet)->isAutomaticGlobalRoute()) {
+      NetRoutingState* state = NetRoutingExtension::get( *inet );
+      if (not state or state->isAutomaticGlobalRoute()) {
         _layerAssignByLength ( *inet, total, global, globalNets );
       }
     } // forEach(Net*)
@@ -557,7 +558,8 @@ namespace Anabatic {
     cmess1 << "  o  Assign Layer (whole net trunk)." << endl;
 
     forEach ( Net* , inet , getCell()->getNets() ) {
-      if (NetRoutingExtension::get(*inet)->isAutomaticGlobalRoute()) {
+      NetRoutingState* state = NetRoutingExtension::get( *inet );
+      if (not state or state->isAutomaticGlobalRoute()) {
         _layerAssignByTrunk( *inet, globalNets, total, global );
       }
     }
