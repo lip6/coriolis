@@ -976,15 +976,6 @@ class Block ( object ):
                 (number of tracks possible per side for pins placement)
         """
     
-        ab = self.conf.cell.getAbutmentBox()
-    
-        xmin = ab.getXMin()
-        xmax = ab.getXMax()
-        ymin = ab.getYMin()
-        ymax = ab.getYMax()
-    
-        width  = xmax - xmin
-        height = ymax - ymin
     
         # ---- Get routing gauges ----
     
@@ -1003,6 +994,16 @@ class Block ( object ):
     
         vPitch  = vGauge.getPitch()
         vOffset = vGauge.getOffset()
+
+        ab = self.conf.cell.getAbutmentBox()
+    
+        xmin = ab.getXMin() + 10*vPitch
+        xmax = ab.getXMax() - 10*vPitch
+        ymin = ab.getYMin() + 10*hPitch
+        ymax = ab.getYMax() - 10*vPitch
+    
+        width  = xmax - xmin
+        height = ymax - ymin
 
         # ---- Margin in tracks (we dont use all the side to place pins) ----
         margin_tracks = 2
