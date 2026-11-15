@@ -469,8 +469,9 @@ namespace {
         Interval freeSpan = track->getFreeInterval( intervals[i].getCenter(), net );
         cdebug_log(145,0) << "| termSpan " << termSpan << endl;
         cdebug_log(145,0) << "| freeSpan " << freeSpan << endl;
-        bool overlap  = false;
-        bool conflict = false;
+        bool overlap    = false;
+        bool netOverlap = false;
+        bool conflict   = false;
         if (freeSpan.isEmpty() or not freeSpan.contains(termSpan)) {
           overlap = true;
           size_t ovBegin = 0;
@@ -479,10 +480,15 @@ namespace {
           if (ovBegin != Track::npos) {
             for ( ; ovBegin <= ovEnd ; ++ovBegin ) {
               TrackElement*       overlaped = track->getSegment( ovBegin );
+              if (not overlaped) continue;
+              if (not Interval(overlaped->getSourceU(), overlaped->getTargetU()).intersect(termSpan))
+                continue;
               TrackBaseFixedSpan* fixedSpan = dynamic_cast<TrackBaseFixedSpan*>( overlaped );
               if (fixedSpan) {
-                if (not fixedSpan->isBlockage())
+                if (not fixedSpan->isBlockage() and (fixedSpan->getNet() != net)) {
                   fixedSpan->setNet( nullptr );
+                  netOverlap = true;
+                }
               } else
                 conflict = true;
             }
@@ -502,7 +508,7 @@ namespace {
           if (rp->isPunctual() and not overlap)
             element = TrackFixedSpanRp::create( rp, bb, track );
           else
-            element = TrackFixedSpan::create( ((overlap) ? nullptr : net), bb, track );
+            element = TrackFixedSpan::create( ((netOverlap) ? nullptr : net), bb, track );
           cdebug_log(145,0) << "| " << element << endl;
         }
 
