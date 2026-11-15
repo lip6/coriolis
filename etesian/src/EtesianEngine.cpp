@@ -750,6 +750,8 @@ namespace Etesian {
     cmess2 << "     o  Looking through the hierarchy." << endl;
     cmess2 << "        - Whole place area: " << getBlockCell()->getAbutmentBox() << "." << endl;
     cmess2 << "        - Sub-place Area: " << _placeArea << "." << endl;
+    cmess1.flush();
+    cmess2.flush();
 
     if (sliceHeight % vpitch) {
       throw Error( "EtesianEngine::toColoquinte(): Slice height (%s) must be a multiple of vpitch (%s)."
