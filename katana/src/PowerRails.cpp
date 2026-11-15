@@ -500,7 +500,10 @@ namespace {
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
 
-    if (not layer->isBlockage()) {
+    DbU::Unit     blkDelta  = 0;
+    if (layer->isBlockage()) {
+      blkDelta = plane->getLayerGauge()->getHalfWireWidth() + plane->getLayer()->getMinimalSpacing() - 1;
+    } else {
       if (AllianceFramework::get()->getCellGauge()->getName() == Name("FlexLib")) {
         if (_width >= DbU::fromPhysical( 10.0, DbU::UnitPower::Micro )) {
           delta = 2 * plane->getLayerGauge()->getPitch();
@@ -556,8 +559,8 @@ namespace {
         if ( segment and net->isExternal() )
           NetExternalComponents::setExternal ( segment );
 
-        axisMin = _axis - _width/2;
-        axisMax = _axis + _width/2;
+        axisMin = _axis - _width/2 - blkDelta;
+        axisMax = _axis + _width/2 + blkDelta;
         if (coronaBb.contains(segment->getBoundingBox())) {
           axisMin -= delta;
           axisMax += delta;
@@ -599,8 +602,8 @@ namespace {
         if ( segment and net->isExternal() )
           NetExternalComponents::setExternal ( segment );
 
-        axisMin = _axis - _width/2;
-        axisMax = _axis + _width/2;
+        axisMin = _axis - _width/2 - blkDelta;
+        axisMax = _axis + _width/2 + blkDelta;
       //if (coronaBb.contains(segment->getBoundingBox())) {
           axisMin -= delta;
           axisMax += delta;
