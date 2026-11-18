@@ -20,6 +20,8 @@ namespace Etesian {
                                     int64_t start_x,
                                     int64_t start_y,
                                     int64_t end_x,
-                                    int64_t end_y );
+                                    int64_t end_y,
+		   		    int fast );
+
 
 }
