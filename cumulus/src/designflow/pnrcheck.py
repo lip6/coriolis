@@ -56,8 +56,8 @@ def mkRuleSet ( callerGlobals, vlogDesignName, flags=0, extraRtlDepends=[], extr
                               , flags=Lvx.Flatten )
     ruleDruc   = Druc  .mkRule( 'druc'  , [rulePnR], flags=0 )
     ruleLayout = Alias .mkRule( 'layout', [rulePnR] )
-    ruleCgt    = PnR   .mkRule( 'cgt', depends=rtlDepends )
-    ruleGraal  = Graal .mkRule( 'graal', rulePnR.file_target(0) )
+    ruleCgt    = PnR   .mkRule( 'cgt'   )
+    ruleGraal  = Graal .mkRule( 'graal' , rulePnR.file_target(0) )
 
     if not (flags & NoGDS):
         ruleGds   = S2R   .mkRule( 'gds', rulePnR.file_target(0).with_suffix('.gds'), rulePnR.file_target(0)
@@ -67,7 +67,7 @@ def mkRuleSet ( callerGlobals, vlogDesignName, flags=0, extraRtlDepends=[], extr
 
     ruleClean  = Clean .mkRule( extrasClean )
 
-    for tag in [ 'Yosys', 'B2V', 'PnR', 'Cougar', 'Lvx', 'Druc', 'Cgt'
+    for tag in [ 'Yosys', 'B2V', 'PnR', 'Cougar', 'Lvx', 'Druc', 'PnR', 'Cgt'
                , 'Layout', 'Gds', 'DRC', 'Graal', 'Dreal', 'Clean' ]:
         rule = 'rule' + tag
         if rule in locals():
