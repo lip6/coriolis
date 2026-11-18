@@ -161,7 +161,11 @@ namespace {
         return false;
       }
 
-      if (std::abs(ppPref0->getAxis() - ppPref1->getAxis()) <= ppPref0->getPitch() + ppPref0->getPitch()/2) {
+      DbU::Unit maxPpSpacing = ppPref0->getPitch();
+      if (not Session::isSymbolic())
+        maxPpSpacing += ppPref0->getPitch() / 2;
+      
+      if (std::abs(ppPref0->getAxis() - ppPref1->getAxis()) < maxPpSpacing) {
         DbU::Unit xRP  = prefs[0].first->getAnchor()->getBoundingBox().getXCenter();
         DbU::Unit axis = ppPref0->getAxis();
         if (std::abs(ppPref1->getAxis() - xRP) < std::abs(ppPref0->getAxis() - xRP))

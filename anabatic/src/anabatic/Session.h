@@ -119,6 +119,7 @@ namespace Anabatic {
       static  inline DbU::Unit                         getDContactPitch      ();
       static  inline RoutingGauge*                     getRoutingGauge       ();
       static         uint32_t                          getStage              ();
+      static  inline bool                              isSymbolic            ();
       static  inline bool                              isGLayer              ( const Layer* );
       static  inline bool                              isGMetal              ( const Layer* );
       static  inline bool                              isGContact            ( const Layer* );
@@ -278,6 +279,7 @@ namespace Anabatic {
   inline const Layer*                      Session::getDContactLayer     ()                     { return getConfiguration()->getDContactLayer(); }
   inline DbU::Unit                         Session::getDContactWidth     ()                     { return getConfiguration()->getDContactWidth(); }
   inline DbU::Unit                         Session::getDContactPitch     ()                     { return getConfiguration()->getDContactPitch(); }
+  inline bool                              Session::isSymbolic           ()                     { return getConfiguration()->isSymbolic(); }
   inline bool                              Session::isGLayer             ( const Layer* layer ) { return getConfiguration()->isGLayer(layer); }
   inline bool                              Session::isGMetal             ( const Layer* layer ) { return getConfiguration()->isGMetal(layer); }
   inline bool                              Session::isGContact           ( const Layer* layer ) { return getConfiguration()->isGContact(layer); }
