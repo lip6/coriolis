@@ -817,7 +817,7 @@ extern "C" {
 
     HTRY
       METHOD_HEAD("Cell.flatten()")
-      __cs.init( "Cell.flattenNets" );
+      __cs.init( "Cell.flatten" );
       if (not PyArg_ParseTuple(args,"O:Cell.flatten", &arg0 )) {
         PyErr_SetString( ConstructorError, "Cell.flatten(): Takes one parameter." );
         return NULL;
@@ -831,6 +831,25 @@ extern "C" {
         instance = PYINSTANCE_O( arg0 );
       }
       cell->flatten( instance );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+  
+  
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_rflatten ()"
+
+  static PyObject* PyCell_rflatten ( PyCell *self, PyObject* args ) {
+    cdebug_log(20,0) << "PyCell_rflatten ()" << endl;
+
+    HTRY
+      METHOD_HEAD ( "Cell.rflatten()" )
+      unsigned int  depth = 1;
+      if (not PyArg_ParseTuple(args,"|I:Cell.rflatten", &depth)) {
+        PyErr_SetString(ConstructorError, "Cell.rflatten(): Invalid number/bad type of parameter.");
+        return NULL;
+      }
+      cell->rflatten( depth );
     HCATCH
     Py_RETURN_NONE;
   }
@@ -935,6 +954,7 @@ extern "C" {
     , { "getClone"            , (PyCFunction)PyCell_getClone            , METH_NOARGS , "Return a copy of the Cell (placement only)." }
     , { "flattenNets"         , (PyCFunction)PyCell_flattenNets         , METH_VARARGS, "Perform a virtual flatten, possibly limited to one instance." }
     , { "flatten"             , (PyCFunction)PyCell_flatten             , METH_VARARGS, "Flatten the instance." }
+    , { "rflatten"            , (PyCFunction)PyCell_rflatten            , METH_VARARGS, "Recursively flatten all the instances ." }
     , { "destroyPhysical"     , (PyCFunction)PyCell_destroyPhysical     , METH_NOARGS , "Destroy all physical components, including DeepNets (vflatten)." }
     , { "destroy"             , (PyCFunction)PyCell_destroy             , METH_NOARGS , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */

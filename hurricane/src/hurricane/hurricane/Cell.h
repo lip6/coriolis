@@ -532,6 +532,7 @@ class Cell : public Entity {
     public: void unmaterialize();
     public: Cell* getClone();
     public: void flatten(Instance*);
+    public: void rflatten(uint32_t depth=1);
     public: void uniquify(unsigned int depth=std::numeric_limits<unsigned int>::max());
     public: void addObserver(BaseObserver*);
     public: void removeObserver(BaseObserver*);

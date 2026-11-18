@@ -779,13 +779,15 @@ class Block ( object ):
         editor = self.conf.editor
         if self.etesian:
             return
+        print( '  o  Flattening P&R block "{}".'.format(self.conf.cellPnR.getName()) )
+        self.conf.cell.rflatten( 1000 )
         if self.conf.isCoreBlock:
             self.etesian = Etesian.EtesianEngine.create( self.conf.corona )
             self.etesian.setBlock( self.conf.icore )
             if editor:
-                editor.setCell( self.conf.cellPnR )
                 Breakpoint.stop( 100, 'Block.place(), corona loaded.')
         else:
+            self.conf.cell.rflatten( 1000 )
             self.etesian = Etesian.EtesianEngine.create( self.conf.cell )
         self.flattenNets()
 

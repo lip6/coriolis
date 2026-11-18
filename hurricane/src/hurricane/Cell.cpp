@@ -1191,21 +1191,22 @@ void Cell::flatten ( Instance* instance )
         upNets.insert( make_pair( instanceNet, upNet ));
     }
 
-    string upName = getString(getName()) + "_f_" + getString(instanceNet->getName());
+    string upName = getString(instance->getName()) + "_f_" + getString(instanceNet->getName());
     Net*   upNet  = getNet( upName );
-    if (upNet) {
-      throw Error( "Cell::flatten(): Net name clash while flattening, \"%s\" already exists"
-                 , upName.c_str() );
+    if (not upNet) {
+      upNet = Net::create( this, upName );
+      upNet->setDirection( instanceNet->getDirection() );
+      upNet->setType     ( instanceNet->getType     () );
+      upNets.insert( make_pair( instanceNet, upNet ));
+    } else {
+      // throw Error( "Cell::flatten(): Net name clash while flattening, \"%s\" already exists"
+      //            , upName.c_str() );
     }
-    upNet = Net::create( this, upName );
-    upNet->setDirection( instanceNet->getDirection() );
-    upNet->setType     ( instanceNet->getType     () );
-    upNets.insert( make_pair( instanceNet, upNet ));
   }
 
   Transformation instanceTransf = instance->getTransformation();
   for ( Instance* subInstance : instance->getMasterCell()->getInstances() ) {
-    string    upName     = getString(getName()) + "_f_" + getString(subInstance->getName());
+    string    upName     = getString(instance->getName()) + "_f_" + getString(subInstance->getName());
     Instance* upInstance = getInstance( upName );
     if (upInstance) {
       throw Error( "Cell::flatten(): Instance name clash while flattening, \"%s\" already exists"
@@ -1236,6 +1237,44 @@ void Cell::flatten ( Instance* instance )
   }
 
   instance->destroy();
+}
+
+
+void Cell::rflatten ( uint32_t depth )
+// ***********************************
+{
+  UpdateSession::open();
+
+  vector<DeepNet*>  deepNets;
+  for ( DeepNet* deepNet : getNets().getSubSet<DeepNet*>() ) {
+    deepNets.push_back( deepNet );
+  }
+  while ( not deepNets.empty() ) {
+    deepNets.back()->destroy();
+    deepNets.pop_back();
+  }
+
+  vector<Instance*> toFlatten;
+  while ( depth > 0 ) {
+    for ( Instance* instance : getInstances() ) {
+      Cell* masterCell = instance->getMasterCell();
+       if (  masterCell->isTerminal()
+         or masterCell->isTerminalNetlist()
+         or masterCell->isRouted()) continue;
+      toFlatten.push_back( instance );
+    }
+    if (toFlatten.empty()) break;
+    sort( toFlatten.begin(), toFlatten.end(), Entity::CompareById() );
+    
+    for ( Instance* instance : toFlatten ) {
+      flatten( instance );
+    }
+    toFlatten.clear();
+
+    depth--;
+  }
+
+  UpdateSession::close();
 }
 
 
