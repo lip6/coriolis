@@ -1348,7 +1348,8 @@ namespace Anabatic {
   {
     if (isInvalidated() and not(flags & Flags::NoUpdate))  const_cast<GCell*>(this)->updateDensity();
 
-    float density = 0.0;
+    size_t allowedDepth = getAnabatic()->getConfiguration()->getAllowedDepth();
+    float  density      = 0.0;
 
     if (getAnabatic()->getDensityMode() == AverageHVDensity) {
       density = getAverageHVDensity();
@@ -1358,7 +1359,7 @@ namespace Anabatic {
       size_t hplanes  = 0;
       float  hdensity = 0.0;
 
-      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=allowedDepth ; i++ ) {
         if (isHorizontalPlane(i)) { hdensity += _densities[i]; ++hplanes; }
       }
       if (hplanes) hdensity /= hplanes;
@@ -1368,7 +1369,7 @@ namespace Anabatic {
       size_t vplanes  = 0;
       float  vdensity = 0.0;
 
-      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=allowedDepth ; i++ ) {
         if (isVerticalPlane(i)) { vdensity += _densities[i]; ++vplanes; }
       }
 
@@ -1376,15 +1377,15 @@ namespace Anabatic {
 
       density = vdensity;
     } else if (getAnabatic()->getDensityMode() == MaxDensity) {
-      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=allowedDepth ; i++ ) {
         if (_densities[i] > density) density = _densities[i];
       }
     } else if (getAnabatic()->getDensityMode() == MaxHDensity) {
-      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=allowedDepth ; i++ ) {
         if (isHorizontalPlane(i) and (_densities[i] > density)) density = _densities[i];
       }
     } else if (getAnabatic()->getDensityMode() == MaxVDensity) {
-      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=allowedDepth; i++ ) {
         if (isVerticalPlane(i) and (_densities[i] > density)) density = _densities[i];
       }
     }
