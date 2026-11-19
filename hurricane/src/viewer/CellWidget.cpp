@@ -1464,6 +1464,7 @@ namespace Hurricane {
           if ( /*timeout("redraw [extension]",timer,10.0,timedout) or*/ (_redrawManager.interrupted()) ) break;
 
           if (isDrawableExtension(slice->getName())) {
+            _drawingQuery.setThreshold      ( screenToDbuLength(1) );
             _drawingQuery.setExtensionMask  ( slice->getMask() );
             _drawingQuery.setDrawExtensionGo( slice->getName() );
             _drawingQuery.setFilter         ( getQueryFilter().set  (Query::DoExtensionGos)

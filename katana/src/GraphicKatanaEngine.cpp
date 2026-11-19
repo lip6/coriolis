@@ -99,7 +99,6 @@ namespace Katana {
         fontScale   = -5;
         halfHeight  =  9;
         halfWidth   = 39;
-        
       }
       
       painter.setPen  ( pen );
