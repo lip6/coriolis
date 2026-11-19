@@ -780,6 +780,8 @@ class Block ( object ):
         if self.etesian:
             return
         print( '  o  Flattening P&R block "{}".'.format(self.conf.cellPnR.getName()) )
+        sys.stderr.flush()
+        sys.stdout.flush()
         self.conf.cell.rflatten( 1000 )
         if self.conf.isCoreBlock:
             self.etesian = Etesian.EtesianEngine.create( self.conf.corona )
